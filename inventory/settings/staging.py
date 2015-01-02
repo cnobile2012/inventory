@@ -27,6 +27,10 @@ DATABASES = {
 # Add to the INSTALLED_APPS here.
 #INSTALLED_APPS.append('debug_toolbar')
 
+ALLOWED_HOSTS = [
+    '.tetrasys-design.net',
+    ]
+
 # email settings
 EMAIL_HOST = 'localhost'
 EMAIL_HOST_USER = ''

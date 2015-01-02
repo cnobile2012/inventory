@@ -21,6 +21,10 @@ SITE_URL = 'static://inventory.homelinx.org/'
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = os.path.join(SITE_URL, 'static/')
 
+ALLOWED_HOSTS = [
+    '.tetrasys-design.net',
+    ]
+
 # email settings
 EMAIL_HOST = 'localhost'
 EMAIL_HOST_USER = ''
