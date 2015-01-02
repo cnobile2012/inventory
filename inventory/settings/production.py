@@ -3,23 +3,15 @@ from .base import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'inventory_prod',
-        'USER': 'inventory_prod',
-        'PASSWORD': 'inventory_prod',
+        'NAME': 'inventory',
+        'USER': 'inventory',
+        'PASSWORD': 'inventory',
         'HOST': '',
         'PORT': '',
     }
 }
 
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-    },
-}
-
-KEY_PREFIX = 'prod'
+#KEY_PREFIX = 'prod'
 #KEY_FUNCTION = 'testsite.common.caching.make_key'
 
 # Where is the root of the site? This can be a root-relative URL.
