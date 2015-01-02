@@ -7,7 +7,7 @@
 *.pdf
 .~lock.*
 local.py
-inventory/static
+#inventory/static
 db-snapshots
 logs/*.log*
 old
