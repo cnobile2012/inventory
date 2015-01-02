@@ -42,6 +42,9 @@ DATABASES = {
 # Example: "http://media.lawrence.com/static/"
 #STATIC_URL = os.path.join(SITE_URL, 'dev/')
 
+###############################################################################
+# Django Debug Toolbar
+###############################################################################
 # Add to the MIDDLEWARE_CLASSES here.
 MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
@@ -50,6 +53,11 @@ INSTALLED_APPS.append('debug_toolbar')
 
 # Setup the IP address from the internal clients.
 #INTERNAL_IPS = IPList(['127.0.0.1', '10.10.10.1', '192.168.1.0/24'])
+
+# If it were working, set it to follow redirects by default.
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
+    }
 
 # email settings
 EMAIL_HOST = 'localhost'

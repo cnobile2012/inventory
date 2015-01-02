@@ -145,18 +145,6 @@ CACHES = {
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
-###############################################################################
-# Django Debug Toolbar
-###############################################################################
-
-# Disable it!
-INTERNAL_IPS = ()
-
-# If it were working, set it to follow redirects by default.
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
-    }
-
 ROOT_URLCONF = 'inventory.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
