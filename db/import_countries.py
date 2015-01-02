@@ -4,16 +4,15 @@
 #
 # This script imports the countries into the database.
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2010-08-29 22:22:56 -0400 (Sun, 29 Aug 2010) $
-# $Revision: 12 $
-#----------------------------------
 
 import sys, csv, traceback, codecs
 from StringIO import StringIO
 from optparse import OptionParser
+
+LOCAL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+if os.path.isdir(os.path.join(LOCAL_PATH, 'inventory')):
+    sys.path.insert(0, LOCAL_PATH)
 
 from inventory.apps.regions.models import Country
 

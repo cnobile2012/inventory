@@ -4,10 +4,8 @@ Countries must be imported before Regions.
 
 After changing to the inventory directory do the following:
 
-  1. $ . setup_settings
-  2. $ cd db/
-  3. $ ./import_countries.py regions-country-ISO3166-1-yyyymmdd.csv | tee country.out
-  4. $ ./import_regions.py regions-region-ISO3166-1-yyyymmdd.csv | tee region.out
+  1. $ db/import_countries.py db/regions-country-ISO3166-1-yyyymmdd.csv | tee db/country.out
+  2. $ db/import_regions.py db/regions-region-ISO3166-1-yyyymmdd.csv | tee db/region.out
 
 The above should load the country and regions tables and link the two together. There may be errors in the .out files relating to unicode conversion. I did the best I could with the unicode, but not everything is getting converted correctly.
 
