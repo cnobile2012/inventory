@@ -8,7 +8,7 @@
 .~lock.*
 local.py
 #inventory/static
-db-snapshots
+db-snapshots/*.sql
 logs/*.log*
 old
 
