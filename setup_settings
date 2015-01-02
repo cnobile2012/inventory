@@ -1,10 +1,9 @@
 PROJECT=inventory
 SITE=inventory
-DJANGO_APPS=${HOME}/src/django_apps/apps
+DJANGO_APPS=${HOME}/src/django_apps
 DJANGO_HOME=${DJANGO_APPS}/${PROJECT}
 DJANGO_PATH=${DJANGO_HOME}/django/bin
 export PATH=${DJANGO_PATH}:${PATH}
-export PYTHONPATH=${DJANGO_HOME}:${DJANGO_APPS}/site-packages
 export DJANGO_SETTINGS_MODULE=${SITE}.settings
 unset DJANGO_HOME
 unset DJANGO_PATH
