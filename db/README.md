@@ -12,7 +12,7 @@ After changing to the inventory directory do the following:
 The above should load the country and regions tables and link the two together. There may be errors in the .out files relating to unicode conversion. I did the best I could with the unicode, but not everything is getting converted correctly.
 
 The data in these tables are from the ISO 3166-1/2 standard.
-Updated data can be downloaded from http://www.commondatahub.com/live.
+Updated data can be downloaded from http://www.commondatahub.com/live. ** WARNING this URL seems to no longer permit downloads--TO DO find new source for this data.
 
 ## Fields
 
