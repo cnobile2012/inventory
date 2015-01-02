@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Inventory {{ title }}</title>
+    <style type="text/css">
+      @import url("/static/css/common.css");
+    </style>
+    <!--[if gte IE 8]>
+    <style type="text/css">
+      @import url("/static/css/ie-fix.css");
+    </style>
+    <![endif]-->
+    <style type="text/css" media="print">
+      @import url("/static/css/report_print.css");
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <ul id="headLine">
+          <li><p id="name">{{ name }}</p></li>
+          <li><p id="title">{{ title }}</p></li>
+          <li>
+            <div id="login">
+              <p>User: {{ user }}</p>
+              <p><a href="/login/logout/">Logout</a></p>
+            </div> <!-- End div#login -->
+          </li>
+        </ul> <!-- End ul#headLine -->
+      </div> <!-- End div#header -->
+      <div id="container">
+        <ul id="navigation">
+          <li><div id="breadcrumbs">
+            {% breadcrumbs breadcrumb.pages breadcrumb.img %}
+          </div></li>
+        </ul>
+        <div id="content">
+          <p class="text">
+            Click on the Title to see the full record.
+          </p>
+          <table>
+            <thead>
+              <tr class="head">
+                <th>Name</th>
+                <th>City</th>
+                <th>Region</th>
+                <th>Country</th>
+                <th>Postal Code</th>
+              </tr>
+            </thead>
+            <tbody class="tbody">{% for record in records %}
+              <tr class="body">
+                <td><a href="{{ record.pk }}/">{{ record.name }}</a></td>
+                <td>{{ record.city }}</td>
+                <td>{{ record.state }}</td>
+                <td>{{ record.country }}</td>
+                <td>{{ record.postal_code }}</td>
+              </tr>{% endfor %}
+            </tbody>
+          </table>
+        </div> <!-- End div#content -->
+      </div> <!-- End div#container -->
+       <div id="footer">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/login/createUser/">Create User</a></li>
+          <li><a href="/admin/">Admin</a></li>
+          <li><a href="#">Site Map</a></li>
+        </ul>
+      </div> <!-- End div#footer -->
+    </div> <!-- End div#wrapper -->
+  </body>
+</html>

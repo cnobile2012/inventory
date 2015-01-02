@@ -1,0 +1,9 @@
+django
+docutils
+mysql_python
+pytz
+simplejson
+IPy
+redis
+django-redis-cache
+ipython

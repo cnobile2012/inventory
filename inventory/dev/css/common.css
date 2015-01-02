@@ -1,0 +1,431 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #a2a2a2;
+  color: #381d83;
+  font-family: Arial, Sans, 'Nimbus Sans L Condensed,',
+   'Bitstream Vera Sans', Helvetica, sans-serif;
+  font-size: small;
+}
+
+body hr {
+  color: #381d83;
+  background-color: #381d83;
+}
+body p.text {
+  position: relative;
+  top: 8px;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 110%;
+}
+body a:link,
+#header ul.login .createUser:link,
+#footer ul li:link {
+  color: #381d83;
+  text-decoration: none;
+}
+body a:focus,
+#header #login .createUser:focus,
+#footer ul li:focus {
+  color: #d36900;
+}
+body a:visited,
+#header #login .createUser:visited,
+#footer ul li:visited {
+  color: #939444;
+  text-decoration: none;
+}
+body a:active,
+#header #login .createUser:active,
+#footer ul li:active {
+  color: #939444;
+  text-decoration: none;
+}
+body a:hover,
+#header #login .createUser:hover,
+#footer ul li:hover {
+  color: #d36900;
+  cursor: pointer;
+}
+
+#wrapper {
+  width: 970px;
+  margin: 0 auto;
+}
+
+#header {
+  display: block;
+  margin: 4px auto 2px auto;
+  height: 40px;
+  width: 960px;
+  padding: 0 8px;
+  text-align: left;
+  font-weight: bold;
+  background-color: #bfd8d8;
+  border: thin solid #381d83;
+}
+#header ul#headLine {
+  display: block;
+  height: 28px;
+  list-style: none;
+  margin-top: 6px;
+}
+#header ul#headLine li {
+  display: inline;
+}
+#header ul#headLine li p#name {
+  float: left;
+  display: block;
+  width: 300px;
+  height: 28px;
+  font-size: 200%;
+}
+#header ul#headLine li p#title {
+  display: block;
+  width: 345px;
+  height: 25px;
+  margin: 0 auto;
+  padding-top: 3px;
+  font-size: 150%;
+  text-align: center;
+}
+#header ul#headLine li div#login {
+  display: block;
+  float: right;
+  margin-top: -27px;
+  font-size: 90%;
+  text-align: left;
+}
+
+#container {
+  display: block;
+  float: left;
+  min-height: 660px;
+  width: 960px;
+  margin: 0 auto 2px auto;
+  padding: 0 8px;
+  text-align: left;
+  font-size: 140%;
+  font-weight: bold;
+  background: #bfd8d8;
+  border: thin solid #381d83;
+}
+#container ul#navigation {
+  display: block;
+  list-style: none;
+}
+#container ul#navigation li {
+  display: inline-block;
+  height: 20px;
+  font-size: 70%;
+}
+#container #breadcrumbs {
+  display: block;
+  height: 20px;
+  width: 800px;
+  font-weight: normal;
+  margin-top: 2px;
+}
+#container #breadcrumbs img.arrow {
+  vertical-align: bottom;
+}
+#container #breadcrumbs span.arrow {
+  margin: 0 2px;
+  vertical-align: 15%;
+}
+#container a#edit {
+  display: block;
+  height: 18px;
+  width: 150px;
+  padding-top: 2px;
+  text-align: right;
+}
+/*
+ * SuckerDiv Menu CSS
+ * Credits: Dynamic Drive CSS Library
+ * URL: http://www.dynamicdrive.com/style/
+ */
+#container .suckerdiv {
+  display: block;
+  float: left;
+  width: 130px;
+  margin-top: 8px;
+  padding: 4px;
+  font-size: 80%;
+  background-color: #a8c3c3;
+}
+#container .suckerdiv ul {
+  list-style-type: none;
+  width: 130px; /* Width of Menu Items */
+  border-bottom: thin solid #ccc;
+}
+#container .suckerdiv ul li {
+  position: relative;
+}
+/* Sub level menu items */
+#container .suckerdiv ul li ul {
+  position: absolute;
+  width: 180px; /* Submenu width */
+  top: 0;
+  background-color: #a8c3c3;
+  visibility: hidden;
+}
+/* Sub level menu links style */
+#container .suckerdiv ul li a {
+  display: block;
+  overflow: auto; /* Force hasLayout in IE7 */
+  text-decoration: none;
+  padding: 1px 4px;
+  border: thin solid #ccc;
+  border-bottom: 0;
+}
+#container .suckerdiv ul li a.focus {
+  color: #d36900;
+}
+#container .suckerdiv ul li a:visited {
+  color: #939444;
+}
+#container .suckerdiv ul li a:active {
+  color: #939444;
+  text-decoration: none;
+}
+#container .suckerdiv ul li a:hover {
+  color: #d36900;
+}
+#container .suckerdiv .subfolderstyle {
+  background: url(../img/arrow18x16.png) no-repeat center right;
+}
+/* Holly Hack for IE \*/
+* html #container .suckerdiv ul li { float: left; height: 1%; }
+* html #container .suckerdiv ul li a { height: 1%; }
+/* End */
+#container #message {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  margin: 0 auto;
+  padding: 4px 0;
+  font-size: 100%;
+  font-weight: bold;
+  text-align: center;
+  background: #bfd8d8;
+  color: #b03820;
+}
+
+#content {
+  display: block;
+  float: left;
+  width: 100%;
+  margin: 0 auto;
+  font-size: 80%;
+}
+#content p.header {
+  height: 15px;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 110%;
+}
+#content ul.column {
+  display: block;
+  list-style: none;
+  width: 100%;
+  margin: 0;
+  padding: 4px;
+}
+#content ul.column li {
+  display: block;
+  float: left;
+  width: 460px;
+  margin: 2px 8px;
+}
+#content ul.column p.text,
+#content ul.column li hr {
+  width: 460px;
+}
+#content ul.search,
+#content ul.login,
+#content ul.create {
+  list-style: none;
+  width: 100%;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+#content ul.search li,
+#content ul.login li,
+#content ul.create li {
+  width: 490px;
+  margin: 0 auto;
+  padding: 4px 0;
+}
+#content ul.login li ul {
+  list-style: none;
+  color: red;
+}
+#content ul.login li ul li {
+  display: inline;
+  text-align: left;
+}
+#content ul.record {
+  display: block;
+  list-style: none;
+  width: 460px;
+  padding: 4px 0;
+  font-size: 90%;
+}
+#content ul.record li {
+  display: block;
+  width: 450px;
+}
+#content ul.record li.hide,
+#content span.hide {
+  display: none;
+}
+#content ul.errorlist {
+  list-style: none;
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  color: #ff0000;
+}
+#content ul.errorlist li {
+  width: 100%;
+  margin: 0 auto;
+}
+#content ul {
+  display: block;
+  list-style: none;
+  margin: 0 auto;
+}
+#content ul li {
+  margin: 8px auto;
+}
+#content label {
+  float: left;
+  width: 200px;
+  margin: 2px 4px 0 0;
+  text-align: right;
+}
+#content select {
+  width: 210px;
+  margin: 0 0 0 10px;
+  background-color: #b3b3b3;
+  color: #381d83;
+  font-weight: bold;
+}
+#content input {
+  width: 206px;
+  margin: 0 0 0 10px;
+  background-color: #b3b3b3;
+  color: #381d83;
+}
+#content span {
+  display: block;
+  width: 306px;
+  min-height: 14px;
+  margin: 0 0 1px 10px;
+  padding: 3px 0;
+  background-color: #b3b3b3;
+  color: #381d83;
+  overflow: auto;
+}
+#content div.submit {
+  display: block;
+  width: 100%;
+  padding: 2px 0;
+  text-align: center;
+  clear: both;
+}
+#content input#search,
+#content input#reset,
+#content input#submit {
+  display: inline;
+  width: auto;
+  margin: 8px auto;
+  padding: 0 4px;
+  clear: both;
+  color: #381d83;
+}
+#content input[type="checkbox"] {
+  width: 17px; /* IE needs this */
+  height: 17px; /* IE needs this */
+  margin: 3px 0 1px 10px;
+}
+#content div[id],
+#content textarea {
+  width: 306px;
+  min-height: 14px;
+  margin: 0 0 1px 10px;
+  padding: 3px 0;
+  background-color: #b3b3b3;
+  color: #381d83;
+  overflow: auto;
+}
+#content #clear {
+  margin-left: 20px;
+}
+#content table {
+  table-layout: auto;
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 90%;
+}
+#content tr.head {
+  font-size: 110%;
+  font-weight: bold;
+}
+#content table thead {
+  display: table-header-group;
+  width: 100%;
+  border-bottom: thin solid #381d83;
+}
+#content table thead tr th {
+  text-align: left;
+}
+#content tbody.tbody {
+  width: 960px;
+  overflow: auto;
+}
+#content tr.body {
+  height: 16px;
+  font-size: 85%;
+}
+#content tbody tr:hover {
+  color: #d36900;
+}
+#content table th,
+#content table td {
+  padding: 0 4px;
+}
+
+#footer {
+  display: block;
+  height: 20px;
+  width: 976px;
+  margin: 0 auto;
+  background-color: #bfd8d8;
+  text-align: center;
+  font-size: 85%;
+  border: thin solid #381d83;
+  clear: both;
+}
+#footer ul {
+  list-style: none;
+  display: block;
+  height: 14px;
+  margin-top: 3px;
+}
+#footer ul li {
+  display: inline-block;
+  width: 70px;
+  margin: 0 auto;
+}

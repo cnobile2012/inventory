@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Inventory {{ title }}</title>
+    <style type="text/css">
+      @import url("/static/css/common.css");
+    </style>
+    <!--[if gte IE 8]>
+    <style type="text/css">
+      @import url("/static/css/ie-fix.css");
+    </style>
+    <![endif]-->
+    <style type="text/css" media="print">
+      @import url("/static/css/report_print.css");
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <ul id="headLine">
+          <li><p id="name">{{ name }}</p></li>
+          <li><p id="title">{{ title }}</p></li>
+          <li>
+            <div id="login">
+              <p>User: {{ user }}</p>
+              <p><a href="/login/logout/">Logout</a></p>
+            </div> <!-- End div#login -->
+          </li>
+        </ul> <!-- End ul#headLine -->
+      </div> <!-- End div#header -->
+      <div id="container">
+        <ul id="navigation">
+          <li><div id="breadcrumbs">
+            {% breadcrumbs breadcrumb.pages breadcrumb.img %}
+          </div></li>
+        </ul>
+        <div id="message">{{ message }}</div>
+        <div id="content">
+          <p class="text">
+            You can make multiple categories within the location code field.
+            The field can hold up to 248 characters.
+          </p>
+          <form id="form" method="post" action="{{ action }}">
+            {% csrf_token %}
+            <ul class="search">
+              {{ form.as_ul }}
+            </ul>
+            <div class="submit">
+              <input id="submit" type="submit" value="Submit" />
+            </div> <!-- End div.submit -->
+          </form> <!-- End form#form0 -->
+        </div> <!-- End div#content -->
+      </div> <!-- End div#container -->
+      <div id="footer">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/login/createUser/">Create User</a></li>
+          <li><a href="/admin/">Admin</a></li>
+          <li><a href="#">Site Map</a></li>
+        </ul>
+      </div> <!-- End div#footer -->
+    </div> <!-- End div#wrapper -->
+  </body>
+</html>

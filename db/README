@@ -1,0 +1,32 @@
+When importing the regions you must import the countries first.
+
+After changing to the inventory directory do the following:
+
+$ . setup_settings
+$ cd db/
+$ ./import_countries.py regions-country-ISO3166-1-yyyymmdd.csv | tee country.out
+$ ./import_regions.py regions-region-ISO3166-1-yyyymmdd.csv | tee region.out
+
+The above should load the country and regions tables and link the two 
+together. There may be errors in the .out files relating to unicode conversion.
+I did the best I could with the unicode, but not everything is getting converted
+correctly.
+
+The data in these tables are from the ISO 3166-1/2 standard.
+Updated data can be downloaded from http://www.commondatahub.com/live.
+
+The four Country fields to download are:
+
+ISO 3166-1 COUNTRY NAME,
+ISO 3166-1 COUNTRY CHAR 2 CODE,
+ISO 3166-1 COUNTRY CHAR 3 CODE,
+ISO 3166-1 COUNTRY NUMBER CODE
+
+The four Region fields to download are:
+
+COUNTRY NAME,
+ISO 3166-2 SUB-DIVISION/STATE CODE,
+ISO 3166-2 SUBDIVISION/STATE NAME,
+ISO 3166-2 PRIMARY LEVEL NAME
+
+COUNTRY NAME is for reference only and is not used in the db.

@@ -1,0 +1,4291 @@
+COUNTRY NAME,ISO 3166-2 SUB-DIVISION/STATE CODE,ISO 3166-2 SUBDIVISION/STATE NAME,ISO 3166-2 PRIMARY LEVEL NAME
+Afghanistan,AF-BDS,Badakhshan,Province
+Afghanistan,AF-BDG,Badghis,Province
+Afghanistan,AF-BGL,Baghlan,Province
+Afghanistan,AF-BAL,Balkh,Province
+Afghanistan,AF-BAM,Bamian,Province
+Afghanistan,AF-DAY,Daykondi,Province
+Afghanistan,AF-FRA,Farah,Province
+Afghanistan,AF-FYB,Faryab,Province
+Afghanistan,AF-GHA,Ghazni,Province
+Afghanistan,AF-GHO,Ghowr,Province
+Afghanistan,AF-HEL,Helmand,Province
+Afghanistan,AF-HER,Herat,Province
+Afghanistan,AF-JOW,Jowzjan,Province
+Afghanistan,AF-KAB,Kabul [Kabol],Province
+Afghanistan,AF-KAN,Kandahar,Province
+Afghanistan,AF-KAP,Kapisa,Province
+Afghanistan,AF-KHO,Khowst,Province
+Afghanistan,AF-KNR,Konar [Kunar],Province
+Afghanistan,AF-KDZ,Kondoz [Kunduz],Province
+Afghanistan,AF-LAG,Laghman,Province
+Afghanistan,AF-LOW,Lowgar,Province
+Afghanistan,AF-NAN,Nangrahar [Nangarhar],Province
+Afghanistan,AF-NIM,Nimruz,Province
+Afghanistan,AF-NUR,Nurestan,Province
+Afghanistan,AF-ORU,Oruzgan [Uruzgan],Province
+Afghanistan,AF-PIA,Paktia,Province
+Afghanistan,AF-PKA,Paktika,Province
+Afghanistan,AF-PAN,Panjshir,Province
+Afghanistan,AF-PAR,Parwan,Province
+Afghanistan,AF-SAM,Samangan,Province
+Afghanistan,AF-SAR,Sar-e Pol,Province
+Afghanistan,AF-TAK,Takhar,Province
+Afghanistan,AF-WAR,Wardak [Wardag],Province
+Afghanistan,AF-ZAB,Zabol [Zabul],Province
+Albania,AL-BR,Berat,District
+Albania,AL-BU,Bulqizë,District
+Albania,AL-DL,Delvinë,District
+Albania,AL-DV,Devoll,District
+Albania,AL-DI,Dibër,District
+Albania,AL-DR,Durrës,District
+Albania,AL-EL,Elbasan,District
+Albania,AL-FR,Fier,District
+Albania,AL-GJ,Gjirokastër,District
+Albania,AL-GR,Gramsh,District
+Albania,AL-HA,Has,District
+Albania,AL-KA,Kavajë,District
+Albania,AL-ER,Kolonjë,District
+Albania,AL-KO,Korçë,District
+Albania,AL-KR,Krujë,District
+Albania,AL-KU,Kukës,District
+Albania,AL-KB,Kurbin,District
+Albania,AL-KC,Kuçovë,District
+Albania,AL-LE,Lezhë,District
+Albania,AL-LB,Librazhd,District
+Albania,AL-LU,Lushnjë,District
+Albania,AL-MK,Mallakastër,District
+Albania,AL-MM,Malësi e Madhe,District
+Albania,AL-MT,Mat,District
+Albania,AL-MR,Mirditë,District
+Albania,AL-PQ,Peqin,District
+Albania,AL-PG,Pogradec,District
+Albania,AL-PU,Pukë,District
+Albania,AL-PR,Përmet,District
+Albania,AL-SR,Sarandë,District
+Albania,AL-SH,Shkodër,District
+Albania,AL-SK,Skrapar,District
+Albania,AL-TE,Tepelenë,District
+Albania,AL-TR,Tiranë,District
+Albania,AL-TP,Tropojë,District
+Albania,AL-VL,Vlorë,District
+Algeria,DZ-01,Adrar,Province
+Algeria,DZ-16,Alger,Province
+Algeria,DZ-23,Annaba,Province
+Algeria,DZ-44,Aïn Defla,Province
+Algeria,DZ-46,Aïn Témouchent,Province
+Algeria,DZ-05,Batna,Province
+Algeria,DZ-07,Biskra,Province
+Algeria,DZ-09,Blida,Province
+Algeria,DZ-34,Bordj Bou Arréridj,Province
+Algeria,DZ-10,Bouira,Province
+Algeria,DZ-35,Boumerdès,Province
+Algeria,DZ-08,Béchar,Province
+Algeria,DZ-06,Béjaïa,Province
+Algeria,DZ-02,Chlef,Province
+Algeria,DZ-25,Constantine,Province
+Algeria,DZ-17,Djelfa,Province
+Algeria,DZ-32,El Bayadh,Province
+Algeria,DZ-39,El Oued,Province
+Algeria,DZ-36,El Tarf,Province
+Algeria,DZ-47,Ghardaïa,Province
+Algeria,DZ-24,Guelma,Province
+Algeria,DZ-33,Illizi,Province
+Algeria,DZ-18,Jijel,Province
+Algeria,DZ-40,Khenchela,Province
+Algeria,DZ-03,Laghouat,Province
+Algeria,DZ-29,Mascara,Province
+Algeria,DZ-43,Mila,Province
+Algeria,DZ-27,Mostaganem,Province
+Algeria,DZ-28,Msila,Province
+Algeria,DZ-26,Médéa,Province
+Algeria,DZ-45,Naama,Province
+Algeria,DZ-31,Oran,Province
+Algeria,DZ-30,Ouargla,Province
+Algeria,DZ-04,Oum el Bouaghi,Province
+Algeria,DZ-48,Relizane,Province
+Algeria,DZ-20,Saïda,Province
+Algeria,DZ-22,Sidi Bel Abbès,Province
+Algeria,DZ-21,Skikda,Province
+Algeria,DZ-41,Souk Ahras,Province
+Algeria,DZ-19,Sétif,Province
+Algeria,DZ-11,Tamanghasset,Province
+Algeria,DZ-14,Tiaret,Province
+Algeria,DZ-37,Tindouf,Province
+Algeria,DZ-42,Tipaza,Province
+Algeria,DZ-38,Tissemsilt,Province
+Algeria,DZ-15,Tizi Ouzou,Province
+Algeria,DZ-13,Tlemcen,Province
+Algeria,DZ-12,Tébessa,Province
+Andorra,AD-07,Andorra la Vella,Parish
+Andorra,AD-02,Canillo,Parish
+Andorra,AD-03,Encamp,Parish
+Andorra,AD-08,Escaldes-Engordany,Parish
+Andorra,AD-04,La Massana,Parish
+Andorra,AD-05,Ordino,Parish
+Andorra,AD-06,Sant Julià de Lòria,Parish
+Angola,AO-BGO,Bengo,Province
+Angola,AO-BGU,Benguela,Province
+Angola,AO-BIE,Bié,Province
+Angola,AO-CAB,Cabinda,Province
+Angola,AO-CCU,Cuando-Cubango,Province
+Angola,AO-CNO,Cuanza Norte,Province
+Angola,AO-CUS,Cuanza Sul,Province
+Angola,AO-CNN,Cunene,Province
+Angola,AO-HUA,Huambo,Province
+Angola,AO-HUI,Huíla,Province
+Angola,AO-LUA,Luanda,Province
+Angola,AO-LNO,Lunda Norte,Province
+Angola,AO-LSU,Lunda Sul,Province
+Angola,AO-MAL,Malange,Province
+Angola,AO-MOX,Moxico,Province
+Angola,AO-NAM,Namibe,Province
+Angola,AO-UIG,Uíge,Province
+Angola,AO-ZAI,Zaire,Province
+Antigua and Barbuda,AG-10,Barbuda,Dependency
+Antigua and Barbuda,AG-X2~,Redonda,Dependency
+Antigua and Barbuda,AG-03,Saint George,Parish
+Antigua and Barbuda,AG-04,Saint John’s,Parish
+Antigua and Barbuda,AG-05,Saint Mary,Parish
+Antigua and Barbuda,AG-06,Saint Paul,Parish
+Antigua and Barbuda,AG-07,Saint Peter,Parish
+Antigua and Barbuda,AG-08,Saint Philip,Parish
+Argentina,AR-B,Buenos Aires,province
+Argentina,AR-C,Capital federal,federal district
+Argentina,AR-K,Catamarca,province
+Argentina,AR-H,Chaco,province
+Argentina,AR-U,Chubut,province
+Argentina,AR-W,Corrientes,province
+Argentina,AR-X,Córdoba,province
+Argentina,AR-E,Entre Ríos,province
+Argentina,AR-P,Formosa,province
+Argentina,AR-Y,Jujuy,province
+Argentina,AR-L,La Pampa,province
+Argentina,AR-F,La Rioja,province
+Argentina,AR-M,Mendoza,province
+Argentina,AR-N,Misiones,province
+Argentina,AR-Q,Neuquén,province
+Argentina,AR-R,Río Negro,province
+Argentina,AR-A,Salta,province
+Argentina,AR-J,San Juan,province
+Argentina,AR-D,San Luis,province
+Argentina,AR-Z,Santa Cruz,province
+Argentina,AR-S,Santa Fe,province
+Argentina,AR-G,Santiago del Estero,province
+Argentina,AR-V,Tierra del Fuego,province
+Argentina,AR-T,Tucumán,province
+Armenia,AM-AG,Aragac?otn,Province
+Armenia,AM-AR,Ararat,Province
+Armenia,AM-AV,Armavir,Province
+Armenia,AM-ER,Erevan,city
+Armenia,AM-GR,Gegark'unik',Province
+Armenia,AM-KT,Kotayk',Province
+Armenia,AM-LO,Lo?y,Province
+Armenia,AM-SU,Syunik',Province
+Armenia,AM-TV,Tavuš,Province
+Armenia,AM-VD,Vayoc Jor,Province
+Armenia,AM-SH,Širak,Province
+Australia,AU-ACT,Australian Capital Territory,territory
+Australia,AU-NSW,New South Wales,state
+Australia,AU-NT,Northern Territory,territory
+Australia,AU-QLD,Queensland,state
+Australia,AU-SA,South Australia,state
+Australia,AU-TAS,Tasmania,state
+Australia,AU-VIC,Victoria,state
+Australia,AU-WA,Western Australia,state
+Austria,AT-1,Burgenland,State
+Austria,AT-2,Kärnten,State
+Austria,AT-3,Niederösterreich,State
+Austria,AT-4,Oberösterreich,State
+Austria,AT-5,Salzburg,State
+Austria,AT-6,Steiermark,State
+Austria,AT-7,Tirol,State
+Austria,AT-8,Vorarlberg,State
+Austria,AT-9,Wien,State
+Azerbaijan,AZ-ABS,Abseron,District
+Azerbaijan,AZ-AGC,Agcabädi,District
+Azerbaijan,AZ-AGM,Agdam,District
+Azerbaijan,AZ-AGS,Agdas,District
+Azerbaijan,AZ-AGA,Agstafa,District
+Azerbaijan,AZ-AGU,Agsu,District
+Azerbaijan,AZ-AST,Astara,District
+Azerbaijan,AZ-BAB,Babäk,District
+Azerbaijan,AZ-BA,Baki,city
+Azerbaijan,AZ-BAL,Balakän,District
+Azerbaijan,AZ-BEY,Beyläqan,District
+Azerbaijan,AZ-BIL,Biläsuvar,District
+Azerbaijan,AZ-BAR,Bärdä,District
+Azerbaijan,AZ-CUL,Culfa,District
+Azerbaijan,AZ-CAB,Cäbrayil,District
+Azerbaijan,AZ-CAL,Cälilabab,District
+Azerbaijan,AZ-DAS,Daskäsän,District
+Azerbaijan,AZ-DAV,Däväçi,District
+Azerbaijan,AZ-FUZ,Füzuli,District
+Azerbaijan,AZ-GOR,Goranboy,District
+Azerbaijan,AZ-GAD,Gädäbäy,District
+Azerbaijan,AZ-GA,Gäncä,city
+Azerbaijan,AZ-GOY,Göyçay,District
+Azerbaijan,AZ-HAC,Haciqabul,District
+Azerbaijan,AZ-IMI,Imisli,District
+Azerbaijan,AZ-ISM,Ismayilli,District
+Azerbaijan,AZ-KAL,Kälbäcär,District
+Azerbaijan,AZ-KUR,Kürdämir,District
+Azerbaijan,AZ-LAC,Laçin,District
+Azerbaijan,AZ-LER,Lerik,District
+Azerbaijan,AZ-LAN,Länkäran,District
+Azerbaijan,AZ-LA,Länkäran City,city
+Azerbaijan,AZ-MAS,Masalli,District
+Azerbaijan,AZ-MI,Mingäçevir,city
+Azerbaijan,AZ-NA,Naftalan,city
+Azerbaijan,AZ-NX,Naxçivan,city
+Azerbaijan,AZ-NEF,Neftçala,District
+Azerbaijan,AZ-OGU,Oguz,District
+Azerbaijan,AZ-ORD,Ordubad,District
+Azerbaijan,AZ-QAX,Qax,District
+Azerbaijan,AZ-QAZ,Qazax,District
+Azerbaijan,AZ-QOB,Qobustan,District
+Azerbaijan,AZ-QBA,Quba,District
+Azerbaijan,AZ-QBI,Qubadli,District
+Azerbaijan,AZ-QUS,Qusar,District
+Azerbaijan,AZ-QAB,Qäbälä,District
+Azerbaijan,AZ-SAT,Saatli,District
+Azerbaijan,AZ-SAB,Sabirabad,District
+Azerbaijan,AZ-SAH,Sahbuz,District
+Azerbaijan,AZ-SAL,Salyan,District
+Azerbaijan,AZ-SMI,Samaxi,District
+Azerbaijan,AZ-SMX,Samux,District
+Azerbaijan,AZ-SIY,Siyäzän,District
+Azerbaijan,AZ-SM,Sumqayit,city
+Azerbaijan,AZ-SUS,Susa,District
+Azerbaijan,AZ-SS,Susa City,city
+Azerbaijan,AZ-SAD,Sädäräk,District
+Azerbaijan,AZ-SAK,Säki,District
+Azerbaijan,AZ-SA,Säki City,city
+Azerbaijan,AZ-SKR,Sämkir,District
+Azerbaijan,AZ-SAR,Särur,District
+Azerbaijan,AZ-TOV,Tovuz,District
+Azerbaijan,AZ-TAR,Tärtär,District
+Azerbaijan,AZ-UCA,Ucar,District
+Azerbaijan,AZ-XA,Xankändi,city
+Azerbaijan,AZ-XAN,Xanlar,District
+Azerbaijan,AZ-XAC,Xaçmaz,District
+Azerbaijan,AZ-XIZ,Xizi,District
+Azerbaijan,AZ-XCI,Xocali,District
+Azerbaijan,AZ-XVD,Xocavänd,District
+Azerbaijan,AZ-YAR,Yardimli,District
+Azerbaijan,AZ-YEV,Yevlax,District
+Azerbaijan,AZ-YE,Yevlax City,city
+Azerbaijan,AZ-ZAQ,Zaqatala,District
+Azerbaijan,AZ-ZAN,Zängilan,District
+Azerbaijan,AZ-ZAR,Zärdab,District
+Azerbaijan,AZ-AB,Äli Bayramli,city
+Bahamas,BS-AC,Acklins and Crooked Islands,District
+Bahamas,BS-BI,Bimini,District
+Bahamas,BS-CI,Cat Island,District
+Bahamas,BS-EX,Exuma,District
+Bahamas,BS-FP,Freeport,District
+Bahamas,BS-FC,Fresh Creek,District
+Bahamas,BS-GH,Governor's Harbour,District
+Bahamas,BS-GT,Green Turtle Cay,District
+Bahamas,BS-HI,Harbour Island,District
+Bahamas,BS-HR,High Rock,District
+Bahamas,BS-IN,Inagua,District
+Bahamas,BS-KB,Kemps Bay,District
+Bahamas,BS-LI,Long Island,District
+Bahamas,BS-MH,Marsh Harbour,District
+Bahamas,BS-MG,Mayaguana,District
+Bahamas,BS-NP,New Providence,District
+Bahamas,BS-NB,Nicholls Town and Berry Islands,District
+Bahamas,BS-RI,Ragged Island,District
+Bahamas,BS-RS,Rock Sound,District
+Bahamas,BS-SR,San Salvador and Rum Cay,District
+Bahamas,BS-SP,Sandy Point,District
+Bahrain,BH-14,Al Janubiyah,Governorate
+Bahrain,BH-13,Al Manamah (Al ‘Asimah),Governorate
+Bahrain,BH-15,Al Muharraq,Governorate
+Bahrain,BH-16,Al Wustá,Governorate
+Bahrain,BH-17,Ash Shamaliyah,Governorate
+Bangladesh,BD-05,Bagerhat zila,District
+Bangladesh,BD-01,Bandarban zila,District
+Bangladesh,BD-02,Barguna zila,District
+Bangladesh,BD-06,Barisal zila,District
+Bangladesh,BD-07,Bhola zila,District
+Bangladesh,BD-03,Bogra zila,District
+Bangladesh,BD-04,Brahmanbaria zila,District
+Bangladesh,BD-09,Chandpur zila,District
+Bangladesh,BD-10,Chittagong zila,District
+Bangladesh,BD-12,Chuadanga zila,District
+Bangladesh,BD-08,Comilla zila,District
+Bangladesh,BD-11,Cox's Bazar zila,District
+Bangladesh,BD-13,Dhaka zila,District
+Bangladesh,BD-14,Dinajpur zila,District
+Bangladesh,BD-15,Faridpur zila,District
+Bangladesh,BD-16,Feni zila,District
+Bangladesh,BD-19,Gaibandha zila,District
+Bangladesh,BD-18,Gazipur zila,District
+Bangladesh,BD-17,Gopalganj zila,District
+Bangladesh,BD-20,Habiganj zila,District
+Bangladesh,BD-24,Jaipurhat zila,District
+Bangladesh,BD-21,Jamalpur zila,District
+Bangladesh,BD-22,Jessore zila,District
+Bangladesh,BD-25,Jhalakati zila,District
+Bangladesh,BD-23,Jhenaidah zila,District
+Bangladesh,BD-29,Khagrachari zila,District
+Bangladesh,BD-27,Khulna zila,District
+Bangladesh,BD-26,Kishoreganj zila,District
+Bangladesh,BD-28,Kurigram zila,District
+Bangladesh,BD-30,Kushtia zila,District
+Bangladesh,BD-31,Lakshmipur zila,District
+Bangladesh,BD-32,Lalmonirhat zila,District
+Bangladesh,BD-36,Madaripur zila,District
+Bangladesh,BD-37,Magura zila,District
+Bangladesh,BD-33,Manikganj zila,District
+Bangladesh,BD-39,Meherpur zila,District
+Bangladesh,BD-38,Moulvibazar zila,District
+Bangladesh,BD-35,Munshiganj zila,District
+Bangladesh,BD-34,Mymensingh zila,District
+Bangladesh,BD-48,Naogaon zila,District
+Bangladesh,BD-43,Narail zila,District
+Bangladesh,BD-40,Narayanganj zila,District
+Bangladesh,BD-42,Narsingdi zila,District
+Bangladesh,BD-44,Natore zila,District
+Bangladesh,BD-45,Nawabganj zila,District
+Bangladesh,BD-41,Netrakona zila,District
+Bangladesh,BD-46,Nilphamari zila,District
+Bangladesh,BD-47,Noakhali zila,District
+Bangladesh,BD-49,Pabna zila,District
+Bangladesh,BD-52,Panchagarh zila,District
+Bangladesh,BD-51,Patuakhali zila,District
+Bangladesh,BD-50,Pirojpur zila,District
+Bangladesh,BD-53,Rajbari zila,District
+Bangladesh,BD-54,Rajshahi zila,District
+Bangladesh,BD-56,Rangamati zila,District
+Bangladesh,BD-55,Rangpur zila,District
+Bangladesh,BD-58,Satkhira zila,District
+Bangladesh,BD-62,Shariatpur zila,District
+Bangladesh,BD-57,Sherpur zila,District
+Bangladesh,BD-59,Sirajganj zila,District
+Bangladesh,BD-61,Sunamganj zila,District
+Bangladesh,BD-60,Sylhet zila,District
+Bangladesh,BD-63,Tangail zila,District
+Bangladesh,BD-64,Thakurgaon zila,District
+Barbados,BB-01,Christ Church,Parish
+Barbados,BB-02,Saint Andrew,Parish
+Barbados,BB-03,Saint George,Parish
+Barbados,BB-04,Saint James,Parish
+Barbados,BB-05,Saint John,Parish
+Barbados,BB-06,Saint Joseph,Parish
+Barbados,BB-07,Saint Lucy,Parish
+Barbados,BB-08,Saint Michael,Parish
+Barbados,BB-09,Saint Peter,Parish
+Barbados,BB-10,Saint Philip,Parish
+Barbados,BB-11,Saint Thomas,Parish
+Belarus,BY-BR,Brestskaya voblasts,Region
+Belarus,BY-HO,Homyel'skaya voblasts,Region
+Belarus,BY-X1~,Horad Minsk,Municipality
+Belarus,BY-HR,Hrodzenskaya voblasts,Region
+Belarus,BY-MA,Mahilyowskaya voblasts,Region
+Belarus,BY-MI,Minskaya voblasts,Region
+Belarus,BY-VI,Vitsyebskaya voblasts,Region
+Belgium,BE-VAN,Antwerpen,Province
+Belgium,BE-WBR,Brabant Wallon,Province
+Belgium,BE-BRU,Brussels,Capital Region
+Belgium,BE-WHT,Hainaut,Province
+Belgium,BE-VLI,Limburg,Province
+Belgium,BE-WLG,Liège,Province
+Belgium,BE-WLX,Luxembourg,Province
+Belgium,BE-WNA,Namur,Province
+Belgium,BE-VOV,Oost-Vlaanderen,Province
+Belgium,BE-VBR,Vlaams Brabant,Province
+Belgium,BE-VWV,West-Vlaanderen,Province
+Belize,BZ-BZ,Belize,District
+Belize,BZ-CY,Cayo,District
+Belize,BZ-CZL,Corozal,District
+Belize,BZ-OW,Orange Walk,District
+Belize,BZ-SC,Stann Creek,District
+Belize,BZ-TOL,Toledo,District
+Benin,BJ-AL,Alibori,Department
+Benin,BJ-AK,Atakora,Department
+Benin,BJ-AQ,Atlantique,Department
+Benin,BJ-BO,Borgou,Department
+Benin,BJ-CO,Collines,Department
+Benin,BJ-DO,Donga,Department
+Benin,BJ-KO,Kouffo,Department
+Benin,BJ-LI,Littoral,Department
+Benin,BJ-MO,Mono,Department
+Benin,BJ-OU,Ouémé,Department
+Benin,BJ-PL,Plateau,Department
+Benin,BJ-ZO,Zou,Department
+Bhutan,BT-33,Bumthang,District
+Bhutan,BT-12,Chhukha,District
+Bhutan,BT-22,Dagana,District
+Bhutan,BT-GA,Gasa,District
+Bhutan,BT-13,Ha,District
+Bhutan,BT-44,Lhuentse,District
+Bhutan,BT-42,Monggar,District
+Bhutan,BT-11,Paro,District
+Bhutan,BT-43,Pemagatshel,District
+Bhutan,BT-23,Punakha,District
+Bhutan,BT-45,Samdrup Jongkha,District
+Bhutan,BT-14,Samtse,District
+Bhutan,BT-31,Sarpang,District
+Bhutan,BT-15,Thimphu,District
+Bhutan,BT-TY,Trashi Yangtse,District
+Bhutan,BT-41,Trashigang,District
+Bhutan,BT-32,Trongsa,District
+Bhutan,BT-21,Tsirang,District
+Bhutan,BT-24,Wangdue Phodrang,District
+Bhutan,BT-34,Zhemgang,District
+"Bolivia, Plurinational State Of",BO-H,Chuquisaca,Department
+"Bolivia, Plurinational State Of",BO-C,Cochabamba,Department
+"Bolivia, Plurinational State Of",BO-B,El Beni,Department
+"Bolivia, Plurinational State Of",BO-L,La Paz,Department
+"Bolivia, Plurinational State Of",BO-O,Oruro,Department
+"Bolivia, Plurinational State Of",BO-N,Pando,Department
+"Bolivia, Plurinational State Of",BO-P,Potosí,Department
+"Bolivia, Plurinational State Of",BO-S,Santa Cruz,Department
+"Bolivia, Plurinational State Of",BO-T,Tarija,Department
+Bosnia and Herzegovina,BA-BIH,Federacija Bosna i Hercegovina,Entity
+Bosnia and Herzegovina,BA-SRP,Republika Srpska,Entity
+Botswana,BW-CE,Central,District
+Botswana,BW-GH,Ghanzi,District
+Botswana,BW-KG,Kgalagadi,District
+Botswana,BW-KL,Kgatleng,District
+Botswana,BW-KW,Kweneng,District
+Botswana,BW-NE,North-East,District
+Botswana,BW-NW,North-West,District
+Botswana,BW-SE,South-East,District
+Botswana,BW-SO,Southern,District
+Brazil,BR-AC,Acre,state
+Brazil,BR-AL,Alagoas,state
+Brazil,BR-AP,Amapá,state
+Brazil,BR-AM,Amazonas,state
+Brazil,BR-BA,Bahia,state
+Brazil,BR-CE,Ceará,state
+Brazil,BR-DF,Distrito Federal,federal district
+Brazil,BR-ES,Espírito Santo,state
+Brazil,BR-GO,Goiás,state
+Brazil,BR-MA,Maranhão,state
+Brazil,BR-MT,Mato Grosso,state
+Brazil,BR-MS,Mato Grosso do Sul,state
+Brazil,BR-MG,Minas Gerais,state
+Brazil,BR-PR,Paraná,state
+Brazil,BR-PB,Paraíba,state
+Brazil,BR-PA,Pará,state
+Brazil,BR-PE,Pernambuco,state
+Brazil,BR-PI,Piauí,state
+Brazil,BR-RJ,Rio de Janeiro,state
+Brazil,BR-RN,Rio Grande do Norte,state
+Brazil,BR-RS,Rio Grande do Sul,state
+Brazil,BR-RO,Rondônia,state
+Brazil,BR-RR,Roraima,state
+Brazil,BR-SC,Santa Catarina,state
+Brazil,BR-SE,Sergipe,state
+Brazil,BR-SP,São Paulo,state
+Brazil,BR-TO,Tocantins,state
+Brunei Darussalam,BN-BE,Belait,District
+Brunei Darussalam,BN-BM,Brunei-Muara,District
+Brunei Darussalam,BN-TE,Temburong,District
+Brunei Darussalam,BN-TU,Tutong,District
+Bulgaria,BG-01,Blagoevgrad,Region
+Bulgaria,BG-02,Burgas,Region
+Bulgaria,BG-08,Dobrich,Region
+Bulgaria,BG-07,Gabrovo,Region
+Bulgaria,BG-26,Haskovo,Region
+Bulgaria,BG-09,Kardzhali,Region
+Bulgaria,BG-10,Kjustendil,Region
+Bulgaria,BG-11,Lovech,Region
+Bulgaria,BG-12,Montana,Region
+Bulgaria,BG-13,Pazardzhik,Region
+Bulgaria,BG-14,Pernik,Region
+Bulgaria,BG-15,Pleven,Region
+Bulgaria,BG-16,Plovdiv,Region
+Bulgaria,BG-17,Razgrad,Region
+Bulgaria,BG-18,Ruse,Region
+Bulgaria,BG-19,Silistra,Region
+Bulgaria,BG-20,Sliven,Region
+Bulgaria,BG-21,Smolyan,Region
+Bulgaria,BG-23,Sofia,Region
+Bulgaria,BG-22,Sofia-Grad,Region
+Bulgaria,BG-24,Stara Zagora,Region
+Bulgaria,BG-25,Targovishte,Region
+Bulgaria,BG-03,Varna,Region
+Bulgaria,BG-04,Veliko Tarnovo,Region
+Bulgaria,BG-05,Vidin,Region
+Bulgaria,BG-06,Vratsa,Region
+Bulgaria,BG-28,Yambol,Region
+Bulgaria,BG-27,Šumen,Region
+Burkina Faso,BF-BAL,Balé,Province
+Burkina Faso,BF-BAM,Bam,Province
+Burkina Faso,BF-BAN,Banwa,Province
+Burkina Faso,BF-BAZ,Bazèga,Province
+Burkina Faso,BF-BGR,Bougouriba,Province
+Burkina Faso,BF-BLG,Boulgou,Province
+Burkina Faso,BF-BLK,Boulkiemdé,Province
+Burkina Faso,BF-COM,Comoé,Province
+Burkina Faso,BF-GAN,Ganzourgou,Province
+Burkina Faso,BF-GNA,Gnagna,Province
+Burkina Faso,BF-GOU,Gourma,Province
+Burkina Faso,BF-HOU,Houet,Province
+Burkina Faso,BF-IOB,Ioba,Province
+Burkina Faso,BF-KAD,Kadiogo,Province
+Burkina Faso,BF-KMD,Komondjari,Province
+Burkina Faso,BF-KMP,Kompienga,Province
+Burkina Faso,BF-KOS,Kossi,Province
+Burkina Faso,BF-KOP,Koulpélogo,Province
+Burkina Faso,BF-KOT,Kouritenga,Province
+Burkina Faso,BF-KOW,Kourwéogo,Province
+Burkina Faso,BF-KEN,Kénédougou,Province
+Burkina Faso,BF-LOR,Loroum,Province
+Burkina Faso,BF-LER,Léraba,Province
+Burkina Faso,BF-MOU,Mouhoun,Province
+Burkina Faso,BF-NAO,Nahouri,Province
+Burkina Faso,BF-NAM,Namentenga,Province
+Burkina Faso,BF-NAY,Nayala,Province
+Burkina Faso,BF-NOU,Noumbiel,Province
+Burkina Faso,BF-OUB,Oubritenga,Province
+Burkina Faso,BF-OUD,Oudalan,Province
+Burkina Faso,BF-PAS,Passoré,Province
+Burkina Faso,BF-PON,Poni,Province
+Burkina Faso,BF-SNG,Sanguié,Province
+Burkina Faso,BF-SMT,Sanmatenga,Province
+Burkina Faso,BF-SIS,Sissili,Province
+Burkina Faso,BF-SOM,Soum,Province
+Burkina Faso,BF-SOR,Sourou,Province
+Burkina Faso,BF-SEN,Séno,Province
+Burkina Faso,BF-TAP,Tapoa,Province
+Burkina Faso,BF-TUI,Tui,Province
+Burkina Faso,BF-YAG,Yagha,Province
+Burkina Faso,BF-YAT,Yatenga,Province
+Burkina Faso,BF-ZIR,Ziro,Province
+Burkina Faso,BF-ZON,Zondoma,Province
+Burkina Faso,BF-ZOU,Zoundwéogo,Province
+Burundi,BI-BB,Bubanza,Province
+Burundi,BI-BJ,Bujumbura,Province
+Burundi,BI-BR,Bururi,Province
+Burundi,BI-CA,Cankuzo,Province
+Burundi,BI-CI,Cibitoke,Province
+Burundi,BI-GI,Gitega,Province
+Burundi,BI-KR,Karuzi,Province
+Burundi,BI-KY,Kayanza,Province
+Burundi,BI-KI,Kirundo,Province
+Burundi,BI-MA,Makamba,Province
+Burundi,BI-MU,Muramvya,Province
+Burundi,BI-MY,Muyinga,Province
+Burundi,BI-MW,Mwaro,Province
+Burundi,BI-NG,Ngozi,Province
+Burundi,BI-RT,Rutana,Province
+Burundi,BI-RY,Ruyigi,Province
+Cambodia,KH-2,Baat Dambang [Batdâmbâng],province
+Cambodia,KH-1,Banteay Mean Chey [Bântéay Méanchey],province
+Cambodia,KH-3,Kampong Chaam [Kâmpóng Cham],province
+Cambodia,KH-4,Kampong Chhnang [Kâmpóng Chhnang],province
+Cambodia,KH-5,Kampong Spueu [Kâmpóng Spœ],province
+Cambodia,KH-6,Kampong Thum [Kâmpóng Thum],province
+Cambodia,KH-7,Kampot [Kâmpôt],province
+Cambodia,KH-8,Kandaal [Kândal],province
+Cambodia,KH-9,Kaoh Kong [Kaôh Kong],province
+Cambodia,KH-10,Kracheh [Krâchéh],province
+Cambodia,KH-23,Krong Kaeb [Krong Kêb],autonomous municipality
+Cambodia,KH-24,Krong Pailin [Krong Pailin],autonomous municipality
+Cambodia,KH-18,Krong Preah Sihanouk [Krong Preah Sihanouk],autonomous municipality
+Cambodia,KH-11,Mondol Kiri [Môndól Kiri],province
+Cambodia,KH-22,Otdar Mean Chey [Otdâr Méanchey] ,province
+Cambodia,KH-12,Phnom Penh [Phnum Pénh],autonomous municipality
+Cambodia,KH-15,Pousaat [Pouthisat],province
+Cambodia,KH-13,Preah Vihear [Preah Vihéar],province
+Cambodia,KH-14,Prey Veaeng [Prey Vêng],province
+Cambodia,KH-16,Rotanak Kiri [Rôtânôkiri],province
+Cambodia,KH-17,Siem Reab [Siemréab],province
+Cambodia,KH-19,Stueng Traeng [Stœ?ng Trêng],province
+Cambodia,KH-20,Svaay Rieng [Svay Rieng],province
+Cambodia,KH-21,Taakaev [Takêv],province
+Cameroon,CM-AD,Adamaoua,Region
+Cameroon,CM-CE,Centre,Region
+Cameroon,CM-ES,East,Region
+Cameroon,CM-EN,Far North,Region
+Cameroon,CM-LT,Littoral,Region
+Cameroon,CM-NO,North,Region
+Cameroon,CM-NW,North-West,Region
+Cameroon,CM-SU,South,Region
+Cameroon,CM-SW,South-West,Region
+Cameroon,CM-OU,West,Region
+Canada,CA-AB,Alberta,province
+Canada,CA-BC,British Columbia,province
+Canada,CA-MB,Manitoba,province
+Canada,CA-NB,New Brunswick,province
+Canada,CA-NL,Newfoundland and Labrador,province
+Canada,CA-NT,Northwest Territories,territory
+Canada,CA-NS,Nova Scotia,province
+Canada,CA-NU,Nunavut,territory
+Canada,CA-ON,Ontario,province
+Canada,CA-PE,Prince Edward Island,province
+Canada,CA-QC,Quebec,province
+Canada,CA-SK,Saskatchewan,province
+Canada,CA-YT,Yukon Territory,territory
+Cape Verde,CV-BV,Boa Vista,
+Cape Verde,CV-BR,Brava,
+Cape Verde,CV-CS,Calheta de São Miguel,
+Cape Verde,CV-MA,Maio,
+Cape Verde,CV-MO,Mosteiros,
+Cape Verde,CV-PA,Paúl,
+Cape Verde,CV-PN,Porto Novo,
+Cape Verde,CV-PR,Praia,
+Cape Verde,CV-RG,Ribeira Grande,
+Cape Verde,CV-SL,Sal,
+Cape Verde,CV-CA,Santa Catarina,
+Cape Verde,CV-CR,Santa Cruz,
+Cape Verde,CV-SD,São Domingos,
+Cape Verde,CV-SF,São Filipe,
+Cape Verde,CV-SN,São Nicolau,
+Cape Verde,CV-SV,São Vicente,
+Cape Verde,CV-TA,Tarrafal,
+Cayman Islands,KY-01~,Bodden Town,District
+Cayman Islands,KY-02~,Cayman Brac,District
+Cayman Islands,KY-03~,East End,District
+Cayman Islands,KY-04~,George Town,District
+Cayman Islands,Ky-05~,Little Cayman,District
+Cayman Islands,KY-06~,North Side,District
+Cayman Islands,KY-07~,West Bay,District
+Central African Republic,CF-BB,Bamingui-Bangoran,prefecture
+Central African Republic,CF-BGF,Bangui,capital
+Central African Republic,CF-BK,Basse-Kotto,prefecture
+Central African Republic,CF-HM,Haut-Mbomou,prefecture
+Central African Republic,CF-HK,Haute-Kotto,prefecture
+Central African Republic,CF-KG,Kémo,prefecture
+Central African Republic,CF-LB,Lobaye,prefecture
+Central African Republic,CF-HS,Mambéré-Kadéï,prefecture
+Central African Republic,CF-MB,Mbomou,prefecture
+Central African Republic,CF-KB,Nana-Grébizi,prefecture
+Central African Republic,CF-NM,Nana-Mambéré,prefecture
+Central African Republic,CF-MP,Ombella-Mpoko,prefecture
+Central African Republic,CF-UK,Ouaka,prefecture
+Central African Republic,CF-AC,Ouham,prefecture
+Central African Republic,CF-OP,Ouham-Pendé,prefecture
+Central African Republic,CF-SE,Sangha-Mbaéré,prefecture
+Central African Republic,CF-VK,Vakaga,prefecture
+Chad,TD-BA,Batha,Region
+Chad,TD-BET,Borkou-Ennedi-Tibesti,Region
+Chad,TD-CB,Chari-Baguirmi,Region
+Chad,TD-GR,Guéra,Region
+Chad,TD-HL,Hadjer Lamis,Region
+Chad,TD-KA,Kanem,Region
+Chad,TD-LC,Lac,Region
+Chad,TD-LO,Logone-Occidental,Region
+Chad,TD-LR,Logone-Oriental,Region
+Chad,TD-MA,Mandoul,Region
+Chad,TD-ME,Mayo-Kébbi-Est,Region
+Chad,TD-MO,Mayo-Kébbi-Ouest,Region
+Chad,TD-MC,Moyen-Chari,Region
+Chad,TD-ND,Ndjamena,Region
+Chad,TD-OD,Ouaddaï,Region
+Chad,TD-SA,Salamat,Region
+Chad,TD-TA,Tandjilé,Region
+Chad,TD-WF,Wadi Fira,Region
+Chile,CL-AI,Aisén del General Carlos Ibáñez del Campo,Region
+Chile,CL-AN,Antofagasta,Region
+Chile,CL-AR,Araucanía,Region
+Chile,CL-AP,Arica and Parinacota,Region
+Chile,CL-AT,Atacama,Region
+Chile,CL-BI,Bío-Bío,Region
+Chile,CL-CO,Coquimbo,Region
+Chile,CL-LI,Libertador General Bernardo O'Higgins,Region
+Chile,CL-LL,Los Lagos,Region
+Chile,CL-LR,Los Ríos,Region
+Chile,CL-MA,Magallanes,Region
+Chile,CL-ML,Maule,Region
+Chile,CL-RM,Región Metropolitana de Santiago,Region
+Chile,CL-TA,Tarapacá,Region
+Chile,CL-VS,Valparaíso,Region
+China,CN-34,Anhui,province
+China,CN-92,Aomen (zh) ***,special administrative region
+China,CN-11,Beijing,municipality
+China,CN-50,Chongqing,municipality
+China,CN-35,Fujian,province
+China,CN-62,Gansu,province
+China,CN-44,Guangdong,province
+China,CN-45,Guangxi,autonomous region
+China,CN-52,Guizhou,province
+China,CN-46,Hainan,province
+China,CN-13,Hebei,province
+China,CN-23,Heilongjiang,province
+China,CN-41,Henan,province
+China,CN-42,Hubei,province
+China,CN-43,Hunan,province
+China,CN-32,Jiangsu,province
+China,CN-36,Jiangxi,province
+China,CN-22,Jilin,province
+China,CN-21,Liaoning,province
+China,CN-15,Nei Mongol (mn),autonomous region
+China,CN-64,Ningxia,autonomous region
+China,CN-63,Qinghai,province
+China,CN-61,Shaanxi,province
+China,CN-37,Shandong,province
+China,CN-31,Shanghai,municipality
+China,CN-14,Shanxi,province
+China,CN-51,Sichuan,province
+China,CN-71,Taiwan *,province
+China,CN-12,Tianjin,municipality
+China,CN-91,Xianggang (zh) **,special administrative region
+China,CN-65,Xinjiang,autonomous region
+China,CN-54,Xizang,autonomous region
+China,CN-53,Yunnan,province
+China,CN-33,Zhejiang,province
+Colombia,CO-AMA,Amazonas,department
+Colombia,CO-ANT,Antioquia,department
+Colombia,CO-ARA,Arauca,department
+Colombia,CO-ATL,Atlántico,department
+Colombia,CO-BOL,Bolívar,department
+Colombia,CO-BOY,Boyacá,department
+Colombia,CO-CAL,Caldas,department
+Colombia,CO-CAQ,Caquetá,department
+Colombia,CO-CAS,Casanare,department
+Colombia,CO-CAU,Cauca,department
+Colombia,CO-CES,Cesar,department
+Colombia,CO-CHO,Chocó,department
+Colombia,CO-CUN,Cundinamarca,department
+Colombia,CO-COR,Córdoba,department
+Colombia,CO-DC,Distrito Capital de Bogotá,capital district
+Colombia,CO-GUA,Guainía,department
+Colombia,CO-GUV,Guaviare,department
+Colombia,CO-HUI,Huila,department
+Colombia,CO-LAG,La Guajira,department
+Colombia,CO-MAG,Magdalena,department
+Colombia,CO-MET,Meta,department
+Colombia,CO-NAR,Nariño,department
+Colombia,CO-NSA,Norte de Santander,department
+Colombia,CO-PUT,Putumayo,department
+Colombia,CO-QUI,Quindío,department
+Colombia,CO-RIS,Risaralda,department
+Colombia,CO-SAP,"San Andrés, Providencia y Santa Catalina",department
+Colombia,CO-SAN,Santander,department
+Colombia,CO-SUC,Sucre,department
+Colombia,CO-TOL,Tolima,department
+Colombia,CO-VAC,Valle del Cauca,department
+Colombia,CO-VAU,Vaupés,department
+Colombia,CO-VID,Vichada,department
+Comoros,KM-A,Anjouan,Autonomous Island
+Comoros,KM-G,Grande Comore,Autonomous Island
+Comoros,KM-M,Mohéli,Autonomous Island
+Congo,CG-11,Bouenza,Department
+Congo,CG-BZV,Brazzaville,Commune
+Congo,CG-8,Cuvette,Department
+Congo,CG-15,Cuvette-Ouest,Department
+Congo,CG-5,Kouilou,Department
+Congo,CG-7,Likouala,Department
+Congo,CG-2,Lékoumou,Department
+Congo,CG-9,Niari,Department
+Congo,CG-14,Plateaux,Department
+Congo,CG-12,Pool,Department
+Congo,CG-13,Sangha,Department
+"Congo, The Democratic Republic Of The",CD-BN,Bandundu,province
+"Congo, The Democratic Republic Of The",CD-BC,Bas-Congo,province
+"Congo, The Democratic Republic Of The",CD-KW,Kasai-Occidental,province
+"Congo, The Democratic Republic Of The",CD-KE,Kasai-Oriental,province
+"Congo, The Democratic Republic Of The",CD-KA,Katanga,province
+"Congo, The Democratic Republic Of The",CD-KN,Kinshasa,city
+"Congo, The Democratic Republic Of The",CD-MA,Maniema,province
+"Congo, The Democratic Republic Of The",CD-NK,Nord-Kivu,province
+"Congo, The Democratic Republic Of The",CD-OR,Orientale,province
+"Congo, The Democratic Republic Of The",CD-SK,Sud-Kivu,province
+"Congo, The Democratic Republic Of The",CD-EQ,Équateur,province
+Costa Rica,CR-A,Alajuela,Province
+Costa Rica,CR-C,Cartago,Province
+Costa Rica,CR-G,Guanacaste,Province
+Costa Rica,CR-H,Heredia,Province
+Costa Rica,CR-L,Limón,Province
+Costa Rica,CR-P,Puntarenas,Province
+Costa Rica,CR-SJ,San José,Province
+Croatia,HR-07,Bjelovarsko-bilogorska županija,county
+Croatia,HR-12,Brodsko-posavska županija,county
+Croatia,HR-19,Dubrovacko-neretvanska županija,county
+Croatia,HR-21,Grad Zagreb,city
+Croatia,HR-18,Istarska županija,county
+Croatia,HR-04,Karlovacka županija,county
+Croatia,HR-06,Koprivnicko-križevacka županija,county
+Croatia,HR-02,Krapinsko-zagorska županija,county
+Croatia,HR-09,Licko-senjska županija,county
+Croatia,HR-20,Medimurska županija,county
+Croatia,HR-14,Osjecko-baranjska županija,county
+Croatia,HR-11,Požeško-slavonska županija,county
+Croatia,HR-08,Primorsko-goranska županija,county
+Croatia,HR-03,Sisacko-moslavacka županija,county
+Croatia,HR-17,Splitsko-dalmatinska županija,county
+Croatia,HR-05,Varaždinska županija,county
+Croatia,HR-10,Viroviticko-podravska županija,county
+Croatia,HR-16,Vukovarsko-srijemska županija,county
+Croatia,HR-13,Zadarska županija,county
+Croatia,HR-01,Zagrebacka županija,county
+Croatia,HR-15,Šibensko-kninska županija,county
+Cuba,CU-09,Camagüey,province
+Cuba,CU-08,Ciego de Ávila,province
+Cuba,CU-06,Cienfuegos,province
+Cuba,CU-03,Ciudad de La Habana,province
+Cuba,CU-12,Granma,province
+Cuba,CU-14,Guantánamo,province
+Cuba,CU-11,Holguín,province
+Cuba,CU-99,Isla de la Juventud,special municipality
+Cuba,CU-02,La Habana,province
+Cuba,CU-10,Las Tunas,province
+Cuba,CU-04,Matanzas,province
+Cuba,CU-01,Pinar del Río,province
+Cuba,CU-07,Sancti Spíritus,province
+Cuba,CU-13,Santiago de Cuba,province
+Cuba,CU-05,Villa Clara,province
+Cyprus,CY-04,Ammochostos,District
+Cyprus,CY-06,Keryneia,District
+Cyprus,CY-03,Larnaka,District
+Cyprus,CY-01,Lefkosia,District
+Cyprus,CY-02,Lemesos,District
+Cyprus,CY-05,Pafos,District
+Czech Republic,CZ-JC,Jihoceský kraj,Region
+Czech Republic,CZ-JM,Jihomoravský kraj ,Region
+Czech Republic,CZ-KA,Karlovarský kraj,Region
+Czech Republic,CZ-KR,Královéhradecký kraj,Region
+Czech Republic,CZ-LI,Liberecký kraj,Region
+Czech Republic,CZ-MO,Moravskoslezský kraj,Region
+Czech Republic,CZ-OL,Olomoucký kraj,Region
+Czech Republic,CZ-PA,Pardubický kraj,Region
+Czech Republic,CZ-PL,Plzenský kraj,Region
+Czech Republic,CZ-PR,"Praha, hlavní mesto",Region
+Czech Republic,CZ-ST,Stredoceský kraj,Region
+Czech Republic,CZ-VY,Vysocina,Region
+Czech Republic,CZ-ZL,Zlínský kraj,Region
+Czech Republic,CZ-US,Ústecký kraj ,Region
+Côte D'Ivoire,CI-06,18 Montagnes (Région des),Region
+Côte D'Ivoire,CI-16,Agnébi (Région de l'),Region
+Côte D'Ivoire,CI-17,Bafing (Région du),Region
+Côte D'Ivoire,CI-09,Bas-Sassandra (Région du),Region
+Côte D'Ivoire,CI-10,Denguélé (Région du),Region
+Côte D'Ivoire,CI-18,Fromager (Région du),Region
+Côte D'Ivoire,CI-02,Haut-Sassandra (Région du),Region
+Côte D'Ivoire,CI-07,Lacs (Région des),Region
+Côte D'Ivoire,CI-01,Lagunes (Région des),Region
+Côte D'Ivoire,CI-12,Marahoué (Région de la),Region
+Côte D'Ivoire,CI-19,Moyen-Cavally (Région du),Region
+Côte D'Ivoire,CI-05,Moyen-Comoé (Région du),Region
+Côte D'Ivoire,CI-11,Nzi-Comoé (Région),Region
+Côte D'Ivoire,CI-03,Savanes (Région des),Region
+Côte D'Ivoire,CI-15,Sud-Bandama (Région du),Region
+Côte D'Ivoire,CI-13,Sud-Comoé (Région du),Region
+Côte D'Ivoire,CI-04,Vallée du Bandama (Région de la),Region
+Côte D'Ivoire,CI-14,Worodougou (Région du),Region
+Côte D'Ivoire,CI-08,Zanzan (Région du),Region
+Denmark,DK-040,Bornholm,county
+Denmark,DK-84,Capital,Region
+Denmark,DK-82,Central Jutland,Region
+Denmark,DK-147,Frederiksberg City,city
+Denmark,DK-020,Frederiksborg,county
+Denmark,DK-042,Fyn,county
+Denmark,DK-015,København,county
+Denmark,DK-101,København City,city
+Denmark,DK-080,Nordjylland,county
+Denmark,DK-81,North Jutland,Region
+Denmark,DK-055,Ribe,county
+Denmark,DK-065,Ringkøbing,county
+Denmark,DK-025,Roskilde,county
+Denmark,DK-83,South Denmark,Region
+Denmark,DK-035,Storstrøm,county
+Denmark,DK-050,Sønderjylland,county
+Denmark,DK-060,Vejle,county
+Denmark,DK-030,Vestsjælland,county
+Denmark,DK-076,Viborg,county
+Denmark,DK-85,Zeeland,Region
+Denmark,DK-070,Århus,county
+Djibouti,DJ-AS,Ali Sabieh,Region
+Djibouti,DJ-AR,Arta,Region
+Djibouti,DJ-DI,Dikhil,Region
+Djibouti,DJ-DJ,Djibouti,City
+Djibouti,DJ-OB,Obock,Region
+Djibouti,DJ-TA,Tadjourah,Region
+Dominica,DM-02,Saint Andrew,Parish
+Dominica,DM-03,Saint David,Parish
+Dominica,DM-04,Saint George,Parish
+Dominica,DM-05,Saint John,Parish
+Dominica,DM-06,Saint Joseph,Parish
+Dominica,DM-07,Saint Luke,Parish
+Dominica,DM-08,Saint Mark,Parish
+Dominica,DM-09,Saint Patrick,Parish
+Dominica,DM-10,Saint Paul,Parish
+Dominica,DM-11,Saint Peter,Parish
+Dominican Republic,DO-02,Azua,province
+Dominican Republic,DO-03,Bahoruco,province
+Dominican Republic,DO-04,Barahona,province
+Dominican Republic,DO-05,Dajabón,province
+Dominican Republic,DO-01,Distrito Nacional (Santo Domingo),province
+Dominican Republic,DO-06,Duarte,province
+Dominican Republic,DO-08,El Seybo [El Seibo],province
+Dominican Republic,DO-09,Espaillat,province
+Dominican Republic,DO-30,Hato Mayor,province
+Dominican Republic,DO-10,Independencia,province
+Dominican Republic,DO-11,La Altagracia,province
+Dominican Republic,DO-07,La Estrelleta [Elías Piña],province
+Dominican Republic,DO-12,La Romana,province
+Dominican Republic,DO-13,La Vega,province
+Dominican Republic,DO-14,María Trinidad Sánchez,province
+Dominican Republic,DO-28,Monseñor Nouel,province
+Dominican Republic,DO-15,Monte Cristi,province
+Dominican Republic,DO-29,Monte Plata,province
+Dominican Republic,DO-16,Pedernales,province
+Dominican Republic,DO-17,Peravia,province
+Dominican Republic,DO-18,Puerto Plata,province
+Dominican Republic,DO-19,Salcedo,province
+Dominican Republic,DO-20,Samaná,province
+Dominican Republic,DO-21,San Cristóbal,province
+Dominican Republic,DO-31,San Jose de Ocoa,province
+Dominican Republic,DO-22,San Juan,province
+Dominican Republic,DO-23,San Pedro de Macorís,province
+Dominican Republic,DO-25,Santiago,province
+Dominican Republic,DO-26,Santiago Rodríguez,province
+Dominican Republic,DO-24,Sánchez Ramírez,province
+Dominican Republic,DO-27,Valverde,province
+Ecuador,EC-A,Azuay,Province
+Ecuador,EC-B,Bolívar,Province
+Ecuador,EC-C,Carchi,Province
+Ecuador,EC-F,Cañar,Province
+Ecuador,EC-H,Chimborazo,Province
+Ecuador,EC-X,Cotopaxi,Province
+Ecuador,EC-O,El Oro,Province
+Ecuador,EC-E,Esmeraldas,Province
+Ecuador,EC-W,Galápagos,Province
+Ecuador,EC-G,Guayas,Province
+Ecuador,EC-I,Imbabura,Province
+Ecuador,EC-L,Loja,Province
+Ecuador,EC-R,Los Ríos,Province
+Ecuador,EC-M,Manabí,Province
+Ecuador,EC-S,Morona-Santiago,Province
+Ecuador,EC-N,Napo,Province
+Ecuador,EC-D,Orellana,Province
+Ecuador,EC-Y,Pastaza,Province
+Ecuador,EC-P,Pichincha,Province
+Ecuador,EC-X1~,Santa Elena,Province
+Ecuador,EC-X2~,Santo Domingo de los Tsachilas,Province
+Ecuador,EC-U,Sucumbíos,Province
+Ecuador,EC-T,Tungurahua,Province
+Ecuador,EC-Z,Zamora-Chinchipe,Province
+Egypt,EG-DK,Ad Daqahliyah,Governorate
+Egypt,EG-BA,Al Bahr al Ahmar,Governorate
+Egypt,EG-BH,Al Buhayrah,Governorate
+Egypt,EG-FYM,Al Fayyum,Governorate
+Egypt,EG-GH,Al Gharbiyah,Governorate
+Egypt,EG-ALX,Al Iskandariyah,Governorate
+Egypt,EG-IS,Al Ismā`īlīyah,Governorate
+Egypt,EG-GZ,Al Jizah,Governorate
+Egypt,EG-MNF,Al Minufiyah,Governorate
+Egypt,EG-MN,Al Minya,Governorate
+Egypt,EG-C,Al Qahirah,Governorate
+Egypt,EG-KB,Al Qalyubiyah,Governorate
+Egypt,EG-WAD,Al Wadi al Jadid,Governorate
+Egypt,EG-LX,al-Uqsur,Governorate
+Egypt,EG-SUZ,As Suways,Governorate
+Egypt,EG-SHR,Ash Sharqiyah,Governorate
+Egypt,EG-ASN,Aswan,Governorate
+Egypt,EG-AST,Asyut,Governorate
+Egypt,EG-BNS,Bani Suwayf,Governorate
+Egypt,EG-PTS,Būr Sa`īd,Governorate
+Egypt,EG-DT,Dumyat,Governorate
+Egypt,EG-JS,Janub Sina',Governorate
+Egypt,EG-KFS,Kafr ash Shaykh,Governorate
+Egypt,EG-MT,Matrūh,Governorate
+Egypt,EG-KN,Qina,Governorate
+Egypt,EG-SIN,Shamal Sina',Governorate
+Egypt,EG-SHG,Suhaj,Governorate
+El Salvador,SV-AH,Ahuachapán,Department
+El Salvador,SV-CA,Cabañas,Department
+El Salvador,SV-CH,Chalatenango,Department
+El Salvador,SV-CU,Cuscatlán,Department
+El Salvador,SV-LI,La Libertad,Department
+El Salvador,SV-PA,La Paz,Department
+El Salvador,SV-UN,La Unión,Department
+El Salvador,SV-MO,Morazán,Department
+El Salvador,SV-SM,San Miguel,Department
+El Salvador,SV-SS,San Salvador,Department
+El Salvador,SV-SV,San Vicente,Department
+El Salvador,SV-SA,Santa Ana,Department
+El Salvador,SV-SO,Sonsonate,Department
+El Salvador,SV-US,Usulután,Department
+Equatorial Guinea,GQ-AN,Annobón,province
+Equatorial Guinea,GQ-BN,Bioko Norte,province
+Equatorial Guinea,GQ-BS,Bioko Sur,province
+Equatorial Guinea,GQ-CS,Centro Sur,province
+Equatorial Guinea,GQ-KN,Kie-Ntem,province
+Equatorial Guinea,GQ-LI,Litoral,province
+Equatorial Guinea,GQ-C,Región Continental,region
+Equatorial Guinea,GQ-I,Región Insular,region
+Equatorial Guinea,GQ-WN,Wele-Nzás,province
+Eritrea,ER-AN,Anseba,Region
+Eritrea,ER-DU,Debub,Region
+Eritrea,ER-DK,Debubawi Keyih Bahri [Debub-Keih-Bahri],Region
+Eritrea,ER-GB,Gash-Barka,Region
+Eritrea,ER-MA,Maakel [Maekel],Region
+Eritrea,ER-SK,Semenawi Keyih Bahri [Semien-Keih-Bahri],Region
+Estonia,EE-37,Harjumaa,County
+Estonia,EE-39,Hiiumaa,County
+Estonia,EE-44,Ida-Virumaa,County
+Estonia,EE-51,Järvamaa,County
+Estonia,EE-49,Jõgevamaa,County
+Estonia,EE-59,Lääne-Virumaa,County
+Estonia,EE-57,Läänemaa,County
+Estonia,EE-67,Pärnumaa,County
+Estonia,EE-65,Põlvamaa,County
+Estonia,EE-70,Raplamaa,County
+Estonia,EE-74,Saaremaa,County
+Estonia,EE-78,Tartumaa,County
+Estonia,EE-82,Valgamaa,County
+Estonia,EE-84,Viljandimaa,County
+Estonia,EE-86,Võrumaa,County
+Ethiopia,ET-AA,Adis Abeba,administration
+Ethiopia,ET-AF,Afar,state
+Ethiopia,ET-AM,Amara,state
+Ethiopia,ET-BE,Binshangul Gumuz,state
+Ethiopia,ET-DD,Dire Dawa,administration
+Ethiopia,ET-GA,Gambela Hizboch,state
+Ethiopia,ET-HA,Hareri Hizb,state
+Ethiopia,ET-OR,Oromiya,state
+Ethiopia,ET-SO,Sumale,state
+Ethiopia,ET-TI,Tigray,state
+Ethiopia,ET-SN,YeDebub Biheroch Bihereseboch na Hizboch,state
+Fiji,FJ-C,Central,division
+Fiji,FJ-E,Eastern,division
+Fiji,FJ-N,Northern,division
+Fiji,FJ-R,Rotuma,dependency
+Fiji,FJ-W,Western,division
+Finland,FI-AL,Ahvenanmaan lääni,
+Finland,FI-ES,Etelä-Suomen lääni,
+Finland,FI-IS,Itä-Suomen lääni,
+Finland,FI-LL,Lapin lääni,
+Finland,FI-LS,Länsi-Suomen lääni,
+Finland,FI-OL,Oulun lääni,
+France,FR-01,Ain,metropolitan department
+France,FR-02,Aisne,metropolitan department
+France,FR-03,Allier,metropolitan department
+France,FR-04,Alpes-de-Haute-Provence,metropolitan department
+France,FR-06,Alpes-Maritimes,metropolitan department
+France,FR-08,Ardennes,metropolitan department
+France,FR-07,Ardèche,metropolitan department
+France,FR-09,Ariège,metropolitan department
+France,FR-10,Aube,metropolitan department
+France,FR-11,Aude,metropolitan department
+France,FR-12,Aveyron,metropolitan department
+France,FR-67,Bas-Rhin,metropolitan department
+France,FR-13,Bouches-du-Rhône,metropolitan department
+France,FR-14,Calvados,metropolitan department
+France,FR-15,Cantal,metropolitan department
+France,FR-16,Charente,metropolitan department
+France,FR-17,Charente-Maritime,metropolitan department
+France,FR-18,Cher,metropolitan department
+France,FR-CP,Clipperton,Dependency
+France,FR-19,Corrèze,metropolitan department
+France,FR-2A,Corse-du-Sud,metropolitan department
+France,FR-23,Creuse,metropolitan department
+France,FR-21,Côte-d'Or,metropolitan department
+France,FR-22,Côtes-d'Armor,metropolitan department
+France,FR-79,Deux-Sèvres,metropolitan department
+France,FR-24,Dordogne,metropolitan department
+France,FR-25,Doubs,metropolitan department
+France,FR-26,Drôme,metropolitan department
+France,FR-91,Essonne,metropolitan department
+France,FR-27,Eure,metropolitan department
+France,FR-28,Eure-et-Loir,metropolitan department
+France,FR-29,Finistère,metropolitan department
+France,FR-30,Gard,metropolitan department
+France,FR-32,Gers,metropolitan department
+France,FR-33,Gironde,metropolitan department
+France,FR-68,Haut-Rhin,metropolitan department
+France,FR-2B,Haute-Corse,metropolitan department
+France,FR-31,Haute-Garonne,metropolitan department
+France,FR-43,Haute-Loire,metropolitan department
+France,FR-52,Haute-Marne,metropolitan department
+France,FR-74,Haute-Savoie,metropolitan department
+France,FR-70,Haute-Saône,metropolitan department
+France,FR-87,Haute-Vienne,metropolitan department
+France,FR-05,Hautes-Alpes,metropolitan department
+France,FR-65,Hautes-Pyrénées,metropolitan department
+France,FR-92,Hauts-de-Seine,metropolitan department
+France,FR-34,Hérault,metropolitan department
+France,FR-35,Ille-et-Vilaine,metropolitan department
+France,FR-36,Indre,metropolitan department
+France,FR-37,Indre-et-Loire,metropolitan department
+France,FR-38,Isère,metropolitan department
+France,FR-39,Jura,metropolitan department
+France,FR-40,Landes,metropolitan department
+France,FR-41,Loir-et-Cher,metropolitan department
+France,FR-42,Loire,metropolitan department
+France,FR-44,Loire-Atlantique,metropolitan department
+France,FR-45,Loiret,metropolitan department
+France,FR-46,Lot,metropolitan department
+France,FR-47,Lot-et-Garonne,metropolitan department
+France,FR-48,Lozère,metropolitan department
+France,FR-49,Maine-et-Loire,metropolitan department
+France,FR-50,Manche,metropolitan department
+France,FR-51,Marne,metropolitan department
+France,FR-53,Mayenne,metropolitan department
+France,FR-YT,Mayotte (see also separate entry under YT),territorial collectivity
+France,FR-54,Meurthe-et-Moselle,metropolitan department
+France,FR-55,Meuse,metropolitan department
+France,FR-56,Morbihan,metropolitan department
+France,FR-57,Moselle,metropolitan department
+France,FR-58,Nièvre,metropolitan department
+France,FR-59,Nord,metropolitan department
+France,FR-NC,Nouvelle-Calédonie (see also separate entry under NC),overseas territory
+France,FR-60,Oise,metropolitan department
+France,FR-61,Orne,metropolitan department
+France,FR-75,Paris,metropolitan department
+France,FR-62,Pas-de-Calais,metropolitan department
+France,FR-PF,Polynésie française (see also separate entry under PF),overseas territory
+France,FR-63,Puy-de-Dôme,metropolitan department
+France,FR-64,Pyrénées-Atlantiques,metropolitan department
+France,FR-66,Pyrénées-Orientales,metropolitan department
+France,FR-69,Rhône,metropolitan department
+France,FR-BL,Saint-Barthélemy (see also separate entry under BL),Overseas territorial collectivity
+France,FR-MF,Saint-Martin (see also separate entry under MF),Overseas territorial collectivity
+France,FR-PM,Saint-Pierre-et-Miquelon (see also separate entry under PM),territorial collectivity
+France,FR-72,Sarthe,metropolitan department
+France,FR-73,Savoie,metropolitan department
+France,FR-71,Saône-et-Loire,metropolitan department
+France,FR-77,Seine-et-Marne,metropolitan department
+France,FR-76,Seine-Maritime,metropolitan department
+France,FR-93,Seine-Saint-Denis,metropolitan department
+France,FR-80,Somme,metropolitan department
+France,FR-81,Tarn,metropolitan department
+France,FR-82,Tarn-et-Garonne,metropolitan department
+France,FR-TF,Terres Australes Françaises (see also separate entry under TF),overseas territory
+France,FR-90,Territoire de Belfort,metropolitan department
+France,FR-95,Val-d'Oise,metropolitan department
+France,FR-94,Val-de-Marne,metropolitan department
+France,FR-83,Var,metropolitan department
+France,FR-84,Vaucluse,metropolitan department
+France,FR-85,Vendée,metropolitan department
+France,FR-86,Vienne,metropolitan department
+France,FR-88,Vosges,metropolitan department
+France,FR-WF,Wallis et Futuna (see also separate entry under WF),overseas territory
+France,FR-89,Yonne,metropolitan department
+France,FR-78,Yvelines,metropolitan department
+French Southern Territories,TF-X2~,Crozet Islands,district
+French Southern Territories,TF-X1~,Ile Saint-Paul et Ile Amsterdam,district
+French Southern Territories,TF-X4~,Iles Eparses,district
+French Southern Territories,TF-X3~,Kerguelen,district
+Gabon,GA-1,Estuaire,Province
+Gabon,GA-2,Haut-Ogooué,Province
+Gabon,GA-3,Moyen-Ogooué,Province
+Gabon,GA-4,Ngounié,Province
+Gabon,GA-5,Nyanga,Province
+Gabon,GA-6,Ogooué-Ivindo,Province
+Gabon,GA-7,Ogooué-Lolo,Province
+Gabon,GA-8,Ogooué-Maritime,Province
+Gabon,GA-9,Woleu-Ntem,Province
+Gambia,GM-B,Banjul,city
+Gambia,GM-L,Lower River,division
+Gambia,GM-M,MacCarthy Island,division
+Gambia,GM-N,North Bank,division
+Gambia,GM-U,Upper River,division
+Gambia,GM-W,Western,division
+Georgia,GE-AB,Abkhazia,autonomous republic
+Georgia,GE-AJ,Ajaria,autonomous republic
+Georgia,GE-GU,Guria,region
+Georgia,GE-IM,Imereti,region
+Georgia,GE-KA,Kakheti,region
+Georgia,GE-KK,Kvemo Kartli,region
+Georgia,GE-MM,Mtskheta-Mtianeti,region
+Georgia,GE-RL,Racha-Lechkhumi [and] Kvemo Svaneti,region
+Georgia,GE-SZ,Samegrelo-Zemo Svaneti,region
+Georgia,GE-SJ,Samtskhe-Javakheti,region
+Georgia,GE-SK,Shida Kartli,region
+Georgia,GE-TB,Tbilisi,city
+Germany,DE-BW,Baden-Württemberg,State
+Germany,DE-BY,Bayern,State
+Germany,DE-BE,Berlin,State
+Germany,DE-BB,Brandenburg,State
+Germany,DE-HB,Bremen,State
+Germany,DE-HH,Hamburg,State
+Germany,DE-HE,Hessen,State
+Germany,DE-MV,Mecklenburg-Vorpommern,State
+Germany,DE-NI,Niedersachsen,State
+Germany,DE-NW,Nordrhein-Westfalen,State
+Germany,DE-RP,Rheinland-Pfalz,State
+Germany,DE-SL,Saarland,State
+Germany,DE-SN,Sachsen,State
+Germany,DE-ST,Sachsen-Anhalt,State
+Germany,DE-SH,Schleswig-Holstein,State
+Germany,DE-TH,Thüringen,State
+Ghana,GH-AH,Ashanti,Region
+Ghana,GH-BA,Brong-Ahafo,Region
+Ghana,GH-CP,Central,Region
+Ghana,GH-EP,Eastern,Region
+Ghana,GH-AA,Greater Accra,Region
+Ghana,GH-NP,Northern,Region
+Ghana,GH-UE,Upper East,Region
+Ghana,GH-UW,Upper West,Region
+Ghana,GH-TV,Volta,Region
+Ghana,GH-WP,Western,Region
+Greece,GR-13,Achaïa,department
+Greece,GR-69,Agio Oros,self-governed part
+Greece,GR-01,Aitolia kai Akarnania,department
+Greece,GR-11,Argolida,department
+Greece,GR-12,Arkadia,department
+Greece,GR-31,Arta,department
+Greece,GR-A1,Attiki,department
+Greece,GR-64,Chalkidiki,department
+Greece,GR-94,Chania,department
+Greece,GR-85,Chios,department
+Greece,GR-81,Dodekanisos,department
+Greece,GR-52,Drama,department
+Greece,GR-71,Evros,department
+Greece,GR-05,Evrytania,department
+Greece,GR-04,Evvoia,department
+Greece,GR-63,Florina,department
+Greece,GR-07,Fokida,department
+Greece,GR-06,Fthiotida,department
+Greece,GR-51,Grevena,department
+Greece,GR-14,Ileia,department
+Greece,GR-53,Imathia,department
+Greece,GR-33,Ioannina,department
+Greece,GR-91,Irakleio,department
+Greece,GR-41,Karditsa,department
+Greece,GR-56,Kastoria,department
+Greece,GR-55,Kavala,department
+Greece,GR-23,Kefallonia,department
+Greece,GR-22,Kerkyra,department
+Greece,GR-57,Kilkis,department
+Greece,GR-15,Korinthia,department
+Greece,GR-58,Kozani,department
+Greece,GR-82,Kyklades,department
+Greece,GR-16,Lakonia,department
+Greece,GR-42,Larisa,department
+Greece,GR-92,Lasithi,department
+Greece,GR-24,Lefkada,department
+Greece,GR-83,Lesvos,department
+Greece,GR-43,Magnisia,department
+Greece,GR-17,Messinia,department
+Greece,GR-59,Pella,department
+Greece,GR-61,Pieria,department
+Greece,GR-34,Preveza,department
+Greece,GR-93,Rethymno,department
+Greece,GR-73,Rodopi,department
+Greece,GR-84,Samos,department
+Greece,GR-62,Serres,department
+Greece,GR-32,Thesprotia,department
+Greece,GR-54,Thessaloniki,department
+Greece,GR-44,Trikala,department
+Greece,GR-03,Voiotia,department
+Greece,GR-72,Xanthi,department
+Greece,GR-21,Zakynthos,department
+Grenada,GD-01,Saint Andrew,Parish
+Grenada,GD-02,Saint David,Parish
+Grenada,GD-03,Saint George,Parish
+Grenada,GD-04,Saint John,Parish
+Grenada,GD-05,Saint Mark,Parish
+Grenada,GD-06,Saint Patrick,Parish
+Grenada,GD-10,Southern Grenadine Islands,Dependency
+Guatemala,GT-AV,Alta Verapaz,Department
+Guatemala,GT-BV,Baja Verapaz,Department
+Guatemala,GT-CM,Chimaltenango,Department
+Guatemala,GT-CQ,Chiquimula,Department
+Guatemala,GT-PR,El Progreso,Department
+Guatemala,GT-ES,Escuintla,Department
+Guatemala,GT-GU,Guatemala,Department
+Guatemala,GT-HU,Huehuetenango,Department
+Guatemala,GT-IZ,Izabal,Department
+Guatemala,GT-JA,Jalapa,Department
+Guatemala,GT-JU,Jutiapa,Department
+Guatemala,GT-PE,Petén,Department
+Guatemala,GT-QZ,Quetzaltenango,Department
+Guatemala,GT-QC,Quiché,Department
+Guatemala,GT-RE,Retalhuleu,Department
+Guatemala,GT-SA,Sacatepéquez,Department
+Guatemala,GT-SM,San Marcos,Department
+Guatemala,GT-SR,Santa Rosa,Department
+Guatemala,GT-SO,Sololá,Department
+Guatemala,GT-SU,Suchitepéquez,Department
+Guatemala,GT-TO,Totonicapán,Department
+Guatemala,GT-ZA,Zacapa,Department
+Guinea,GN-BE,Beyla,Perfecture
+Guinea,GN-BF,Boffa,Perfecture
+Guinea,GN-BK,Boké,Perfecture
+Guinea,GN-C,Conakry,Perfecture
+Guinea,GN-CO,Coyah,Perfecture
+Guinea,GN-DB,Dabola,Perfecture
+Guinea,GN-DL,Dalaba,Perfecture
+Guinea,GN-DI,Dinguiraye,Perfecture
+Guinea,GN-DU,Dubréka,Perfecture
+Guinea,GN-FA,Faranah,Perfecture
+Guinea,GN-FO,Forécariah,Perfecture
+Guinea,GN-FR,Fria,Perfecture
+Guinea,GN-GA,Gaoual,Perfecture
+Guinea,GN-GU,Guékédou,Perfecture
+Guinea,GN-KA,Kankan,Perfecture
+Guinea,GN-KD,Kindia,Perfecture
+Guinea,GN-KS,Kissidougou,Perfecture
+Guinea,GN-KB,Koubia,Perfecture
+Guinea,GN-KN,Koundara,Perfecture
+Guinea,GN-KO,Kouroussa,Perfecture
+Guinea,GN-KE,Kérouané,Perfecture
+Guinea,GN-LA,Labé,Perfecture
+Guinea,GN-LO,Lola,Perfecture
+Guinea,GN-LE,Lélouma,Perfecture
+Guinea,GN-MC,Macenta,Perfecture
+Guinea,GN-ML,Mali,Perfecture
+Guinea,GN-MM,Mamou,Perfecture
+Guinea,GN-MD,Mandiana,Perfecture
+Guinea,GN-NZ,Nzérékoré,Perfecture
+Guinea,GN-PI,Pita,Perfecture
+Guinea,GN-SI,Siguiri,Perfecture
+Guinea,GN-TO,Tougué,Perfecture
+Guinea,GN-TE,Télimélé,Perfecture
+Guinea,GN-YO,Yomou,Perfecture
+Guinea-Bissau,GW-BA,Bafatá,region
+Guinea-Bissau,GW-BM,Biombo,region
+Guinea-Bissau,GW-BS,Bissau,autonomous sector
+Guinea-Bissau,GW-BL,Bolama,region
+Guinea-Bissau,GW-CA,Cacheu,region
+Guinea-Bissau,GW-GA,Gabú,region
+Guinea-Bissau,GW-OI,Oio,region
+Guinea-Bissau,GW-QU,Quinara,region
+Guinea-Bissau,GW-TO,Tombali,region
+Guyana,GY-BA,Barima-Waini,Region
+Guyana,GY-CU,Cuyuni-Mazaruni,Region
+Guyana,GY-DE,Demerara-Mahaica,Region
+Guyana,GY-EB,East Berbice-Corentyne,Region
+Guyana,GY-ES,Essequibo Islands-West Demerara,Region
+Guyana,GY-MA,Mahaica-Berbice,Region
+Guyana,GY-PM,Pomeroon-Supenaam,Region
+Guyana,GY-PT,Potaro-Siparuni,Region
+Guyana,GY-UD,Upper Demerara-Berbice,Region
+Guyana,GY-UT,Upper Takutu-Upper Essequibo,Region
+Haiti,HT-AR,Artibonite,Department
+Haiti,HT-CE,Centre,Department
+Haiti,HT-GA,Grande-Anse,Department
+Haiti,HT-ND,Nord,Department
+Haiti,HT-NE,Nord-Est,Department
+Haiti,HT-NO,Nord-Ouest,Department
+Haiti,HT-OU,Ouest,Department
+Haiti,HT-SD,Sud,Department
+Haiti,HT-SE,Sud-Est,Department
+Honduras,HN-AT,Atlántida,Department
+Honduras,HN-CH,Choluteca,Department
+Honduras,HN-CL,Colón,Department
+Honduras,HN-CM,Comayagua,Department
+Honduras,HN-CP,Copán,Department
+Honduras,HN-CR,Cortés,Department
+Honduras,HN-EP,El Paraíso,Department
+Honduras,HN-FM,Francisco Morazán,Department
+Honduras,HN-GD,Gracias a Dios,Department
+Honduras,HN-IN,Intibucá,Department
+Honduras,HN-IB,Islas de la Bahía,Department
+Honduras,HN-LP,La Paz,Department
+Honduras,HN-LE,Lempira,Department
+Honduras,HN-OC,Ocotepeque,Department
+Honduras,HN-OL,Olancho,Department
+Honduras,HN-SB,Santa Bárbara,Department
+Honduras,HN-VA,Valle,Department
+Honduras,HN-YO,Yoro,Department
+Hungary,HU-BA,Baranya,county
+Hungary,HU-BZ,Borsod-Abaúj-Zemplén,county
+Hungary,HU-BU,Budapest,capital city
+Hungary,HU-BK,Bács-Kiskun,county
+Hungary,HU-BE,Békés,county
+Hungary,HU-BC,Békéscsaba,city of county right
+Hungary,HU-CS,Csongrád,county
+Hungary,HU-DE,Debrecen,city of county right
+Hungary,HU-DU,Dunaújváros,city of county right
+Hungary,HU-EG,Eger,city of county right
+Hungary,HU-X1~,Erd,County
+Hungary,HU-FE,Fejér,county
+Hungary,HU-GY,Gyor,city of county right
+Hungary,HU-GS,Gyor-Moson-Sopron,county
+Hungary,HU-HB,Hajdú-Bihar,county
+Hungary,HU-HE,Heves,county
+Hungary,HU-HV,Hódmezovásárhely,city of county right
+Hungary,HU-JN,Jász-Nagykun-Szolnok,county
+Hungary,HU-KV,Kaposvár,city of county right
+Hungary,HU-KM,Kecskemét,city of county right
+Hungary,HU-KE,Komárom-Esztergom,county
+Hungary,HU-MI,Miskolc,city of county right
+Hungary,HU-NK,Nagykanizsa,city of county right
+Hungary,HU-NY,Nyíregyháza,city of county right
+Hungary,HU-NO,Nógrád,county
+Hungary,HU-PE,Pest,county
+Hungary,HU-PS,Pécs,city of county right
+Hungary,HU-ST,Salgótarján,city of county right
+Hungary,HU-SO,Somogy,county
+Hungary,HU-SN,Sopron,city of county right
+Hungary,HU-SZ,Szabolcs-Szatmár-Bereg,county
+Hungary,HU-SD,Szeged,city of county right
+Hungary,HU-SS,Szekszárd,city of county right
+Hungary,HU-SK,Szolnok,city of county right
+Hungary,HU-SH,Szombathely,city of county right
+Hungary,HU-SF,Székesfehérvár,city of county right
+Hungary,HU-TB,Tatabánya,city of county right
+Hungary,HU-TO,Tolna,county
+Hungary,HU-VA,Vas,county
+Hungary,HU-VE,Veszprém,county
+Hungary,HU-VM,Veszprém City,city of county right
+Hungary,HU-ZA,Zala,county
+Hungary,HU-ZE,Zalaegerszeg,city of county right
+Iceland,IS-7,Austurland,Region
+Iceland,IS-1,Höfuðborgarsvæði utan Reykjavíkur,Region
+Iceland,IS-6,Norðurland eystra,Region
+Iceland,IS-5,Norðurland vestra,Region
+Iceland,IS-0,Reykjavík,City
+Iceland,IS-8,Suðurland,Region
+Iceland,IS-2,Suðurnes,Region
+Iceland,IS-4,Vestfirðir,Region
+Iceland,IS-3,Vesturland,Region
+India,IN-AN,Andaman and Nicobar Islands,union territory
+India,IN-AP,Andhra Pradesh,state
+India,IN-AR,Arunachal Pradesh,state
+India,IN-AS,Assam,state
+India,IN-BR,Bihar,state
+India,IN-CH,Chandigarh,union territory
+India,IN-CT,Chhattisgarh,state
+India,IN-DN,Dadra and Nagar Haveli,union territory
+India,IN-DD,Daman and Diu,union territory
+India,IN-DL,Delhi,union territory
+India,IN-GA,Goa,state
+India,IN-GJ,Gujarat,state
+India,IN-HR,Haryana,state
+India,IN-HP,Himachal Pradesh,state
+India,IN-JK,Jammu and Kashmir,state
+India,IN-JH,Jharkhand,state
+India,IN-KA,Karnataka,state
+India,IN-KL,Kerala,state
+India,IN-LD,Lakshadweep,union territory
+India,IN-MP,Madhya Pradesh,state
+India,IN-MH,Maharashtra,state
+India,IN-MN,Manipur,state
+India,IN-ML,Meghalaya,state
+India,IN-MZ,Mizoram,state
+India,IN-NL,Nagaland,state
+India,IN-OR,Orissa,state
+India,IN-PY,Pondicherry,union territory
+India,IN-PB,Punjab,state
+India,IN-RJ,Rajasthan,state
+India,IN-SK,Sikkim,state
+India,IN-TN,Tamil Nadu,state
+India,IN-TR,Tripura,state
+India,IN-UP,Uttar Pradesh,state
+India,IN-UL,Uttaranchal,state
+India,IN-WB,West Bengal,state
+Indonesia,ID-AC,Aceh,autonomous province
+Indonesia,ID-BA,Bali,province
+Indonesia,ID-BB,Bangka Belitung,province
+Indonesia,ID-BT,Banten,province
+Indonesia,ID-BE,Bengkulu,province
+Indonesia,ID-GO,Gorontalo,province
+Indonesia,ID-JK,Jakarta Raya,special district
+Indonesia,ID-JA,Jambi,province
+Indonesia,ID-JB,Jawa Barat,province
+Indonesia,ID-JT,Jawa Tengah,province
+Indonesia,ID-JI,Jawa Timur,province
+Indonesia,ID-KB,Kalimantan Barat,province
+Indonesia,ID-KS,Kalimantan Selatan,province
+Indonesia,ID-KT,Kalimantan Tengah,province
+Indonesia,ID-KI,Kalimantan Timur,province
+Indonesia,ID-KR,Kepulauan Riau,province
+Indonesia,ID-LA,Lampung,province
+Indonesia,ID-MA,Maluku,province
+Indonesia,ID-MU,Maluku Utara,province
+Indonesia,ID-NB,Nusa Tenggara Barat,province
+Indonesia,ID-NT,Nusa Tenggara Timur,province
+Indonesia,ID-PA,Papua,province
+Indonesia,ID-PB,Papua Barat,province
+Indonesia,ID-RI,Riau,province
+Indonesia,ID-SR,Sulawesi Barat,province
+Indonesia,ID-SN,Sulawesi Selatan,province
+Indonesia,ID-ST,Sulawesi Tengah,province
+Indonesia,ID-SG,Sulawesi Tenggara,province
+Indonesia,ID-SA,Sulawesi Utara,province
+Indonesia,ID-SB,Sumatera Barat,province
+Indonesia,ID-SS,Sumatera Selatan,province
+Indonesia,ID-SU,Sumatera Utara,province
+Indonesia,ID-YO,Yogyakarta,special region
+"Iran, Islamic Republic Of",IR-03,Ardabil,Province
+"Iran, Islamic Republic Of",IR-02,Az¯arbayjan-e Gharbi,Province
+"Iran, Islamic Republic Of",IR-01,Az¯arbayjan-e Sharqi,Province
+"Iran, Islamic Republic Of",IR-06,Bushehr,Province
+"Iran, Islamic Republic Of",IR-08,Chahar Mah¸all va Bakhtiari,Province
+"Iran, Islamic Republic Of",IR-04,Esfahan,Province
+"Iran, Islamic Republic Of",IR-14,Fars,Province
+"Iran, Islamic Republic Of",IR-19,Gilan,Province
+"Iran, Islamic Republic Of",IR-27,Golestan,Province
+"Iran, Islamic Republic Of",IR-24,Hamadan,Province
+"Iran, Islamic Republic Of",IR-23,Hormozgan,Province
+"Iran, Islamic Republic Of",IR-05,Ilam,Province
+"Iran, Islamic Republic Of",IR-15,Kerman,Province
+"Iran, Islamic Republic Of",IR-17,Kermanshah,Province
+"Iran, Islamic Republic Of",IR-09,Khorasan,
+"Iran, Islamic Republic Of",IR-29,Khorasan-e Janubi,Province
+"Iran, Islamic Republic Of",IR-30,Khorasan-e Razavi,Province
+"Iran, Islamic Republic Of",IR-31,Khorasan-e Shemali,Province
+"Iran, Islamic Republic Of",IR-10,Khuzestan,Province
+"Iran, Islamic Republic Of",IR-18,Kohkiluyeh va Buyer Ahmad,Province
+"Iran, Islamic Republic Of",IR-16,Kordestan,Province
+"Iran, Islamic Republic Of",IR-20,Lorestan,Province
+"Iran, Islamic Republic Of",IR-22,Markazi,Province
+"Iran, Islamic Republic Of",IR-21,Mazandaran,Province
+"Iran, Islamic Republic Of",IR-28,Qazvin,Province
+"Iran, Islamic Republic Of",IR-26,Qom,Province
+"Iran, Islamic Republic Of",IR-12,Semnan,Province
+"Iran, Islamic Republic Of",IR-13,Sistan va Baluchestan,Province
+"Iran, Islamic Republic Of",IR-07,Tehran,Province
+"Iran, Islamic Republic Of",IR-25,Yazd,Province
+"Iran, Islamic Republic Of",IR-11,Zanjan,Province
+Iraq,IQ-AN,Al Anbar,Province
+Iraq,IQ-BA,Al Basrah,Province
+Iraq,IQ-MU,Al Muthanná,Province
+Iraq,IQ-QA,Al Qadisiyah,Province
+Iraq,IQ-NA,An Najaf,Province
+Iraq,IQ-AR,Arbil,Province
+Iraq,IQ-SU,As Sulaymaniyah,Province
+Iraq,IQ-TS,At Ta'mim,Province
+Iraq,IQ-BB,Babil,Province
+Iraq,IQ-BG,Baghdad,Province
+Iraq,IQ-DA,Dahuk,Province
+Iraq,IQ-DQ,Dhi Qar,Province
+Iraq,IQ-DI,Diyalá,Province
+Iraq,IQ-KA,Karbala',Province
+Iraq,IQ-MA,Maysan,Province
+Iraq,IQ-NI,Ninawá,Province
+Iraq,IQ-SD,Salah ad Din,Province
+Iraq,IQ-WA,Wasit,Province
+Ireland,IE-CW,Carlow,County
+Ireland,IE-CN,Cavan,County
+Ireland,IE-CE,Clare,County
+Ireland,IE-C,Cork,County
+Ireland,IE-DL,Donegal,County
+Ireland,IE-D,Dublin,County
+Ireland,IE-G,Galway,County
+Ireland,IE-KY,Kerry,County
+Ireland,IE-KE,Kildare,County
+Ireland,IE-KK,Kilkenny,County
+Ireland,IE-LS,Laois,County
+Ireland,IE-LM,Leitrim,County
+Ireland,IE-LK,Limerick,County
+Ireland,IE-LD,Longford,County
+Ireland,IE-LH,Louth,County
+Ireland,IE-MO,Mayo,County
+Ireland,IE-MH,Meath,County
+Ireland,IE-MN,Monaghan,County
+Ireland,IE-OY,Offaly,County
+Ireland,IE-RN,Roscommon,County
+Ireland,IE-SO,Sligo,County
+Ireland,IE-TA,Tipperary,County
+Ireland,IE-WD,Waterford,County
+Ireland,IE-WH,Westmeath,County
+Ireland,IE-WX,Wexford,County
+Ireland,IE-WW,Wicklow,County
+Israel,IL-D,HaDarom,District
+Israel,IL-HA,Haifa,District
+Israel,IL-M,HaMerkaz,District
+Israel,IL-Z,HaZafon,District
+Israel,IL-TA,Tel-Aviv,District
+Israel,IL-JM,Yerushalayim,District
+Italy,IT-AG,Agrigento,Province
+Italy,IT-AL,Alessandria,Province
+Italy,IT-AN,Ancona,Province
+Italy,IT-AO,Aosta,Province
+Italy,IT-AR,Arezzo,Province
+Italy,IT-AP,Ascoli Piceno,Province
+Italy,IT-AT,Asti,Province
+Italy,IT-AV,Avellino,Province
+Italy,IT-BA,Bari,Province
+Italy,IT-BT,Barletta-Andria-Trani,Province
+Italy,IT-BL,Belluno,Province
+Italy,IT-BN,Benevento,Province
+Italy,IT-BG,Bergamo,Province
+Italy,IT-BI,Biella,Province
+Italy,IT-BO,Bologna,Province
+Italy,IT-BZ,Bolzano,Province
+Italy,IT-BS,Brescia,Province
+Italy,IT-BR,Brindisi,Province
+Italy,IT-CA,Cagliari,Province
+Italy,IT-CL,Caltanissetta,Province
+Italy,IT-CB,Campobasso,Province
+Italy,IT-CI,Carbonia-Iglesias,Province
+Italy,IT-CE,Caserta,Province
+Italy,IT-CT,Catania,Province
+Italy,IT-CZ,Catanzaro,Province
+Italy,IT-CH,Chieti,Province
+Italy,IT-CO,Como,Province
+Italy,IT-CS,Cosenza,Province
+Italy,IT-CR,Cremona,Province
+Italy,IT-KR,Crotone,Province
+Italy,IT-CN,Cuneo,Province
+Italy,IT-EN,Enna,Province
+Italy,IT-FM,Fermo,Province
+Italy,IT-FE,Ferrara,Province
+Italy,IT-FI,Firenze,Province
+Italy,IT-FG,Foggia,Province
+Italy,IT-FC,Forli-Cesena,Province
+Italy,IT-FR,Frosinone ,Province
+Italy,IT-GE,Genova,Province
+Italy,IT-GO,Gorizia,Province
+Italy,IT-GR,Grosseto,Province
+Italy,IT-IM,Imperia,Province
+Italy,IT-IS,Isernia,Province
+Italy,IT-AQ,L'Aquila,Province
+Italy,IT-SP,La Spezia,Province
+Italy,IT-LT,Latina,Province
+Italy,IT-LE,Lecce,Province
+Italy,IT-LC,Lecco,Province
+Italy,IT-LI,Livorno,Province
+Italy,IT-LO,Lodi,Province
+Italy,IT-LU,Lucca,Province
+Italy,IT-MC,Macerata,Province
+Italy,IT-MN,Mantova,Province
+Italy,IT-MS,Massa-Carrara,Province
+Italy,IT-MT,Matera,Province
+Italy,IT-MA,Medio Campidano,Province
+Italy,IT-ME,Messina,Province
+Italy,IT-MI,Milano,Province
+Italy,IT-MO,Modena,Province
+Italy,IT-MB,Monza e Brianza,Province
+Italy,IT-NA,Napoli,Province
+Italy,IT-NO,Novara,Province
+Italy,IT-NU,Nuoro,Province
+Italy,IT-OG,Ogliastra,Province
+Italy,IT-OL,Olbia-Tempio,Province
+Italy,IT-OR,Oristano,Province
+Italy,IT-PD,Padova,Province
+Italy,IT-PA,Palermo,Province
+Italy,IT-PR,Parma,Province
+Italy,IT-PV,Pavia,Province
+Italy,IT-PG,Perugia,Province
+Italy,IT-PS,Pesaro e Urbino,Province
+Italy,IT-PE,Pescara,Province
+Italy,IT-PC,Piacenza,Province
+Italy,IT-PI,Pisa,Province
+Italy,IT-PT,Pistoia,Province
+Italy,IT-PN,Pordenone,Province
+Italy,IT-PZ,Potenza,Province
+Italy,IT-PO,Prato,Province
+Italy,IT-RG,Ragusa,Province
+Italy,IT-RA,Ravenna,Province
+Italy,IT-RC,Reggio Calabria,Province
+Italy,IT-RE,Reggio Emilia,Province
+Italy,IT-RI,Rieti,Province
+Italy,IT-RN,Rimini,Province
+Italy,IT-RM,Roma,Province
+Italy,IT-RO,Rovigo,Province
+Italy,IT-SA,Salerno,Province
+Italy,IT-SS,Sassari,Province
+Italy,IT-SV,Savona,Province
+Italy,IT-SI,Siena,Province
+Italy,IT-SR,Siracusa,Province
+Italy,IT-SO,Sondrio,Province
+Italy,IT-TA,Taranto,Province
+Italy,IT-TE,Teramo,Province
+Italy,IT-TR,Terni,Province
+Italy,IT-TO,Torino,Province
+Italy,IT-TP,Trapani,Province
+Italy,IT-TN,Trento,Province
+Italy,IT-TV,Treviso,Province
+Italy,IT-TS,Trieste,Province
+Italy,IT-UD,Udine,Province
+Italy,IT-VA,Varese,Province
+Italy,IT-VE,Venezia,Province
+Italy,IT-VB,Verbano-Cusio-Ossola,Province
+Italy,IT-VC,Vercelli,Province
+Italy,IT-VR,Verona,Province
+Italy,IT-VV,Vibo Valentia,Province
+Italy,IT-VI,Vicenza,Province
+Italy,IT-VT,Viterbo,Province
+Jamaica,JM-13,Clarendon,Parish
+Jamaica,JM-09,Hanover,Parish
+Jamaica,JM-01,Kingston,Parish
+Jamaica,JM-12,Manchester,Parish
+Jamaica,JM-04,Portland,Parish
+Jamaica,JM-02,Saint Andrew,Parish
+Jamaica,JM-06,Saint Ann,Parish
+Jamaica,JM-14,Saint Catherine,Parish
+Jamaica,JM-11,Saint Elizabeth,Parish
+Jamaica,JM-08,Saint James,Parish
+Jamaica,JM-05,Saint Mary,Parish
+Jamaica,JM-03,Saint Thomas,Parish
+Jamaica,JM-07,Trelawny,Parish
+Jamaica,JM-10,Westmoreland,Parish
+Japan,JP-23,Aiti [Aichi],Perfecture
+Japan,JP-05,Akita,Perfecture
+Japan,JP-02,Aomori,Perfecture
+Japan,JP-38,Ehime,Perfecture
+Japan,JP-21,Gihu [Gifu],Perfecture
+Japan,JP-10,Gunma,Perfecture
+Japan,JP-34,Hirosima [Hiroshima],Perfecture
+Japan,JP-01,Hokkaidô [Hokkaido],Territory
+Japan,JP-18,Hukui [Fukui],Perfecture
+Japan,JP-40,Hukuoka [Fukuoka],Perfecture
+Japan,JP-07,Hukusima [Fukushima],Perfecture
+Japan,JP-28,Hyôgo [Hyogo],Perfecture
+Japan,JP-08,Ibaraki,Perfecture
+Japan,JP-17,Isikawa [Ishikawa],Perfecture
+Japan,JP-03,Iwate,Perfecture
+Japan,JP-37,Kagawa,Perfecture
+Japan,JP-46,Kagosima [Kagoshima],Perfecture
+Japan,JP-14,Kanagawa,Perfecture
+Japan,JP-43,Kumamoto,Perfecture
+Japan,JP-26,Kyôto [Kyoto],Urban Perfecture
+Japan,JP-39,Kôti [Kochi],Perfecture
+Japan,JP-24,Mie,Perfecture
+Japan,JP-04,Miyagi,Perfecture
+Japan,JP-45,Miyazaki,Perfecture
+Japan,JP-20,Nagano,Perfecture
+Japan,JP-42,Nagasaki,Perfecture
+Japan,JP-29,Nara,Perfecture
+Japan,JP-15,Niigata,Perfecture
+Japan,JP-33,Okayama,Perfecture
+Japan,JP-47,Okinawa,Perfecture
+Japan,JP-41,Saga,Perfecture
+Japan,JP-11,Saitama,Perfecture
+Japan,JP-25,Siga [Shiga],Perfecture
+Japan,JP-32,Simane [Shimane],Perfecture
+Japan,JP-22,Sizuoka [Shizuoka],Perfecture
+Japan,JP-12,Tiba [Chiba],Perfecture
+Japan,JP-36,Tokusima [Tokushima],Perfecture
+Japan,JP-09,Totigi [Tochigi],Perfecture
+Japan,JP-31,Tottori,Perfecture
+Japan,JP-16,Toyama,Perfecture
+Japan,JP-13,Tôkyô [Tokyo],Metropolis
+Japan,JP-30,Wakayama,Perfecture
+Japan,JP-06,Yamagata,Perfecture
+Japan,JP-35,Yamaguti [Yamaguchi],Perfecture
+Japan,JP-19,Yamanasi [Yamanashi],Perfecture
+Japan,JP-44,Ôita [Oita],Perfecture
+Japan,JP-27,Ôsaka [Osaka],Urban Perfecture
+Jordan,JO-AJ,?Ajlun,Province
+Jordan,JO-AM,?Amman,Province
+Jordan,JO-BA,Al Balqa',Province
+Jordan,JO-KA,Al Karak,Province
+Jordan,JO-MA,Al Mafraq,Province
+Jordan,JO-AQ,Aqaba,Province
+Jordan,JO-AT,At Tafilah,Province
+Jordan,JO-AZ,Az Zarqa',Province
+Jordan,JO-IR,Irbid,Province
+Jordan,JO-JA,Jarash,Province
+Jordan,JO-MN,Ma`an,Province
+Jordan,JO-MD,Madaba,Province
+Kazakhstan,KZ-ALA,Almaty,city
+Kazakhstan,KZ-ALM,Almaty oblysy,region
+Kazakhstan,KZ-AKM,Aqmola oblysy,region
+Kazakhstan,KZ-AKT,Aqtöbe oblysy,region
+Kazakhstan,KZ-AST,Astana,city
+Kazakhstan,KZ-ATY,Atyrau oblysy,region
+Kazakhstan,KZ-ZAP,Batys Qazaqstan oblysy,region
+Kazakhstan,KZ-BAY,Bayqongyr,city
+Kazakhstan,KZ-MAN,Mangghystau oblysy,region
+Kazakhstan,KZ-YUZ,Ongtüstik Qazaqstan oblysy,region
+Kazakhstan,KZ-PAV,Pavlodar oblysy,region
+Kazakhstan,KZ-KAR,Qaraghandy oblysy,region
+Kazakhstan,KZ-KUS,Qostanay oblysy,region
+Kazakhstan,KZ-KZY,Qyzylorda oblysy,region
+Kazakhstan,KZ-VOS,Shyghys Qazaqstan oblysy,region
+Kazakhstan,KZ-SEV,Soltüstik Qazaqstan oblysy,region
+Kazakhstan,KZ-ZHA,Zhambyl oblysy,region
+Kenya,KE-200,Central,province
+Kenya,KE-300,Coast,province
+Kenya,KE-400,Eastern,province
+Kenya,KE-110,Nairobi Municipality,municipality
+Kenya,KE-500,North-Eastern,province
+Kenya,KE-600,Nyanza,province
+Kenya,KE-700,Rift Valley,province
+Kenya,KE-900,Western,province
+Kiribati,KI-G,Gilbert Islands,Island group
+Kiribati,KI-L,Line Islands,Island group
+Kiribati,KI-P,Phoenix Islands,Island group
+"Korea, Democratic People's Republic Of",KP-04,Chagang-do,province
+"Korea, Democratic People's Republic Of",KP-09,Hamgyong-bukdo,province
+"Korea, Democratic People's Republic Of",KP-08,Hamgyong-namdo,province
+"Korea, Democratic People's Republic Of",KP-06,Hwanghae-bukto,province
+"Korea, Democratic People's Republic Of",KP-05,Hwanghae-namdo,province
+"Korea, Democratic People's Republic Of",KP-07,Kangwon-do,province
+"Korea, Democratic People's Republic Of",KP-13,Nason,Special City
+"Korea, Democratic People's Republic Of",KP-03,Pyongan-bukdo,province
+"Korea, Democratic People's Republic Of",KP-02,Pyongan-namdo,province
+"Korea, Democratic People's Republic Of",KP-01,Pyongyang,Capital City
+"Korea, Democratic People's Republic Of",KP-10,Yanggang-do,province
+"Korea, Republic of",KR-26,Busan Gwang'yeogsi [Pusan-Kwangyokshi],metropolitan city
+"Korea, Republic of",KR-43,Chungcheongbugdo [Ch'ungch'ongbuk-do],province
+"Korea, Republic of",KR-44,Chungcheongnamdo [Ch'ungch'ongnam-do],province
+"Korea, Republic of",KR-27,Daegu Gwang'yeogsi [Taegu-Kwangyokshi],metropolitan city
+"Korea, Republic of",KR-30,Daejeon Gwang'yeogsi [Taejon-Kwangyokshi],metropolitan city
+"Korea, Republic of",KR-42,Gang'weondo [Kang-won-do],province
+"Korea, Republic of",KR-29,Gwangju Gwang'yeogsi [Kwangju-Kwangyokshi],metropolitan city
+"Korea, Republic of",KR-41,Gyeonggido [Kyonggi-do],province
+"Korea, Republic of",KR-47,Gyeongsangbugdo [Kyongsangbuk-do],province
+"Korea, Republic of",KR-48,Gyeongsangnamdo [Kyongsangnam-do],province
+"Korea, Republic of",KR-28,Incheon Gwang'yeogsi [Inch'n-Kwangyokshi],metropolitan city
+"Korea, Republic of",KR-49,Jejudo [Cheju-do],province
+"Korea, Republic of",KR-45,Jeonrabugdo[Chollabuk-do],province
+"Korea, Republic of",KR-46,Jeonranamdo [Chollanam-do],province
+"Korea, Republic of",KR-11,Seoul Teugbyeolsi [Seoul-T'ukpyolshi],capital metropolitan city
+"Korea, Republic of",KR-31,Ulsan Gwang'yeogsi [Ulsan-Kwangyokshi],metropolitan city
+Kuwait,KW-AH,Al Ahmadi,Governorate
+Kuwait,KW-FA,Al Farwaniyah,Governorate
+Kuwait,KW-JA,Al Jahrah,Governorate
+Kuwait,KW-KU,Al Kuwayt,Governorate
+Kuwait,KW-HA,Hawalli,Governorate
+Kuwait,KW-MU,Mubarak al-Kabir,Governorate
+Kyrgyzstan,KG-B,Batken,region
+Kyrgyzstan,KG-GB,Bishkek,city
+Kyrgyzstan,KG-C,Chü,region
+Kyrgyzstan,KG-J,Jalal-Abad,region
+Kyrgyzstan,KG-N,Naryn,region
+Kyrgyzstan,KG-O,Osh,region
+Kyrgyzstan,KG-T,Talas,region
+Kyrgyzstan,KG-Y,Ysyk-Köl,region
+Lao People's Democratic Republic,LA-AT,Attapu [Attopeu],province
+Lao People's Democratic Republic,LA-BK,Bokèo,province
+Lao People's Democratic Republic,LA-BL,Bolikhamxai [Borikhane],province
+Lao People's Democratic Republic,LA-CH,Champasak [Champassak],province
+Lao People's Democratic Republic,LA-HO,Houaphan,province
+Lao People's Democratic Republic,LA-KH,Khammouan,province
+Lao People's Democratic Republic,LA-LM,Louang Namtha,province
+Lao People's Democratic Republic,LA-LP,Louangphabang [Louang Prabang],province
+Lao People's Democratic Republic,LA-OU,Oudômxai [Oudomsai],province
+Lao People's Democratic Republic,LA-PH,Phôngsali [Phong Saly],province
+Lao People's Democratic Republic,LA-SL,Salavan [Saravane],province
+Lao People's Democratic Republic,LA-SV,Savannakhét,province
+Lao People's Democratic Republic,LA-VI,Vientiane,province
+Lao People's Democratic Republic,LA-VT,Vientiane Prefecture,prefecture
+Lao People's Democratic Republic,LA-XA,Xaignabouli [Sayaboury],province
+Lao People's Democratic Republic,LA-XN,Xaisômboun,special zone
+Lao People's Democratic Republic,LA-XI,Xiangkhoang [Xieng Khouang],province
+Lao People's Democratic Republic,LA-XE,Xékong [Sékong],province
+Latvia,LV-AI,Aizkraukles Aprinkis,district
+Latvia,LV-AL,Aluksnes Aprinkis,district
+Latvia,LV-BL,Balvu Aprinkis,district
+Latvia,LV-BU,Bauskas Aprinkis,district
+Latvia,LV-CE,Cesu Aprinkis,district
+Latvia,LV-DGV,Daugavpils,city
+Latvia,LV-DA,Daugavpils Aprinkis,district
+Latvia,LV-DO,Dobeles Aprinkis,district
+Latvia,LV-GU,Gulbenes Aprinkis,district
+Latvia,LV-JK,Jekabpils Aprinkis,district
+Latvia,LV-JEL,Jelgava,city
+Latvia,LV-JL,Jelgavas Aprinkis,district
+Latvia,LV-JUR,Jurmala,city
+Latvia,LV-KR,Kraslavas Aprinkis,district
+Latvia,LV-KU,Kuldigas Aprinkis,district
+Latvia,LV-LPX,Liepaja,city
+Latvia,LV-LE,Liepajas Aprinkis,district
+Latvia,LV-LM,Limbažu Aprinkis,district
+Latvia,LV-LU,Ludzas Aprinkis,district
+Latvia,LV-MA,Madonas Aprinkis,district
+Latvia,LV-OG,Ogres Aprinkis,district
+Latvia,LV-PR,Preilu Aprinkis,district
+Latvia,LV-REZ,Rezekne,city
+Latvia,LV-RE,Rezeknes Aprinkis,district
+Latvia,LV-RIX,Riga,city
+Latvia,LV-RI,Rigas Aprinkis,district
+Latvia,LV-SA,Saldus Aprinkis,district
+Latvia,LV-TA,Talsu Aprinkis,district
+Latvia,LV-TU,Tukuma Aprinkis,district
+Latvia,LV-VK,Valkas Aprinkis,district
+Latvia,LV-VM,Valmieras Aprinkis,district
+Latvia,LV-VEN,Ventspils,city
+Latvia,LV-VE,Ventspils Aprinkis,district
+Lebanon,LB-BA,Beirut,Province
+Lebanon,LB-BI,El Béqaa,Province
+Lebanon,LB-JL,Jabal Loubnâne,Province
+Lebanon,LB-AS,Loubnâne ech Chemâli,Province
+Lebanon,LB-JA,Loubnâne ej Jnoûbi,Province
+Lebanon,LB-NA,Nabatîyé,Province
+Lesotho,LS-D,Berea,District
+Lesotho,LS-B,Butha-Buthe,District
+Lesotho,LS-C,Leribe,District
+Lesotho,LS-E,Mafeteng,District
+Lesotho,LS-A,Maseru,District
+Lesotho,LS-F,Mohale's Hoek,District
+Lesotho,LS-J,Mokhotlong,District
+Lesotho,LS-H,Qacha's Nek,District
+Lesotho,LS-G,Quthing,District
+Lesotho,LS-K,Thaba-Tseka,District
+Liberia,LR-BM,Bomi,County
+Liberia,LR-BG,Bong,County
+Liberia,LR-X1~,Gbarpolu,County
+Liberia,LR-GB,Grand Bassa,County
+Liberia,LR-CM,Grand Cape Mount,County
+Liberia,LR-GG,Grand Gedeh,County
+Liberia,LR-GK,Grand Kru,County
+Liberia,LR-LO,Lofa,County
+Liberia,LR-MG,Margibi,County
+Liberia,LR-MY,Maryland,County
+Liberia,LR-MO,Montserrado,County
+Liberia,LR-NI,Nimba,County
+Liberia,LR-X2~,River Gee,County
+Liberia,LR-RI,Rivercess,County
+Liberia,LR-SI,Sinoe,County
+Libyan Arab Jamahiriya,LY-AJ,Ajdabiya,
+Libyan Arab Jamahiriya,LY-HZ,Al ?izam al Akh?ar,
+Libyan Arab Jamahiriya,LY-BU,Al Butnan,District
+Libyan Arab Jamahiriya,LY-JA,Al Jabal al Akh?ar,District
+Libyan Arab Jamahiriya,LY-JI,Al Jifarah,District
+Libyan Arab Jamahiriya,LY-JU,Al Jufrah,District
+Libyan Arab Jamahiriya,LY-KF,Al Kufrah,District
+Libyan Arab Jamahiriya,LY-MJ,Al Marj,District
+Libyan Arab Jamahiriya,LY-MB,Al Marqab,District
+Libyan Arab Jamahiriya,LY-QT,Al Qatrun,
+Libyan Arab Jamahiriya,LY-QB,Al Qubbah,
+Libyan Arab Jamahiriya,LY-WA,Al Wa?ah,District
+Libyan Arab Jamahiriya,LY-NQ,An Nuqat al Khams,District
+Libyan Arab Jamahiriya,LY-SH,Ash Shati',District
+Libyan Arab Jamahiriya,LY-ZA,Az Zawiyah,District
+Libyan Arab Jamahiriya,LY-BA,Banghazi,District
+Libyan Arab Jamahiriya,LY-BW,Bani Walid,
+Libyan Arab Jamahiriya,LY-DR,Darnah,District
+Libyan Arab Jamahiriya,LY-GD,Ghadamis,
+Libyan Arab Jamahiriya,LY-GR,Gharyan,
+Libyan Arab Jamahiriya,LY-GT,Ghat,District
+Libyan Arab Jamahiriya,LY-JB,Jaghbub,
+Libyan Arab Jamahiriya,LY-MI,Misratah,District
+Libyan Arab Jamahiriya,LY-MZ,Mizdah,
+Libyan Arab Jamahiriya,LY-MQ,Murzuq,District
+Libyan Arab Jamahiriya,LY-NL,Nalut,District
+Libyan Arab Jamahiriya,LY-SB,Sabha,District
+Libyan Arab Jamahiriya,LY-SS,Sabratah Surman,
+Libyan Arab Jamahiriya,LY-SR,Surt,District
+Libyan Arab Jamahiriya,LY-TN,Tajura' wa an Nawahi Arba,
+Libyan Arab Jamahiriya,LY-TB,Tarabulus,District
+Libyan Arab Jamahiriya,LY-TM,Tarhunah-Masallatah,
+Libyan Arab Jamahiriya,LY-WD,Wadi al ?ayat,District
+Libyan Arab Jamahiriya,LY-YJ,Yafran-Jadu,
+Liechtenstein,LI-01,Balzers,Commune
+Liechtenstein,LI-02,Eschen,Commune
+Liechtenstein,LI-03,Gamprin,Commune
+Liechtenstein,LI-04,Mauren,Commune
+Liechtenstein,LI-05,Planken,Commune
+Liechtenstein,LI-06,Ruggell,Commune
+Liechtenstein,LI-07,Schaan,Commune
+Liechtenstein,LI-08,Schellenberg,Commune
+Liechtenstein,LI-09,Triesen,Commune
+Liechtenstein,LI-10,Triesenberg,Commune
+Liechtenstein,LI-11,Vaduz,Commune
+Lithuania,LT-AL,Alytaus Apskritis,County
+Lithuania,LT-KU,Kauno Apskritis,County
+Lithuania,LT-KL,Klaipedos Apskritis,County
+Lithuania,LT-MR,Marijampoles Apskritis,County
+Lithuania,LT-PN,Panevežio Apskritis,County
+Lithuania,LT-TA,Taurages Apskritis,County
+Lithuania,LT-TE,Telšiu Apskritis,County
+Lithuania,LT-UT,Utenos Apskritis,County
+Lithuania,LT-VL,Vilniaus Apskritis,County
+Lithuania,LT-SA,Šiauliu Apskritis,County
+Luxembourg,LU-D,Diekirch,District
+Luxembourg,LU-G,Grevenmacher,District
+Luxembourg,LU-L,Luxembourg (fr),District
+"Macedonia, the Former Yugoslav Republic Of",MK-AD,Aerodrom *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-AR,Aracinovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-BR,Berovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-TL,Bitola,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-BG,Bogdanci,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VJ,Bogovinje,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-BS,Bosilovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-BN,Brvenica,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-BU,Butel *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-CI,Cair *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-CA,Caška,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-CE,Centar *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-CZ,Centar Župa,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-CH,Cešinovo-Obleševo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-CS,Cucer Sandevo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-DB,Debar,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-DA,Debarca,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-DL,Delcevo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-DM,Demir Hisar,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-DK,Demir Kapija,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-SD,Dojran,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-DE,Dolneni,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-DR,Drugovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-GB,Gazi Baba *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-GV,Gevgelija,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-GP,Gjorce Petrov *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-GT,Gostivar,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-GR,Gradsko,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-IL,Ilinden,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-JG,Jegunovce,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KB,Karbinci,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KX,Karpoš *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-AV,Kavadarci,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KH,Kicevo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VD,Kisela Voda *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-OC,Kocani,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KN,Konce,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KY,Kratovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KZ,Kriva Palanka,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KG,Krivogaštani,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-KS,Kruševo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-UM,Kumanovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-LI,Lipkovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-LO,Lozovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-MK,Makedonska Kamenica,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-MD,Makedonski Brod,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-MR,Mavrovo-i-Rostuša,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-MG,Mogila,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-NG,Negotino,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-NV,Novaci,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-NS,Novo Selo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-OD,Ohrid,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-OS,Oslomej,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-PH,Pehcevo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-PE,Petrovec,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-PN,Plasnica,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-PP,Prilep,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-PT,Probištip,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-RV,Radoviš,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-RN,Rankovce,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-RE,Resen,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-RM,Rosoman,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-AJ,Saraj *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-X1~,Skopje,
+"Macedonia, the Former Yugoslav Republic Of",MK-SS,Sopište,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-NA,Staro Nagoricane,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-UG,Struga,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-RU,Strumica,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-SU,Studenicani,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-SL,Sveti Nikole,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-TR,Tearce,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-ET,Tetovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VA,Valandovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VL,Vasilevo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VE,Veles,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VV,Vevcani,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-NI,Vinica,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VC,Vraneštica,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-VH,Vrapcište,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-ZA,Zajas,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-ZK,Zelenikovo,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-ZR,Zrnovci,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-ST,Štip,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-SO,Šuto Orizari *,Municipality
+"Macedonia, the Former Yugoslav Republic Of",MK-ZE,Želino,Municipality
+Madagascar,MG-T,Antananarivo,Province
+Madagascar,MG-D,Antsiranana,Province
+Madagascar,MG-F,Fianarantsoa,Province
+Madagascar,MG-M,Mahajanga,Province
+Madagascar,MG-A,Toamasina,Province
+Madagascar,MG-U,Toliara,Province
+Malawi,MW-BA,Balaka,District
+Malawi,MW-BL,Blantyre,District
+Malawi,MW-CK,Chikwawa,District
+Malawi,MW-CR,Chiradzulu,District
+Malawi,MW-CT,Chitipa,District
+Malawi,MW-DE,Dedza,District
+Malawi,MW-DO,Dowa,District
+Malawi,MW-KR,Karonga,District
+Malawi,MW-KS,Kasungu,District
+Malawi,MW-LK,Likoma Island,District
+Malawi,MW-LI,Lilongwe,District
+Malawi,MW-MH,Machinga,District
+Malawi,MW-MG,Mangochi,District
+Malawi,MW-MC,Mchinji,District
+Malawi,MW-MU,Mulanje,District
+Malawi,MW-MW,Mwanza,District
+Malawi,MW-MZ,Mzimba,District
+Malawi,MW-NB,Nkhata Bay,District
+Malawi,MW-NK,Nkhotakota,District
+Malawi,MW-NS,Nsanje,District
+Malawi,MW-NU,Ntcheu,District
+Malawi,MW-NI,Ntchisi,District
+Malawi,MW-PH,Phalombe,District
+Malawi,MW-RU,Rumphi,District
+Malawi,MW-SA,Salima,District
+Malawi,MW-TH,Thyolo,District
+Malawi,MW-ZO,Zomba,District
+Malaysia,MY-01,Johor,state
+Malaysia,MY-02,Kedah,state
+Malaysia,MY-03,Kelantan,state
+Malaysia,MY-04,Melaka,state
+Malaysia,MY-05,Negeri Sembilan,state
+Malaysia,MY-06,Pahang,state
+Malaysia,MY-08,Perak,state
+Malaysia,MY-09,Perlis,state
+Malaysia,MY-07,Pulau Pinang,state
+Malaysia,MY-12,Sabah,state
+Malaysia,MY-13,Sarawak,state
+Malaysia,MY-10,Selangor,state
+Malaysia,MY-11,Terengganu,state
+Malaysia,MY-14,Wilayah Persekutuan Kuala Lumpur,federal territory
+Malaysia,MY-15,Wilayah Persekutuan Labuan,federal territory
+Malaysia,MY-16,Wilayah Persekutuan Putrajaya,federal territory
+Maldives,MV-02,Alif,administrative atoll
+Maldives,MV-X1~,Alif Dhaal,
+Maldives,MV-20,Baa,administrative atoll
+Maldives,MV-17,Dhaalu,administrative atoll
+Maldives,MV-14,Faafu,administrative atoll
+Maldives,MV-27,Gaaf Alif,administrative atoll
+Maldives,MV-28,Gaafu Dhaalu,administrative atoll
+Maldives,MV-29,Gnaviyani,administrative atoll
+Maldives,MV-07,Haa Alif,administrative atoll
+Maldives,MV-23,Haa Dhaalu,administrative atoll
+Maldives,MV-26,Kaafu,administrative atoll
+Maldives,MV-05,Laamu,administrative atoll
+Maldives,MV-03,Lhaviyani,administrative atoll
+Maldives,MV-MLE,Male,capital
+Maldives,MV-12,Meemu,administrative atoll
+Maldives,MV-25,Noonu,administrative atoll
+Maldives,MV-13,Raa,administrative atoll
+Maldives,MV-01,Seenu,administrative atoll
+Maldives,MV-24,Shaviyani,administrative atoll
+Maldives,MV-08,Thaa,administrative atoll
+Maldives,MV-04,Vaavu,administrative atoll
+Mali,ML-BKO,Bamako,district
+Mali,ML-7,Gao,region
+Mali,ML-1,Kayes,region
+Mali,ML-8,Kidal,region
+Mali,ML-2,Koulikoro,region
+Mali,ML-5,Mopti,region
+Mali,ML-3,Sikasso,region
+Mali,ML-4,Ségou,region
+Mali,ML-6,Tombouctou,region
+Marshall Islands,MH-ALL,Ailinglaplap,Municipality
+Marshall Islands,MH-ALK,Ailuk,Municipality
+Marshall Islands,MH-ARN,Arno,Municipality
+Marshall Islands,MH-AUR,Aur,Municipality
+Marshall Islands,MH-EBO,Ebon,Municipality
+Marshall Islands,MH-ENI,Enewetak,Municipality
+Marshall Islands,MH-JAB,Jabat,Municipality
+Marshall Islands,MH-JAL,Jaluit,Municipality
+Marshall Islands,MH-KIL,Kili,Municipality
+Marshall Islands,MH-KWA,Kwajalein,Municipality
+Marshall Islands,MH-LAE,Lae,Municipality
+Marshall Islands,MH-LIB,Lib,Municipality
+Marshall Islands,MH-LIK,Likiep,Municipality
+Marshall Islands,MH-MAJ,Majuro,Municipality
+Marshall Islands,MH-MAL,Maloelap,Municipality
+Marshall Islands,MH-MEJ,Mejit,Municipality
+Marshall Islands,MH-MIL,Mili,Municipality
+Marshall Islands,MH-NMK,Namdrik,Municipality
+Marshall Islands,MH-NMU,Namu,Municipality
+Marshall Islands,MH-RON,Rongelap,Municipality
+Marshall Islands,MH-UJA,Ujae,Municipality
+Marshall Islands,MH-UTI,Utirik,Municipality
+Marshall Islands,MH-WTH,Wotho,Municipality
+Marshall Islands,MH-WTJ,Wotje,Municipality
+Mauritania,MR-07,Adrar,region
+Mauritania,MR-03,Assaba,region
+Mauritania,MR-05,Brakna,region
+Mauritania,MR-08,Dakhlet Nouâdhibou,region
+Mauritania,MR-04,Gorgol,region
+Mauritania,MR-10,Guidimaka,region
+Mauritania,MR-01,Hodh ech Chargui,region
+Mauritania,MR-02,Hodh el Gharbi,region
+Mauritania,MR-12,Inchiri,region
+Mauritania,MR-NKC,Nouakchott,district
+Mauritania,MR-09,Tagant,region
+Mauritania,MR-11,Tiris Zemmour,region
+Mauritania,MR-06,Trarza,region
+Mauritius,MU-AG,Agalega Islands,dependency
+Mauritius,MU-BR,Beau Bassin-Rose Hill,city
+Mauritius,MU-BL,Black River,district
+Mauritius,MU-CC,Cargados Carajos Shoals [Saint Brandon Islands],dependency
+Mauritius,MU-CU,Curepipe,city
+Mauritius,MU-FL,Flacq,district
+Mauritius,MU-GP,Grand Port,district
+Mauritius,MU-MO,Moka,district
+Mauritius,MU-PA,Pamplemousses,district
+Mauritius,MU-PW,Plaines Wilhems,district
+Mauritius,MU-PL,Port Louis City,district
+Mauritius,MU-PU,Port Louis District,city
+Mauritius,MU-QB,Quatre Bornes,city
+Mauritius,MU-RR,Rivière du Rempart,district
+Mauritius,MU-RO,Rodrigues Island,dependency
+Mauritius,MU-SA,Savanne,district
+Mauritius,MU-VP,Vacoas-Phoenix,city
+Mexico,MX-AGU,Aguascalientes,state
+Mexico,MX-BCN,Baja California,state
+Mexico,MX-BCS,Baja California Sur,state
+Mexico,MX-CAM,Campeche,state
+Mexico,MX-CHP,Chiapas,state
+Mexico,MX-CHH,Chihuahua,state
+Mexico,MX-COA,Coahuila,state
+Mexico,MX-COL,Colima,state
+Mexico,MX-DIF,Distrito Federal,federal district
+Mexico,MX-DUR,Durango,state
+Mexico,MX-GUA,Guanajuato,state
+Mexico,MX-GRO,Guerrero,state
+Mexico,MX-HID,Hidalgo,state
+Mexico,MX-JAL,Jalisco,state
+Mexico,MX-MIC,Michoacán,state
+Mexico,MX-MOR,Morelos,state
+Mexico,MX-MEX,México,state
+Mexico,MX-NAY,Nayarit,state
+Mexico,MX-NLE,Nuevo León,state
+Mexico,MX-OAX,Oaxaca,state
+Mexico,MX-PUE,Puebla,state
+Mexico,MX-QUE,Querétaro,state
+Mexico,MX-ROO,Quintana Roo,state
+Mexico,MX-SLP,San Luis Potosí,state
+Mexico,MX-SIN,Sinaloa,state
+Mexico,MX-SON,Sonora,state
+Mexico,MX-TAB,Tabasco,state
+Mexico,MX-TAM,Tamaulipas,state
+Mexico,MX-TLA,Tlaxcala,state
+Mexico,MX-VER,Veracruz,state
+Mexico,MX-YUC,Yucatán,state
+Mexico,MX-ZAC,Zacatecas,state
+"Micronesia, Federated States Of",FM-TRK,Chuuk,State
+"Micronesia, Federated States Of",FM-KSA,Kosrae,State
+"Micronesia, Federated States Of",FM-PNI,Pohnpei,State
+"Micronesia, Federated States Of",FM-YAP,Yap,State
+"Moldova, Republic of",MD-BA,Balti,district
+"Moldova, Republic of",MD-CA,Cahul,district
+"Moldova, Republic of",MD-CU,Chisinau,district
+"Moldova, Republic of",MD-CH,Chisinau City,city
+"Moldova, Republic of",MD-ED,Edinet,district
+"Moldova, Republic of",MD-GA,"Gagauzia, Unitate Teritoriala Autonoma (UTAG)",autonomous territory
+"Moldova, Republic of",MD-LA,Lapusna,district
+"Moldova, Republic of",MD-OR,Orhei,district
+"Moldova, Republic of",MD-SO,Soroca,district
+"Moldova, Republic of",MD-SN,"Stînga Nistrului, unitatea teritoriala din",territorial unit
+"Moldova, Republic of",MD-TA,Taraclia,district
+"Moldova, Republic of",MD-TI,Tighina [Bender],district
+"Moldova, Republic of",MD-UN,Ungheni,district
+Mongolia,MN-073,Arhangay,province
+Mongolia,MN-071,Bayan-Ölgiy,province
+Mongolia,MN-069,Bayanhongor,province
+Mongolia,MN-067,Bulgan,province
+Mongolia,MN-037,Darhan uul,municipality
+Mongolia,MN-061,Dornod,province
+Mongolia,MN-063,Dornogovi,province
+Mongolia,MN-059,Dundgovi,province
+Mongolia,MN-057,Dzavhan,province
+Mongolia,MN-065,Govi-Altay,province
+Mongolia,MN-064,Govi-Sümber,municipality
+Mongolia,MN-039,Hentiy,province
+Mongolia,MN-043,Hovd,province
+Mongolia,MN-041,Hövsgöl,province
+Mongolia,MN-035,Orhon,municipality
+Mongolia,MN-049,Selenge,province
+Mongolia,MN-051,Sühbaatar,province
+Mongolia,MN-047,Töv,province
+Mongolia,MN-1,Ulaanbaatar,municipality
+Mongolia,MN-046,Uvs,province
+Mongolia,MN-053,Ömnögovi,province
+Mongolia,MN-055,Övörhangay,province
+Montenegro,ME-01,Andrijevica,Commune
+Montenegro,ME-02,Bar,Commune
+Montenegro,ME-03,Berane,Commune
+Montenegro,ME-04,Bijelo Polje,Commune
+Montenegro,ME-05,Budva,Commune
+Montenegro,ME-06,Cetinje,Commune
+Montenegro,ME-07,Danilovgrad,Commune
+Montenegro,ME-08,Herceg-Novi,Commune
+Montenegro,ME-09,Kolašin,Commune
+Montenegro,ME-10,Kotor,Commune
+Montenegro,ME-11,Mojkovac,Commune
+Montenegro,ME-12,Nikšic´,Commune
+Montenegro,ME-13,Plav,Commune
+Montenegro,ME-14,Pljevlja,Commune
+Montenegro,ME-15,Plužine,Commune
+Montenegro,ME-16,Podgorica,Commune
+Montenegro,ME-17,Rožaje,Commune
+Montenegro,ME-19,Tivat,Commune
+Montenegro,ME-20,Ulcinj,Commune
+Montenegro,ME-18,Šavnik,Commune
+Montenegro,ME-21,Žabljak,Commune
+Morocco,MA-HAO,Al Haouz,province
+Morocco,MA-HOC,Al Hoceïma,province
+Morocco,MA-ASZ,Assa-Zag,province
+Morocco,MA-AZI,Azilal,province
+Morocco,MA-BES,Ben Slimane,province
+Morocco,MA-BEM,Beni Mellal,province
+Morocco,MA-BER,Berkane,province
+Morocco,MA-BOD,Boujdour (EH),province
+Morocco,MA-BOM,Boulemane,province
+Morocco,MA-CHE,Chefchaouen,province
+Morocco,MA-CHI,Chichaoua,province
+Morocco,MA-CHT,Chtouka-Ait Baha,
+Morocco,MA-HAJ,El Hajeb,province
+Morocco,MA-JDI,El Jadida,province
+Morocco,MA-ERR,Errachidia,province
+Morocco,MA-ESM,Es Smara (EH),province
+Morocco,MA-ESI,Essaouira,province
+Morocco,MA-FIG,Figuig,province
+Morocco,MA-GUE,Guelmim,province
+Morocco,MA-IFR,Ifrane,province
+Morocco,MA-JRA,Jrada,province
+Morocco,MA-KES,Kelaat es Sraghna,province
+Morocco,MA-KHE,Khemisset,province
+Morocco,MA-KHN,Khenifra,province
+Morocco,MA-KHO,Khouribga,province
+Morocco,MA-KEN,Kénitra,province
+Morocco,MA-X1~,Laayoune-Boujdour-Sakia El Hamra,
+Morocco,MA-LAR,Larache,province
+Morocco,MA-LAA,Laâyoune*,province
+Morocco,MA-MED,Mediouna,province
+Morocco,MA-MOU,Moulay Yacoub,
+Morocco,MA-NAD,Nador,province
+Morocco,MA-NOU,Nouaceur,province
+Morocco,MA-OUA,Ouarzazate,province
+Morocco,MA-OUD,Oued ed Dahab (EH),province
+Morocco,MA-SAF,Safi,province
+Morocco,MA-SEF,Sefrou,
+Morocco,MA-SET,Settat,province
+Morocco,MA-SIK,Sidi Kacem,province
+Morocco,MA-TNT,Tan-Tan,province
+Morocco,MA-TAO,Taounate,province
+Morocco,MA-TAI,Taourirt,province
+Morocco,MA-TAR,Taroudant,province
+Morocco,MA-TAT,Tata,province
+Morocco,MA-TAZ,Taza,province
+Morocco,MA-TIZ,Tiznit,province
+Morocco,MA-ZAG,Zagora,province
+Mozambique,MZ-P,Cabo Delgado,province
+Mozambique,MZ-G,Gaza,province
+Mozambique,MZ-I,Inhambane,province
+Mozambique,MZ-B,Manica,province
+Mozambique,MZ-L,Maputo,province
+Mozambique,MZ-MPM,Maputo City,city
+Mozambique,MZ-N,Nampula,province
+Mozambique,MZ-A,Niassa,province
+Mozambique,MZ-S,Sofala,province
+Mozambique,MZ-T,Tete,province
+Mozambique,MZ-Q,Zambézia,province
+Myanmar,MM-07,Ayeyarwady,division
+Myanmar,MM-02,Bago,division
+Myanmar,MM-14,Chin,state
+Myanmar,MM-11,Kachin,state
+Myanmar,MM-12,Kayah,state
+Myanmar,MM-13,Kayin,state
+Myanmar,MM-03,Magway,division
+Myanmar,MM-04,Mandalay,division
+Myanmar,MM-15,Mon,state
+Myanmar,MM-16,Rakhine,state
+Myanmar,MM-01,Sagaing,division
+Myanmar,MM-17,Shan,state
+Myanmar,MM-05,Tanintharyi,division
+Myanmar,MM-06,Yangon,division
+Namibia,NA-CA,Caprivi,Region
+Namibia,NA-ER,Erongo,Region
+Namibia,NA-HA,Hardap,Region
+Namibia,NA-KA,Karas,Region
+Namibia,NA-KH,Khomas,Region
+Namibia,NA-KU,Kunene,Region
+Namibia,NA-OW,Ohangwena,Region
+Namibia,NA-OK,Okavango,Region
+Namibia,NA-OH,Omaheke,Region
+Namibia,NA-OS,Omusati,Region
+Namibia,NA-ON,Oshana,Region
+Namibia,NA-OT,Oshikoto,Region
+Namibia,NA-OD,Otjozondjupa,Region
+Nauru,NR-01,Aiwo,District
+Nauru,NR-02,Anabar,District
+Nauru,NR-03,Anetan,District
+Nauru,NR-04,Anibare,District
+Nauru,NR-05,Baiti,District
+Nauru,NR-06,Boe,District
+Nauru,NR-07,Buada,District
+Nauru,NR-08,Denigomodu,District
+Nauru,NR-09,Ewa,District
+Nauru,NR-10,Ijuw,District
+Nauru,NR-11,Meneng,District
+Nauru,NR-12,Nibok,District
+Nauru,NR-13,Uaboe,District
+Nauru,NR-14,Yaren,District
+Nepal,NP-BA,Bagmati,
+Nepal,NP-BH,Bheri,
+Nepal,NP-DH,Dhawalagiri,
+Nepal,NP-GA,Gandaki,
+Nepal,NP-JA,Janakpur,
+Nepal,NP-KA,Karnali,
+Nepal,NP-KO,Kosi [Koshi],
+Nepal,NP-LU,Lumbini,
+Nepal,NP-MA,Mahakali,
+Nepal,NP-ME,Mechi,
+Nepal,NP-NA,Narayani,
+Nepal,NP-RA,Rapti,
+Nepal,NP-SA,Sagarmatha,
+Nepal,NP-SE,Seti,
+Netherlands,NL-DR,Drenthe,Province
+Netherlands,NL-FL,Flevoland,Province
+Netherlands,NL-FR,Friesland,Province
+Netherlands,NL-GE,Gelderland,Province
+Netherlands,NL-GR,Groningen,Province
+Netherlands,NL-LI,Limburg,Province
+Netherlands,NL-NB,Noord-Brabant,Province
+Netherlands,NL-NH,Noord-Holland,Province
+Netherlands,NL-OV,Overijssel,Province
+Netherlands,NL-UT,Utrecht,Province
+Netherlands,NL-ZE,Zeeland,Province
+Netherlands,NL-ZH,Zuid-Holland,Province
+New Zealand,NZ-AUK,Auckland,Regional Council
+New Zealand,NZ-BOP,Bay of Plenty,Regional Council
+New Zealand,NZ-CAN,Canterbury,Regional Council
+New Zealand,NZ-X1~,Chatham  Islands,Special Territory
+New Zealand,NZ-GIS,Gisborne,Unitary Authority
+New Zealand,NZ-HKB,Hawkes's Bay,Regional Council
+New Zealand,NZ-MWT,Manawatu-Wanganui,Regional Council
+New Zealand,NZ-MBH,Marlborough,Unitary Authority
+New Zealand,NZ-NSN,Nelson,Unitary Authority
+New Zealand,NZ-NTL,Northland,Regional Council
+New Zealand,NZ-OTA,Otago,Regional Council
+New Zealand,NZ-STL,Southland,Regional Council
+New Zealand,NZ-TKI,Taranaki,Regional Council
+New Zealand,NZ-TAS,Tasman,Unitary Authority
+New Zealand,NZ-WKO,Waikato,Regional Council
+New Zealand,NZ-WGN,Wellington,Regional Council
+New Zealand,NZ-WTC,West Coast,Regional Council
+Nicaragua,NI-AN,Atlántico Norte*,autonomous region
+Nicaragua,NI-AS,Atlántico Sur*,autonomous region
+Nicaragua,NI-BO,Boaco,department
+Nicaragua,NI-CA,Carazo,department
+Nicaragua,NI-CI,Chinandega,department
+Nicaragua,NI-CO,Chontales,department
+Nicaragua,NI-ES,Estelí,department
+Nicaragua,NI-GR,Granada,department
+Nicaragua,NI-JI,Jinotega,department
+Nicaragua,NI-LE,León,department
+Nicaragua,NI-MD,Madriz,department
+Nicaragua,NI-MN,Managua,department
+Nicaragua,NI-MS,Masaya,department
+Nicaragua,NI-MT,Matagalpa,department
+Nicaragua,NI-NS,Nueva Segovia,department
+Nicaragua,NI-RI,Rivas,department
+Nicaragua,NI-SJ,Río San Juan,department
+Niger,NE-1,Agadez,Region
+Niger,NE-2,Diffa,Region
+Niger,NE-3,Dosso,Region
+Niger,NE-4,Maradi,Region
+Niger,NE-8,Niamey,Capital District
+Niger,NE-5,Tahoua,Region
+Niger,NE-6,Tillabéri,Region
+Niger,NE-7,Zinder,Region
+Nigeria,NG-AB,Abia,state
+Nigeria,NG-FC,Abuja Capital Territory,capital territory
+Nigeria,NG-AD,Adamawa,state
+Nigeria,NG-AK,Akwa Ibom,state
+Nigeria,NG-AN,Anambra,state
+Nigeria,NG-BA,Bauchi,state
+Nigeria,NG-BY,Bayelsa,state
+Nigeria,NG-BE,Benue,state
+Nigeria,NG-BO,Borno,state
+Nigeria,NG-CR,Cross River,state
+Nigeria,NG-DE,Delta,state
+Nigeria,NG-EB,Ebonyi,state
+Nigeria,NG-ED,Edo,state
+Nigeria,NG-EK,Ekiti,state
+Nigeria,NG-EN,Enugu,state
+Nigeria,NG-GO,Gombe,state
+Nigeria,NG-IM,Imo,state
+Nigeria,NG-JI,Jigawa,state
+Nigeria,NG-KD,Kaduna,state
+Nigeria,NG-KN,Kano,state
+Nigeria,NG-KT,Katsina,state
+Nigeria,NG-KE,Kebbi,state
+Nigeria,NG-KO,Kogi,state
+Nigeria,NG-KW,Kwara,state
+Nigeria,NG-LA,Lagos,state
+Nigeria,NG-NA,Nassarawa,state
+Nigeria,NG-NI,Niger,state
+Nigeria,NG-OG,Ogun,state
+Nigeria,NG-ON,Ondo,state
+Nigeria,NG-OS,Osun,state
+Nigeria,NG-OY,Oyo,state
+Nigeria,NG-PL,Plateau,state
+Nigeria,NG-RI,Rivers,state
+Nigeria,NG-SO,Sokoto,state
+Nigeria,NG-TA,Taraba,state
+Nigeria,NG-YO,Yobe,state
+Nigeria,NG-ZA,Zamfara,state
+Norway,NO-02,Akershus,County
+Norway,NO-09,Aust-Agder,County
+Norway,NO-06,Buskerud,County
+Norway,NO-20,Finnmark,County
+Norway,NO-04,Hedmark,County
+Norway,NO-12,Hordaland,County
+Norway,NO-22,Jan Mayen (Arctic Region) (See also country code SJ),
+Norway,NO-15,Møre og Romsdal,County
+Norway,NO-17,Nord-Trøndelag,County
+Norway,NO-18,Nordland,County
+Norway,NO-05,Oppland,County
+Norway,NO-03,Oslo,County
+Norway,NO-11,Rogaland,County
+Norway,NO-14,Sogn og Fjordane,County
+Norway,NO-21,Svalbard (Arctic Region) (See also country code SJ),
+Norway,NO-16,Sør-Trøndelag,County
+Norway,NO-08,Telemark,County
+Norway,NO-19,Troms,County
+Norway,NO-10,Vest-Agder,County
+Norway,NO-07,Vestfold,County
+Norway,NO-01,Østfold,County
+Oman,OM-DA,Ad Dakhiliyah,Region
+Oman,OM-ZA,Adh Dhahirah,Region
+Oman,OM-BA,Al Batinah,Region
+Oman,OM-X1~,Al Buraymi,Governorate
+Oman,OM-WU,Al Wustá,Region
+Oman,OM-SH,Ash Sharqiyah,Region
+Oman,OM-JA,Dhofar,Governorate
+Oman,OM-MA,Masqat,Governorate
+Oman,OM-MU,Musandam,Governorate
+Pakistan,PK-JK,Azad Kashmir,Pakistan administered area
+Pakistan,PK-BA,Baluchistan (en),province
+Pakistan,PK-TA,Federally Administered Tribal Areas,territory
+Pakistan,PK-IS,Islamabad,federal capital territory
+Pakistan,PK-NW,North-West Frontier,province
+Pakistan,PK-NA,Northern Areas,Pakistan administered area
+Pakistan,PK-PB,Punjab,province
+Pakistan,PK-SD,Sind (en),province
+Palau,PW-002,Aimeliik,State
+Palau,PW-004,Airai,State
+Palau,PW-010,Angaur,State
+Palau,PW-050,Hatobohei,State
+Palau,PW-100,Kayangel,State
+Palau,PW-150,Koror,State
+Palau,PW-212,Melekeok,State
+Palau,PW-214,Ngaraard,State
+Palau,PW-218,Ngarchelong,State
+Palau,PW-222,Ngardmau,State
+Palau,PW-224,Ngatpang,State
+Palau,PW-226,Ngchesar,State
+Palau,PW-227,Ngeremlengui,State
+Palau,PW-228,Ngiwal,State
+Palau,PW-350,Peleliu,State
+Palau,PW-370,Sonsorol,State
+Panama,PA-1,Bocas del Toro,province
+Panama,PA-4,Chiriquí,province
+Panama,PA-2,Coclé,province
+Panama,PA-3,Colón,province
+Panama,PA-0,Comarca de San Blas,Comarca
+Panama,PA-5,Darién,province
+Panama,PA-6,Herrera,province
+Panama,PA-7,Los Santos,province
+Panama,PA-8,Panamá,province
+Panama,PA-9,Veraguas,province
+Papua New Guinea,PG-CPM,Central,province
+Papua New Guinea,PG-CPK,Chimbu,province
+Papua New Guinea,PG-EBR,East New Britain,province
+Papua New Guinea,PG-ESW,East Sepik,province
+Papua New Guinea,PG-EHG,Eastern Highlands,province
+Papua New Guinea,PG-EPW,Enga,province
+Papua New Guinea,PG-GPK,Gulf,province
+Papua New Guinea,PG-MPM,Madang,province
+Papua New Guinea,PG-MRL,Manus,province
+Papua New Guinea,PG-MBA,Milne Bay,province
+Papua New Guinea,PG-MPL,Morobe,province
+Papua New Guinea,PG-NCD,National Capital District (Port Moresby),district
+Papua New Guinea,PG-NIK,New Ireland,province
+Papua New Guinea,PG-NSA,North Solomons,province
+Papua New Guinea,PG-NPP,Northern,province
+Papua New Guinea,PG-SAN,Sandaun [West Sepik],province
+Papua New Guinea,PG-SHM,Southern Highlands,province
+Papua New Guinea,PG-WBK,West New Britain,province
+Papua New Guinea,PG-WPD,Western,province
+Papua New Guinea,PG-WHM,Western Highlands,province
+Paraguay,PY-16,Alto Paraguay,department
+Paraguay,PY-10,Alto Paraná,department
+Paraguay,PY-13,Amambay,department
+Paraguay,PY-ASU,Asunción,capital
+Paraguay,PY-19,Boquerón,department
+Paraguay,PY-5,Caaguazú,department
+Paraguay,PY-6,Caazapá,department
+Paraguay,PY-14,Canindeyú,department
+Paraguay,PY-11,Central,department
+Paraguay,PY-1,Concepción,department
+Paraguay,PY-3,Cordillera,department
+Paraguay,PY-4,Guairá,department
+Paraguay,PY-7,Itapúa,department
+Paraguay,PY-8,Misiones,department
+Paraguay,PY-9,Paraguarí,department
+Paraguay,PY-15,Presidente Hayes,department
+Paraguay,PY-2,San Pedro,department
+Paraguay,PY-12,Ñeembucú,department
+Peru,PE-AMA,Amazonas,Region
+Peru,PE-ANC,Ancash,Region
+Peru,PE-APU,Apurímac,Region
+Peru,PE-ARE,Arequipa,Region
+Peru,PE-AYA,Ayacucho,Region
+Peru,PE-CAJ,Cajamarca,Region
+Peru,PE-CUS,Cuzco [Cusco],Region
+Peru,PE-CAL,El Callao,Region
+Peru,PE-HUV,Huancavelica,Region
+Peru,PE-HUC,Huánuco,Region
+Peru,PE-ICA,Ica,Region
+Peru,PE-JUN,Junín,Region
+Peru,PE-LAL,La Libertad,Region
+Peru,PE-LAM,Lambayeque,Region
+Peru,PE-LIM,Lima,Region
+Peru,PE-X1~,Lima Metropolitana,Province
+Peru,PE-LOR,Loreto,Region
+Peru,PE-MDD,Madre de Dios,Region
+Peru,PE-MOQ,Moquegua,Region
+Peru,PE-PAS,Pasco,Region
+Peru,PE-PIU,Piura,Region
+Peru,PE-PUN,Puno,Region
+Peru,PE-SAM,San Martín,Region
+Peru,PE-TAC,Tacna,Region
+Peru,PE-TUM,Tumbes,Region
+Peru,PE-UCA,Ucayali,Region
+Philippines,PH-ABR,Abra,
+Philippines,PH-AGN,Agusan del Norte,
+Philippines,PH-AGS,Agusan del Sur,
+Philippines,PH-AKL,Aklan,
+Philippines,PH-ALB,Albay,
+Philippines,PH-ANT,Antique,
+Philippines,PH-APA,Apayao,
+Philippines,PH-AUR,Aurora,
+Philippines,PH-BAS,Basilan,
+Philippines,PH-BAN,Bataan,
+Philippines,PH-BTN,Batanes,
+Philippines,PH-BTG,Batangas,
+Philippines,PH-BEN,Benguet,
+Philippines,PH-BIL,Biliran,
+Philippines,PH-BOH,Bohol,
+Philippines,PH-BUK,Bukidnon,
+Philippines,PH-BUL,Bulacan,
+Philippines,PH-CAG,Cagayan,
+Philippines,PH-CAN,Camarines Norte,
+Philippines,PH-CAS,Camarines Sur,
+Philippines,PH-CAM,Camiguin,
+Philippines,PH-CAP,Capiz,
+Philippines,PH-CAT,Catanduanes,
+Philippines,PH-CAV,Cavite,
+Philippines,PH-CEB,Cebu,
+Philippines,PH-COM,Compostela Valley,
+Philippines,PH-DAV,Davao del Norte,
+Philippines,PH-DAS,Davao del Sur,
+Philippines,PH-DAO,Davao Oriental,
+Philippines,PH-X1~,Dinagat,
+Philippines,PH-EAS,Eastern Samar,
+Philippines,PH-GUI,Guimaras,
+Philippines,PH-IFU,Ifugao,
+Philippines,PH-ILN,Ilocos Norte,
+Philippines,PH-ILS,Ilocos Sur,
+Philippines,PH-ILI,Iloilo,
+Philippines,PH-ISA,Isabela,
+Philippines,PH-KAL,Kalinga,
+Philippines,PH-LUN,La Union,
+Philippines,PH-LAG,Laguna,
+Philippines,PH-LAN,Lanao del Norte,
+Philippines,PH-LAS,Lanao del Sur,
+Philippines,PH-LEY,Leyte,
+Philippines,PH-MAG,Maguindanao,
+Philippines,PH-MAD,Marinduque,
+Philippines,PH-MAS,Masbate,
+Philippines,PH-MDC,Mindoro Occidental,
+Philippines,PH-MDR,Mindoro Oriental,
+Philippines,PH-MSC,Misamis Occidental,
+Philippines,PH-MSR,Misamis Oriental,
+Philippines,PH-MOU,Mountain Province,
+Philippines,PH-NEC,Negros Occidental,
+Philippines,PH-NER,Negros Oriental,
+Philippines,PH-NCO,North Cotabato,
+Philippines,PH-NSA,Northern Samar,
+Philippines,PH-NUE,Nueva Ecija,
+Philippines,PH-NUV,Nueva Vizcaya,
+Philippines,PH-PLW,Palawan,
+Philippines,PH-PAM,Pampanga,
+Philippines,PH-PAN,Pangasinan,
+Philippines,PH-QUE,Quezon,
+Philippines,PH-QUI,Quirino,
+Philippines,PH-RIZ,Rizal,
+Philippines,PH-ROM,Romblon,
+Philippines,PH-SAR,Sarangani,
+Philippines,PH-X2~,Shariff Kabunsuan,
+Philippines,PH-SIG,Siquijor,
+Philippines,PH-SOR,Sorsogon,
+Philippines,PH-SCO,South Cotabato,
+Philippines,PH-SLE,Southern Leyte,
+Philippines,PH-SUK,Sultan Kudarat,
+Philippines,PH-SLU,Sulu,
+Philippines,PH-SUN,Surigao del Norte,
+Philippines,PH-SUR,Surigao del Sur,
+Philippines,PH-TAR,Tarlac,
+Philippines,PH-TAW,Tawi-Tawi,
+Philippines,PH-WSA,Western Samar,
+Philippines,PH-ZMB,Zambales,
+Philippines,PH-ZAN,Zamboanga del Norte,
+Philippines,PH-ZAS,Zamboanga del Sur,
+Philippines,PH-ZSI,Zamboanga Sibuguey [Zamboanga Sibugay],
+Philippines,PH-MNL,,
+Poland,PL-DS,Dolnoslaskie,Voivodship
+Poland,PL-KP,Kujawsko-pomorskie,Voivodship
+Poland,PL-LU,Lubelskie,Voivodship
+Poland,PL-LB,Lubuskie,Voivodship
+Poland,PL-LD,Lódzkie,Voivodship
+Poland,PL-MA,Malopolskie,Voivodship
+Poland,PL-MZ,Mazowieckie,Voivodship
+Poland,PL-OP,Opolskie,Voivodship
+Poland,PL-PK,Podkarpackie,Voivodship
+Poland,PL-PD,Podlaskie,Voivodship
+Poland,PL-PM,Pomorskie,Voivodship
+Poland,PL-SL,Slaskie,Voivodship
+Poland,PL-SK,Swietokrzyskie,Voivodship
+Poland,PL-WN,Warminsko-mazurskie,Voivodship
+Poland,PL-WP,Wielkopolskie,Voivodship
+Poland,PL-ZP,Zachodniopomorskie,Voivodship
+Portugal,PT-01,Aveiro,district
+Portugal,PT-02,Beja,district
+Portugal,PT-03,Braga,district
+Portugal,PT-04,Bragança,district
+Portugal,PT-05,Castelo Branco,district
+Portugal,PT-06,Coimbra,district
+Portugal,PT-08,Faro,district
+Portugal,PT-09,Guarda,district
+Portugal,PT-10,Leiria,district
+Portugal,PT-11,Lisboa,district
+Portugal,PT-12,Portalegre,district
+Portugal,PT-13,Porto,district
+Portugal,PT-30,Região Autónoma da Madeira,autonomous region
+Portugal,PT-20,Região Autónoma dos Açores,autonomous region
+Portugal,PT-14,Santarém,district
+Portugal,PT-15,Setúbal,district
+Portugal,PT-16,Viana do Castelo,district
+Portugal,PT-17,Vila Real,district
+Portugal,PT-18,Viseu,district
+Portugal,PT-07,Évora,district
+Qatar,QA-DA,Ad Dawhah,Municipality
+Qatar,QA-GH,Al Ghuwayriyah,Municipality
+Qatar,QA-JU,Al Jumayliyah,Municipality
+Qatar,QA-KH,Al Khawr,Municipality
+Qatar,QA-WA,Al Wakrah,Municipality
+Qatar,QA-RA,Ar Rayyan,Municipality
+Qatar,QA-JB,Jariyan al Batnah,Municipality
+Qatar,QA-MS,Madinat ash Shamal,Municipality
+Qatar,QA-X1~,Umm Sa'id,Municipality
+Qatar,QA-US,Umm Salal,Municipality
+Romania,RO-AB,Alba,County
+Romania,RO-AR,Arad,County
+Romania,RO-AG,Arges,County
+Romania,RO-BC,Bacau,County
+Romania,RO-BH,Bihor,County
+Romania,RO-BN,Bistrita-Nasaud,County
+Romania,RO-BT,Botosani,County
+Romania,RO-BR,Braila,County
+Romania,RO-BV,Brasov,County
+Romania,RO-B,Bucuresti,City
+Romania,RO-BZ,Buzau,County
+Romania,RO-CL,Calarasi,County
+Romania,RO-CS,Caras-Severin,County
+Romania,RO-CJ,Cluj,County
+Romania,RO-CT,Constanta,County
+Romania,RO-CV,Covasna,County
+Romania,RO-DJ,Dolj,County
+Romania,RO-DB,Dâmbovita,County
+Romania,RO-GL,Galati,County
+Romania,RO-GR,Giurgiu,County
+Romania,RO-GJ,Gorj,County
+Romania,RO-HR,Harghita,County
+Romania,RO-HD,Hunedoara,County
+Romania,RO-IL,Ialomita,County
+Romania,RO-IS,Iasi,County
+Romania,RO-IF,Ilfov,County
+Romania,RO-MM,Maramures,County
+Romania,RO-MH,Mehedinti,County
+Romania,RO-MS,Mures,County
+Romania,RO-NT,Neamt,County
+Romania,RO-OT,Olt,County
+Romania,RO-PH,Prahova,County
+Romania,RO-SJ,Salaj,County
+Romania,RO-SM,Satu Mare,County
+Romania,RO-SB,Sibiu,County
+Romania,RO-SV,Suceava,County
+Romania,RO-TR,Teleorman,County
+Romania,RO-TM,Timis,County
+Romania,RO-TL,Tulcea,County
+Romania,RO-VS,Vaslui,County
+Romania,RO-VN,Vrancea,County
+Romania,RO-VL,Vâlcea,County
+Russian Federation,RU-AD,"Adygeya, Respublika",republic
+Russian Federation,RU-AGB,Aginskiy Buryatskiy avtonomnyy okrug,autonomous district
+Russian Federation,RU-AL,"Altay, Respublika",republic
+Russian Federation,RU-ALT,Altayskiy kray,administrative territory
+Russian Federation,RU-AMU,Amurskaya oblast',administrative region
+Russian Federation,RU-ARK,Arkhangel'skaya oblast',administrative region
+Russian Federation,RU-AST,Astrakhanskaya oblast',administrative region
+Russian Federation,RU-BA,"Bashkortostan, Respublika",republic
+Russian Federation,RU-BEL,Belgorodskaya oblast',administrative region
+Russian Federation,RU-BRY,Bryanskaya oblast',administrative region
+Russian Federation,RU-BU,"Buryatiya, Respublika",republic
+Russian Federation,RU-CE,Chechenskaya Respublika,republic
+Russian Federation,RU-CHE,Chelyabinskaya oblast',administrative region
+Russian Federation,RU-CHI,Chitinskaya oblast',administrative region
+Russian Federation,RU-CHU,Chukotskiy avtonomnyy okrug,autonomous district
+Russian Federation,RU-CU,Chuvashskaya Respublika,republic
+Russian Federation,RU-DA,"Dagestan, Respublika",republic
+Russian Federation,RU-EVE,Evenkiyskiy avtonomnyy okrug,autonomous district
+Russian Federation,RU-IN,Ingushskaya Respublika [Respublika Ingushetiya],republic
+Russian Federation,RU-IRK,Irkutskaya oblast',administrative region
+Russian Federation,RU-IVA,Ivanovskaya oblast',administrative region
+Russian Federation,RU-KB,Kabardino-Balkarskaya Respublika,republic
+Russian Federation,RU-KGD,Kaliningradskaya oblast',administrative region
+Russian Federation,RU-KL,"Kalmykiya, Respublika",republic
+Russian Federation,RU-KLU,Kaluzhskaya oblast',administrative region
+Russian Federation,RU-KAM,Kamchatskaya oblast',administrative region
+Russian Federation,RU-KC,Karachayevo-Cherkesskaya Respublika,republic
+Russian Federation,RU-KR,"Kareliya, Respublika",republic
+Russian Federation,RU-KEM,Kemerovskaya oblast',administrative region
+Russian Federation,RU-KHA,Khabarovskiy kray,administrative territory
+Russian Federation,RU-KK,"Khakasiya, Respublika",republic
+Russian Federation,RU-KHM,Khanty-Mansiyskiy avtonomnyy okrug [Yugra],autonomous district
+Russian Federation,RU-KIR,Kirovskaya oblast',administrative region
+Russian Federation,RU-KO,"Komi, Respublika",republic
+Russian Federation,RU-X1~,Komi-Permyak,
+Russian Federation,RU-KOR,Koryakskiy avtonomnyy okrug,autonomous district
+Russian Federation,RU-KOS,Kostromskaya oblast',administrative region
+Russian Federation,RU-KDA,Krasnodarskiy kray,administrative territory
+Russian Federation,RU-KYA,Krasnoyarskiy kray,administrative territory
+Russian Federation,RU-KGN,Kurganskaya oblast',administrative region
+Russian Federation,RU-KRS,Kurskaya oblast',administrative region
+Russian Federation,RU-LEN,Leningradskaya oblast',administrative region
+Russian Federation,RU-LIP,Lipetskaya oblast',administrative region
+Russian Federation,RU-MAG,Magadanskaya oblast',administrative region
+Russian Federation,RU-ME,"Mariy El, Respublika",republic
+Russian Federation,RU-MO,"Mordoviya, Respublika",republic
+Russian Federation,RU-MOS,Moskovskaya oblast',administrative region
+Russian Federation,RU-MOW,Moskva,autonomous city
+Russian Federation,RU-MUR,Murmanskaya oblast',administrative region
+Russian Federation,RU-NEN,Nenetskiy avtonomnyy okrug,autonomous district
+Russian Federation,RU-NIZ,Nizhegorodskaya oblast',administrative region
+Russian Federation,RU-NGR,Novgorodskaya oblast',administrative region
+Russian Federation,RU-NVS,Novosibirskaya oblast',administrative region
+Russian Federation,RU-OMS,Omskaya oblast',administrative region
+Russian Federation,RU-ORE,Orenburgskaya oblast',administrative region
+Russian Federation,RU-ORL,Orlovskaya oblast',administrative region
+Russian Federation,RU-PNZ,Penzenskaya oblast',administrative region
+Russian Federation,RU-PER,Perm,administrative territory
+Russian Federation,RU-PRI,Primorskiy kray,administrative territory
+Russian Federation,RU-PSK,Pskovskaya oblast',administrative region
+Russian Federation,RU-ROS,Rostovskaya oblast',administrative region
+Russian Federation,RU-RYA,Ryazanskaya oblast',administrative region
+Russian Federation,RU-SA,"Sakha, Respublika [Yakutiya]",republic
+Russian Federation,RU-SAK,Sakhalinskaya oblast',administrative region
+Russian Federation,RU-SAM,Samarskaya oblast',administrative region
+Russian Federation,RU-SPE,Sankt-Peterburg,autonomous city
+Russian Federation,RU-SAR,Saratovskaya oblast',administrative region
+Russian Federation,RU-SE,"Severnaya Osetiya, Respublika [Alaniya] [Respublika Severnaya Osetiya-Alaniya]",republic
+Russian Federation,RU-SMO,Smolenskaya oblast',administrative region
+Russian Federation,RU-STA,Stavropol'skiy kray,administrative territory
+Russian Federation,RU-SVE,Sverdlovskaya oblast',administrative region
+Russian Federation,RU-TAM,Tambovskaya oblast',administrative region
+Russian Federation,RU-TA,"Tatarstan, Respublika",republic
+Russian Federation,RU-TAY,Taymyrskiy (Dolgano-Nenetskiy) avtonomnyy okrug,autonomous district
+Russian Federation,RU-TOM,Tomskaya oblast',administrative region
+Russian Federation,RU-TUL,Tul'skaya oblast',administrative region
+Russian Federation,RU-TVE,Tverskaya oblast',administrative region
+Russian Federation,RU-TYU,Tyumenskaya oblast',administrative region
+Russian Federation,RU-TY,"Tyva, Respublika [Tuva]",republic
+Russian Federation,RU-UD,Udmurtskaya Respublika,republic
+Russian Federation,RU-ULY,Ul'yanovskaya oblast',administrative region
+Russian Federation,RU-UOB,Ust'-Ordynskiy Buryatskiy avtonomnyy okrug,autonomous district
+Russian Federation,RU-VLA,Vladimirskaya oblast',administrative region
+Russian Federation,RU-VGG,Volgogradskaya oblast',administrative region
+Russian Federation,RU-VLG,Vologodskaya oblast',administrative region
+Russian Federation,RU-VOR,Voronezhskaya oblast',administrative region
+Russian Federation,RU-YAN,Yamalo-Nenetskiy avtonomnyy okrug,autonomous district
+Russian Federation,RU-YAR,Yaroslavskaya oblast',administrative region
+Russian Federation,RU-YEV,Yevreyskaya avtonomnaya oblast',autonomous region
+Rwanda,RW-02,Est,province
+Rwanda,RW-03,Nord,province
+Rwanda,RW-04,Ouest,province
+Rwanda,RW-05,Sud,province
+Rwanda,RW-01,Ville de Kigali,province
+"Saint Helena, Ascension and Tristan Da Cunha",SH-AC,Ascension,dependency
+"Saint Helena, Ascension and Tristan Da Cunha",SH-SH,Saint Helena,administrative area
+"Saint Helena, Ascension and Tristan Da Cunha",SH-TA,Tristan da Cunha,dependency
+Saint Kitts And Nevis,KN-01,Christ Church Nichola Town,Parish
+Saint Kitts And Nevis,KN-02,Saint Anne Sandy Point,Parish
+Saint Kitts And Nevis,KN-03,Saint George Basseterre,Parish
+Saint Kitts And Nevis,KN-04,Saint George Gingerland,Parish
+Saint Kitts And Nevis,KN-05,Saint James Windward,Parish
+Saint Kitts And Nevis,KN-06,Saint John Capisterre,Parish
+Saint Kitts And Nevis,KN-07,Saint John Figtree,Parish
+Saint Kitts And Nevis,KN-08,Saint Mary Cayon,Parish
+Saint Kitts And Nevis,KN-09,Saint Paul Capisterre,Parish
+Saint Kitts And Nevis,KN-10,Saint Paul Charlestown,Parish
+Saint Kitts And Nevis,KN-11,Saint Peter Basseterre,Parish
+Saint Kitts And Nevis,KN-12,Saint Thomas Lowland,Parish
+Saint Kitts And Nevis,KN-13,Saint Thomas Middle Island,Parish
+Saint Kitts And Nevis,KN-15,Trinity Palmetto Point,Parish
+Saint Vincent And The Grenedines,VC-01,Charlotte,Parish
+Saint Vincent And The Grenedines,VC-06,Grenadines,Parish
+Saint Vincent And The Grenedines,VC-02,Saint Andrew,Parish
+Saint Vincent And The Grenedines,VC-03,Saint David,Parish
+Saint Vincent And The Grenedines,VC-04,Saint George,Parish
+Saint Vincent And The Grenedines,VC-05,Saint Patrick,Parish
+Samoa,WS-AA,A'ana,District
+Samoa,WS-AL,Aiga-i-le-Tai,District
+Samoa,WS-AT,Atua,District
+Samoa,WS-FA,Fa'asaleleaga,District
+Samoa,WS-GE,Gaga'emauga,District
+Samoa,WS-GI,Gagaifomauga,District
+Samoa,WS-PA,Palauli,District
+Samoa,WS-SA,Satupa'itea,District
+Samoa,WS-TU,Tuamasaga,District
+Samoa,WS-VF,Va'a-o-Fonoti,District
+Samoa,WS-VS,Vaisigano,District
+San Marino,SM-01,Acquaviva,Municipality
+San Marino,SM-06,Borgo Maggiore,Municipality
+San Marino,SM-02,Chiesanuova,Municipality
+San Marino,SM-03,Domagnano,Municipality
+San Marino,SM-04,Faetano,Municipality
+San Marino,SM-05,Fiorentino,Municipality
+San Marino,SM-08,Montegiardino,Municipality
+San Marino,SM-07,San Marino,Municipality
+San Marino,SM-09,Serravalle,Municipality
+Sao Tome and Principe,ST-P,Príncipe,Municipality
+Sao Tome and Principe,ST-S,São Tomé,Municipality
+Saudi Arabia,SA-06,?a'il,Region
+Saudi Arabia,SA-14,?Asir,Region
+Saudi Arabia,SA-08,Al ?udud ash Shamaliyah,Region
+Saudi Arabia,SA-11,Al Ba?ah,Region
+Saudi Arabia,SA-12,Al Jawf,Region
+Saudi Arabia,SA-03,Al Madinah,Region
+Saudi Arabia,SA-05,Al Qasim,Region
+Saudi Arabia,SA-01,Ar Riya?,Region
+Saudi Arabia,SA-04,Ash Sharqiyah,Region
+Saudi Arabia,SA-09,Jizan,Region
+Saudi Arabia,SA-02,Makkah,Region
+Saudi Arabia,SA-10,Najran,Region
+Saudi Arabia,SA-07,Tabuk,Region
+Senegal,SN-DK,Dakar,
+Senegal,SN-DB,Diourbel,
+Senegal,SN-FK,Fatick,
+Senegal,SN-KL,Kaolack,
+Senegal,SN-KD,Kolda,
+Senegal,SN-LG,Louga,
+Senegal,SN-MT,Matam,
+Senegal,SN-SL,Saint-Louis,
+Senegal,SN-TC,Tambacounda,
+Senegal,SN-TH,Thiès,
+Senegal,SN-ZG,Ziguinchor,
+Serbia,RS-00,Belgrade,city
+Serbia,RS-14,Borski okrug,district
+Serbia,RS-11,Braničevski okrug,district
+Serbia,RS-23,Jablanički okrug,district
+Serbia,RS-04,Južnobanatski okrug,district
+Serbia,RS-06,Južnobanatski okrug,district
+Serbia,RS-09,Kolubarski okrug,district
+Serbia,RS-25,Kosovski okrug,district
+Serbia,RS-28,Kosovsko-Mitrovački okrug,district
+Serbia,RS-29,Kosovsko-Pomoravski okrug,district
+Serbia,RS-08,Mačvanski okrug,district
+Serbia,RS-17,Moravički okrug,district
+Serbia,RS-20,Nišavski okrug,district
+Serbia,RS-26,Pećki okrug,district
+Serbia,RS-22,Pirotski okrug,district
+Serbia,RS-10,Podunavski okrug,district
+Serbia,RS-13,Pomoravski okrug,district
+Serbia,RS-27,Prizrenski okrug,district
+Serbia,RS-24,Pčinjski okrug,district
+Serbia,RS-19,Rasinski okrug,district
+Serbia,RS-18,Raška okrug,district
+Serbia,RS-03,Severnobanatski okrug,district
+Serbia,RS-01,Severnobački okrug,district
+Serbia,RS-02,Srednjebanatski okrug,district
+Serbia,RS-07,Sremski okrug,district
+Serbia,RS-21,Toplièki okrug,district
+Serbia,RS-15,Zajeèarski okrug,district
+Serbia,RS-05,Zapadnobaèki okrug,district
+Serbia,RS-16,Zlatiborski okrug,district
+Serbia,RS-12,Šumadijski okrug,district
+Seychelles,SC-01,Anse aux Pins,District
+Seychelles,SC-02,Anse Boileau,District
+Seychelles,SC-04,Anse Louis,District
+Seychelles,SC-05,Anse Royale,District
+Seychelles,SC-03,Anse Étoile,District
+Seychelles,SC-06,Baie Lazare,District
+Seychelles,SC-07,Baie Sainte Anne,District
+Seychelles,SC-08,Beau Vallon,District
+Seychelles,SC-09,Bel Air,District
+Seychelles,SC-10,Bel Ombre,District
+Seychelles,SC-11,Cascade,District
+Seychelles,SC-12,Glacis,District
+Seychelles,SC-13,Grand' Anse (Mahé),District
+Seychelles,SC-14,Grand' Anse (Praslin),District
+Seychelles,SC-15,La Digue,District
+Seychelles,SC-16,La Rivière Anglaise,District
+Seychelles,SC-17,Mont Buxton,District
+Seychelles,SC-18,Mont Fleuri,District
+Seychelles,SC-19,Plaisance,District
+Seychelles,SC-20,Pointe La Rue,District
+Seychelles,SC-21,Port Glaud,District
+Seychelles,SC-22,Saint Louis,District
+Seychelles,SC-23,Takamaka,District
+Sierra Leone,SL-E,Eastern,province
+Sierra Leone,SL-N,Northern,province
+Sierra Leone,SL-S,Southern,province
+Sierra Leone,SL-W,Western Area (Freetown),area
+Singapore,SG-X1~,Singapore - No State,
+Slovakia,SK-BC,Banskobystrický kraj,Region
+Slovakia,SK-BL,Bratislavský kraj,Region
+Slovakia,SK-KI,Košický kraj,Region
+Slovakia,SK-NI,Nitriansky kraj,Region
+Slovakia,SK-PV,Prešovský kraj,Region
+Slovakia,SK-TC,Trenciansky kraj,Region
+Slovakia,SK-TA,Trnavský kraj,Region
+Slovakia,SK-ZI,Žilinský kraj,Region
+Slovenia,SI-001,Ajdovšcina,
+Slovenia,SI-002,Beltinci,
+Slovenia,SI-148,Benedikt,
+Slovenia,SI-149,Bistrica ob Sotli,
+Slovenia,SI-003,Bled,
+Slovenia,SI-150,Bloke,
+Slovenia,SI-004,Bohinj,
+Slovenia,SI-005,Borovnica,
+Slovenia,SI-006,Bovec,
+Slovenia,SI-151,Braslovce,
+Slovenia,SI-007,Brda,
+Slovenia,SI-008,Brezovica,
+Slovenia,SI-009,Brežice,
+Slovenia,SI-152,Cankova,
+Slovenia,SI-011,Celje,
+Slovenia,SI-012,Cerklje na Gorenjskem,
+Slovenia,SI-013,Cerknica,
+Slovenia,SI-014,Cerkno,
+Slovenia,SI-153,Cerkvenjak,
+Slovenia,SI-015,Crenšovci,
+Slovenia,SI-016,Crna na Koroškem,
+Slovenia,SI-017,Crnomelj,
+Slovenia,SI-018,Destrnik,
+Slovenia,SI-019,Divaca,
+Slovenia,SI-154,Dobje,
+Slovenia,SI-020,Dobrepolje,
+Slovenia,SI-155,Dobrna,
+Slovenia,SI-021,Dobrova-Polhov Gradec,
+Slovenia,SI-156,Dobrovnik/Dobronak,
+Slovenia,SI-022,Dol pri Ljubljani,
+Slovenia,SI-157,Dolenjske Toplice,
+Slovenia,SI-023,Domžale,
+Slovenia,SI-024,Dornava,
+Slovenia,SI-025,Dravograd,
+Slovenia,SI-026,Duplek,
+Slovenia,SI-027,Gorenja vas-Poljane,
+Slovenia,SI-028,Gorišnica,
+Slovenia,SI-029,Gornja Radgona,
+Slovenia,SI-030,Gornji Grad,
+Slovenia,SI-031,Gornji Petrovci,
+Slovenia,SI-158,Grad,
+Slovenia,SI-032,Grosuplje,
+Slovenia,SI-159,Hajdina,
+Slovenia,SI-160,Hoce-Slivnica,
+Slovenia,SI-161,Hodoš/Hodos,
+Slovenia,SI-162,Horjul,
+Slovenia,SI-034,Hrastnik,
+Slovenia,SI-035,Hrpelje-Kozina,
+Slovenia,SI-036,Idrija,
+Slovenia,SI-037,Ig,
+Slovenia,SI-038,Ilirska Bistrica,
+Slovenia,SI-039,Ivancna Gorica,
+Slovenia,SI-040,Izola/Isola,
+Slovenia,SI-041,Jesenice,
+Slovenia,SI-163,Jezersko,
+Slovenia,SI-042,Juršinci,
+Slovenia,SI-043,Kamnik,
+Slovenia,SI-044,Kanal,
+Slovenia,SI-045,Kidricevo,
+Slovenia,SI-046,Kobarid,
+Slovenia,SI-047,Kobilje,
+Slovenia,SI-048,Kocevje,
+Slovenia,SI-049,Komen,
+Slovenia,SI-164,Komenda,
+Slovenia,SI-050,Koper/Capodistria,
+Slovenia,SI-165,Kostel,
+Slovenia,SI-051,Kozje,
+Slovenia,SI-052,Kranj,
+Slovenia,SI-053,Kranjska Gora,
+Slovenia,SI-166,Križevci,
+Slovenia,SI-054,Krško,
+Slovenia,SI-055,Kungota,
+Slovenia,SI-056,Kuzma,
+Slovenia,SI-057,Laško,
+Slovenia,SI-058,Lenart,
+Slovenia,SI-059,Lendava/Lendva,
+Slovenia,SI-060,Litija,
+Slovenia,SI-061,Ljubljana,
+Slovenia,SI-062,Ljubno,
+Slovenia,SI-063,Ljutomer,
+Slovenia,SI-064,Logatec,
+Slovenia,SI-167,Lovrenc na Pohorju,
+Slovenia,SI-065,Loška dolina,
+Slovenia,SI-066,Loški Potok,
+Slovenia,SI-067,Luce,
+Slovenia,SI-068,Lukovica,
+Slovenia,SI-069,Majšperk,
+Slovenia,SI-070,Maribor,
+Slovenia,SI-168,Markovci,
+Slovenia,SI-071,Medvode,
+Slovenia,SI-072,Mengeš,
+Slovenia,SI-073,Metlika,
+Slovenia,SI-074,Mežica,
+Slovenia,SI-169,Miklavž na Dravskem polju,
+Slovenia,SI-075,Miren-Kostanjevica,
+Slovenia,SI-170,Mirna Pec,
+Slovenia,SI-076,Mislinja,
+Slovenia,SI-077,Moravce,
+Slovenia,SI-078,Moravske Toplice,
+Slovenia,SI-079,Mozirje,
+Slovenia,SI-080,Murska Sobota,
+Slovenia,SI-081,Muta,
+Slovenia,SI-082,Naklo,
+Slovenia,SI-083,Nazarje,
+Slovenia,SI-084,Nova Gorica,
+Slovenia,SI-085,Novo mesto,
+Slovenia,SI-086,Odranci,
+Slovenia,SI-171,Oplotnica,
+Slovenia,SI-087,Ormož,
+Slovenia,SI-088,Osilnica,
+Slovenia,SI-089,Pesnica,
+Slovenia,SI-090,Piran/Pirano,
+Slovenia,SI-091,Pivka,
+Slovenia,SI-092,Podcetrtek,
+Slovenia,SI-172,Podlehnik,
+Slovenia,SI-093,Podvelka,
+Slovenia,SI-173,Polzela,
+Slovenia,SI-094,Postojna,
+Slovenia,SI-174,Prebold,
+Slovenia,SI-095,Preddvor,
+Slovenia,SI-175,Prevalje,
+Slovenia,SI-096,Ptuj,
+Slovenia,SI-097,Puconci,
+Slovenia,SI-098,Race-Fram,
+Slovenia,SI-099,Radece,
+Slovenia,SI-100,Radenci,
+Slovenia,SI-101,Radlje ob Dravi,
+Slovenia,SI-102,Radovljica,
+Slovenia,SI-103,Ravne na Koroškem,
+Slovenia,SI-176,Razkrižje,
+Slovenia,SI-104,Ribnica,
+Slovenia,SI-177,Ribnica na Pohorju,
+Slovenia,SI-107,Rogatec,
+Slovenia,SI-106,Rogaška Slatina,
+Slovenia,SI-105,Rogašovci,
+Slovenia,SI-108,Ruše,
+Slovenia,SI-178,Selnica ob Dravi,
+Slovenia,SI-109,Semic,
+Slovenia,SI-110,Sevnica,
+Slovenia,SI-111,Sežana,
+Slovenia,SI-112,Slovenj Gradec,
+Slovenia,SI-113,Slovenska Bistrica,
+Slovenia,SI-114,Slovenske Konjice,
+Slovenia,SI-179,Sodražica,
+Slovenia,SI-180,Solcava,
+Slovenia,SI-115,Starše,
+Slovenia,SI-181,Sveta Ana,
+Slovenia,SI-182,Sveti Andraž v Slovenskih goricah,
+Slovenia,SI-116,Sveti Jurij,
+Slovenia,SI-184,Tabor,
+Slovenia,SI-010,Tišina,
+Slovenia,SI-128,Tolmin,
+Slovenia,SI-129,Trbovlje,
+Slovenia,SI-130,Trebnje,
+Slovenia,SI-185,Trnovska vas,
+Slovenia,SI-186,Trzin,
+Slovenia,SI-131,Tržic,
+Slovenia,SI-132,Turnišce,
+Slovenia,SI-133,Velenje,
+Slovenia,SI-187,Velika Polana,
+Slovenia,SI-134,Velike Lašce,
+Slovenia,SI-188,Veržej,
+Slovenia,SI-135,Videm,
+Slovenia,SI-136,Vipava,
+Slovenia,SI-137,Vitanje,
+Slovenia,SI-138,Vodice,
+Slovenia,SI-139,Vojnik,
+Slovenia,SI-189,Vransko,
+Slovenia,SI-140,Vrhnika,
+Slovenia,SI-141,Vuzenica,
+Slovenia,SI-142,Zagorje ob Savi,
+Slovenia,SI-143,Zavrc,
+Slovenia,SI-144,Zrece,
+Slovenia,SI-033,Šalovci,
+Slovenia,SI-183,Šempeter-Vrtojba,
+Slovenia,SI-117,Šencur,
+Slovenia,SI-118,Šentilj,
+Slovenia,SI-119,Šentjernej,
+Slovenia,SI-120,Šentjur pri Celju,
+Slovenia,SI-121,Škocjan,
+Slovenia,SI-122,Škofja Loka,
+Slovenia,SI-123,Škofljica,
+Slovenia,SI-124,Šmarje pri Jelšah,
+Slovenia,SI-125,Šmartno ob Paki,
+Slovenia,SI-194,Šmartno pri Litiji,
+Slovenia,SI-126,Šoštanj,
+Slovenia,SI-127,Štore,
+Slovenia,SI-190,Žalec,
+Slovenia,SI-146,Železniki,
+Slovenia,SI-191,Žetale,
+Slovenia,SI-147,Žiri,
+Slovenia,SI-192,Žirovnica,
+Slovenia,SI-193,Žužemberk,
+Solomon Islands,SB-CT,Capital Territory (Honiara),capital territory
+Solomon Islands,SB-CE,Central,province
+Solomon Islands,SB-CH,Choiseul,province
+Solomon Islands,SB-GU,Guadalcanal,province
+Solomon Islands,SB-IS,Isabel,province
+Solomon Islands,SB-MK,Makira,province
+Solomon Islands,SB-ML,Malaita,province
+Solomon Islands,SB-RB,Rennell and Bellona,province
+Solomon Islands,SB-TE,Temotu,province
+Solomon Islands,SB-WE,Western,province
+Somalia,SO-AW,Awdal,Region
+Somalia,SO-BK,Bakool,Region
+Somalia,SO-BN,Banaadir,Region
+Somalia,SO-BR,Bari,Region
+Somalia,SO-BY,Bay,Region
+Somalia,SO-GA,Galguduud,Region
+Somalia,SO-GE,Gedo,Region
+Somalia,SO-HI,Hiiraan,Region
+Somalia,SO-JD,Jubbada Dhexe,Region
+Somalia,SO-JH,Jubbada Hoose,Region
+Somalia,SO-MU,Mudug,Region
+Somalia,SO-NU,Nugaal,Region
+Somalia,SO-SA,Sanaag,Region
+Somalia,SO-SD,Shabeellaha Dhexe,Region
+Somalia,SO-SH,Shabeellaha Hoose,Region
+Somalia,SO-SO,Sool,Region
+Somalia,SO-TO,Togdheer,Region
+Somalia,SO-WO,Woqooyi Galbeed,Region
+South Africa,ZA-EC,Eastern Cape,Province
+South Africa,ZA-FS,Free State,Province
+South Africa,ZA-GT,Gauteng,Province
+South Africa,ZA-NL,Kwazulu-Natal,Province
+South Africa,ZA-LP,Limpopo,Province
+South Africa,ZA-MP,Mpumalanga,Province
+South Africa,ZA-NW,North-West,Province
+South Africa,ZA-NC,Northern Cape,Province
+South Africa,ZA-WC,Western Cape,Province
+Spain,ES-C,A Coruña,province
+Spain,ES-AB,Albacete,province
+Spain,ES-A,Alicante,province
+Spain,ES-AL,Almería,province
+Spain,ES-O,Asturias,province
+Spain,ES-BA,Badajoz,province
+Spain,ES-PM,Baleares,province
+Spain,ES-B,Barcelona,province
+Spain,ES-BU,Burgos,province
+Spain,ES-S,Cantabria,province
+Spain,ES-CS,Castellón,province
+Spain,ES-CE,Ceuta,municipality
+Spain,ES-CR,Ciudad Real,province
+Spain,ES-CU,Cuenca,province
+Spain,ES-CC,Cáceres,province
+Spain,ES-CA,Cádiz,province
+Spain,ES-CO,Córdoba,province
+Spain,ES-GI,Girona,province
+Spain,ES-GR,Granada,province
+Spain,ES-GU,Guadalajara,province
+Spain,ES-SS,Guipúzcoa,province
+Spain,ES-H,Huelva,province
+Spain,ES-HU,Huesca,province
+Spain,ES-J,Jaén,province
+Spain,ES-LO,La Rioja,province
+Spain,ES-GC,Las Palmas,province
+Spain,ES-LE,León,province
+Spain,ES-L,Lleida,province
+Spain,ES-LU,Lugo,province
+Spain,ES-M,Madrid,province
+Spain,ES-ML,Melilla,municipality
+Spain,ES-MU,Murcia,province
+Spain,ES-MA,Málaga,province
+Spain,ES-NA,Navarra,province
+Spain,ES-OR,Ourense,province
+Spain,ES-P,Palencia,province
+Spain,ES-PO,Pontevedra,province
+Spain,ES-SA,Salamanca,province
+Spain,ES-TF,Santa Cruz de Tenerife,province
+Spain,ES-SG,Segovia,province
+Spain,ES-SE,Sevilla,province
+Spain,ES-SO,Soria,province
+Spain,ES-T,Tarragona,province
+Spain,ES-TE,Teruel,province
+Spain,ES-TO,Toledo,province
+Spain,ES-V,Valencia,province
+Spain,ES-VA,Valladolid,province
+Spain,ES-BI,Vizcaya,province
+Spain,ES-ZA,Zamora,province
+Spain,ES-Z,Zaragoza,province
+Spain,ES-VI,Álava,province
+Spain,ES-AV,Ávila,province
+Sri Lanka,LK-52,Ampāra,district
+Sri Lanka,LK-71,Anurādhapura,district
+Sri Lanka,LK-81,Badulla,district
+Sri Lanka,LK-12,Gampaha,district
+Sri Lanka,LK-31,Gālla,district
+Sri Lanka,LK-33,Hambantŏṭa,district
+Sri Lanka,LK-13,Kalutara,district
+Sri Lanka,LK-92,Kegalla,district
+Sri Lanka,LK-42,Kilinŏchchi,district
+Sri Lanka,LK-61,Kuruṇægala,district
+Sri Lanka,LK-11,Kŏḷamba,district
+Sri Lanka,LK-51,Madakalapuva,district
+Sri Lanka,LK-21,Mahanuvara,district
+Sri Lanka,LK-43,Mannārama,district
+Sri Lanka,LK-45,Mulativ,district
+Sri Lanka,LK-22,Mātale,district
+Sri Lanka,LK-32,Mātara,district
+Sri Lanka,LK-82,Mŏṇarāgala,district
+Sri Lanka,LK-23,Nuvara Ĕliya,district
+Sri Lanka,LK-62,Puttalama,district
+Sri Lanka,LK-72,Pŏḷŏnnaruva,district
+Sri Lanka,LK-91,Ratnapura,district
+Sri Lanka,LK-53,Trikuṇāmalaya,district
+Sri Lanka,LK-44,Vavuniyāva,district
+Sri Lanka,LK-41,Yāpanaya,district
+Sudan,SD-23,A?ali an Nil,State
+Sudan,SD-26,Al Ba?r al A?mar,State
+Sudan,SD-18,Al Bu?ayrat,State
+Sudan,SD-07,Al Jazirah,State
+Sudan,SD-03,Al Khartum,State
+Sudan,SD-06,Al Qa?arif,State
+Sudan,SD-22,Al Wa?dah,State
+Sudan,SD-04,An Nil,State
+Sudan,SD-08,An Nil al Abya?,State
+Sudan,SD-24,An Nil al Azraq,State
+Sudan,SD-01,Ash Shamaliyah,State
+Sudan,SD-17,Ba?r al Jabal,State
+Sudan,SD-16,Gharb al Istiwa'iyah,State
+Sudan,SD-14,Gharb Ba?r al Ghazal,State
+Sudan,SD-12,Gharb Darfur,State
+Sudan,SD-10,Gharb Kurdufan,
+Sudan,SD-11,Janub Darfur,State
+Sudan,SD-13,Janub Kurdufan,State
+Sudan,SD-20,Junqali,State
+Sudan,SD-05,Kassala,State
+Sudan,SD-15,Shamal Ba?r al Ghazal,State
+Sudan,SD-02,Shamal Darfur,State
+Sudan,SD-09,Shamal Kurdufan,State
+Sudan,SD-19,Sharq al Istiwa'iyah,State
+Sudan,SD-25,Sinnar,State
+Sudan,SD-21,Warab,State
+Suriname,SR-BR,Brokopondo,District
+Suriname,SR-CM,Commewijne,District
+Suriname,SR-CR,Coronie,District
+Suriname,SR-MA,Marowijne,District
+Suriname,SR-NI,Nickerie,District
+Suriname,SR-PR,Para,District
+Suriname,SR-PM,Paramaribo,District
+Suriname,SR-SA,Saramacca,District
+Suriname,SR-SI,Sipaliwini,District
+Suriname,SR-WA,Wanica,District
+Swaziland,SZ-HH,Hhohho,District
+Swaziland,SZ-LU,Lubombo,District
+Swaziland,SZ-MA,Manzini,District
+Swaziland,SZ-SH,Shiselweni,District
+Sweden,SE-K,Blekinge län [SE-10],County
+Sweden,SE-W,Dalarnas län [SE-20],County
+Sweden,SE-I,Gotlands län [SE-09],County
+Sweden,SE-X,Gävleborgs län [SE-21],County
+Sweden,SE-N,Hallands län [SE-13],County
+Sweden,SE-Z,Jämtlands län [SE-23],County
+Sweden,SE-F,Jönköpings län [SE-06],County
+Sweden,SE-H,Kalmar län [SE-08],County
+Sweden,SE-G,Kronobergs län [SE-07],County
+Sweden,SE-BD,Norrbottens län [SE-25],County
+Sweden,SE-M,Skåne län [SE-12],County
+Sweden,SE-AB,Stockholms län [SE-01],County
+Sweden,SE-D,Södermanlands län [SE-04],County
+Sweden,SE-C,Uppsala län [SE-03],County
+Sweden,SE-S,Värmlands län [SE-17],County
+Sweden,SE-AC,Västerbottens län [SE-24],County
+Sweden,SE-Y,Västernorrlands län [SE-22],County
+Sweden,SE-U,Västmanlands län [SE-19],County
+Sweden,SE-O,Västra Götalands län [SE-14],County
+Sweden,SE-T,Örebro län [SE-18],County
+Sweden,SE-E,Östergötlands län [SE-05],County
+Switzerland,CH-AG,Aargau (de),Canton
+Switzerland,CH-AR,Appenzell Ausserrhoden (de),Canton
+Switzerland,CH-AI,Appenzell Innerrhoden (de),Canton
+Switzerland,CH-BL,Basel-Landschaft (de),Canton
+Switzerland,CH-BS,Basel-Stadt (de),Canton
+Switzerland,CH-BE,Bern (de),Canton
+Switzerland,CH-FR,Fribourg (fr),Canton
+Switzerland,CH-GE,Genève (fr),Canton
+Switzerland,CH-GL,Glarus (de),Canton
+Switzerland,CH-GR,Graubünden (de),Canton
+Switzerland,CH-JU,Jura (fr),Canton
+Switzerland,CH-LU,Luzern (de),Canton
+Switzerland,CH-NE,Neuchâtel (fr),Canton
+Switzerland,CH-NW,Nidwalden (de),Canton
+Switzerland,CH-OW,Obwalden (de),Canton
+Switzerland,CH-SG,Sankt Gallen (de),Canton
+Switzerland,CH-SH,Schaffhausen (de),Canton
+Switzerland,CH-SZ,Schwyz (de),Canton
+Switzerland,CH-SO,Solothurn (de),Canton
+Switzerland,CH-TG,Thurgau (de),Canton
+Switzerland,CH-TI,Ticino (it),Canton
+Switzerland,CH-UR,Uri (de),Canton
+Switzerland,CH-VS,Valais (fr),Canton
+Switzerland,CH-VD,Vaud (fr),Canton
+Switzerland,CH-ZG,Zug (de),Canton
+Switzerland,CH-ZH,Zürich (de),Canton
+Syrian Arab Republic,SY-HL,?alab,Province
+Syrian Arab Republic,SY-HM,?amah,Province
+Syrian Arab Republic,SY-HI,?ims,Province
+Syrian Arab Republic,SY-HA,Al ?asakah,Province
+Syrian Arab Republic,SY-LA,Al Ladhiqiyah,Province
+Syrian Arab Republic,SY-QU,Al Qunaytirah,Province
+Syrian Arab Republic,SY-RA,Ar Raqqah,Province
+Syrian Arab Republic,SY-SU,As Suwayda',Province
+Syrian Arab Republic,SY-DR,Dar?a,Province
+Syrian Arab Republic,SY-DY,Dayr az Zawr,Province
+Syrian Arab Republic,SY-DI,Dimashq,Province
+Syrian Arab Republic,SY-ID,Idlib,Province
+Syrian Arab Republic,SY-RD,Rif Dimashq,Province
+Syrian Arab Republic,SY-TA,Tartus,Province
+"Taiwan, Province Of China",TW-CHA,Changhua,district
+"Taiwan, Province Of China",TW-CYQ,Chiayi,district
+"Taiwan, Province Of China",TW-CYI,Chiayi Municipality,municipality
+"Taiwan, Province Of China",TW-HSQ,Hsinchu,district
+"Taiwan, Province Of China",TW-HSZ,Hsinchu Municipality,municipality
+"Taiwan, Province Of China",TW-HUA,Hualien,district
+"Taiwan, Province Of China",TW-ILA,Ilan,district
+"Taiwan, Province Of China",TW-KHQ,Kaohsiung,district
+"Taiwan, Province Of China",TW-KHH,Kaohsiung Special Municipality,special municipality
+"Taiwan, Province Of China",TW-KEE,Keelung Municipality,municipality
+"Taiwan, Province Of China",TW-MIA,Miaoli,district
+"Taiwan, Province Of China",TW-NAN,Nantou,district
+"Taiwan, Province Of China",TW-PEN,Penghu,district
+"Taiwan, Province Of China",TW-PIF,Pingtung,district
+"Taiwan, Province Of China",TW-TXQ,Taichung,district
+"Taiwan, Province Of China",TW-TXG,Taichung Municipality,municipality
+"Taiwan, Province Of China",TW-TNQ,Tainan,district
+"Taiwan, Province Of China",TW-TNN,Tainan Municipality,municipality
+"Taiwan, Province Of China",TW-TPQ,Taipei,district
+"Taiwan, Province Of China",TW-TPE,Taipei Special Municipality,special municipality
+"Taiwan, Province Of China",TW-TTT,Taitung,district
+"Taiwan, Province Of China",TW-TAO,Taoyuan,district
+"Taiwan, Province Of China",TW-YUN,Yunlin,district
+Tajikistan,TJ-GB,Gorno-Badakhshan,autonomous region
+Tajikistan,TJ-KT,Khatlon,region
+Tajikistan,TJ-SU,Sughd,region
+Tajikistan,Tj-X1~,,city
+"Tanzania, United Republic of",TZ-01,Arusha,Region
+"Tanzania, United Republic of",TZ-02,Dar es Salaam,Region
+"Tanzania, United Republic of",TZ-03,Dodoma,Region
+"Tanzania, United Republic of",TZ-04,Iringa,Region
+"Tanzania, United Republic of",TZ-05,Kagera,Region
+"Tanzania, United Republic of",TZ-06,Kaskazini Pemba,Region
+"Tanzania, United Republic of",TZ-07,Kaskazini Unguja,Region
+"Tanzania, United Republic of",TZ-08,Kigoma,Region
+"Tanzania, United Republic of",TZ-09,Kilimanjaro,Region
+"Tanzania, United Republic of",TZ-10,Kusini Pemba,Region
+"Tanzania, United Republic of",TZ-11,Kusini Unguja,Region
+"Tanzania, United Republic of",TZ-12,Lindi,Region
+"Tanzania, United Republic of",TZ-26,Manyara,Region
+"Tanzania, United Republic of",TZ-13,Mara,Region
+"Tanzania, United Republic of",TZ-14,Mbeya,Region
+"Tanzania, United Republic of",TZ-15,Mjini Magharibi,Region
+"Tanzania, United Republic of",TZ-16,Morogoro,Region
+"Tanzania, United Republic of",TZ-17,Mtwara,Region
+"Tanzania, United Republic of",TZ-18,Mwanza,Region
+"Tanzania, United Republic of",TZ-19,Pwani,Region
+"Tanzania, United Republic of",TZ-20,Rukwa,Region
+"Tanzania, United Republic of",TZ-21,Ruvuma,Region
+"Tanzania, United Republic of",TZ-22,Shinyanga,Region
+"Tanzania, United Republic of",TZ-23,Singida,Region
+"Tanzania, United Republic of",TZ-24,Tabora,Region
+"Tanzania, United Republic of",TZ-25,Tanga,Region
+Thailand,TH-37,Amnat Charoen,province
+Thailand,TH-15,Ang Thong,province
+Thailand,TH-31,Buri Ram,province
+Thailand,TH-24,Chachoengsao,province
+Thailand,TH-18,Chai Nat,province
+Thailand,TH-36,Chaiyaphum,province
+Thailand,TH-22,Chanthaburi,province
+Thailand,TH-50,Chiang Mai,province
+Thailand,TH-57,Chiang Rai,province
+Thailand,TH-20,Chon Buri,province
+Thailand,TH-86,Chumphon,province
+Thailand,TH-46,Kalasin,province
+Thailand,TH-62,Kamphaeng Phet,province
+Thailand,TH-71,Kanchanaburi,province
+Thailand,TH-40,Khon Kaen,province
+Thailand,TH-81,Krabi,province
+Thailand,TH-10,Krung Thep Maha Nakhon [Bangkok],metropolitan administration
+Thailand,TH-52,Lampang,province
+Thailand,TH-51,Lamphun,province
+Thailand,TH-42,Loei,province
+Thailand,TH-16,Lop Buri,province
+Thailand,TH-58,Mae Hong Son,province
+Thailand,TH-44,Maha Sarakham,province
+Thailand,TH-49,Mukdahan,province
+Thailand,TH-26,Nakhon Nayok,province
+Thailand,TH-73,Nakhon Pathom,province
+Thailand,TH-48,Nakhon Phanom,province
+Thailand,TH-30,Nakhon Ratchasima,province
+Thailand,TH-60,Nakhon Sawan,province
+Thailand,TH-80,Nakhon Si Thammarat,province
+Thailand,TH-55,Nan,province
+Thailand,TH-96,Narathiwat,province
+Thailand,TH-39,Nong Bua Lam Phu,province
+Thailand,TH-43,Nong Khai,province
+Thailand,TH-12,Nonthaburi,province
+Thailand,TH-13,Pathum Thani,province
+Thailand,TH-94,Pattani,province
+Thailand,TH-82,Phangnga,province
+Thailand,TH-93,Phatthalung,province
+Thailand,TH-S,Phatthaya,special administrative city
+Thailand,TH-56,Phayao,province
+Thailand,TH-67,Phetchabun,province
+Thailand,TH-76,Phetchaburi,province
+Thailand,TH-66,Phichit,province
+Thailand,TH-65,Phitsanulok,province
+Thailand,TH-14,Phra Nakhon Si Ayutthaya,province
+Thailand,TH-54,Phrae,province
+Thailand,TH-83,Phuket,province
+Thailand,TH-25,Prachin Buri,province
+Thailand,TH-77,Prachuap Khiri Khan,province
+Thailand,TH-85,Ranong,province
+Thailand,TH-70,Ratchaburi,province
+Thailand,TH-21,Rayong,province
+Thailand,TH-45,Roi Et,province
+Thailand,TH-27,Sa Kaeo,province
+Thailand,TH-47,Sakon Nakhon,province
+Thailand,TH-11,Samut Prakan,province
+Thailand,TH-74,Samut Sakhon,province
+Thailand,TH-75,Samut Songkhram,province
+Thailand,TH-19,Saraburi,province
+Thailand,TH-91,Satun,province
+Thailand,TH-33,Si Sa Ket,province
+Thailand,TH-17,Sing Buri,province
+Thailand,TH-90,Songkhla,province
+Thailand,TH-64,Sukhothai,province
+Thailand,TH-72,Suphan Buri,province
+Thailand,TH-84,Surat Thani,province
+Thailand,TH-32,Surin,province
+Thailand,TH-63,Tak,province
+Thailand,TH-92,Trang,province
+Thailand,TH-23,Trat,province
+Thailand,TH-34,Ubon Ratchathani,province
+Thailand,TH-41,Udon Thani,province
+Thailand,TH-61,Uthai Thani,province
+Thailand,TH-53,Uttaradit,province
+Thailand,TH-95,Yala,province
+Thailand,TH-35,Yasothon,province
+Timor-Leste,TL-AL,Aileu,District
+Timor-Leste,TL-AN,Ainaro,District
+Timor-Leste,TL-BA,Baucau,District
+Timor-Leste,TL-BO,Bobonaro,District
+Timor-Leste,TL-CO,Cova Lima,District
+Timor-Leste,TL-DI,Dili,District
+Timor-Leste,TL-ER,Ermera,District
+Timor-Leste,TL-LA,Lautem,District
+Timor-Leste,TL-LI,Liquiça,District
+Timor-Leste,TL-MT,Manatuto,District
+Timor-Leste,TL-MF,Manufahi,District
+Timor-Leste,TL-OE,Oecussi,District
+Timor-Leste,TL-VI,Viqueque,District
+Togo,TG-C,Centre,Region
+Togo,TG-K,Kara,Region
+Togo,TG-M,Maritime (Région),Region
+Togo,TG-P,Plateaux,Region
+Togo,TG-S,Savannes,Region
+Tonga,TO-01,'Eua,Island group
+Tonga,TO-02,Ha'apai,Island group
+Tonga,TO-03,Niuas,Island group
+Tonga,TO-04,Tongatapu,Island group
+Tonga,TO-05,Vava'u,Island group
+Trinidad and Tobago,TT-ARI,Arima,municipality
+Trinidad and Tobago,TT-CHA,Chaguanas,municipality
+Trinidad and Tobago,TT-CTT,Couva-Tabaquite-Talparo,region
+Trinidad and Tobago,TT-DMN,Diego Martin,region
+Trinidad and Tobago,TT-ETO,Eastern Tobago,region
+Trinidad and Tobago,TT-PED,Penal-Debe,region
+Trinidad and Tobago,TT-PTF,Point Fortin,municipality
+Trinidad and Tobago,TT-POS,Port of Spain,municipality
+Trinidad and Tobago,TT-PRT,Princes Town,region
+Trinidad and Tobago,TT-RCM,Rio Claro-Mayaro,region
+Trinidad and Tobago,TT-SFO,San Fernando,municipality
+Trinidad and Tobago,TT-SJL,San Juan-Laventille,region
+Trinidad and Tobago,TT-SGE,Sangre Grande,region
+Trinidad and Tobago,TT-SIP,Siparia,region
+Trinidad and Tobago,TT-TUP,Tunapuna-Piarco,region
+Trinidad and Tobago,TT-WTO,Western Tobago,region
+Tunisia,TN-13,Ben Arous,Governorate
+Tunisia,TN-23,Bizerte,Governorate
+Tunisia,TN-31,Béja,Governorate
+Tunisia,TN-81,Gabès,Governorate
+Tunisia,TN-71,Gafsa,Governorate
+Tunisia,TN-32,Jendouba,Governorate
+Tunisia,TN-41,Kairouan,Governorate
+Tunisia,TN-42,Kasserine,Governorate
+Tunisia,TN-73,Kebili,Governorate
+Tunisia,TN-12,L'Ariana,Governorate
+Tunisia,TN-14,La Manouba,Governorate
+Tunisia,TN-33,Le Kef,Governorate
+Tunisia,TN-53,Mahdia,Governorate
+Tunisia,TN-82,Medenine,Governorate
+Tunisia,TN-52,Monastir,Governorate
+Tunisia,TN-21,Nabeul,Governorate
+Tunisia,TN-61,Sfax,Governorate
+Tunisia,TN-43,Sidi Bouzid,Governorate
+Tunisia,TN-34,Siliana,Governorate
+Tunisia,TN-51,Sousse,Governorate
+Tunisia,TN-83,Tataouine,Governorate
+Tunisia,TN-72,Tozeur,Governorate
+Tunisia,TN-11,Tunis,Governorate
+Tunisia,TN-22,Zaghouan,Governorate
+Turkey,TR-01,Adana,Province
+Turkey,TR-02,Adiyaman,Province
+Turkey,TR-03,Afyon,Province
+Turkey,TR-04,Agri,Province
+Turkey,TR-68,Aksaray,Province
+Turkey,TR-05,Amasya,Province
+Turkey,TR-06,Ankara,Province
+Turkey,TR-07,Antalya,Province
+Turkey,TR-75,Ardahan,Province
+Turkey,TR-08,Artvin,Province
+Turkey,TR-09,Aydin,Province
+Turkey,TR-10,Balikesir,Province
+Turkey,TR-74,Bartin,Province
+Turkey,TR-72,Batman,Province
+Turkey,TR-69,Bayburt,Province
+Turkey,TR-11,Bilecik,Province
+Turkey,TR-12,Bingöl,Province
+Turkey,TR-13,Bitlis,Province
+Turkey,TR-14,Bolu,Province
+Turkey,TR-15,Burdur,Province
+Turkey,TR-16,Bursa,Province
+Turkey,TR-20,Denizli,Province
+Turkey,TR-21,Diyarbakir,Province
+Turkey,TR-81,Düzce,Province
+Turkey,TR-22,Edirne,Province
+Turkey,TR-23,Elazig,Province
+Turkey,TR-24,Erzincan,Province
+Turkey,TR-25,Erzurum,Province
+Turkey,TR-26,Eskisehir,Province
+Turkey,TR-27,Gaziantep,Province
+Turkey,TR-28,Giresun,Province
+Turkey,TR-29,Gümüshane,Province
+Turkey,TR-30,Hakkâri,Province
+Turkey,TR-31,Hatay,Province
+Turkey,TR-76,Igdir,Province
+Turkey,TR-32,Isparta,Province
+Turkey,TR-34,Istanbul,Province
+Turkey,TR-35,Izmir,Province
+Turkey,TR-33,Içel,Province
+Turkey,TR-46,Kahramanmaras,Province
+Turkey,TR-78,Karabük,Province
+Turkey,TR-70,Karaman,Province
+Turkey,TR-36,Kars,Province
+Turkey,TR-37,Kastamonu,Province
+Turkey,TR-38,Kayseri,Province
+Turkey,TR-79,Kilis,Province
+Turkey,TR-71,Kirikkale,Province
+Turkey,TR-39,Kirklareli,Province
+Turkey,TR-40,Kirsehir,Province
+Turkey,TR-41,Kocaeli,Province
+Turkey,TR-42,Konya,Province
+Turkey,TR-43,Kütahya,Province
+Turkey,TR-44,Malatya,Province
+Turkey,TR-45,Manisa,Province
+Turkey,TR-47,Mardin,Province
+Turkey,TR-48,Mugla,Province
+Turkey,TR-49,Mus,Province
+Turkey,TR-50,Nevsehir,Province
+Turkey,TR-51,Nigde,Province
+Turkey,TR-52,Ordu,Province
+Turkey,TR-80,Osmaniye,Province
+Turkey,TR-53,Rize,Province
+Turkey,TR-54,Sakarya,Province
+Turkey,TR-55,Samsun,Province
+Turkey,TR-63,Sanliurfa,Province
+Turkey,TR-56,Siirt,Province
+Turkey,TR-57,Sinop,Province
+Turkey,TR-73,Sirnak,Province
+Turkey,TR-58,Sivas,Province
+Turkey,TR-59,Tekirdag,Province
+Turkey,TR-60,Tokat,Province
+Turkey,TR-61,Trabzon,Province
+Turkey,TR-62,Tunceli,Province
+Turkey,TR-64,Usak,Province
+Turkey,TR-65,Van,Province
+Turkey,TR-77,Yalova,Province
+Turkey,TR-66,Yozgat,Province
+Turkey,TR-67,Zonguldak,Province
+Turkey,TR-17,Çanakkale,Province
+Turkey,TR-18,Çankiri,Province
+Turkey,TR-19,Çorum,Province
+Turkmenistan,TM-A,Ahal,Province
+Turkmenistan,TM-B,Balkan,Province
+Turkmenistan,TM-D,Dasoguz,Province
+Turkmenistan,TM-L,Lebap,Province
+Turkmenistan,TM-M,Mary,Province
+Turkmenistan,TM-X~,,City
+Tuvalu,TV-FUN,Funafuti,Island Council
+Tuvalu,TV-NMG,Nanumanga,Island Council
+Tuvalu,TV-NMA,Nanumea,Island Council
+Tuvalu,TV-NIT,Niutao,Island Council
+Tuvalu,TV-NIU,Nui,Island Council
+Tuvalu,TV-NKF,Nukufetau,Island Council
+Tuvalu,TV-NKL,Nukulaelae,Island Council
+Tuvalu,TV-VAI,Vaitupu,Island Council
+Uganda,UG-317,Abim,District
+Uganda,UG-301,Adjumani,District
+Uganda,UG-314,Amolatar,District
+Uganda,UG-216,Amuria,District
+Uganda,UG-319,Amuru,District
+Uganda,UG-302,Apac,District
+Uganda,UG-303,Arua,District
+Uganda,UG-217,Budaka,District
+Uganda,UG-223,Bududa,District
+Uganda,UG-201,Bugiri,District
+Uganda,UG-224,Bukedea,District
+Uganda,UG-218,Bukwa,District
+Uganda,UG-419,Buliisa,District
+Uganda,UG-401,Bundibugyo,District
+Uganda,UG-402,Bushenyi,District
+Uganda,UG-202,Busia,District
+Uganda,UG-219,Butaleja,District
+Uganda,UG-318,Dokolo,District
+Uganda,UG-304,Gulu,District
+Uganda,UG-403,Hoima,District
+Uganda,UG-416,Ibanda,District
+Uganda,UG-203,Iganga,District
+Uganda,UG-417,Isingiro,District
+Uganda,UG-204,Jinja,District
+Uganda,UG-315,Kaabong,District
+Uganda,UG-404,Kabale,District
+Uganda,UG-405,Kabarole,District
+Uganda,UG-213,Kaberamaido,District
+Uganda,UG-101,Kalangala,District
+Uganda,UG-220,Kaliro,District
+Uganda,UG-102,Kampala,District
+Uganda,UG-205,Kamuli,District
+Uganda,UG-413,Kamwenge,District
+Uganda,UG-414,Kanungu,District
+Uganda,UG-206,Kapchorwa,District
+Uganda,UG-406,Kasese,District
+Uganda,UG-207,Katakwi,District
+Uganda,UG-112,Kayunga,District
+Uganda,UG-407,Kibaale,District
+Uganda,UG-103,Kiboga,District
+Uganda,UG-418,Kiruhura,District
+Uganda,UG-408,Kisoro,District
+Uganda,UG-305,Kitgum,District
+Uganda,UG-316,Koboko,District
+Uganda,UG-306,Kotido,District
+Uganda,UG-208,Kumi,District
+Uganda,UG-415,Kyenjojo,District
+Uganda,UG-307,Lira,District
+Uganda,UG-104,Luwero,District
+Uganda,UG-116,Lyantonde,District
+Uganda,UG-221,Manafwa,District
+Uganda,UG-320,Maracha,District
+Uganda,UG-105,Masaka,District
+Uganda,UG-409,Masindi,District
+Uganda,UG-214,Mayuge,District
+Uganda,UG-209,Mbale,District
+Uganda,UG-410,Mbarara,District
+Uganda,UG-114,Mityana,District
+Uganda,UG-308,Moroto,District
+Uganda,UG-309,Moyo,District
+Uganda,UG-106,Mpigi,District
+Uganda,UG-107,Mubende,District
+Uganda,UG-108,Mukono,District
+Uganda,UG-311,Nakapiripirit,District
+Uganda,UG-115,Nakaseke,District
+Uganda,UG-109,Nakasongola,District
+Uganda,UG-222,Namutumba,District
+Uganda,UG-310,Nebbi,District
+Uganda,UG-411,Ntungamo,District
+Uganda,UG-321,Oyam,District
+Uganda,UG-312,Pader,District
+Uganda,UG-210,Pallisa,District
+Uganda,UG-110,Rakai,District
+Uganda,UG-412,Rukungiri,District
+Uganda,UG-111,Sembabule,District
+Uganda,UG-215,Sironko,District
+Uganda,UG-211,Soroti,District
+Uganda,UG-212,Tororo,District
+Uganda,UG-113,Wakiso,District
+Uganda,UG-313,Yumbe,District
+Ukraine,UA-71,Cherkas'ka Oblast',region
+Ukraine,UA-74,Chernihivs'ka Oblast',region
+Ukraine,UA-77,Chernivets'ka Oblast',region
+Ukraine,UA-12,Dnipropetrovs'ka Oblast',region
+Ukraine,UA-14,Donets'ka Oblast',region
+Ukraine,UA-26,Ivano-Frankivs'ka Oblast',region
+Ukraine,UA-63,Kharkivs'ka Oblast',region
+Ukraine,UA-65,Khersons'ka Oblast',region
+Ukraine,UA-68,Khmel'nyts'ka Oblast',region
+Ukraine,UA-35,Kirovohrads'ka Oblast',region
+Ukraine,UA-30,Kyïv,region
+Ukraine,UA-32,Kyïvs'ka Oblast',region
+Ukraine,UA-46,L'vivs'ka Oblast',region
+Ukraine,UA-09,Luhans'ka Oblast',region
+Ukraine,UA-48,Mykolaïvs'ka Oblast',region
+Ukraine,UA-51,Odes'ka Oblast',region
+Ukraine,UA-53,Poltavs'ka Oblast',region
+Ukraine,UA-43,Respublika Krym,Autonomous Republic
+Ukraine,UA-56,Rivnens'ka Oblast',region
+Ukraine,UA-40,Sevastopol',region
+Ukraine,UA-59,Sums'ka Oblast',region
+Ukraine,UA-61,Ternopil's'ka Oblast',region
+Ukraine,UA-05,Vinnyts'ka Oblast',region
+Ukraine,UA-07,Volyns'ka Oblast',region
+Ukraine,UA-21,Zakarpats'ka Oblast',region
+Ukraine,UA-23,Zaporiz'ka Oblast',region
+Ukraine,UA-18,Zhytomyrs'ka Oblast',region
+United Arab Emirates,AE-AZ,Abu Z¸aby [Abu Dhabi],Emirate
+United Arab Emirates,AE-AJ,Ajman,Emirate
+United Arab Emirates,AE-FU,Al Fujayrah,Emirate
+United Arab Emirates,AE-SH,Ash Shariqah [Sharjah],Emirate
+United Arab Emirates,AE-DU,Dubayy [Dubai],Emirate
+United Arab Emirates,AE-RK,Ra’s al Khaymah,Emirate
+United Arab Emirates,AE-UQ,Umm al Qaywayn,Emirate
+United Kingdom,GB-ABE,Aberdeen City,
+United Kingdom,GB-ABD,Aberdeenshire,
+United Kingdom,GB-ANS,Angus,
+United Kingdom,GB-ANT,Antrim,
+United Kingdom,GB-ARD,Ards,
+United Kingdom,GB-AGB,Argyll and Bute,
+United Kingdom,GB-ARM,Armagh,
+United Kingdom,GB-BLA,Ballymena,
+United Kingdom,GB-BLY,Ballymoney,
+United Kingdom,GB-BNB,Banbridge,
+United Kingdom,GB-BDG,Barking and Dagenham,
+United Kingdom,GB-BNE,Barnet,
+United Kingdom,GB-BNS,Barnsley,
+United Kingdom,GB-BAS,Bath and North East Somerset,
+United Kingdom,GB-BDF,Bedfordshire,
+United Kingdom,GB-BFS,Belfast,
+United Kingdom,GB-BEX,Bexley,
+United Kingdom,GB-BIR,Birmingham,
+United Kingdom,GB-BBD,Blackburn with Darwen,
+United Kingdom,GB-BPL,Blackpool,
+United Kingdom,GB-BGW,Blaenau Gwent,
+United Kingdom,GB-BOL,Bolton,
+United Kingdom,GB-BMH,Bournemouth,
+United Kingdom,GB-BRC,Bracknell Forest,
+United Kingdom,GB-BRD,Bradford,
+United Kingdom,GB-BEN,Brent,
+United Kingdom,GB-BGE,Bridgend [Pen-y-bont ar Ogwr GB-POG],
+United Kingdom,GB-BNH,Brighton and Hove,
+United Kingdom,GB-BST,"Bristol, City of",
+United Kingdom,GB-BRY,Bromley,
+United Kingdom,GB-BKM,Buckinghamshire,
+United Kingdom,GB-BUR,Bury,
+United Kingdom,GB-CAY,Caerphilly [Caerffili GB-CAF],
+United Kingdom,GB-CLD,Calderdale,
+United Kingdom,GB-CAM,Cambridgeshire,
+United Kingdom,GB-CMD,Camden,
+United Kingdom,GB-CRF,Cardiff [Caerdydd GB-CRD],
+United Kingdom,GB-CMN,Carmarthenshire [Sir Gaerfyrddin GB-GFY],
+United Kingdom,GB-CKF,Carrickfergus,
+United Kingdom,GB-CSR,Castlereagh,
+United Kingdom,GB-CGN,Ceredigion [Sir Ceredigion],
+United Kingdom,GB-CHS,Cheshire,
+United Kingdom,GB-CLK,Clackmannanshire,
+United Kingdom,GB-CLR,Coleraine,
+United Kingdom,GB-CWY,Conwy,
+United Kingdom,GB-CKT,Cookstown,
+United Kingdom,GB-CON,Cornwall,
+United Kingdom,GB-COV,Coventry,
+United Kingdom,GB-CGV,Craigavon,
+United Kingdom,GB-CRY,Croydon,
+United Kingdom,GB-CMA,Cumbria,
+United Kingdom,GB-DAL,Darlington,
+United Kingdom,GB-DEN,Denbighshire [Sir Ddinbych GB-DDB],
+United Kingdom,GB-DER,Derby,
+United Kingdom,GB-DBY,Derbyshire,
+United Kingdom,GB-DRY,Derry,
+United Kingdom,GB-DEV,Devon,
+United Kingdom,GB-DNC,Doncaster,
+United Kingdom,GB-DOR,Dorset,
+United Kingdom,GB-DOW,Down,
+United Kingdom,GB-DUD,Dudley,
+United Kingdom,GB-DGY,Dumfries and Galloway,
+United Kingdom,GB-DND,Dundee City,
+United Kingdom,GB-DGN,Dungannon,
+United Kingdom,GB-DUR,Durham,
+United Kingdom,GB-EAL,Ealing,
+United Kingdom,GB-EAY,East Ayrshire,
+United Kingdom,GB-EDU,East Dunbartonshire,
+United Kingdom,GB-ELN,East Lothian,
+United Kingdom,GB-ERW,East Renfrewshire,
+United Kingdom,GB-ERY,East Riding of Yorkshire,
+United Kingdom,GB-ESX,East Sussex,
+United Kingdom,GB-EDH,"Edinburgh, City of",
+United Kingdom,GB-ELS,Eilean Siar,
+United Kingdom,GB-ENF,Enfield,
+United Kingdom,GB-ESS,Essex,
+United Kingdom,GB-FAL,Falkirk,
+United Kingdom,GB-FER,Fermanagh,
+United Kingdom,GB-FIF,Fife,
+United Kingdom,GB-FLN,Flintshire [Sir y Fflint GB-FFL],
+United Kingdom,GB-GAT,Gateshead,
+United Kingdom,GB-GLG,Glasgow City,
+United Kingdom,GB-GLS,Gloucestershire,
+United Kingdom,GB-GRE,Greenwich,
+United Kingdom,GB-GWN,Gwynedd,
+United Kingdom,GB-HCK,Hackney,
+United Kingdom,GB-HAL,Halton,
+United Kingdom,GB-HMF,Hammersmith and Fulham,
+United Kingdom,GB-HAM,Hampshire,
+United Kingdom,GB-HRY,Haringey,
+United Kingdom,GB-HRW,Harrow,
+United Kingdom,GB-HPL,Hartlepool,
+United Kingdom,GB-HAV,Havering,
+United Kingdom,GB-HEF,"Herefordshire, County of",
+United Kingdom,GB-HRT,Hertfordshire,
+United Kingdom,GB-HLD,Highland,
+United Kingdom,GB-HIL,Hillingdon,
+United Kingdom,GB-HNS,Hounslow,
+United Kingdom,GB-IVC,Inverclyde,
+United Kingdom,GB-AGY,Isle of Anglesey [Sir Ynys Môn GB-YNM],
+United Kingdom,GB-IOW,Isle of Wight,
+United Kingdom,GB-IOS,Isles of Scilly,
+United Kingdom,GB-ISL,Islington,
+United Kingdom,GB-KEC,Kensington and Chelsea,
+United Kingdom,GB-KEN,Kent,
+United Kingdom,GB-KHL,"Kingston upon Hull, City of",
+United Kingdom,GB-KTT,Kingston upon Thames,
+United Kingdom,GB-KIR,Kirklees,
+United Kingdom,GB-KWL,Knowsley,
+United Kingdom,GB-LBH,Lambeth,
+United Kingdom,GB-LAN,Lancashire,
+United Kingdom,GB-LRN,Larne,
+United Kingdom,GB-LDS,Leeds,
+United Kingdom,GB-LCE,Leicester,
+United Kingdom,GB-LEC,Leicestershire,
+United Kingdom,GB-LEW,Lewisham,
+United Kingdom,GB-LMV,Limavady,
+United Kingdom,GB-LIN,Lincolnshire,
+United Kingdom,GB-LSB,Lisburn,
+United Kingdom,GB-LIV,Liverpool,
+United Kingdom,GB-LND,"London, City of",
+United Kingdom,GB-LUT,Luton,
+United Kingdom,GB-MFT,Magherafelt,
+United Kingdom,GB-MAN,Manchester,
+United Kingdom,GB-MDW,Medway,
+United Kingdom,GB-MTY,Merthyr Tydfil [Merthyr Tudful GB-MTU],
+United Kingdom,GB-MRT,Merton,
+United Kingdom,GB-MDB,Middlesbrough,
+United Kingdom,GB-MLN,Midlothian,
+United Kingdom,GB-MIK,Milton Keynes,
+United Kingdom,GB-MON,Monmouthshire [Sir Fynwy GB-FYN],
+United Kingdom,GB-MRY,Moray,
+United Kingdom,GB-MYL,Moyle,
+United Kingdom,GB-NTL,Neath Port Talbot [Castell-nedd Port Talbot GB-CTL],
+United Kingdom,GB-NET,Newcastle upon Tyne,
+United Kingdom,GB-NWM,Newham,
+United Kingdom,GB-NWP,Newport [Casnewydd GB-CNW],
+United Kingdom,GB-NYM,Newry and Mourne,
+United Kingdom,GB-NTA,Newtownabbey,
+United Kingdom,GB-NFK,Norfolk,
+United Kingdom,GB-NAY,North Ayrshire,
+United Kingdom,GB-NDN,North Down,
+United Kingdom,GB-NEL,North East Lincolnshire,
+United Kingdom,GB-NLK,North Lanarkshire,
+United Kingdom,GB-NLN,North Lincolnshire,
+United Kingdom,GB-NSM,North Somerset,
+United Kingdom,GB-NTY,North Tyneside,
+United Kingdom,GB-NYK,North Yorkshire,
+United Kingdom,GB-NTH,Northamptonshire,
+United Kingdom,GB-NBL,Northumberland,
+United Kingdom,GB-NGM,Nottingham,
+United Kingdom,GB-NTT,Nottinghamshire,
+United Kingdom,GB-OLD,Oldham,
+United Kingdom,GB-OMH,Omagh,
+United Kingdom,GB-ORK,Orkney Islands,
+United Kingdom,GB-OXF,Oxfordshire,
+United Kingdom,GB-PEM,Pembrokeshire [Sir Benfro GB-BNF],
+United Kingdom,GB-PKN,Perth and Kinross,
+United Kingdom,GB-PTE,Peterborough,
+United Kingdom,GB-PLY,Plymouth,
+United Kingdom,GB-POL,Poole,
+United Kingdom,GB-POR,Portsmouth,
+United Kingdom,GB-POW,Powys,
+United Kingdom,GB-RDG,Reading,
+United Kingdom,GB-RDB,Redbridge,
+United Kingdom,GB-RCC,Redcar and Cleveland,
+United Kingdom,GB-RFW,Renfrewshire,
+United Kingdom,GB-RCT,"Rhondda, Cynon, Taff [Rhondda, Cynon,Taf]",
+United Kingdom,GB-RIC,Richmond upon Thames,
+United Kingdom,GB-RCH,Rochdale,
+United Kingdom,GB-ROT,Rotherham,
+United Kingdom,GB-RUT,Rutland,
+United Kingdom,GB-SLF,Salford,
+United Kingdom,GB-SAW,Sandwell,
+United Kingdom,GB-SCB,"Scottish Borders, The",
+United Kingdom,GB-SFT,Sefton,
+United Kingdom,GB-SHF,Sheffield,
+United Kingdom,GB-ZET,Shetland Islands,
+United Kingdom,GB-SHR,Shropshire,
+United Kingdom,GB-SLG,Slough,
+United Kingdom,GB-SOL,Solihull,
+United Kingdom,GB-SOM,Somerset,
+United Kingdom,GB-SAY,South Ayrshire,
+United Kingdom,GB-SGC,South Gloucestershire,
+United Kingdom,GB-SLK,South Lanarkshire,
+United Kingdom,GB-STY,South Tyneside,
+United Kingdom,GB-STH,Southampton,
+United Kingdom,GB-SOS,Southend-on-Sea,
+United Kingdom,GB-SWK,Southwark,
+United Kingdom,GB-SHN,St. Helens,
+United Kingdom,GB-STS,Staffordshire,
+United Kingdom,GB-STG,Stirling,
+United Kingdom,GB-SKP,Stockport,
+United Kingdom,GB-STT,Stockton-on-Tees,
+United Kingdom,GB-STE,Stoke-on-Trent,
+United Kingdom,GB-STB,Strabane,
+United Kingdom,GB-SFK,Suffolk,
+United Kingdom,GB-SND,Sunderland,
+United Kingdom,GB-SRY,Surrey,
+United Kingdom,GB-STN,Sutton,
+United Kingdom,GB-SWA,Swansea [Abertawe GB-ATA],
+United Kingdom,GB-SWD,Swindon,
+United Kingdom,GB-TAM,Tameside,
+United Kingdom,GB-TFW,Telford and Wrekin,
+United Kingdom,GB-THR,Thurrock,
+United Kingdom,GB-TOB,Torbay,
+United Kingdom,GB-TOF,Torfaen [Tor-faen],
+United Kingdom,GB-TWH,Tower Hamlets,
+United Kingdom,GB-TRF,Trafford,
+United Kingdom,GB-VGL,"Vale of Glamorgan, The [Bro Morgannwg GB-BMG]",
+United Kingdom,GB-WKF,Wakefield,
+United Kingdom,GB-WLL,Walsall,
+United Kingdom,GB-WFT,Waltham Forest,
+United Kingdom,GB-WND,Wandsworth,
+United Kingdom,GB-WRT,Warrington,
+United Kingdom,GB-WAR,Warwickshire,
+United Kingdom,GB-WBK,West Berkshire,
+United Kingdom,GB-WDU,West Dunbartonshire,
+United Kingdom,GB-WLN,West Lothian,
+United Kingdom,GB-WSX,West Sussex,
+United Kingdom,GB-WSM,Westminster,
+United Kingdom,GB-WGN,Wigan,
+United Kingdom,GB-WIL,Wiltshire,
+United Kingdom,GB-WNM,Windsor and Maidenhead,
+United Kingdom,GB-WRL,Wirral,
+United Kingdom,GB-WOK,Wokingham,
+United Kingdom,GB-WLV,Wolverhampton,
+United Kingdom,GB-WOR,Worcestershire,
+United Kingdom,GB-WRX,Wrexham [Wrecsam GB-WRC],
+United Kingdom,GB-YOR,York,
+United States,US-AL,Alabama,state
+United States,US-AK,Alaska,state
+United States,US-AS,American Samoa (see also separate entry under AS),outlying area
+United States,US-AZ,Arizona,state
+United States,US-AR,Arkansas,state
+United States,US-CA,California,state
+United States,US-CO,Colorado,state
+United States,US-CT,Connecticut,state
+United States,US-DE,Delaware,state
+United States,US-DC,District of Columbia,district
+United States,US-FL,Florida,state
+United States,US-GA,Georgia,state
+United States,US-GU,Guam (see also separate entry under GU),outlying area
+United States,US-HI,Hawaii,state
+United States,US-ID,Idaho,state
+United States,US-IL,Illinois,state
+United States,US-IN,Indiana,state
+United States,US-IA,Iowa,state
+United States,US-KS,Kansas,state
+United States,US-KY,Kentucky,state
+United States,US-LA,Louisiana,state
+United States,US-ME,Maine,state
+United States,US-MD,Maryland,state
+United States,US-MA,Massachusetts,state
+United States,US-MI,Michigan,state
+United States,US-MN,Minnesota,state
+United States,US-MS,Mississippi,state
+United States,US-MO,Missouri,state
+United States,US-MT,Montana,state
+United States,US-NE,Nebraska,state
+United States,US-NV,Nevada,state
+United States,US-NH,New Hampshire,state
+United States,US-NJ,New Jersey,state
+United States,US-NM,New Mexico,state
+United States,US-NY,New York,state
+United States,US-NC,North Carolina,state
+United States,US-ND,North Dakota,state
+United States,US-MP,Northern Mariana Islands (see also separate entry under MP),outlying area
+United States,US-OH,Ohio,state
+United States,US-OK,Oklahoma,state
+United States,US-OR,Oregon,state
+United States,US-PA,Pennsylvania,state
+United States,US-PR,Puerto Rico (see also separate entry under PR),outlying area
+United States,US-RI,Rhode Island,state
+United States,US-SC,South Carolina,state
+United States,US-SD,South Dakota,state
+United States,US-TN,Tennessee,state
+United States,US-TX,Texas,state
+United States,US-UM,United States Minor Outlying Islands (see also separate entry under UM),outlying area
+United States,US-UT,Utah,state
+United States,US-VT,Vermont,state
+United States,US-VI,"Virgin Islands, U.S. (see also separate entry under VI)",outlying area
+United States,US-VA,Virginia,state
+United States,US-WA,Washington,state
+United States,US-WV,West Virginia,state
+United States,US-WI,Wisconsin,state
+United States,US-WY,Wyoming,state
+United States Minor Outlying Islands,UM-81,Baker Island,Territory
+United States Minor Outlying Islands,UM-84,Howland Island,Territory
+United States Minor Outlying Islands,UM-86,Jarvis Island,Territory
+United States Minor Outlying Islands,UM-67,Johnston Atoll,Territory
+United States Minor Outlying Islands,UM-89,Kingman Reef,Territory
+United States Minor Outlying Islands,UM-71,Midway Islands,Territory
+United States Minor Outlying Islands,UM-76,Navassa Island,Territory
+United States Minor Outlying Islands,UM-95,Palmyra Atoll,Territory
+United States Minor Outlying Islands,UM-79,Wake Island,Territory
+Uruguay,UY-AR,Artigas,Department
+Uruguay,UY-DU,Durazno,Department
+Uruguay,UY-FS,Flores,Department
+Uruguay,UY-FD,Florida,Department
+Uruguay,UY-LA,Lavalleja,Department
+Uruguay,UY-MA,Maldonado,Department
+Uruguay,UY-MO,Montevideo,Department
+Uruguay,UY-PA,Paysandú,Department
+Uruguay,UY-RV,Rivera,Department
+Uruguay,UY-RO,Rocha,Department
+Uruguay,UY-RN,Río Negro,Department
+Uruguay,UY-SA,Salto,Department
+Uruguay,UY-SJ,San José,Department
+Uruguay,UY-SO,Soriano,Department
+Uruguay,UY-TA,Tacuarembó,Department
+Uruguay,UY-TT,Treinta y Tres,Department
+Uruguay,UY-X1~,,Department
+Uruguay,UY-X3~,,Department
+Uruguay,UY-X2~,,Department
+Uzbekistan,UZ-AN,Andijon,region
+Uzbekistan,UZ-BU,Buxoro,region
+Uzbekistan,UZ-FA,Farg‘ona,region
+Uzbekistan,UZ-JI,Jizzax,region
+Uzbekistan,UZ-NG,Namangan,region
+Uzbekistan,UZ-NW,Navoiy,region
+Uzbekistan,UZ-QA,Qashqadaryo,region
+Uzbekistan,UZ-QR,Qoraqalpog‘iston Respublikasi,republic
+Uzbekistan,UZ-SA,Samarqand,region
+Uzbekistan,UZ-SI,Sirdaryo,region
+Uzbekistan,UZ-SU,Surxondaryo,region
+Uzbekistan,UZ-TO,Toshkent,region
+Uzbekistan,UZ-TK,Toshkent City,city
+Uzbekistan,UZ-XO,Xorazm,region
+Vanuatu,VU-MAP,Malampa,Province
+Vanuatu,VU-PAM,Pénama,Province
+Vanuatu,VU-SAM,Sanma,Province
+Vanuatu,VU-SEE,Shéfa,Province
+Vanuatu,VU-TAE,Taféa,Province
+Vanuatu,VU-TOB,Torba,Province
+"Venezuela, Bolivarian Republic of",VE-Z,Amazonas,state
+"Venezuela, Bolivarian Republic of",VE-B,Anzoátegui,state
+"Venezuela, Bolivarian Republic of",VE-C,Apure,state
+"Venezuela, Bolivarian Republic of",VE-D,Aragua,state
+"Venezuela, Bolivarian Republic of",VE-E,Barinas,state
+"Venezuela, Bolivarian Republic of",VE-F,Bolívar,state
+"Venezuela, Bolivarian Republic of",VE-G,Carabobo,state
+"Venezuela, Bolivarian Republic of",VE-H,Cojedes,state
+"Venezuela, Bolivarian Republic of",VE-Y,Delta Amacuro,state
+"Venezuela, Bolivarian Republic of",VE-W,Dependencias Federales,federal dependency
+"Venezuela, Bolivarian Republic of",VE-A,Distrito Federal,federal district
+"Venezuela, Bolivarian Republic of",VE-I,Falcón,state
+"Venezuela, Bolivarian Republic of",VE-J,Guárico,state
+"Venezuela, Bolivarian Republic of",VE-K,Lara,state
+"Venezuela, Bolivarian Republic of",VE-M,Miranda,state
+"Venezuela, Bolivarian Republic of",VE-N,Monagas,state
+"Venezuela, Bolivarian Republic of",VE-L,Mérida,state
+"Venezuela, Bolivarian Republic of",VE-O,Nueva Esparta,state
+"Venezuela, Bolivarian Republic of",VE-P,Portuguesa,state
+"Venezuela, Bolivarian Republic of",VE-R,Sucre,state
+"Venezuela, Bolivarian Republic of",VE-T,Trujillo,state
+"Venezuela, Bolivarian Republic of",VE-S,Táchira,state
+"Venezuela, Bolivarian Republic of",VE-X,Vargas,state
+"Venezuela, Bolivarian Republic of",VE-U,Yaracuy,state
+"Venezuela, Bolivarian Republic of",VE-V,Zulia,state
+Viet Nam,VN-44,An Giang,Province
+Viet Nam,VN-43,Ba Ria - Vung Tau,Province
+Viet Nam,VN-53,Bac Can,Province
+Viet Nam,VN-54,Bac Giang,Province
+Viet Nam,VN-55,Bac Lieu,Province
+Viet Nam,VN-56,Bac Ninh,Province
+Viet Nam,VN-50,Ben Tre,Province
+Viet Nam,VN-31,Binh Dinh,Province
+Viet Nam,VN-57,Binh Duong,Province
+Viet Nam,VN-58,Binh Phuoc,Province
+Viet Nam,VN-40,Binh Thuan,Province
+Viet Nam,VN-59,Ca Mau,Province
+Viet Nam,VN-48,Can Tho,Province
+Viet Nam,VN-04,Cao Bang,Province
+Viet Nam,VN-60,"Da Nang, thanh pho",Province
+Viet Nam,VN-33,Dac Lac,Province
+Viet Nam,VN-72,Dak Nong,Province
+Viet Nam,VN-71,Dien Bien,Province
+Viet Nam,VN-39,Dong Nai,Province
+Viet Nam,VN-45,Dong Thap,Province
+Viet Nam,VN-30,Gia Lai,Province
+Viet Nam,VN-03,Ha Giang,Province
+Viet Nam,VN-63,Ha Nam,Province
+Viet Nam,VN-64,"Ha Noi, thu do",Province
+Viet Nam,VN-15,Ha Tay,Province
+Viet Nam,VN-23,Ha Tinh,Province
+Viet Nam,VN-61,Hai Duong,Province
+Viet Nam,VN-62,"Hai Phong, thanh pho",Province
+Viet Nam,VN-73,Hau Giang,Province
+Viet Nam,VN-65,"Ho Chi Minh, thanh pho [Sai Gon]",Province
+Viet Nam,VN-14,Hoa Binh,Province
+Viet Nam,VN-66,Hung Yen,Province
+Viet Nam,VN-34,Khanh Hoa,Province
+Viet Nam,VN-47,Kien Giang,Province
+Viet Nam,VN-28,Kon Tum,Province
+Viet Nam,VN-01,Lai Chau,Province
+Viet Nam,VN-35,Lam Dong,Province
+Viet Nam,VN-09,Lang Son,Province
+Viet Nam,VN-02,Lao Cai,Province
+Viet Nam,VN-41,Long An,Province
+Viet Nam,VN-67,Nam Dinh,Province
+Viet Nam,VN-22,Nghe An,Province
+Viet Nam,VN-18,Ninh Binh,Province
+Viet Nam,VN-36,Ninh Thuan,Province
+Viet Nam,VN-68,Phu Tho,Province
+Viet Nam,VN-32,Phu Yen,Province
+Viet Nam,VN-24,Quang Binh,Province
+Viet Nam,VN-27,Quang Nam,Province
+Viet Nam,VN-29,Quang Ngai,Province
+Viet Nam,VN-13,Quang Ninh,Province
+Viet Nam,VN-25,Quang Tri,Province
+Viet Nam,VN-52,Soc Trang,Province
+Viet Nam,VN-05,Son La,Province
+Viet Nam,VN-37,Tay Ninh,Province
+Viet Nam,VN-20,Thai Binh,Province
+Viet Nam,VN-69,Thai Nguyen,Province
+Viet Nam,VN-21,Thanh Hoa,Province
+Viet Nam,VN-26,Thua Thien-Hue,Province
+Viet Nam,VN-46,Tien Giang,Province
+Viet Nam,VN-51,Tra Vinh,Province
+Viet Nam,VN-07,Tuyen Quang,Province
+Viet Nam,VN-49,Vinh Long,Province
+Viet Nam,VN-70,Vinh Phuc,Province
+Viet Nam,VN-06,Yen Bai,Province
+Western Sahara,EH-BOD,Boujdour,Province
+Western Sahara,EH-ESM,Es Semara,Province
+Western Sahara,EH-LAA,Laayoune,Province
+Western Sahara,EH-OUD,Oued el Dahab,Province
+Yemen,YE-AM,'Amran,Governorate
+Yemen,YE-AB,Abyan,Governorate
+Yemen,YE-DA,Ad¸ D¸ali',Governorate
+Yemen,YE-HU,Al ?udaydah,Governorate
+Yemen,YE-BA,Al Bay?a',Governorate
+Yemen,YE-JA,Al Jawf,Governorate
+Yemen,YE-MR,Al Mahrah,Governorate
+Yemen,YE-MW,Al Mahwit,Governorate
+Yemen,YE-DH,Dhamar,Governorate
+Yemen,YE-HD,Hadramawt,Governorate
+Yemen,YE-HJ,Hajjah,Governorate
+Yemen,YE-IB,Ibb,Governorate
+Yemen,YE-LA,La?ij,Governorate
+Yemen,YE-MA,Ma'rib,Governorate
+Yemen,YE-SD,Sa`dah,Governorate
+Yemen,YE-SN,Sanʿā,Governorate
+Yemen,YE-SH,Shabwah,Governorate
+Yemen,YE-TA,Taʿizz,Governorate
+Yemen,YE-AD,ʿAdan,Governorate
+Zambia,ZM-02,Central,Province
+Zambia,ZM-08,Copperbelt,Province
+Zambia,ZM-03,Eastern,Province
+Zambia,ZM-04,Luapula,Province
+Zambia,ZM-09,Lusaka,Province
+Zambia,ZM-06,North-Western,Province
+Zambia,ZM-05,Northern,Province
+Zambia,ZM-07,Southern,Province
+Zambia,ZM-01,Western,Province
+Zimbabwe,ZW-BU,Bulawayo,City
+Zimbabwe,ZW-HA,Harare,City
+Zimbabwe,ZW-MA,Manicaland,Province
+Zimbabwe,ZW-MC,Mashonaland Central,Province
+Zimbabwe,ZW-ME,Mashonaland East,Province
+Zimbabwe,ZW-MW,Mashonaland West,Province
+Zimbabwe,ZW-MV,Masvingo,Province
+Zimbabwe,ZW-MN,Matabeleland North,Province
+Zimbabwe,ZW-MS,Matabeleland South,Province
+Zimbabwe,ZW-MI,Midlands,Province

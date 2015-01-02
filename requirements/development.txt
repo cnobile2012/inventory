@@ -1,0 +1,4 @@
+# Include the bare minimum.
+-r base.txt
+
+django_debug_toolbar

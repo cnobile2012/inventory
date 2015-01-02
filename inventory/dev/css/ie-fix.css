@@ -1,0 +1,10 @@
+#content input,
+#content select,
+#content textarea,
+#content table {
+  font-size: 100%;
+}
+
+#footer ul li {
+  display: inline;
+}

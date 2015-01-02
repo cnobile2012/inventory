@@ -1,0 +1,92 @@
+body {
+  background-color: white;
+  color: black;
+  font-size: 12pt;
+}
+body p.text {
+  display: none;
+}
+body a:link,
+body a:focus,
+body a:visited,
+body a:active,
+body a:hover {
+  color: black;
+}
+#header {
+  position: relative;
+  display: block;
+  border: thin solid black;
+}
+#header ul#headLine {
+  margin-top: 0;
+}
+#header ul#headLine li p#name {
+  padding-top: 5px;
+  font-size: 150%;
+}
+#header ul#headLine li p#title {
+  height: 22px;
+  padding-top: 8px;
+  font-size: 125%;
+}
+#header ul#headLine li div#login {
+  margin-top: -20px;
+}
+#header ul#headLine li div#login p a {
+  display: none;
+}
+#container {
+  position: relative;
+  display: block;
+  float: none !important;
+  border: thin solid black;
+  min-height: 0;
+  background: transparent none;
+}
+#container #message {
+  min-height: 0;
+}
+#container ul#navigation {
+  display: none;
+}
+#content {
+  position: relative;
+  display: block;
+  float: none !important;
+  background: transparent none;
+}
+#content ul.column li {
+  width: 100%;
+  float: none !important;
+}
+#content div.submit {
+  display: none;
+}
+#content label {
+  width: 210px;
+}
+#content hr,
+#content ul.record,
+#content ul.record li,
+#content ul.column li,
+#content ul.column li hr {
+  width: 100%;
+  margin: 0 auto;
+  color: black;
+}
+#content ul li span,
+#content ul li div[id] {
+  color: black;
+  width: 720px;
+  border: thin solid gray;
+}
+#content table thead {
+  display: table-header-group;
+}
+#content tbody.tbody {
+  overflow: visible;
+}
+#footer {
+  display: none;
+}
