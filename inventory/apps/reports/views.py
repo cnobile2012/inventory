@@ -1,12 +1,6 @@
 #
 # reports/views.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2013-06-29 21:54:44 -0400 (Sat, 29 Jun 2013) $
-# $Revision: 77 $
-#----------------------------------
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import Context, loader
@@ -104,7 +98,8 @@ class ItemRecord(ReportsBase):
         items['package'] = escape(record.package)
         items['condition'] = escape(record.condition)
         items['quantity'] = escape(record.quantity)
-        items['location_code'] = escape(record.location_code)
+        codes = ', '.join([r.path for r in record.location_code.all()])
+        items['location_code'] = escape(codes)
         items['categories'] = mark_safe("<br />".join(
             [cat.path for cat in record.categories.all()]))
         dist = record.distributor

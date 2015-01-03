@@ -2,11 +2,7 @@
 # reports/forms.py
 #
 # SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2010-08-29 22:22:56 -0400 (Sun, 29 Aug 2010) $
-# $Revision: 12 $
-#----------------------------------
+#
 
 from django import forms
 from django.forms.formsets import formset_factory
@@ -37,6 +33,8 @@ class ItemForm(forms.Form):
                                   widget=TextDisplay)
     categories = forms.CharField(max_length=1016, label="Categories:",
                                  widget=TextDisplay)
+    location_code = forms.CharField(max_length=2048, label="Location Code(s)",
+                                    widget=TextDisplay)
     distributor = forms.CharField(max_length=248, label="Distributor:",
                                   widget=TextDisplay)
     manufacturer = forms.CharField(max_length=248, label="Manufacturer:",
