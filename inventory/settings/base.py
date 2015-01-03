@@ -42,7 +42,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Sysadmins', 'sysadminclient@capstrat.com'),
+    ('Sysadmins', 'carl.nobile@gmail.com'),
     )
 
 MANAGERS = ADMINS
