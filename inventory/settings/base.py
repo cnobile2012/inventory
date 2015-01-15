@@ -3,11 +3,6 @@
 #
 # Django settings for inventory project.
 #
-# SVN keywords
-#------------------------------
-# $Author: $
-# $Date: $
-# $Revision: $
 
 import os
 from inventory.setupenv import *
@@ -45,7 +40,7 @@ ADMINS = (
     ('Sysadmins', 'carl.nobile@gmail.com'),
     )
 
-MANAGERS = ADMINS
+ALLOWED_HOSTS = []
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -56,8 +51,6 @@ TIME_ZONE = 'America/New_York'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-
-SITE_ID = 1
 
 SITE_NAME = "TetraSys Inventory"
 
@@ -126,13 +119,13 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = [
     # UpdateCacheMiddleware must be first on the list
     'django.middleware.cache.UpdateCacheMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
-    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware', # This must be last
     ]
 
