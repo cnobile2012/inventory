@@ -52,6 +52,8 @@ TIME_ZONE = 'America/New_York'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
+SITE_ID = 1
+
 SITE_NAME = "TetraSys Inventory"
 
 # Where is the 'website' directory with settings dir, apps, urls.py, etc. are.
