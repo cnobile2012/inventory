@@ -23,6 +23,7 @@ STATIC_URL = os.path.join(SITE_URL, 'static/')
 
 ALLOWED_HOSTS = [
     '.tetrasys-design.net',
+    '162.209.110.28',
     ]
 
 # email settings
