@@ -163,8 +163,10 @@ class CategoryAdminForm(forms.ModelForm):
 
 
 class ItemAdminForm(forms.ModelForm):
-    title = forms.CharField(
-        widget=forms.TextInput(attrs={'size': 100}))
+
+    def __init__(self, *args, **kwargs):
+        super(ItemAdminForm, self).__init__(*args, **kwargs)
+        self.fields['title'].widget = forms.TextInput(attrs={'size': 100})
 
     class Meta:
         model = Item
