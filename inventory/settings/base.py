@@ -8,7 +8,6 @@ import os
 from inventory.setupenv import *
 from inventory.apps.items.settings import *
 from inventory.apps.login.settings import *
-from django.template import add_to_builtins
 
 
 class IPList(list):
@@ -155,17 +154,6 @@ TEMPLATE_DIRS = (
     os.path.join(SITE_ROOT, 'templates'),
     )
 
-TEMPLATE_TAGS = (
-    'inventory.tags.breadcrumbs',
-    'inventory.tags.utilitylib',
-)
-
-try:
-    for lib in TEMPLATE_TAGS:
-        add_to_builtins(lib)
-except AttributeError:
-    pass
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -175,6 +163,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'inventory.common',
     'inventory.apps.items',
     'inventory.apps.regions',
     'inventory.apps.login',
