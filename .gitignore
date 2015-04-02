@@ -3,7 +3,11 @@
 .#*
 *#*#
 .DS_Store
-#*.txt
+*.txt
+!base.txt
+!development.txt
+!production.txt
+!staging.txt
 *.pdf
 .~lock.*
 local.py

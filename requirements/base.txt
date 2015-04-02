@@ -1,4 +1,5 @@
 django
+django-dcolumns
 docutils
 mysql_python
 pytz
