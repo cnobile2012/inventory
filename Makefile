@@ -24,7 +24,7 @@ tar	: clean
           $(PACKAGE_DIR))
 #----------------------------------------------------------------------
 clean	:
-	$(shell $(PREFIX)/cleanDirs.sh clean)
+	cleanDirs.sh clean
 	@(cd ${DOCS_DIR}; make clean)
 
 clobber	: clean

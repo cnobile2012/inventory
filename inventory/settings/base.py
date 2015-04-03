@@ -163,6 +163,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'dcolumn.dcolumns',
     'inventory.common',
     'inventory.apps.items',
     'inventory.apps.regions',
