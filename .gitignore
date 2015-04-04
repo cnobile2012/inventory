@@ -13,6 +13,7 @@
 local.py
 inventory/static/*/
 db-snapshots/*.sql
+db-snapshots/*.sql.gz
 logs/*.log*
 old
 

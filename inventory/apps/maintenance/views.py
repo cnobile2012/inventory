@@ -1,14 +1,8 @@
 #
 # maintenance/views.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2014-12-05 17:46:21 -0500 (Fri, 05 Dec 2014) $
-# $Revision: 95 $
-#----------------------------------
 
-import simplejson
+import json
 from django.http import HttpResponse, HttpResponseRedirect, \
      HttpResponseBadRequest
 from django.template import Context, loader
@@ -46,7 +40,7 @@ class Confirm(ViewBase):
                                       u" submit again."
 
         self._log.debug(u"Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(simplejson.dumps(response))
+        return HttpResponse(json.dumps(response))
 
 
 class Delete(ViewBase):
@@ -76,7 +70,7 @@ class Delete(ViewBase):
                     pass
 
         self._log.debug(u"Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(simplejson.dumps(response))
+        return HttpResponse(json.dumps(response))
 
     def _deleteRecords(self, pks):
         # Make the PKs integers.
@@ -172,7 +166,7 @@ class Location(ViewBase):
 
             self._log.debug(u"Context dump for %s: %s",
                             self.__module__, response)
-            result = simplejson.dumps(response)
+            result = json.dumps(response)
         else:
             form = LocationConfigForm()
             response['form'] = form

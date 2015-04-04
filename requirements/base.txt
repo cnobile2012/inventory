@@ -1,9 +1,7 @@
 django
-django-dcolumns
 docutils
 mysql_python
 pytz
-simplejson
 IPy
 redis
 django-redis-cache
