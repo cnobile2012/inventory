@@ -8,7 +8,7 @@
 # $Revision: 77 $
 #----------------------------------
 
-import simplejson
+import json
 from StringIO import StringIO
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -115,7 +115,7 @@ class ProcessLogin(ViewBase):
             response["message"] =  response["message"] % username
 
         self._log.debug("Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(simplejson.dumps(response))
+        return HttpResponse(json.dumps(response))
 
 ##     def _logoutHTML(self, user):
 ##         result = u'''
@@ -180,7 +180,7 @@ class ProcessCreateUser(ViewBase):
             response['content'] = self._formHTML(form, "create")
 
         self._log.debug(u"Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(simplejson.dumps(response))
+        return HttpResponse(json.dumps(response))
 
 
 ##############################

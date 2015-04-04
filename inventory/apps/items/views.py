@@ -1,14 +1,9 @@
 #
 # items/views.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2014-01-16 21:17:19 -0500 (Thu, 16 Jan 2014) $
-# $Revision: 87 $
-#----------------------------------
 
-import datetime, pytz, simplejson
+import json
+import datetime, pytz
 
 from django.http import HttpResponse
 from django.template import Context, loader
@@ -96,7 +91,7 @@ class ProcessRegion(ViewBase):
             response['message'] = msg + "."
 
         self._log.debug("Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(simplejson.dumps(response))
+        return HttpResponse(json.dumps(response))
 
 
 ##############################
