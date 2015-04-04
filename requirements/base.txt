@@ -1,10 +1,21 @@
 django
 django-dcolumns
-docutils
+
 mysql_python
 pytz
-simplejson
+
 IPy
+
+# Caching
 redis
 django-redis-cache
+
+# Provides REST API support.
+djangorestframework
+markdown
+django-filter
+pyyaml
+
+# Utilities
 ipython
+docutils
