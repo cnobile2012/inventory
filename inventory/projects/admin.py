@@ -22,8 +22,10 @@ class ProjectAdmin(UserAdminMixin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'public', 'updater', 'updated',)
+    list_display = ('name', 'public', 'active', 'updater', 'updated',)
     filter_horizontal = ('members',)
+    search_fields = ('name',)
+    list_filter = ('public', 'active',)
     form = ProjectForm
 
 admin.site.register(Project, ProjectAdmin)

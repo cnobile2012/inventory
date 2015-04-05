@@ -42,7 +42,13 @@ EMAIL_REPLY_TO = 'donotreply@'
 DOC_CONTACTS = (
     )
 
-LOGGING.get('loggers', {}).get('django.request', {})['level'] = 'INFO'
-LOGGING.get('loggers', {}).get('inventory.views', {})['level'] = 'INFO'
-LOGGING.get('loggers', {}).get('inventory.admin', {})['level'] = 'INFO'
-LOGGING.get('loggers', {}).get('inventory.models', {})['level'] = 'INFO'
+# Logging
+LOG_ENV = 'stage'
+LOG_FILE = '{}/{}-general.log'.format(LOG_DIR, LOG_ENV)
+LOG_API_FILE = '{}/{}-api.log'.format(LOG_DIR, LOG_ENV)
+
+LOGGING.get('handlers', {}).get('inventory_file', {})['filename'] = LOG_FILE
+LOGGING.get('handlers', {}).get('api_file', {})['filename'] = LOG_API_FILE
+
+LOGGING.get('loggers', {}).get('inventory', {})['level'] = 'INFO'
+LOGGING.get('loggers', {}).get('api', {})['level'] = 'INFO'

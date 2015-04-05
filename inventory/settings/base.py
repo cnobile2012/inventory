@@ -166,6 +166,7 @@ INSTALLED_APPS = [
     'dcolumn.dcolumns',
     'rest_framework',
     'inventory.common',
+    'inventory.user_profiles',
     'inventory.projects',
     'inventory.apps.items',
     'inventory.apps.regions',
@@ -181,7 +182,6 @@ INSTALLED_APPS = [
 # more details on how to customize your logging configuration.
 LOG_DIR = os.path.abspath(os.path.join(SITE_ROOT, '..', 'logs'))
 not os.path.isdir(LOG_DIR) and os.mkdir(LOG_DIR, 0775)
-LOG_ENV = "base"
 
 LOGGING = {
     'version': 1,
@@ -211,11 +211,20 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
             },
+        # Remove this one in the future.
         'inventory_file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'level': 'DEBUG',
             'formatter': 'verbose',
-            'filename': '%s/%s-search.log' % (LOG_DIR, LOG_ENV),
+            'filename': '/dev/null',
+            'maxBytes': 50000000,  # 50 Meg bytes
+            'backupCount': 5,
+            },
+        'api_file': {
+            'class': 'inventory.common.loghandlers.DeferredRotatingFileHandler',
+            'level': 'DEBUG',
+            'formatter': 'verbose',
+            'filename': '/dev/null',
             'maxBytes': 50000000,  # 50 Meg bytes
             'backupCount': 5,
             },
@@ -226,18 +235,13 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
             },
-        'inventory.views': {
+        'inventory': {
             'handlers': ('inventory_file', 'console', 'mail_admins',),
             'level': 'ERROR',
             'propagate': True,
             },
-        'inventory.models': {
-            'handlers': ('inventory_file', 'console', 'mail_admins',),
-            'level': 'ERROR',
-            'propagate': True,
-            },
-        'inventory.admin': {
-            'handlers': ('inventory_file', 'console', 'mail_admins',),
+        'api': {
+            'handlers': ('api_file', 'console', 'mail_admins',),
             'level': 'ERROR',
             'propagate': True,
             },

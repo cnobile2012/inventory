@@ -9,7 +9,7 @@ from rest_framework import serializers
 from .models import Project
 
 
-log = logging.getLogger('projects.serializers')
+log = logging.getLogger('api.projects.serializers')
 
 
 class ProjectSerializer(serializers.ModelSerializer):

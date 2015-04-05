@@ -4,7 +4,6 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
 
 from dcolumn.common.model_mixins import (

@@ -35,3 +35,11 @@ EMAIL_REPLY_TO = 'donotreply@'
 # Document Email Contacts
 DOC_CONTACTS = (
     )
+
+# Logging
+LOG_ENV = 'production'
+LOG_FILE = '{}/{}-general.log'.format(LOG_DIR, LOG_ENV)
+LOG_API_FILE = '{}/{}-api.log'.format(LOG_DIR, LOG_ENV)
+
+LOGGING.get('handlers', {}).get('inventory_file', {})['filename'] = LOG_FILE
+LOGGING.get('handlers', {}).get('api_file', {})['filename'] = LOG_API_FILE
