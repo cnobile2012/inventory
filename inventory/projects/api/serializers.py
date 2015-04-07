@@ -6,7 +6,8 @@ import logging
 
 from rest_framework import serializers
 
-from .models import Project
+from inventory.user_profiles.api.serializers import UserSerializer
+from inventory.projects.models import Project
 
 
 log = logging.getLogger('api.projects.serializers')
@@ -14,10 +15,10 @@ log = logging.getLogger('api.projects.serializers')
 
 class ProjectSerializer(serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(view_name='project-detail')
-    members = MemberSerializer(many=True, required=False)
+    members = UserSerializer(many=True, required=False)
 
     class Meta:
-        model = Holiday
+        model = Project
         fields = ('pk', 'name', 'public', 'active', 'created', 'updated',
                   'uri',)
         exclude = ('creator', 'updater',)

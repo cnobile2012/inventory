@@ -30,7 +30,7 @@ class UserProfile(TimeModelMixin, UserModelMixin):
         )
 
     user = models.OneToOneField(
-        User, verbose_name=_("User"), related_name='profile')
+        User, verbose_name=_("User"))
     role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT)
     projects = models.ManyToManyField(
@@ -52,7 +52,7 @@ class UserProfile(TimeModelMixin, UserModelMixin):
 
     def _full_name_reversed_producer(self):
         return self.get_full_name_reversed()
-    _full_name_reversed_producershort_description = _("User's Name")
+    _full_name_reversed_producer.short_description = _("User")
 
     def _projects_producer(self):
         return mark_safe("<br />".join(
