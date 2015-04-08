@@ -30,7 +30,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ('id', 'role', 'projects', 'creator', 'created', 'updater',
                   'updated', 'user', 'uri',)
-        #exclude = ('creator', 'updater',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
         depth = 0
 

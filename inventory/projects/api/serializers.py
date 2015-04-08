@@ -14,13 +14,13 @@ log = logging.getLogger('api.projects.serializers')
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    members = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True, many=True)
     uri = serializers.HyperlinkedIdentityField(view_name='project-detail')
-    members = UserSerializer(many=True, required=False)
 
     class Meta:
         model = Project
-        fields = ('pk', 'name', 'public', 'active', 'created', 'updated',
-                  'uri',)
-        exclude = ('creator', 'updater',)
+        fields = ('pk', 'name', 'members', 'public', 'active', 'created',
+                  'updated', 'uri',)
         read_only_fields = ('pk', 'created', 'updated',)
         depth = 0
