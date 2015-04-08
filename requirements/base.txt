@@ -12,6 +12,8 @@ django-redis-cache
 
 # Provides REST API support.
 djangorestframework
+djangorestframework-xml
+djangorestframework-yaml
 markdown
 django-filter
 pyyaml

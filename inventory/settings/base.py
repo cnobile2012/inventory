@@ -175,6 +175,26 @@ INSTALLED_APPS = [
     'inventory.apps.maintenance',
     ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework_xml.parsers.XMLParser',
+        'rest_framework_yaml.parsers.YAMLParser',
+        ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework_xml.renderers.XMLRenderer',
+        'rest_framework_yaml.renderers.YAMLRenderer',
+        ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        )
+    }
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
