@@ -16,6 +16,7 @@ djangorestframework-xml
 djangorestframework-yaml
 markdown
 django-filter
+django-guardian
 pyyaml
 
 # Utilities

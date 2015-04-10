@@ -110,6 +110,14 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'bjwykl6a7km26!0bsx%$v8g#s=+s5-(v2&d0^r8tl5++4ip$u4'
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'guardian.backends.ObjectPermissionBackend',
+    )
+
+# Guardian requirement
+ANONYMOUS_USER_ID = -1
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -134,8 +142,8 @@ CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
         'LOCATION': '/var/run/redis/redis.sock',
-    },
-}
+        },
+    }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
@@ -165,6 +173,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dcolumn.dcolumns',
     'rest_framework',
+    'guardian',
     'inventory.common',
     'inventory.user_profiles',
     'inventory.projects',
@@ -177,6 +186,7 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         'rest_framework.permissions.IsAuthenticated',
         ),
     'DEFAULT_PARSER_CLASSES': (
