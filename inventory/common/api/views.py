@@ -16,12 +16,14 @@ def api_root(request, format=None):
     The root of all URIs found in this web service.
     """
     buff = OrderedDict()
-    buff['USERS'] = 'User related endpoints.'
-    buff['groups'] = reverse('group-list', request=request, format=format)
-    buff['profiles'] = reverse('user-profile-list', request=request,
+    users = OrderedDict()
+    projects = OrderedDict()
+    buff['PROJECTS'] = projects
+    projects['projects'] = reverse('project-list', request=request,
+                                   format=format)
+    buff['USERS'] = users
+    users['groups'] = reverse('group-list', request=request, format=format)
+    users['profiles'] = reverse('user-profile-list', request=request,
                                format=format)
-    buff['users'] = reverse('user-list', request=request, format=format)
-    buff['PROJECTS'] = 'Project related endpoints.'
-    buff['projects'] = reverse('project-list', request=request, format=format)
-
+    users['users'] = reverse('user-list', request=request, format=format)
     return Response(buff)
