@@ -17,9 +17,10 @@ from django.core.exceptions import ValidationError
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
 
+from inventory.regions.models import Region, Country
+
 from inventory.apps.items.models import Manufacturer, Distributor, \
      Category, Currency, Cost, Specification, Item
-from inventory.apps.regions.models import Region, Country
 from inventory.apps.utils.admin import BaseAdmin
 from inventory.setupenv import getLogger
 

@@ -15,8 +15,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 from inventory.settings import CONDITION_TYPES
+from inventory.regions.models import Country, Region
+
 from inventory.apps.utils.models import Base
-from inventory.apps.regions.models import Country, Region
 from inventory.apps.maintenance.models import LocationCodeCategory
 
 

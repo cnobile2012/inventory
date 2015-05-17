@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/regions/models.py
 #
@@ -5,17 +6,18 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from dcolumn.common.model_mixins import UserModelMixin, TimeModelMixin
+from dcolumn.common.model_mixins import (
+    UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
 
 
 #
 # Country
 #
-class CountryManager(models.Manager):
+class CountryManager(StatusModelManagerMixin):
     pass
 
 
-class Country(TimeModelMixin, UserModelMixin):
+class Country(TimeModelMixin, UserModelMixin, StatusModelMixin):
     """
     This model implements country functionality.
     """
@@ -39,17 +41,17 @@ class Country(TimeModelMixin, UserModelMixin):
         verbose_name_plural = _("Countries")
 
     def __unicode__(self):
-        return "{} ({})".format(self.country, self.country_code_2)
+        return u"{} ({})".format(self.country, self.country_code_2)
 
 
 #
 # Region
 #
-class RegionManager(models.Manager):
+class RegionManager(StatusModelManagerMixin):
     pass
 
 
-class Region(TimeModelMixin, UserModelMixin):
+class Region(TimeModelMixin, UserModelMixin, StatusModelMixin):
     """
     This model implements region functionality.
     """
@@ -71,5 +73,5 @@ class Region(TimeModelMixin, UserModelMixin):
         verbose_name_plural = _("Regions")
 
     def __unicode__(self):
-        return "{} ({} {})".format(self.region_code, self.region,
-                                   self.primary_level)
+        return u"{} ({} {})".format(self.region_code, self.region,
+                                    self.primary_level)

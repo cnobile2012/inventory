@@ -12,9 +12,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
+from inventory.regions.models import Country
+
 from inventory.apps.utils.views import ViewBase
 from inventory.apps.items.models import Distributor, Manufacturer
-from inventory.apps.regions.models import Country
 from inventory.settings import SITE_NAME, getLogger
 
 

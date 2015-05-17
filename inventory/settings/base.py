@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # base.py
 #
@@ -177,8 +178,9 @@ INSTALLED_APPS = [
     'inventory.common',
     'inventory.user_profiles',
     'inventory.projects',
+    'inventory.regions',
     'inventory.apps.items',
-    'inventory.apps.regions',
+    #'inventory.apps.regions',
     'inventory.apps.login',
     'inventory.apps.reports',
     'inventory.apps.maintenance',
