@@ -21,11 +21,12 @@ class RegionAdmin(UserAdminMixin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('country', 'region_code', 'region', 'primary_level',
+    list_display = ('country', 'region', 'primary_level', 'region_code',
                     'active',)
     list_editable = ('active',)
     search_fields = ('country__country', 'region_code', 'region',
                      'primary_level',)
+    list_filter = ('active',)
     ordering = ('country__country', 'region_code',)
 
 
@@ -49,6 +50,7 @@ class CountryAdmin(UserAdminMixin):
     inlines = (RegionInline,)
     search_fields = ('country_code_2', 'country_code_3', 'country',
                      'country_number_code',)
+    list_filter = ('active',)
     ordering = ('country',)
 
     def save_formset(self, request, form, formset, change):
