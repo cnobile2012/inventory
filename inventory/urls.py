@@ -24,4 +24,5 @@ urlpatterns = patterns(
     url(r'^api/v1/$', include('inventory.common.api.urls')),
     url(r'^api/v1/user-profile/', include('inventory.user_profiles.api.urls')),
     url(r'^api/v1/projects/', include('inventory.projects.api.urls')),
+    url(r'^api/v1/regions/', include('inventory.regions.api.urls')),
     )

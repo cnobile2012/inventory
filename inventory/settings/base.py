@@ -180,7 +180,6 @@ INSTALLED_APPS = [
     'inventory.projects',
     'inventory.regions',
     'inventory.apps.items',
-    #'inventory.apps.regions',
     'inventory.apps.login',
     'inventory.apps.reports',
     'inventory.apps.maintenance',
@@ -204,7 +203,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        )
+        ),
     }
 
 # A sample logging configuration. The only tangible logging
