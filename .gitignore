@@ -9,6 +9,7 @@
 !production.txt
 !staging.txt
 *.pdf
+#!docs/*.pdf
 .~lock.*
 local.py
 inventory/static/*/

@@ -28,7 +28,11 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
     name = models.CharField(
         verbose_name=_("Project Name"), max_length=256)
     members = models.ManyToManyField(
-        User, verbose_name=_("Project Members"), blank=True)
+        User, verbose_name=_("Project Members"),
+        related_name='project_members', blank=True)
+    managers = models.ManyToManyField(
+        User, verbose_name=_("Project Managers"),
+        related_name='project_managers', blank=True)
     public = models.BooleanField(
         verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES)
 

@@ -16,14 +16,14 @@ from .forms import ProjectForm
 #
 class ProjectAdmin(UserAdminMixin):
     fieldsets = (
-        (None, {'fields': ('name', 'members', 'public',)}),
+        (None, {'fields': ('name', 'managers', 'members', 'public',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
     list_display = ('name', 'public', 'active', 'updater', 'updated',)
-    filter_horizontal = ('members',)
+    filter_horizontal = ('managers', 'members',)
     search_fields = ('name',)
     list_filter = ('public', 'active',)
     form = ProjectForm

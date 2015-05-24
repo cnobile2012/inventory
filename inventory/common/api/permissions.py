@@ -6,6 +6,8 @@ import logging
 
 from rest_framework.permissions import BasePermission
 
+from inventory.user_profiles.models import UserProfile
+
 
 log = logging.getLogger('api.common.permissions')
 
@@ -26,13 +28,16 @@ class IsAdminSuperUser(BasePermission):
 
 class IsProjectManager(BasePermission):
     """
-    Allows access only to project managers.
+    Allows access only to project managers or an administrator.
     """
 
     def has_permission(self, request, view):
         result = False
 
-        if request.user and request.user.userprofile.manager:
+        if (request.user.is_superuser or hasattr(request, 'user') and
+            ((hasattr(request.user, 'userprofile') and
+              request.user.userprofile.role == UserProfile.ADMINISTRATOR) or
+            request.user.project_managers.count())):
             result = True
 
         return result
@@ -44,8 +49,9 @@ class IsProjectMember(BasePermission):
     """
     def has_object_permission(self, request, view, obj):
         result = False
-        check_results = []
 
-        # DO STUFF HERE
+        if (request.user and
+            request.user.userprofile.role == UserProfile.DEFAULT):
+            result = True
 
         return result

@@ -35,15 +35,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    uri = serializers.HyperlinkedIdentityField(view_name='user-detail')
     userprofile = UserProfileSerializer(many=False, required=False)
+    #uri = serializers.HyperlinkedIdentityField(view_name='user-detail')
 
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email',
                   'is_active', 'is_staff', 'is_superuser', 'last_login',
-                  'date_joined', 'userprofile', 'uri',)
-        read_only_fields = ('id', 'last_login', 'date_joined',)
+                  'date_joined', 'userprofile',)# 'uri',)
+        read_only_fields = ('id', 'last_login', 'date_joined', 'userprofile',)
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -53,5 +53,5 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ('id', 'name', 'institution', 'user_set', 'uri',)
+        fields = ('id', 'name', 'user_set', 'uri',)
         read_only_fields = ('id',)

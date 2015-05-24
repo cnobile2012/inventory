@@ -22,11 +22,9 @@ class UserProfile(TimeModelMixin, UserModelMixin):
     """
     DEFAULT = 0
     ADMINISTRATOR = 1
-    MANAGER = 2
     ROLE = (
         (DEFAULT, _('Default')),
         (ADMINISTRATOR, _("Administrator")),
-        (MANAGER, _('Manager'))
         )
 
     user = models.OneToOneField(
