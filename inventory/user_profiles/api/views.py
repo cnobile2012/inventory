@@ -8,7 +8,8 @@ from django.contrib.auth.models import User, Group
 
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
-from inventory.common.api.permissions import IsAdminSuperUser
+from inventory.common.api.pagination import SmallResultsSetPagination
+#from inventory.common.api.permissions import IsAdminSuperUser
 from inventory.user_profiles.models import UserProfile
 
 from .serializers import UserSerializer, GroupSerializer, UserProfileSerializer
@@ -17,49 +18,190 @@ from .serializers import UserSerializer, GroupSerializer, UserProfileSerializer
 log = logging.getLogger('api.user_profiles.views')
 
 
-class UserList(ListAPIView):
+#
+# User
+#
+class UserAuthorizationMixin(object):
+
+    def get_queryset(self):
+        result = []
+
+        if self.request.user.is_superuser:
+            result = User.objects.all()
+        elif hasattr(self.request.user, 'userprofile'):
+            if self.request.user.userprofile.role == UserProfile.ADMINISTRATOR:
+                result = User.objects.all()
+            else:
+                result = [self.request.user]
+
+        return result
+
+
+class UserList(UserAuthorizationMixin, ListAPIView):
+    """
+    User list endpoint.
+
+    ## Keywords:
+      * format `str` (optional)
+        * Determines which output format to use.
+      * page `int` (optional)
+        * Page number, starts at 1.
+      * page_size `int` (optional)
+        * Number of items to return in the page. Default is 25 maximum is 200.
+
+    ## Examples:
+      1. `/?format=api`
+        * Returns items in HTML format.
+      2. `/?format=json`
+        * Returns items in JSON format.
+      3. `/?format=xml`
+        * Returns items in XML format.
+      3. `/?format=yaml`
+        * Returns items in YAML format.
+      4. `/`
+        * Returns the first page of 25 items.
+      5. `/?page=1`
+        * Returns the first page of 25 items.
+      6. `/?page=3&page_size=100`
+        * Returns 100 items in the third page.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminSuperUser,)
+    #permission_classes = (IsAdminSuperUser,)
+    pagination_class = SmallResultsSetPagination
 
 user_list = UserList.as_view()
 
 
-class UserDetail(RetrieveAPIView):
+class UserDetail(UserAuthorizationMixin, RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminSuperUser,)
+    #permission_classes = (IsAdminSuperUser,)
 
 user_detail = UserDetail.as_view()
 
 
-class GroupList(ListAPIView):
+#
+# Group
+#
+class GroupAuthorizationMixin(object):
+
+    def get_queryset(self):
+        result = []
+
+        if self.request.user.is_superuser:
+            result = Group.objects.all()
+        elif hasattr(self.request.user, 'userprofile'):
+            if self.request.user.userprofile.role == UserProfile.ADMINISTRATOR:
+                result = Group.objects.all()
+            else:
+                result = self.request.user.groups.all()
+
+        return result
+
+
+class GroupList(GroupAuthorizationMixin, ListAPIView):
+    """
+    Group list endpoint.
+
+    ## Keywords:
+      * format `str` (optional)
+        * Determines which output format to use.
+      * page `int` (optional)
+        * Page number, starts at 1.
+      * page_size `int` (optional)
+        * Number of items to return in the page. Default is 25 maximum is 200.
+
+    ## Examples:
+      1. `/?format=api`
+        * Returns items in HTML format.
+      2. `/?format=json`
+        * Returns items in JSON format.
+      3. `/?format=xml`
+        * Returns items in XML format.
+      3. `/?format=yaml`
+        * Returns items in YAML format.
+      4. `/`
+        * Returns the first page of 25 items.
+      5. `/?page=1`
+        * Returns the first page of 25 items.
+      6. `/?page=3&page_size=100`
+        * Returns 100 items in the third page.
+    """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (IsAdminSuperUser,)
+    #permission_classes = (IsAdminSuperUser,)
+    pagination_class = SmallResultsSetPagination
 
 group_list = GroupList.as_view()
 
 
-class GroupDetail(RetrieveAPIView):
+class GroupDetail(GroupAuthorizationMixin, RetrieveAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (IsAdminSuperUser,)
+    #permission_classes = (IsAdminSuperUser,)
 
 group_detail = GroupDetail.as_view()
 
 
-class UserProfileList(ListAPIView):
+#
+# UserProfile
+#
+class UserProfileAuthorizationMixin(object):
+
+    def get_queryset(self):
+        result = []
+
+        if self.request.user.is_superuser:
+            result = UserProfile.objects.all()
+        elif hasattr(self.request.user, 'userprofile'):
+            if self.request.user.userprofile.role == UserProfile.ADMINISTRATOR:
+                result = UserProfile.objects.all()
+            else:
+                result = [self.request.user.userprofile]
+
+        return result
+
+
+class UserProfileList(UserProfileAuthorizationMixin, ListAPIView):
+    """
+    UserProfile list endpoint.
+
+    ## Keywords:
+      * format `str` (optional)
+        * Determines which output format to use.
+      * page `int` (optional)
+        * Page number, starts at 1.
+      * page_size `int` (optional)
+        * Number of items to return in the page. Default is 25 maximum is 200.
+
+    ## Examples:
+      1. `/?format=api`
+        * Returns items in HTML format.
+      2. `/?format=json`
+        * Returns items in JSON format.
+      3. `/?format=xml`
+        * Returns items in XML format.
+      3. `/?format=yaml`
+        * Returns items in YAML format.
+      4. `/`
+        * Returns the first page of 25 items.
+      5. `/?page=1`
+        * Returns the first page of 25 items.
+      6. `/?page=3&page_size=100`
+        * Returns 100 items in the third page.
+    """
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = (IsAdminSuperUser,)
+    #permission_classes = (IsAdminSuperUser,)
+    pagination_class = SmallResultsSetPagination
 
 user_profile_list = UserProfileList.as_view()
 
 
-class UserProfileDetail(RetrieveAPIView):
+class UserProfileDetail(UserProfileAuthorizationMixin, RetrieveAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = (IsAdminSuperUser,)
+    #permission_classes = (IsAdminSuperUser,)
 
 user_profile_detail = UserProfileDetail.as_view()
