@@ -8,7 +8,8 @@ from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 
-from inventory.common.api.permissions import IsAdminSuperUser, IsProjectManager
+from inventory.common.api.permissions import (
+    IsAdminSuperUser, IsAdministrator, IsProjectManager)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.projects.models import Project
 from inventory.user_profiles.models import UserProfile
@@ -19,6 +20,9 @@ from .serializers import ProjectSerializer
 log = logging.getLogger('api.projects.views')
 
 
+#
+# Project
+#
 class ProjectAuthorizationMixin(object):
 
     def get_queryset(self):

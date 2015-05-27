@@ -8,8 +8,9 @@ from django.contrib.auth.models import User, Group
 
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
+from inventory.common.api.permissions import (
+    IsAdminSuperUser, IsAdministrator, IsProjectManager)
 from inventory.common.api.pagination import SmallResultsSetPagination
-#from inventory.common.api.permissions import IsAdminSuperUser
 from inventory.user_profiles.models import UserProfile
 
 from .serializers import UserSerializer, GroupSerializer, UserProfileSerializer
@@ -67,7 +68,7 @@ class UserList(UserAuthorizationMixin, ListAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    #permission_classes = (IsAdminSuperUser,)
+    permission_classes = (IsAdminSuperUser, IsAdministrator, IsProjectManager)
     pagination_class = SmallResultsSetPagination
 
 user_list = UserList.as_view()
@@ -76,7 +77,7 @@ user_list = UserList.as_view()
 class UserDetail(UserAuthorizationMixin, RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    #permission_classes = (IsAdminSuperUser,)
+    permission_classes = (IsAdminSuperUser, IsAdministrator, IsProjectManager)
 
 user_detail = UserDetail.as_view()
 
@@ -130,7 +131,7 @@ class GroupList(GroupAuthorizationMixin, ListAPIView):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    #permission_classes = (IsAdminSuperUser,)
+    permission_classes = (IsAdminSuperUser, IsAdministrator, IsProjectManager)
     pagination_class = SmallResultsSetPagination
 
 group_list = GroupList.as_view()
@@ -139,7 +140,7 @@ group_list = GroupList.as_view()
 class GroupDetail(GroupAuthorizationMixin, RetrieveAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    #permission_classes = (IsAdminSuperUser,)
+    permission_classes = (IsAdminSuperUser, IsAdministrator, IsProjectManager)
 
 group_detail = GroupDetail.as_view()
 
@@ -193,7 +194,7 @@ class UserProfileList(UserProfileAuthorizationMixin, ListAPIView):
     """
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    #permission_classes = (IsAdminSuperUser,)
+    permission_classes = (IsAdminSuperUser, IsAdministrator, IsProjectManager)
     pagination_class = SmallResultsSetPagination
 
 user_profile_list = UserProfileList.as_view()
@@ -202,6 +203,6 @@ user_profile_list = UserProfileList.as_view()
 class UserProfileDetail(UserProfileAuthorizationMixin, RetrieveAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    #permission_classes = (IsAdminSuperUser,)
+    permission_classes = (IsAdminSuperUser, IsAdministrator, IsProjectManager)
 
 user_profile_detail = UserProfileDetail.as_view()

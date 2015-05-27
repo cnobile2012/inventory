@@ -26,32 +26,33 @@ class IsAdminSuperUser(BasePermission):
         return result
 
 
-class IsProjectManager(BasePermission):
+class IsAdministrator(BasePermission):
     """
-    Allows access only to project managers or an administrator.
+    Allows access only to an administrator.
     """
 
     def has_permission(self, request, view):
         result = False
 
-        if (request.user.is_superuser or hasattr(request, 'user') and
-            ((hasattr(request.user, 'userprofile') and
-              request.user.userprofile.role == UserProfile.ADMINISTRATOR) or
-            request.user.project_managers.count())):
+        if (hasattr(request, 'user') and
+            hasattr(request.user, 'userprofile') and
+            request.user.userprofile.role == UserProfile.ADMINISTRATOR):
             result = True
 
         return result
 
 
-class IsProjectMember(BasePermission):
+class IsProjectManager(BasePermission):
     """
-    Check that the project is authorized for this user.
+    Allows access only to project managers.
     """
-    def has_object_permission(self, request, view, obj):
+
+    def has_permission(self, request, view):
         result = False
 
-        if (request.user and
-            request.user.userprofile.role == UserProfile.DEFAULT):
+        if (hasattr(request, 'user') and
+            hasattr(request.user, 'userprofile') and
+            request.user.project_managers.count()):
             result = True
 
         return result
