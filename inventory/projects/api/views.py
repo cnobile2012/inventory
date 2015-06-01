@@ -7,6 +7,7 @@ import logging
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
+from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager)
@@ -68,6 +69,8 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
         * Returns 100 items in the third page.
     """
     serializer_class = ProjectSerializer
+    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
+                             IsProjectManager,),)
     pagination_class = SmallResultsSetPagination
 
     def pre_save(self, obj):
@@ -81,6 +84,8 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     Project detail endpoint.
     """
     queryset = Project.objects.all()
+    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
+                             IsProjectManager,),)
     serializer_class = ProjectSerializer
 
 project_detail = ProjectDetail.as_view()

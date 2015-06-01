@@ -46,7 +46,14 @@ class UserProfile(TimeModelMixin, UserModelMixin):
         return self.get_full_name_reversed()
 
     def get_full_name_reversed(self):
-        return "{}, {}".format(self.user.last_name, self.user.first_name)
+        result = None
+
+        if self.user.last_name or self.user.first_name:
+            result = "{}, {}".format(self.user.last_name, self.user.first_name)
+        else:
+            result = self.user.username
+
+        return result
 
     def _full_name_reversed_producer(self):
         return self.get_full_name_reversed()

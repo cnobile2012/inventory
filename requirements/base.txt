@@ -14,10 +14,11 @@ django-redis-cache
 djangorestframework
 djangorestframework-xml
 djangorestframework-yaml
-markdown
+rest_condition
 django-filter
 django-guardian
 pyyaml
+markdown
 
 # Utilities
 ipython

@@ -6,7 +6,10 @@ import logging
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+from rest_condition import ConditionalPermission, C, And, Or, Not
 
+from inventory.common.api.permissions import (
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.regions.models import Country, Region
 
@@ -49,7 +52,8 @@ class CountryList(ListCreateAPIView):
     """
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    #permission_classes = (,)
+    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
+                             IsProjectManager, IsUser,),)
     pagination_class = SmallResultsSetPagination
 
     def pre_save(self, obj):
@@ -64,7 +68,8 @@ class CountryDetail(RetrieveUpdateDestroyAPIView):
     """
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    #permission_classes = (,)
+    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
+                             IsProjectManager, IsUser,),)
 
     def pre_save(self, obj):
         obj.upater = self.request.user
@@ -105,7 +110,8 @@ class RegionList(ListCreateAPIView):
     """
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
-    #permission_classes = (,)
+    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
+                             IsProjectManager, IsUser,),)
     pagination_class = SmallResultsSetPagination
 
     def pre_save(self, obj):
@@ -120,7 +126,8 @@ class RegionDetail(RetrieveUpdateDestroyAPIView):
     """
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
-    #permission_classes = (,)
+    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
+                             IsProjectManager, IsUser,),)
 
     def pre_save(self, obj):
         obj.upater = self.request.user
