@@ -6,7 +6,8 @@ import logging
 
 from django.contrib.auth.models import User, Group
 
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import (
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from inventory.common.api.permissions import (
@@ -39,7 +40,7 @@ class UserAuthorizationMixin(object):
         return result
 
 
-class UserList(UserAuthorizationMixin, ListAPIView):
+class UserList(UserAuthorizationMixin, ListCreateAPIView):
     """
     User list endpoint.
 
@@ -76,7 +77,7 @@ class UserList(UserAuthorizationMixin, ListAPIView):
 user_list = UserList.as_view()
 
 
-class UserDetail(UserAuthorizationMixin, RetrieveAPIView):
+class UserDetail(UserAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
@@ -104,7 +105,7 @@ class GroupAuthorizationMixin(object):
         return result
 
 
-class GroupList(GroupAuthorizationMixin, ListAPIView):
+class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
     """
     Group list endpoint.
 
@@ -141,7 +142,7 @@ class GroupList(GroupAuthorizationMixin, ListAPIView):
 group_list = GroupList.as_view()
 
 
-class GroupDetail(GroupAuthorizationMixin, RetrieveAPIView):
+class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
@@ -169,7 +170,7 @@ class UserProfileAuthorizationMixin(object):
         return result
 
 
-class UserProfileList(UserProfileAuthorizationMixin, ListAPIView):
+class UserProfileList(UserProfileAuthorizationMixin, ListCreateAPIView):
     """
     UserProfile list endpoint.
 
@@ -206,7 +207,8 @@ class UserProfileList(UserProfileAuthorizationMixin, ListAPIView):
 user_profile_list = UserProfileList.as_view()
 
 
-class UserProfileDetail(UserProfileAuthorizationMixin, RetrieveAPIView):
+class UserProfileDetail(UserProfileAuthorizationMixin,
+                        RetrieveUpdateDestroyAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
