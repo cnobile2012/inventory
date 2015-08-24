@@ -2,6 +2,8 @@
 # inventory/user_profiles/api/tests/test_users.py
 #
 
+import json
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -29,25 +31,29 @@ class TestUser(APITestCase):
         self._set_user_auth(use_token=False)
         self.client.force_authenticate(user=self.user)
         uri = reverse('user-list')
-        data = {'username': 'NewUser',}
+        data = {'username': 'NewUser', 'password': 'NewUserPassword'}
         response = self._get_response_value_POST(uri, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data, data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        msg = "Full data: {}".format(response.data)
+        self.assertEqual(response.data.get('username'), data.get('username'),
+                         msg)
+
+    def test_user_list_no_permissions(self):
+        """
+        Test the user_list endpoint with no permissions.
+        """
+        self._create_user()
+        self._set_user_auth(use_token=False)
+        uri = reverse('user-list')
+        values = self._get_response_value_GET(uri, 'username', num_records=0)
+        self.assertEqual(values, [])
 
 
 
 
 
-
-    ## def test_user_list_no_permissions(self):
-    ##     """
-    ##     Test the user_list endpoint with no permissions.
-    ##     """
-    ##     self._create_user()
-    ##     self._set_user_auth(use_token=False)
-    ##     values = self._get_response_value('?format=json', 'username',
-    ##                                       num_records=0)
-    ##     self.assertEqual(values, [])
 
 
 
@@ -73,7 +79,7 @@ class TestUser(APITestCase):
     def _get_response_value_POST(self, uri, data, format='json'):
         return self.client.post(uri, data, format=format)
 
-    def _get_response_value_GET(self, uri, format, field, num_records=1):
+    def _get_response_value_GET(self, uri, field, format='json', num_records=1):
         response = self.client.get(uri, format=format)
         results = response.data.get('results', [])
         self.assertTrue(len(results) == num_records)
