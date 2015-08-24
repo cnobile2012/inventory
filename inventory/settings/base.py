@@ -193,6 +193,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
         ),
     'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
         'rest_framework_xml.parsers.XMLParser',
         'rest_framework_yaml.parsers.YAMLParser',
         ),
@@ -207,6 +208,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer'
+        )
     }
 
 # A sample logging configuration. The only tangible logging
