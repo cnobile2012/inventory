@@ -21,6 +21,9 @@ DATABASES = {
         'HOST': 'localhost',
         # Set to empty string for default. Not used with sqlite3.
         'PORT': '',
+        # Only Use when DB is created then comment.
+        #'OPTIONS': {'init_command': 'SET storage_engine=InnoDB;',
+        #            'charset': 'utf8'},
     }
 }
 

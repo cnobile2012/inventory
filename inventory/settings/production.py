@@ -8,6 +8,9 @@ DATABASES = {
         'PASSWORD': 'inventory',
         'HOST': '',
         'PORT': '',
+        # Only Use when DB is created then comment.
+        #'OPTIONS': {'init_command': 'SET storage_engine=InnoDB;',
+        #            'charset': 'utf8'},
     }
 }
 
