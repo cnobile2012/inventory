@@ -11,8 +11,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         # Or path to database file if using sqlite3.
         'NAME': 'inventory',
-        # Test DB name.
-        'TEST_NAME': 'test_inventory',
         # Not used with sqlite3.
         'USER': 'inventory',
         # Not used with sqlite3.
