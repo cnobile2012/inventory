@@ -43,7 +43,7 @@ class TestUser(APITestCase):
         msg = "Full data: {}".format(response.data)
         self.assertEqual(response.data.get('username'), data.get('username'),
                          msg)
-        response = self.client.get(uri, format=format)
+        response = self.client.get(uri, format='json')
         results = response.data.get('results', [])
         values = [d.get('username') for d in results]
         msg = "Values: {}".format(values)
@@ -58,7 +58,7 @@ class TestUser(APITestCase):
             password="TEMP-{}".format(random.randint(10000, 99999)))
         self._set_user_auth(use_token=False)
         uri = reverse('user-list')
-        response = self.client.get(uri, format=format)
+        response = self.client.get(uri, format='json')
         msg = "Data: {}".format(response.data)
         self.assertTrue('detail' in response.data, msg)
 
