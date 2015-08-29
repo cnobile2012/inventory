@@ -1,8 +1,11 @@
 #
 # inventory/user_profiles/api/tests/test_users.py
 #
+# Run ./manage.py test -k # Keep the DB, don't rebuild.
+#
 
 import json
+import random
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -27,36 +30,37 @@ class TestUser(APITestCase):
         """
         Ensure we can create a new account.
         """
+        users = [u'AnonymousUser', u'TestUser', u'NewUser']
         self._create_user()
         self._set_user_auth(use_token=False)
         self.client.force_authenticate(user=self.user)
         uri = reverse('user-list')
         data = {'username': 'NewUser', 'password': 'NewUserPassword'}
-        response = self._get_response_value_POST(uri, data)
+        response = self.client.post(uri, data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         msg = "Full data: {}".format(response.data)
         self.assertEqual(response.data.get('username'), data.get('username'),
                          msg)
+        response = self.client.get(uri, format=format)
+        results = response.data.get('results', [])
+        values = [d.get('username') for d in results]
+        msg = "Values: {}".format(values)
+        self.assertEqual(values, users, msg)
 
     def test_user_list_no_permissions(self):
         """
         Test the user_list endpoint with no permissions.
         """
-        self._create_user()
+        self._create_user(
+            username="TEMP-{}".format(random.randint(10000, 99999)),
+            password="TEMP-{}".format(random.randint(10000, 99999)))
         self._set_user_auth(use_token=False)
         uri = reverse('user-list')
-        values = self._get_response_value_GET(uri, 'username', num_records=0)
-        self.assertEqual(values, [])
-
-
-
-
-
-
-
-
+        response = self.client.get(uri, format=format)
+        msg = "Data: {}".format(response.data)
+        self.assertTrue('detail' in response.data, msg)
 
 
     def _create_user(self, username=_TEMP_USERNAME, password=_TEMP_PASSWORD):
@@ -75,17 +79,3 @@ class TestUser(APITestCase):
             self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         else:
             self.client.login(username=username, password=password)
-
-    def _get_response_value_POST(self, uri, data, format='json'):
-        return self.client.post(uri, data, format=format)
-
-    def _get_response_value_GET(self, uri, field, format='json', num_records=1):
-        response = self.client.get(uri, format=format)
-        results = response.data.get('results', [])
-        self.assertTrue(len(results) == num_records)
-        values = []
-
-        for num in range(num_records):
-            values.append(results[num].get(field))
-
-        return values
