@@ -22,8 +22,8 @@ DATABASES = {
         # Only Use when DB is created then comment.
         #'OPTIONS': {'init_command': 'SET storage_engine=InnoDB;',
         #            'charset': 'utf8'},
+        }
     }
-}
 
 #KEY_PREFIX = 'dev'
 #KEY_FUNCTION = 'inventory.common.caching.make_key'
