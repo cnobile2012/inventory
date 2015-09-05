@@ -66,7 +66,7 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
       5. `/?page=1`
         * Returns the first page of 25 items.
       6. `/?page=3&page_size=100`
-        * Returns 100 items in the third page.
+        * Returns the third page of 100 items..
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -131,7 +131,7 @@ class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
       5. `/?page=1`
         * Returns the first page of 25 items.
       6. `/?page=3&page_size=100`
-        * Returns 100 items in the third page.
+        * Returns the third page of 100 items.
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -196,7 +196,7 @@ class UserProfileList(UserProfileAuthorizationMixin, ListCreateAPIView):
       5. `/?page=1`
         * Returns the first page of 25 items.
       6. `/?page=3&page_size=100`
-        * Returns 100 items in the third page.
+        * Returns the third page or 100 items.
     """
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
