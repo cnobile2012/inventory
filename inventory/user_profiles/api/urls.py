@@ -3,6 +3,7 @@
 #
 
 from django.conf.urls import patterns, include, url
+from rest_framework.authtoken import views
 
 
 urlpatterns = patterns(
@@ -15,3 +16,7 @@ urlpatterns = patterns(
     url(r'user-profile/(?P<pk>\d+)/$', 'user_profile_detail',
         name="user-profile-detail"),
     )
+
+urlpatterns += [
+    url(r'^api-token-auth/', views.obtain_auth_token)
+    ]
