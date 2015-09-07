@@ -8,13 +8,14 @@ from django.contrib.auth.models import User, Group
 
 from rest_framework import serializers
 
+from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.user_profiles.models import UserProfile
 
 
 log = logging.getLogger('api.user_profiles.serializers')
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(SerializerMixin, serializers.ModelSerializer):
     projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', many=True, read_only=True)
     creator = serializers.HyperlinkedRelatedField(
@@ -38,15 +39,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.projects = validated_data.get('projects', instance.projects)
         instance.save()
         return instance
-
-    def _get_user_object(self):
-        request = self.context.get('request', None)
-        user = None
-
-        if request:
-            user = request.user
-
-        return user
 
     class Meta:
         model = UserProfile
