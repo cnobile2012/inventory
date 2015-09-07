@@ -40,7 +40,7 @@ class TestRegion(APITestCase):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        msg = "Full data: {}".format(data)
+        msg = "Response data: {}".format(data)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
         # Get the same record through the API.
         uri = reverse('country-detail', kwargs={'pk': data.get('id')})
@@ -51,18 +51,25 @@ class TestRegion(APITestCase):
         self.assertTrue(data.get('active'), msg)
 
     def test_create_region(self):
-        # Create thec ountry.
+        # Create the ountry.
         uri = reverse('country-list')
         new_data = {'country': 'Country-02', 'country_code_2': 'C2'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         # Create the region.
+        pk = data.get('id')
+        country_detail_uri = reverse('country-detail', kwargs={'pk': pk})
         uri = reverse('region-list')
-        new_data = {'country': data.get('country'),
+        new_data = {'country': country_detail_uri,
                     'region': 'New Region',
                     'region_code': 'NR'}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertEqual(data.get('region'), new_data.get('region'), msg)
         # Get the same record through the API.
-        uri = reverse('region-detail', kwargs={'pk': data.get('id')})
+        pk = data.get('id')
+        uri = reverse('region-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response data: {}".format(data)
