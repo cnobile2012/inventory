@@ -48,10 +48,26 @@ class TestRegion(APITestCase):
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
+        self.assertTrue(data.get('active'), msg)
 
-
-
-
+    def test_create_region(self):
+        # Create thec ountry.
+        uri = reverse('country-list')
+        new_data = {'country': 'Country-02', 'country_code_2': 'C2'}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        # Create the region.
+        uri = reverse('region-list')
+        new_data = {'country': data.get('country'),
+                    'region': 'New Region',
+                    'region_code': 'NR'}
+        # Get the same record through the API.
+        uri = reverse('region-detail', kwargs={'pk': data.get('id')})
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertEqual(data.get('region'), new_data.get('region'), msg)
+        self.assertTrue(data.get('active'), msg)
 
 
 
