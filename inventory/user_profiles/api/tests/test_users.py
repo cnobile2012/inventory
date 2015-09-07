@@ -1,10 +1,10 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/user_profiles/api/tests/test_users.py
 #
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
 
-import json
 import random
 
 from django.contrib.auth.models import User
@@ -26,7 +26,6 @@ class TestUser(APITestCase):
     def setUp(self):
         self.user = None
         self.client = None
-        self.token_key = None
 
     def tearDown(self):
         self.client.logout()
@@ -78,7 +77,6 @@ class TestUser(APITestCase):
             username="TEMP-{}".format(random.randint(10000, 99999)),
             password="TEMP-{}".format(random.randint(10000, 99999)))
         self._set_user_auth(use_token=True)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_key)
         uri = reverse('user-list')
         data = {'username': 'NewUser', 'password': 'NewUserPassword'}
         response = self.client.post(uri, data, format='json')
