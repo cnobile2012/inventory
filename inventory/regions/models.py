@@ -40,6 +40,9 @@ class Country(TimeModelMixin, UserModelMixin, StatusModelMixin):
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
 
+    def save(self, *args, **kwargs):
+        super(Country, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return u"{} ({})".format(self.country, self.country_code_2)
 
@@ -71,6 +74,9 @@ class Region(TimeModelMixin, UserModelMixin, StatusModelMixin):
         ordering = ('region', 'region_code',)
         verbose_name = _("Region")
         verbose_name_plural = _("Regions")
+
+    def save(self, *args, **kwargs):
+        super(Region, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u"{} ({} {})".format(self.region_code, self.region,

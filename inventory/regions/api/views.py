@@ -56,9 +56,6 @@ class CountryList(ListCreateAPIView):
                              IsProjectManager, IsUser,),)
     pagination_class = SmallResultsSetPagination
 
-    def pre_save(self, obj):
-        obj.upater = self.request.user
-
 country_list = CountryList.as_view()
 
 
@@ -70,9 +67,6 @@ class CountryDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = CountrySerializer
     permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
                              IsProjectManager, IsUser,),)
-
-    def pre_save(self, obj):
-        obj.upater = self.request.user
 
 country_detail = CountryDetail.as_view()
 
@@ -114,9 +108,6 @@ class RegionList(ListCreateAPIView):
                              IsProjectManager, IsUser,),)
     pagination_class = SmallResultsSetPagination
 
-    def pre_save(self, obj):
-        obj.upater = self.request.user
-
 region_list = RegionList.as_view()
 
 
@@ -128,8 +119,5 @@ class RegionDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = RegionSerializer
     permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
                              IsProjectManager, IsUser,),)
-
-    def pre_save(self, obj):
-        obj.upater = self.request.user
 
 region_detail = RegionDetail.as_view()
