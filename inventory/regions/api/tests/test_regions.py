@@ -5,8 +5,6 @@
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
 
-import json
-
 from rest_framework.reverse import reverse
 from rest_framework import status
 
