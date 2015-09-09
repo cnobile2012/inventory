@@ -7,13 +7,8 @@
 
 import random
 
-from django.contrib.auth.models import User
-
 from rest_framework.reverse import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
-from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
 
 from inventory.common.api.tests.base_test import BaseTest
 
@@ -48,7 +43,8 @@ class TestUser(BaseTest):
 
     def test_user_list_no_permissions(self):
         """
-        Test the user_list endpoint with no permissions.
+        Test the user_list endpoint with no permissions. We overwrite the
+        self.client created in the setUp method in the base class.
         """
         self._create_user(
             username="TEMP-{}".format(random.randint(10000, 99999)),
@@ -62,7 +58,8 @@ class TestUser(BaseTest):
 
     def test_user_list_with_token(self):
         """
-        Test use of API with token.
+        Test use of API with token.. We overwrite the self.client created in
+        the setUp method in the base class.
         """
         self._create_user(
             username="TEMP-{}".format(random.randint(10000, 99999)),
