@@ -33,7 +33,7 @@ class UserProfile(TimeModelMixin, UserModelMixin):
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT)
     projects = models.ManyToManyField(
         Project, verbose_name=_("Projects"), blank=True)
-    #picture = models.ImageField(upload_to='thumbpath', blank=True)
+    #picture = models.ImageField(upload_to='thumbpath', null=True, blank=True)
 
     objects = UserProfileManager()
 
