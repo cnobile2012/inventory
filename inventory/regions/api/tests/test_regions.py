@@ -224,13 +224,13 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-07', 'country_code_2': 'C7'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        pk = data.get('id')
         # Get the API list OPTIONS.
         response = self.client.options(uri, format='json')
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('name'), 'Country List', msg)
         # Get the API detail OPTIONS.
+        pk = data.get('id')
         uri = reverse('country-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data

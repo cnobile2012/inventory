@@ -11,6 +11,7 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.user_profiles.models import UserProfile
+from inventory.projects.models import Project
 
 
 log = logging.getLogger('api.user_profiles.serializers')
@@ -37,7 +38,6 @@ class UserProfileSerializer(SerializerMixin, serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.updater = self._get_user_object()
         instance.role = validated_data.get('role', instance.role)
-        instance.projects = validated_data.get('projects', instance.projects)
         instance.save()
         return instance
 
@@ -46,7 +46,6 @@ class UserProfileSerializer(SerializerMixin, serializers.ModelSerializer):
         fields = ('id', 'role', 'projects', 'creator', 'created', 'updater',
                   'updated', 'user', 'uri',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
-        depth = 0
 
 
 class UserSerializer(serializers.ModelSerializer):
