@@ -45,3 +45,13 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
 
     def __unicode__(self):
         return self.name
+
+    def process_members(self, members):
+        new_pks = [inst.pk for inst in members]
+        old_pks = [inst.pk for inst in self.members.all()]
+        rem_pks = list(set(old_pks) - set(new_pks))
+        # Remove unwanted members.
+        self.members.remove(*self.members.filter(pk__in=rem_pks))
+        add_pks = list(set(new_pks) - set(old_pks))
+        new_mem = User.objects.filter(pk__in=add_pks)
+        self.members.add(*new_mem)
