@@ -41,7 +41,7 @@ class TestProject(BaseTest):
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
-                    'members': [self.user_uri,]}
+                    'members': [self.user_uri,], 'managers': [self.user_uri,]}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -60,7 +60,7 @@ class TestProject(BaseTest):
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
-                    'members': [self.user_uri,]}
+                    'members': [self.user_uri,], 'managers': [self.user_uri,]}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -87,7 +87,7 @@ class TestProject(BaseTest):
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
-                    'members': [self.user_uri,]}
+                    'members': [self.user_uri,], 'managers': [self.user_uri,]}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -114,7 +114,7 @@ class TestProject(BaseTest):
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
-                    'members': [self.user_uri,]}
+                    'members': [self.user_uri,], 'managers': [self.user_uri,]}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -144,7 +144,7 @@ class TestProject(BaseTest):
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
-                    'members': [self.user_uri,]}
+                    'members': [self.user_uri,], 'managers': [self.user_uri,]}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         pk = data.get('id')
@@ -163,3 +163,120 @@ class TestProject(BaseTest):
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('name'), 'Project Detail', msg)
 
+    def test_adding_member_patch(self):
+        # Create Project with POST.
+        uri = reverse('project-list')
+        new_data = {'name': 'Test Project', 'public': False, 'active': True,
+                    'members': [self.user_uri,], 'managers': [self.user_uri,]}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self.assertTrue(len(data.get('members')) == 1, msg)
+        # Add member
+        pk = data.get('id')
+        uri = reverse('project-detail', kwargs={'pk': pk})
+        new_user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data['members'] = [self.user_uri, new_user_uri]
+        response = self.client.patch(uri, new_data, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)        
+        self.assertTrue(len(data.get('members')) == 2, msg)
+        # Get the same record through the API.
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertTrue(any([uri for uri in data.get('members')
+                             if self.user_uri in uri]), msg)
+        self.assertTrue(any([uri for uri in data.get('members')
+                             if new_user_uri in uri]), msg)
+
+    def test_removing_member_patch(self):
+        # Create Project with POST.
+        uri = reverse('project-list')
+        new_user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Project', 'public': False, 'active': True,
+                    'members': [self.user_uri, new_user_uri],
+                    'managers': [self.user_uri]}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self.assertTrue(len(data.get('members')) == 2, msg)
+        # Remove member
+        pk = data.get('id')
+        uri = reverse('project-detail', kwargs={'pk': pk})
+        new_data['members'] = [self.user_uri]
+        response = self.client.patch(uri, new_data, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertTrue(len(data.get('members')) == 1, msg)
+        # Get the same record through the API.
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertTrue(any([uri for uri in data.get('members')
+                             if self.user_uri in uri]), msg)
+        self.assertFalse(any([uri for uri in data.get('members')
+                              if new_user_uri in uri]), msg)
+
+    def test_adding_manager_patch(self):
+        # Create Project with POST.
+        uri = reverse('project-list')
+        new_data = {'name': 'Test Project', 'public': False, 'active': True,
+                    'members': [self.user_uri,], 'managers': [self.user_uri,]}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self.assertTrue(len(data.get('managers')) == 1, msg)
+        # Add manager
+        pk = data.get('id')
+        uri = reverse('project-detail', kwargs={'pk': pk})
+        new_user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data['managers'] = [self.user_uri, new_user_uri]
+        response = self.client.patch(uri, new_data, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)        
+        self.assertTrue(len(data.get('managers')) == 2, msg)
+        # Get the same record through the API.
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertTrue(any([uri for uri in data.get('managers')
+                             if self.user_uri in uri]), msg)
+        self.assertTrue(any([uri for uri in data.get('managers')
+                             if new_user_uri in uri]), msg)
+
+    def test_removing_manager_patch(self):
+        # Create Project with POST.
+        uri = reverse('project-list')
+        new_user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Project', 'public': False, 'active': True,
+                    'members': [self.user_uri,],
+                    'managers': [self.user_uri, new_user_uri]}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self.assertTrue(len(data.get('managers')) == 2, msg)
+        # Remove manager
+        pk = data.get('id')
+        uri = reverse('project-detail', kwargs={'pk': pk})
+        new_data['managers'] = [self.user_uri]
+        response = self.client.patch(uri, new_data, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertTrue(len(data.get('managers')) == 1, msg)
+        # Get the same record through the API.
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response data: {}".format(data)
+        self.assertTrue(any([uri for uri in data.get('managers')
+                             if self.user_uri in uri]), msg)
+        self.assertFalse(any([uri for uri in data.get('managers')
+                              if new_user_uri in uri]), msg)

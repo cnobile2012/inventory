@@ -55,3 +55,13 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         add_pks = list(set(new_pks) - set(old_pks))
         new_mem = User.objects.filter(pk__in=add_pks)
         self.members.add(*new_mem)
+
+    def process_managers(self, managers):
+        new_pks = [inst.pk for inst in managers]
+        old_pks = [inst.pk for inst in self.managers.all()]
+        rem_pks = list(set(old_pks) - set(new_pks))
+        # Remove unwanted managers.
+        self.managers.remove(*self.managers.filter(pk__in=rem_pks))
+        add_pks = list(set(new_pks) - set(old_pks))
+        new_man = User.objects.filter(pk__in=add_pks)
+        self.managers.add(*new_man)
