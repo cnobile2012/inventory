@@ -23,8 +23,8 @@ def api_root(request, format=None):
 
     buff['Projects'] = projects
     buff['Regions'] = regions
-    buff['Users'] = users
     buff['Suppliers'] = suppliers
+    buff['Users'] = users
 
     projects['projects'] = reverse('project-list', request=request,
                                    format=format)
