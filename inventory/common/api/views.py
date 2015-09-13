@@ -19,10 +19,12 @@ def api_root(request, format=None):
     projects = OrderedDict()
     regions = OrderedDict()
     users = OrderedDict()
+    suppliers = OrderedDict()
 
     buff['Projects'] = projects
     buff['Regions'] = regions
     buff['Users'] = users
+    buff['Suppliers'] = suppliers
 
     projects['projects'] = reverse('project-list', request=request,
                                    format=format)
@@ -30,6 +32,8 @@ def api_root(request, format=None):
                                    format=format)
     regions['regions'] = reverse('region-list', request=request,
                                  format=format)
+    suppliers['suppliers'] = reverse('supplier-list', request=request,
+                                     format=format)
     users['groups'] = reverse('group-list', request=request, format=format)
     users['profiles'] = reverse('user-profile-list', request=request,
                                format=format)

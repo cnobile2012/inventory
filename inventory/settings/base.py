@@ -181,6 +181,7 @@ INSTALLED_APPS = [
     'inventory.user_profiles',
     'inventory.projects',
     'inventory.regions',
+    'inventory.suppliers',
     'inventory.apps.items',
     'inventory.apps.login',
     'inventory.apps.reports',

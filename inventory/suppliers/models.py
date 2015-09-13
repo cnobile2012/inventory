@@ -4,10 +4,11 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 
 from dcolumn.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
+
+from inventory.regions.models import Region, Country
 
 
 class SupplierManager(StatusModelManagerMixin):
@@ -36,8 +37,8 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin):
         verbose_name=_("Address 2"), max_length=50, blank=True, null=True)
     city = models.CharField(
         verbose_name=_("City"), max_length=30, blank=True, null=True)
-    state = models.ForeignKey(
-        Region, verbose_name=_("State/Provence"), blank=True, null=True)
+    region = models.ForeignKey(
+        Region, verbose_name=_("State/Province"), blank=True, null=True)
     postal_code = models.CharField(
         verbose_name=_("Postal Code"), max_length=15, blank=True, null=True)
     country = models.ForeignKey(
