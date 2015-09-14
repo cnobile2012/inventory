@@ -30,7 +30,9 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin):
         )
 
     name = models.CharField(
-        verbose_name=_("Name"), max_length=256, db_index=True)
+        verbose_name=_("Name"), max_length=255)
+    name_lower = models.CharField(
+        verbose_name=_("Name"), max_length=255, unique=True, db_index=True)
     address_01 = models.CharField(
         verbose_name=_("Address 1"), max_length=50, blank=True, null=True)
     address_02 = models.CharField(
@@ -50,7 +52,7 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin):
     email = models.EmailField(
         verbose_name=_("Email"), max_length=75, blank=True, null=True)
     url = models.URLField(
-        verbose_name=_("URL"), max_length=256, blank=True, null=True)
+        verbose_name=_("URL"), max_length=255, blank=True, null=True)
     stype = models.SmallIntegerField(
         verbose_name=_("Supplier Type"), choices=SUPPLIER_TYPE)
 
@@ -64,3 +66,8 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.strip()
+        self.name_lower = self.name.lower()
+        super(Supplier, self).save(*args, **kwargs)
