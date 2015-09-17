@@ -1,20 +1,16 @@
 #
 # login/forms.py
 #
-# SVN/CVS Info
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2010-08-29 22:22:56 -0400 (Sun, 29 Aug 2010) $
-# $Revision: 12 $
-#----------------------------------
 
 import re
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from inventory.settings import getLogger
 
 
 log = getLogger()
+User = get_user_model()
 
 
 class LoginForm(forms.Form):

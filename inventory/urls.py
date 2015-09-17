@@ -4,7 +4,7 @@
 
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
+from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
@@ -24,6 +24,15 @@ urlpatterns = patterns(
     url(r'^api/v1/$', include('inventory.common.api.urls')),
     url(r'^api/v1/projects/', include('inventory.projects.api.urls')),
     url(r'^api/v1/regions/', include('inventory.regions.api.urls')),
-    url(r'^api/v1/user-profiles/', include('inventory.user_profiles.api.urls')),
+    url(r'^api/v1/accounts/', include('inventory.accounts.api.urls')),
     url(r'^api/v1/suppliers/', include('inventory.suppliers.api.urls')),
     )
+
+if settings.DEBUG:
+    # Static media files.
+    urlpatterns += patterns(
+        '',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT}),
+        )
+

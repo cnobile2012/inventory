@@ -13,10 +13,10 @@ from StringIO import StringIO
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template import Context, loader
-from django.contrib.auth.models import User
 from django.contrib import auth
 from django.db import models
 from django.core.context_processors import csrf
+from django.contrib.auth import get_user_model
 
 from inventory.apps.login.forms import LoginForm, RegistrationForm
 from inventory.apps.utils.views import ViewBase
@@ -24,6 +24,7 @@ from inventory.settings import SITE_NAME, getLogger
 
 
 log = getLogger()
+User = get_user_model()
 
 
 class Login(ViewBase):

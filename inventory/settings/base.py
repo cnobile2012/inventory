@@ -164,6 +164,8 @@ TEMPLATE_DIRS = (
     os.path.join(SITE_ROOT, 'templates'),
     )
 
+AUTH_USER_MODEL = 'accounts.User'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -178,7 +180,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'guardian',
     'inventory.common',
-    'inventory.user_profiles',
+    'inventory.accounts',
     'inventory.projects',
     'inventory.regions',
     'inventory.suppliers',

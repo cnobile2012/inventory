@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/projects/models.py
 #
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from dcolumn.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
@@ -28,10 +30,10 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
     name = models.CharField(
         verbose_name=_("Project Name"), max_length=256)
     members = models.ManyToManyField(
-        User, verbose_name=_("Project Members"),
+        settings.AUTH_USER_MODEL, verbose_name=_("Project Members"),
         related_name='project_members', blank=True)
     managers = models.ManyToManyField(
-        User, verbose_name=_("Project Managers"),
+        settings.AUTH_USER_MODEL, verbose_name=_("Project Managers"),
         related_name='project_managers', blank=True)
     public = models.BooleanField(
         verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES)
@@ -53,7 +55,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         # Remove unwanted members.
         self.members.remove(*self.members.filter(pk__in=rem_pks))
         add_pks = list(set(new_pks) - set(old_pks))
-        new_mem = User.objects.filter(pk__in=add_pks)
+        new_mem = get_user_model().objects.filter(pk__in=add_pks)
         self.members.add(*new_mem)
 
     def process_managers(self, managers):
@@ -63,5 +65,5 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         # Remove unwanted managers.
         self.managers.remove(*self.managers.filter(pk__in=rem_pks))
         add_pks = list(set(new_pks) - set(old_pks))
-        new_man = User.objects.filter(pk__in=add_pks)
+        new_man = get_user_model().objects.filter(pk__in=add_pks)
         self.managers.add(*new_man)

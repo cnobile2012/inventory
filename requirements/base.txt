@@ -3,6 +3,7 @@ django-dcolumns
 
 mysql_python
 pytz
+Pillow
 
 IPy
 

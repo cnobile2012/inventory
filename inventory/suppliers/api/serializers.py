@@ -1,15 +1,14 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/suppliers/api/serializers.py
 #
 
 import logging
 
-from django.contrib.auth.models import User
-
 from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from inventory.user_profiles.api.serializers import UserSerializer
+from inventory.accounts.api.serializers import UserSerializer
 from inventory.suppliers.models import Supplier
 from inventory.regions.models import Region, Country
 

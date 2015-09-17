@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/projects/api/views.py
 #
 
 import logging
+
+from django.contrib.auth import get_user_model
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
@@ -13,12 +16,12 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.projects.models import Project
-from inventory.user_profiles.models import UserProfile
 
 from .serializers import ProjectSerializer
 
 
 log = logging.getLogger('api.projects.views')
+User = get_user_model()
 
 
 #
@@ -32,7 +35,7 @@ class ProjectAuthorizationMixin(object):
         if self.request.user.is_superuser:
             result = Project.objects.all()
         elif hasattr(self.request.user, 'userprofile'):
-            if self.request.user.userprofile.role == UserProfile.ADMINISTRATOR:
+            if self.request.user.userprofile.role == User.ADMINISTRATOR:
                 result = Project.objects.all()
             else:
                 result = self.request.user.userprofile.projects.all()

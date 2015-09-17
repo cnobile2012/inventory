@@ -12,11 +12,15 @@ BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(BASE_PATH)
 
 import django; django.setup()
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+#from django.contrib.auth.models import User
 
+#from inventory.accounts.models import User
 from inventory.apps.items.models import Distributor, Manufacturer
 from inventory.regions.models import Region, Country
 from inventory.suppliers.models import Supplier
+
+User = get_user_model()
 
 
 def setupLogger(name=u'root', fullpath=None, fmt=None, level=logging.INFO):

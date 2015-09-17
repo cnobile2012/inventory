@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/common/api/permissions.py
 #
@@ -5,8 +6,6 @@
 import logging
 
 from rest_framework.permissions import BasePermission
-
-from inventory.user_profiles.models import UserProfile
 
 
 log = logging.getLogger('api.common.permissions')

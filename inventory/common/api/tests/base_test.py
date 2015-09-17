@@ -5,11 +5,13 @@
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
 
-from django.contrib.auth.models import User
-
 from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class BaseTest(APITestCase):

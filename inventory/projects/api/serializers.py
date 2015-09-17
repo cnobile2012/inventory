@@ -1,19 +1,22 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/projects/api/serializers.py
 #
 
 import logging
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from inventory.user_profiles.api.serializers import UserSerializer
+from inventory.accounts.models import User
+from inventory.accounts.api.serializers import UserSerializer
 from inventory.projects.models import Project
 
 
 log = logging.getLogger('api.projects.serializers')
+User = get_user_model()
 
 
 class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
