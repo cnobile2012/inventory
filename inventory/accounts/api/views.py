@@ -37,7 +37,7 @@ class UserAuthorizationMixin(object):
         result = []
 
         if (self.request.user.is_superuser or
-            self.request.user.role == UserProfile.ADMINISTRATOR):
+            self.request.user.role == User.ADMINISTRATOR):
             result = User.objects.all()
         else:
             result = [self.request.user]
@@ -103,13 +103,11 @@ class GroupAuthorizationMixin(object):
     def get_queryset(self):
         result = []
 
-        if self.request.user.is_superuser:
+        if (self.request.user.is_superuser or
+            self.request.user.role == User.ADMINISTRATOR):
             result = Group.objects.all()
-        elif hasattr(self.request.user, 'userprofile'):
-            if self.request.user.userprofile.role == UserProfile.ADMINISTRATOR:
-                result = Group.objects.all()
-            else:
-                result = self.request.user.groups.all()
+        else:
+            result = self.request.user.groups.all()
 
         return result
 

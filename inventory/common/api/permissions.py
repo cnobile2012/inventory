@@ -5,10 +5,13 @@
 
 import logging
 
+from django.contrib.auth import get_user_model
+
 from rest_framework.permissions import BasePermission
 
 
 log = logging.getLogger('api.common.permissions')
+User = get_user_model()
 
 
 class IsAdminSuperUser(BasePermission):
@@ -35,8 +38,7 @@ class IsAdministrator(BasePermission):
         result = False
 
         if (hasattr(request, 'user') and
-            hasattr(request.user, 'userprofile') and
-            request.user.userprofile.role == UserProfile.ADMINISTRATOR):
+            request.user.role == User.ADMINISTRATOR):
             result = True
 
         log.debug("IsAdministrator: %s", result)
@@ -51,9 +53,7 @@ class IsProjectManager(BasePermission):
     def has_permission(self, request, view):
         result = False
 
-        if (hasattr(request, 'user') and
-            hasattr(request.user, 'userprofile') and
-            request.user.project_managers.count()):
+        if hasattr(request, 'user') and request.user.project_managers.count():
             result = True
 
         log.debug("IsProjectManager: %s", result)
@@ -68,9 +68,7 @@ class IsUser(BasePermission):
     def has_permission(self, request, view):
         result = False
 
-        if (hasattr(request, 'user') and
-            hasattr(request.user, 'userprofile') and
-            request.user.userprofile.role == UserProfile.DEFAULT):
+        if hasattr(request, 'user') and request.user.role == User.DEFAULT_ROLE:
             result = True
 
         log.debug("IsUser: %s", result)

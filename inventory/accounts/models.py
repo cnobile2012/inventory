@@ -20,8 +20,7 @@ class UserManager(BaseUserManager):
     def _create_user(self, username, email, password,
                      is_staff, is_superuser, **extra_fields):
         """
-        Creates and saves a User and UserProfile with the given username,
-        email and password.
+        Creates and saves a User with the given username, email and password.
         """
         now = timezone.now()
 
