@@ -17,11 +17,13 @@ def api_root(request, format=None):
     """
     buff = OrderedDict()
     accounts = OrderedDict()
+    #oauth = OrderedDict()
     projects = OrderedDict()
     regions = OrderedDict()
     suppliers = OrderedDict()
 
     buff['Accounts'] = accounts
+    #buff['OAuth2'] = oauth
     buff['Projects'] = projects
     buff['Regions'] = regions
     buff['Suppliers'] = suppliers
@@ -30,6 +32,8 @@ def api_root(request, format=None):
         'group-list', request=request, format=format)
     accounts['users'] = reverse(
         'user-list', request=request, format=format)
+    #oauth['applications'] = reverse(
+    #    'list', request=request, format=format)
     projects['projects'] = reverse(
         'project-list', request=request, format=format)
     regions['countries'] = reverse(

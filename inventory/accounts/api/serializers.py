@@ -24,9 +24,9 @@ class UserSerializer(serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(view_name='user-detail')
 
     def create(self, validated_data):
-        username = validated_data.pop('username')
-        password = validated_data.pop('password')
-        email = validated_data.pop('email')
+        username = validated_data.pop('username', '')
+        password = validated_data.pop('password', '')
+        email = validated_data.pop('email', '')
         return User.objects.create_user(
             username, email=email, password=password, **validated_data)
 

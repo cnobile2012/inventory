@@ -30,6 +30,7 @@ class IPList(list):
                     return True
         except:
             pass
+
         return False
 
 
@@ -177,7 +178,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dcolumn.dcolumns',
     'rest_framework',
-    'rest_framework.authtoken',
+    'oauth2_provider',
     'guardian',
     'inventory.common',
     'inventory.accounts',
@@ -190,9 +191,17 @@ INSTALLED_APPS = [
     'inventory.apps.maintenance',
     ]
 
+OAUTH2_PROVIDER = {
+    # This is the list of available scopes.
+    'SCOPES': {
+        'read': 'Read scope',
+        'write': 'Write scope',
+        'groups': 'Access to your groups'
+        }
+    }
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         'rest_framework.permissions.IsAuthenticated',
         ),
     'DEFAULT_PARSER_CLASSES': (
@@ -209,7 +218,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
         ),
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'TEST_REQUEST_RENDERER_CLASSES': (
@@ -219,10 +228,9 @@ REST_FRAMEWORK = {
         )
     }
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
+# A sample logging configuration. The only tangible logging performed by this
+# configuration is to send an email to the site admins on every HTTP 500 error
+# when DEBUG=False. See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
 LOG_DIR = os.path.abspath(os.path.join(SITE_ROOT, '..', 'logs'))
 not os.path.isdir(LOG_DIR) and os.mkdir(LOG_DIR, 0775)

@@ -7,7 +7,11 @@ import logging
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
+from rest_framework.permissions import IsAuthenticated
+
 from rest_condition import ConditionalPermission, C, And, Or, Not
+
+from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager)
@@ -53,8 +57,10 @@ class SupplierList(ListCreateAPIView):
     """
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
     pagination_class = SmallResultsSetPagination
 
     def pre_save(self, obj):
@@ -68,8 +74,10 @@ class SupplierDetail(RetrieveUpdateDestroyAPIView):
     Supplier detail endpoint.
     """
     queryset = Supplier.objects.all()
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
     serializer_class = SupplierSerializer
 
 supplier_detail = SupplierDetail.as_view()

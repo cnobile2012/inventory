@@ -6,7 +6,11 @@ import logging
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+from rest_framework.permissions import IsAuthenticated
+
 from rest_condition import ConditionalPermission, C, And, Or, Not
+
+from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser)
@@ -52,8 +56,10 @@ class CountryList(ListCreateAPIView):
     """
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager, IsUser,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
     pagination_class = SmallResultsSetPagination
 
 country_list = CountryList.as_view()
@@ -65,8 +71,10 @@ class CountryDetail(RetrieveUpdateDestroyAPIView):
     """
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager, IsUser,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
 
 country_detail = CountryDetail.as_view()
 
@@ -104,8 +112,10 @@ class RegionList(ListCreateAPIView):
     """
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager, IsUser,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
     pagination_class = SmallResultsSetPagination
 
 region_list = RegionList.as_view()
@@ -117,7 +127,9 @@ class RegionDetail(RetrieveUpdateDestroyAPIView):
     """
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager, IsUser,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
 
 region_detail = RegionDetail.as_view()

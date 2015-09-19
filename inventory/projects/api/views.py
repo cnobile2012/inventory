@@ -10,7 +10,11 @@ from django.contrib.auth import get_user_model
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
+from rest_framework.permissions import IsAuthenticated
+
 from rest_condition import ConditionalPermission, C, And, Or, Not
+
+from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager)
@@ -32,13 +36,11 @@ class ProjectAuthorizationMixin(object):
     def get_queryset(self):
         result = []
 
-        if self.request.user.is_superuser:
+        if (self.request.user.is_superuser or
+            self.request.user.role == User.ADMINISTRATOR):
             result = Project.objects.all()
-        elif hasattr(self.request.user, 'userprofile'):
-            if self.request.user.userprofile.role == User.ADMINISTRATOR:
-                result = Project.objects.all()
-            else:
-                result = self.request.user.userprofile.projects.all()
+        else:
+            result = self.request.user.projects.all()
 
         return result
 
@@ -72,8 +74,10 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
         * Returns 100 items in the third page.
     """
     serializer_class = ProjectSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
     pagination_class = SmallResultsSetPagination
 
     def pre_save(self, obj):
@@ -87,8 +91,10 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     Project detail endpoint.
     """
     queryset = Project.objects.all()
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
     serializer_class = ProjectSerializer
 
 project_detail = ProjectDetail.as_view()

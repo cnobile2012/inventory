@@ -4,7 +4,6 @@ django-dcolumns
 mysql_python
 pytz
 Pillow
-
 IPy
 
 # Caching
@@ -20,6 +19,9 @@ django-filter
 django-guardian
 pyyaml
 markdown
+
+# Auth
+django-oauth-toolkit
 
 # Utilities
 ipython

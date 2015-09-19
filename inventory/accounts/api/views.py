@@ -10,7 +10,12 @@ from django.contrib.auth import get_user_model
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+from rest_framework.permissions import IsAuthenticated
+
 from rest_condition import ConditionalPermission, C, And, Or, Not
+
+from oauth2_provider.ext.rest_framework import (
+    TokenHasReadWriteScope, TokenHasScope)
 
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager)
@@ -31,13 +36,11 @@ class UserAuthorizationMixin(object):
     def get_queryset(self):
         result = []
 
-        if self.request.user.is_superuser:
+        if (self.request.user.is_superuser or
+            self.request.user.role == UserProfile.ADMINISTRATOR):
             result = User.objects.all()
-        elif hasattr(self.request.user, 'userprofile'):
-            if self.request.user.userprofile.role == UserProfile.ADMINISTRATOR:
-                result = User.objects.all()
-            else:
-                result = [self.request.user]
+        else:
+            result = [self.request.user]
 
         return result
 
@@ -72,8 +75,10 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
     pagination_class = SmallResultsSetPagination
 
 user_list = UserList.as_view()
@@ -82,8 +87,10 @@ user_list = UserList.as_view()
 class UserDetail(UserAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        )
 
 user_detail = UserDetail.as_view()
 
@@ -137,8 +144,11 @@ class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasScope, IsAuthenticated,),),
+        )
+    required_scopes = ('read', 'write', 'groups',)
     pagination_class = SmallResultsSetPagination
 
 group_list = GroupList.as_view()
@@ -147,7 +157,10 @@ group_list = GroupList.as_view()
 class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (Or(IsAdminSuperUser, IsAdministrator,
-                             IsProjectManager,),)
+    permission_classes = (
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        And(Or(TokenHasScope, IsAuthenticated,),),
+        )
+    required_scopes = ('read', 'write', 'groups',)
 
 group_detail = GroupDetail.as_view()
