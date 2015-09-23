@@ -21,6 +21,8 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', many=True, read_only=True)
+    oauth2_provider_application = serializers.HyperlinkedRelatedField(
+        view_name='oauth2-application-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(view_name='user-detail')
 
     def create(self, validated_data):
@@ -60,8 +62,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'password', 'send_email', 'need_password',
                   'first_name', 'last_name', 'email', 'role', 'projects',
-                  'is_active', 'is_staff', 'is_superuser', 'last_login',
-                  'date_joined', 'uri',)
+                  'oauth2_provider_application', 'is_active', 'is_staff',
+                  'is_superuser', 'last_login', 'date_joined', 'uri',)
         read_only_fields = ('id', 'last_login', 'date_joined',)
         extra_kwargs = {'password': {'write_only': True}}
 

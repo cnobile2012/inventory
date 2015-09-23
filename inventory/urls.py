@@ -21,12 +21,15 @@ urlpatterns = patterns(
     url(r'^reports/', include('inventory.apps.reports.urls')),
     url(r'^maintenance/', include('inventory.apps.maintenance.urls')),
 
-    # New Site
+    # New Site Web
+
+    # New Site API
     url(r'^auth/$', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/v1/$', include('inventory.common.api.urls')),
+    url(r'^api/v1/accounts/', include('inventory.accounts.api.urls')),
+    url(r'^api/v1/oauth2/', include('inventory.oauth2.api.urls')),
     url(r'^api/v1/projects/', include('inventory.projects.api.urls')),
     url(r'^api/v1/regions/', include('inventory.regions.api.urls')),
-    url(r'^api/v1/accounts/', include('inventory.accounts.api.urls')),
     url(r'^api/v1/suppliers/', include('inventory.suppliers.api.urls')),
     )
 

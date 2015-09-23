@@ -7,7 +7,6 @@
 
 from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 
 
@@ -24,8 +23,8 @@ class BaseTest(APITestCase):
         self.user = None
 
     def setUp(self):
-        self._create_user()
-        self._set_user_auth(use_token=False)
+        self.user = self._create_user()
+        self.client = self._set_user_auth(self.user, use_token=False)
         self.client.force_authenticate(user=self.user)
 
     def tearDown(self):
@@ -33,18 +32,28 @@ class BaseTest(APITestCase):
 
     def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
                      superuser=True):
-        self.user = User.objects.create(username=username, password=password)
-        self.user.is_active = True
-        self.user.is_staff = True
-        self.user.is_superuser = superuser
-        self.user.save()
+        user = User.objects.create_user(username=username, password=password)
+        user.is_active = True
+        user.is_staff = True
+        user.is_superuser = superuser
+        user.save()
+        return user
 
-    def _set_user_auth(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
-                       use_token=True):
-        self.client = APIClient()
+    def _update_user(self, user, is_active=True, is_staff=True,
+                     is_superuser=True):
+        user.is_active = is_active
+        user.is_staff = is_staff
+        user.is_superuser = is_superuser
+        user.save()
+
+    def _set_user_auth(self, user, username=_TEST_USERNAME,
+                       password=_TEST_PASSWORD, use_token=True):
+        client = APIClient()
 
         if use_token:
-            token = Token.objects.create(user=self.user)
-            self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+            token = Token.objects.create(user=user)
+            client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         else:
-            self.client.login(username=username, password=password)
+            client.login(username=username, password=password)
+
+        return client

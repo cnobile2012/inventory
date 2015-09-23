@@ -13,7 +13,3 @@ urlpatterns = patterns(
     url(r'groups/$', 'group_list', name='group-list'),
     url(r'group/(?P<pk>\d+)/$', 'group_detail', name='group-detail'),
     )
-
-urlpatterns += [
-    url(r'^api-token-auth/', views.obtain_auth_token)
-    ]

@@ -182,6 +182,7 @@ INSTALLED_APPS = [
     'guardian',
     'inventory.common',
     'inventory.accounts',
+    'inventory.oauth2',
     'inventory.projects',
     'inventory.regions',
     'inventory.suppliers',
