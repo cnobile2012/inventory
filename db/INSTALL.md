@@ -6,9 +6,10 @@
   2. $ workon inventory
   3. $ git checkout <version>
   4. Make sure that inventory/apps/regions/ does not exist. If it does delete it.
-  5. $ ./manage.py dbshell < migrate_regions.ddl
+  5. $ mysql -u root -p inventory < migrate_regions.ddl
   6. $ ./manage.py migrate --fake-initial
-  7. $ db/migrate_suppliers.py -n
-  8. Check that there are no erros in log/migrate-supplier.log
-  9. $ db/migrate_suppliers.py
-  10. $ db/migrate_suppliers.py # Run twice to fix the update times.
+  7. Create new superuser
+  8. $ db/migrate_suppliers.py -n
+  9. Check that there are no erros in log/migrate-supplier.log
+  10. $ db/migrate_suppliers.py
+  11. $ db/migrate_suppliers.py # Run twice to fix the update times.
