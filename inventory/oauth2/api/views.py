@@ -17,7 +17,7 @@ from oauth2_provider.ext.rest_framework import (
     TokenHasReadWriteScope, TokenHasScope)
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from .serializers import (
@@ -72,11 +72,23 @@ class ApplicationList(ApplicationAuthorizationMixin, ListCreateAPIView):
         * Returns the first page of 25 items.
       6. `/?page=3&page_size=100`
         * Returns the third page of 100 items.
+
+    ## Valid Values:
+      1. `client_type`
+        * `confidential`
+        * `public`
+      2. `authorization_grant_type`
+        * `authorization-code`
+        * `implicit`
+        * `password`
+        * `client-credentials`
+      3. `redirect_uris`
+        * URIs can be seperated with any whitespace character.
     """
     serializer_class = ApplicationSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -91,7 +103,7 @@ class ApplicationDetail(ApplicationAuthorizationMixin,
     serializer_class = ApplicationSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -149,7 +161,7 @@ class AccessTokenList(AccessTokenAuthorizationMixin, ListCreateAPIView):
     serializer_class = AccessTokenSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -164,7 +176,7 @@ class AccessTokenDetail(AccessTokenAuthorizationMixin,
     serializer_class = AccessTokenSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -222,7 +234,7 @@ class GrantList(GrantAuthorizationMixin, ListCreateAPIView):
     serializer_class = GrantSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -236,7 +248,7 @@ class GrantDetail(GrantAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = GrantSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -294,7 +306,7 @@ class RefreshTokenList(RefreshTokenAuthorizationMixin, ListCreateAPIView):
     serializer_class = RefreshTokenSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -309,7 +321,7 @@ class RefreshTokenDetail(RefreshTokenAuthorizationMixin,
     serializer_class = RefreshTokenSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )

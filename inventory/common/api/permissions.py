@@ -73,3 +73,22 @@ class IsUser(BasePermission):
 
         log.debug("IsUser: %s", result)
         return result
+
+
+class IsAnyUser(BasePermission):
+    """
+    Allows any registered user.
+    """
+
+    def has_permission(self, request, view):
+        result = False
+
+        if (hasattr(request, 'user') and
+            (request.user.is_superuser or
+             request.user.role == User.ADMINISTRATOR or
+             request.user.project_managers.count() or
+             request.user.role == User.DEFAULT_ROLE)):
+            result = True
+
+        log.debug("IsUser: %s", result)
+        return result
