@@ -12,8 +12,8 @@ urlpatterns = patterns(
     '',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/v1/o/', include('oauth2_provider.urls',
-                               namespace='oauth2_provider')),
+    url(r'^oauth2/', include('oauth2_provider.urls',
+                             namespace='oauth2_provider')),
 
     # Old Site
     url(r'^', include('inventory.apps.items.urls')),
