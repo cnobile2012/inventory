@@ -5,8 +5,6 @@
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
 
-import random
-
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -42,43 +40,41 @@ class TestAccounts(BaseTest):
         msg = "Response Data: {}".format(data)
         self.assertEqual(data.get('username'), new_data.get('username'), msg)
 
-    def test_user_list_no_permissions(self):
+    def test_user_with_no_permissions(self):
         """
         Test the user_list endpoint with no permissions. We don't use the 
         self.client created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
-        self._update_user(self.user, is_superuser=False)
-        self.client = self._set_user_auth(self.user, use_token=False)
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(username, password)
         # Use API to get user list with unauthenticated user.
         uri = reverse('user-list')
-        response = self.client.get(uri, format='json')
+        response = client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
         self.assertTrue('detail' in data, msg)
 
-    def test_user_list_with_token(self):
+    def test_user_with_token(self):
         """
         Test use of API with token. We don't use the self.client created in
         the setUp method from the base class.
         """
-        #self.skipTest("Temporarily skipped")
-        username = "TEMP-{}".format(random.randint(10000, 99999))
-        password = "TEMP-{}".format(random.randint(10000, 99999))
-        user = self._create_user(username=username, password=password,
-                                 superuser=False)
-        client = self._set_user_auth(user, use_token=True)
+        self.skipTest("Temporarily skipped")
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(username, password)
         # Use API to create a test user.
         uri = reverse('user-list')
         data = {'username': 'NewUser_01', 'password': 'NewUserPassword'}
         response = client.post(uri, data, format='json')
-        client.logout()
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_update_put_user(self):
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         # Use API to create a test user.
         uri = reverse('user-list')
         new_data = {'username': 'NewUser_03', 'password': 'NewUserPassword'}
@@ -103,7 +99,7 @@ class TestAccounts(BaseTest):
         self.assertTrue(data.get('is_staff'), msg)
 
     def test_update_patch_user(self):
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         # Use API to create a test user.
         uri = reverse('user-list')
         new_data = {'username': 'NewUser_05', 'password': 'NewUserPassword'}
@@ -128,7 +124,7 @@ class TestAccounts(BaseTest):
         self.assertTrue(data.get('is_staff'), msg)
 
     def test_delete_user(self):
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         # Use API to create a test user.
         uri = reverse('user-list')
         new_data = {'username': 'NewUser_07', 'password': 'NewUserPassword'}
@@ -159,7 +155,7 @@ class TestAccounts(BaseTest):
         #self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_user(self):
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         # Use API to create a test user.
         uri = reverse('user-list')
         new_data = {'username': 'NewUser_07', 'password': 'NewUserPassword'}

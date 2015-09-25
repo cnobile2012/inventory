@@ -31,11 +31,11 @@ class BaseTest(APITestCase):
         self.client.logout()
 
     def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
-                     superuser=True):
+                     is_superuser=True):
         user = User.objects.create_user(username=username, password=password)
         user.is_active = True
         user.is_staff = True
-        user.is_superuser = superuser
+        user.is_superuser = is_superuser
         user.save()
         return user
 
@@ -57,3 +57,10 @@ class BaseTest(APITestCase):
             client.login(username=username, password=password)
 
         return client
+
+    def _create_normal_user(self, username, password, use_token=False):
+        user = self._create_user(username=username, password=password,
+                                 is_superuser=False)
+        client = self._set_user_auth(user, username=username, password=password,
+                                     use_token=use_token)
+        return user, client
