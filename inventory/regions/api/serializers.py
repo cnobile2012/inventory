@@ -8,7 +8,7 @@ import logging
 from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from inventory.regions.models import Country, Region
+from ..models import Country, Region
 
 
 log = logging.getLogger('api.regions.serializers')
