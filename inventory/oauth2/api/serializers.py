@@ -115,7 +115,7 @@ class GrantSerializer(serializers.ModelSerializer):
         model = Grant
         fields = ('id', 'user', 'code', 'application', 'expires',
                   'redirect_uri', 'scope', 'uri',)
-        read_only_fields = ('id', 'code', 'application', 'user',)
+        read_only_fields = ('id', 'user', 'code', 'application', 'expires',)
 
 
 #
@@ -136,8 +136,6 @@ class RefreshTokenSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         #instance.token = validated_data.get('token', instance.token)
-        instance.expires = validated_data.get('expires', instance.expires)
-        instance.scope = validated_data.get('scope', instance.scope)
         instance.save()
         return instance
 
