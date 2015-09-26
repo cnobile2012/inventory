@@ -98,14 +98,18 @@ class TestOauth2(BaseTest):
         username = 'Normal User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
-        self._make_app_token(user, username, password, "SU_TEST_APP_02",
-                             client)
+        app_name = 'SU_TEST_APP_02'
+        self._make_app_token(user, username, password, app_name, client)
         uri = reverse('access-token-list')
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
+        # Test that the application is the correct one.
+        data = self._get_application(client, data)
+        msg = "Response Data: {}".format(data)
+        self.assertEquals(data.get('name'), app_name, msg)
 
     def test_normal_application(self):
         """
@@ -119,14 +123,16 @@ class TestOauth2(BaseTest):
         username = 'Normal User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
-        self._make_app_token(user, username, password, "SU_TEST_APP_02",
-                             client)
+        app_name = 'SU_TEST_APP_02'
+        self._make_app_token(user, username, password, app_name, client)
         uri = reverse('application-list')
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
+        # Test that the application is the correct one.
+        self.assertEquals(data.get('results')[0].get('name'), app_name, msg)
 
     def test_normal_grant(self):
         """
@@ -140,14 +146,18 @@ class TestOauth2(BaseTest):
         username = 'Normal User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
-        self._make_app_token(user, username, password, "SU_TEST_APP_02",
-                             client)
+        app_name = 'SU_TEST_APP_02'
+        self._make_app_token(user, username, password, app_name, client)
         uri = reverse('grant-list')
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
+        # Test that the application is the correct one.
+        data = self._get_application(client, data)
+        msg = "Response Data: {}".format(data)
+        self.assertEquals(data.get('name'), app_name, msg)
 
     def test_normal_refresh_token(self):
         """
@@ -161,15 +171,18 @@ class TestOauth2(BaseTest):
         username = 'Normal User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
-        self._make_app_token(user, username, password, "SU_TEST_APP_02",
-                             client)
+        app_name = 'SU_TEST_APP_02'
+        self._make_app_token(user, username, password, app_name, client)
         uri = reverse('refresh-token-list')
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
-
+        # Test that the application is the correct one.
+        data = self._get_application(client, data)
+        msg = "Response Data: {}".format(data)
+        self.assertEquals(data.get('name'), app_name, msg)
 
 
 
@@ -209,3 +222,8 @@ class TestOauth2(BaseTest):
 
     def _create_grant(self, ):
         pass
+
+    def _get_application(self, client, data):
+        uri = data.get('results')[0].get('application')
+        response = client.get(uri, format='json')
+        return response.data
