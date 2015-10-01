@@ -17,6 +17,7 @@ libssl-dev
 ## Python Packages Need to be Installed
 
 $ `sudo easy_install pip`
+
 $ `sudo pip install virtualenvwrapper`
 
 ## Create the Virtual Environment
