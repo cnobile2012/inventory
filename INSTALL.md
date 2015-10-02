@@ -4,14 +4,12 @@
 
 Use `sudo apt-get install` or `sudo aptitude install`.
 
-ubuntu-dev-tools
-python-setuptools
-mariadb-client
-mariadb-server
-redis-server
-redis-tools
-libmariadbclient-dev
-libmariadbd-dev
+ubuntu-dev-tools python-setuptools
+
+mariadb-client mariadb-server libmariadbclient-dev libmariadbd-dev
+
+redis-server redis-tools
+
 libssl-dev
 
 ## Python Packages Need to be Installed
