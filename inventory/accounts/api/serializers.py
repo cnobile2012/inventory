@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
     projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', many=True, read_only=True)
     oauth2_provider_application = serializers.HyperlinkedRelatedField(
-        view_name='oauth2-application-detail', many=True, read_only=True)
+        view_name='application-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(view_name='user-detail')
 
     def create(self, validated_data):
