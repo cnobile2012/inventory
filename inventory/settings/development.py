@@ -44,6 +44,14 @@ DATABASES = {
 # Add to the MIDDLEWARE_CLASSES here.
 MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        #'BACKEND': 'redis_cache.RedisCache',
+        #'LOCATION': '/var/run/redis/redis.sock',
+        },
+    }
+
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')
 
