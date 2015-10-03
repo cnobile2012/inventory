@@ -8,6 +8,7 @@
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.test import APIClient
 
 from inventory.common.api.tests.base_test import BaseTest
 
@@ -48,7 +49,7 @@ class TestAccounts(BaseTest):
         #self.skipTest("Temporarily skipped")
         username = 'Normal User'
         password = '123456'
-        user, client = self._create_normal_user(username, password)
+        user, client = self._create_normal_user(username, password, login=False)
         # Use API to get user list with unauthenticated user.
         uri = reverse('user-list')
         response = client.get(uri, format='json')
@@ -61,14 +62,19 @@ class TestAccounts(BaseTest):
         Test use of API with token. We don't use the self.client created in
         the setUp method from the base class.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         username = 'Normal User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, grant_type='client_credentials')
+        print data
+
         # Use API to create a test user.
         uri = reverse('user-list')
-        data = {'username': 'NewUser_01', 'password': 'NewUserPassword'}
-        response = client.post(uri, data, format='json')
+        new_data = {'username': 'NewUser_01', 'password': 'NewUserPassword'}
+        response = client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)

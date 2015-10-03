@@ -29,13 +29,8 @@ class TestProject(BaseTest):
         user_pk = data.get('id')
         self.assertTrue(isinstance(user_pk, int))
         # Use API to create the user's profile.
-        uri = reverse('user-profile-list')
+        uri = reverse('user-list')
         self.user_uri = reverse('user-detail', kwargs={'pk': user_pk})
-        profile_data = {'user': self.user_uri, 'role': 0}
-        response = self.client.post(uri, profile_data, format='json')
-        data = response.data
-        msg = "Response Data: {}".format(data)
-        self.assertEquals(data.get('role'), profile_data.get('role'), msg)
 
     def test_create_post_project(self):
         # Create Project with POST.

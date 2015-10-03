@@ -38,6 +38,7 @@ class IsAdministrator(BasePermission):
         result = False
 
         if (hasattr(request, 'user') and
+            hasattr(request.user, 'role') and
             request.user.role == User.ADMINISTRATOR):
             result = True
 
@@ -53,7 +54,9 @@ class IsProjectManager(BasePermission):
     def has_permission(self, request, view):
         result = False
 
-        if hasattr(request, 'user') and request.user.project_managers.count():
+        if (hasattr(request, 'user') and
+            hasattr(request.user, 'project_managers') and
+            request.user.project_managers.count()):
             result = True
 
         log.debug("IsProjectManager: %s", result)
@@ -68,7 +71,9 @@ class IsUser(BasePermission):
     def has_permission(self, request, view):
         result = False
 
-        if hasattr(request, 'user') and request.user.role == User.DEFAULT_ROLE:
+        if (hasattr(request, 'user') and
+            hasattr(request.user, 'role') and
+            request.user.role == User.DEFAULT_ROLE):
             result = True
 
         log.debug("IsUser: %s", result)
@@ -84,10 +89,10 @@ class IsAnyUser(BasePermission):
         result = False
 
         if (hasattr(request, 'user') and
-            (request.user.is_superuser or
-             request.user.role == User.ADMINISTRATOR or
-             request.user.project_managers.count() or
-             request.user.role == User.DEFAULT_ROLE)):
+            (hasattr(request.user, 'role') and
+             request.user.role in (User.ADMINISTRATOR, User.DEFAULT_ROLE)) or
+            (hasattr(request.user, 'project_managers') and
+             request.user.project_managers.count())):
             result = True
 
         log.debug("IsUser: %s", result)

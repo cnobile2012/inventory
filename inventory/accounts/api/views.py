@@ -18,7 +18,7 @@ from oauth2_provider.ext.rest_framework import (
     TokenHasReadWriteScope, TokenHasScope)
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from .serializers import UserSerializer, GroupSerializer
@@ -76,7 +76,7 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
     serializer_class = UserSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
             Or(TokenHasReadWriteScope, IsAuthenticated)
             ),
         )
@@ -89,7 +89,7 @@ class UserDetail(UserAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
             Or(TokenHasReadWriteScope, IsAuthenticated)
             ),
         )
@@ -145,7 +145,7 @@ class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
     serializer_class = GroupSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
@@ -159,7 +159,7 @@ class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = GroupSerializer
     permission_classes = (
         And(
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager),
+            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
             Or(TokenHasScope, IsAuthenticated)
             ),
         )
