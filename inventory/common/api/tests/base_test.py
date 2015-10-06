@@ -40,8 +40,8 @@ class BaseTest(APITestCase):
         self.client.logout()
 
     # Setup user
-    def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
-                     is_superuser=True):
+    def _create_user(self, username=_TEST_USERNAME, email=None,
+                     password=_TEST_PASSWORD, is_superuser=True):
         user = User.objects.create_user(username=username, password=password)
         user.is_active = True
         user.is_staff = True
@@ -65,9 +65,9 @@ class BaseTest(APITestCase):
 
         return client
 
-    def _create_normal_user(self, username, password, login=True):
-        user = self._create_user(username=username, password=password,
-                                 is_superuser=False)
+    def _create_normal_user(self, username, password, email=None, login=True):
+        user = self._create_user(username=username, email=email,
+                                 password=password, is_superuser=False)
         client = self._set_user_auth(user, username=username, password=password,
                                      login=login)
         return user, client
@@ -84,9 +84,9 @@ class BaseTest(APITestCase):
 
     def _create_application(self, user, name, client_type='confidential',
                             grant_type='password'):
-        obj = Application.objects.create(name=name, user=user,
-                                         client_type=client_type,
-                                         authorization_grant_type=grant_type)
+        obj = Application.objects.create(
+            name=name, user=user, client_type=client_type,
+            authorization_grant_type=grant_type.replace('_', '-'))
         msg = "Application object: {}".format(obj)
         self.assertTrue(obj.client_id, msg)
         self.assertTrue(obj.client_secret, msg)
@@ -95,11 +95,12 @@ class BaseTest(APITestCase):
     def _create_access_token(self, client_id, client_secret, grant_type,
                              client, username=None, password=None):
         uri = reverse('oauth2_provider:token')
-        user_pass = "{}:{}".format(client_id, client_secret)
-        extra = {'HTTP_AUTHORIZATION': 'Authorization: Basic {}'.format(
-            base64.b64encode(user_pass))}
+        user_pass = "{}:{}".format(client_id, client_secret).encode('utf-8')
+        extra = {'HTTP_AUTHORIZATION': 'Basic {}'.format(
+            base64.b64encode(user_pass.decode('utf-8')))}
         new_data = {'grant_type': grant_type}
-        #print client_id, client_secret, grant_type, client, username, password
+        #print(client_id, client_secret, grant_type, client, username, password,
+        #      new_data)
 
         if username and password:
             new_data['username'] = username
@@ -111,11 +112,13 @@ class BaseTest(APITestCase):
         else:
             new_data['scope'] = 'read write'
 
+        #response = client.post(uri, new_data, **extra)
         response = client.post(uri, new_data, format='multipart', **extra)
-        data = json.loads(response.content)
+
+        data = json.loads(response.content.decode('utf-8'))
         msg = "Oauth2 content: {}, code: {}, Reason: {}".format(
             response.content, response.status_code, response.reason_phrase)
-        self.assertTrue(data.get('access_token'), msg)
+        self.assertEquals(response.status_code, 200, msg)
         return data
 
     def _create_grant(self, ):

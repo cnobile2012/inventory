@@ -65,12 +65,12 @@ class TestAccounts(BaseTest):
         #self.skipTest("Temporarily skipped")
         username = 'Normal User'
         password = '123456'
-        user, client = self._create_normal_user(username, password)
+        user, client = self._create_normal_user(username, password,
+                                                email='test@example.com')
         app_name = 'Token Test'
         data = self._make_app_token(
-            user, app_name, client, grant_type='client_credentials')
-        print data
-
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
         # Use API to create a test user.
         uri = reverse('user-list')
         new_data = {'username': 'NewUser_01', 'password': 'NewUserPassword'}
