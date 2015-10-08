@@ -85,8 +85,8 @@ class TestSuppliers(BaseTest):
 
     def test_create_supplier_post_token(self):
         """
-        Test supplier of API with token. We don't use the self.client created in
-        the setUp method from the base class.
+        Test supplier with API with token. We don't use the self.client
+        created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.

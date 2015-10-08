@@ -42,12 +42,12 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         return obj
 
     def update(self, instance, validated_data):
-        instance.updater = self._get_user_object()
         instance.name = validated_data.get('name', instance.name)
         instance.public = validated_data.get('public', instance.public)
         instance.active = validated_data.get('active', instance.active)
         instance.process_members(validated_data.get('members', []))
         instance.process_managers(validated_data.get('managers', []))
+        instance.updater = self._get_user_object()
         instance.save()
         return instance
 
