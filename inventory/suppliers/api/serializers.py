@@ -35,8 +35,31 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
         return obj
 
     def update(self, instance, validated_data):
+        instance.name = validated_data.get(
+            'name', instance.name)
+        instance.address_01 = validated_data.get(
+            'address_01', instance.address_01)
+        instance.address_02 = validated_data.get(
+            'address_02', instance.address_02)
+        instance.city = validated_data.get(
+            'city', instance.city)
+        instance.postal_code = validated_data.get(
+            'postal_code', instance.postal_code)
+        instance.phone = validated_data.get(
+            'phone', instance.phone)
+        instance.fax = validated_data.get(
+            'fax', instance.fax)
+        instance.email = validated_data.get(
+            'email', instance.email)
+        instance.stype = validated_data.get(
+            'stype', instance.stype)
+        instance.country = validated_data.get(
+            'country', instance.country)
+        instance.region = validated_data.get(
+            'region', instance.region)
         instance.updater = self._get_user_object()
-        instance.active = validated_data.get('active', instance.active)
+        instance.active = validated_data.get(
+            'active', instance.active)
         instance.save()
         return instance
 

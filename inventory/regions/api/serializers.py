@@ -32,6 +32,14 @@ class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
         return Country.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.country = validated_data.get(
+            'country', instance.country)
+        instance.country_code_2 = validated_data.get(
+            'country_code_2', instance.country_code_2)
+        instance.country_code_3 = validated_data.get(
+            'country_code_3', instance.country_code_3)
+        instance.country_number_code = validated_data.get(
+            'country_number_code', instance.country_number_code)
         instance.updater = self._get_user_object()
         instance.active = validated_data.get('active', instance.active)
         instance.save()
@@ -43,7 +51,6 @@ class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
                   'country_number_code', 'active', 'creator', 'created',
                   'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
-        depth = 0
 
 
 #
@@ -66,6 +73,14 @@ class RegionSerializer(SerializerMixin, serializers.ModelSerializer):
         return Region.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.country = validated_data.get(
+            'country', instance.country)
+        instance.region = validated_data.get(
+            'region', instance.region)
+        instance.region_code = validated_data.get(
+            'region_code', instance.region_code)
+        instance.primary_level = validated_data.get(
+            'primary_level', instance.primary_level)
         instance.updater = self._get_user_object()
         instance.active = validated_data.get('active', instance.active)
         instance.save()
@@ -76,4 +91,3 @@ class RegionSerializer(SerializerMixin, serializers.ModelSerializer):
         fields = ('id', 'country', 'region', 'region_code', 'primary_level',
                   'active', 'creator', 'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
-        depth = 0

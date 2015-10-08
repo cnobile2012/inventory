@@ -16,6 +16,7 @@ class TestRegion(BaseTest):
         super(TestRegion, self).__init__(name)
 
     def test_create_post_country(self):
+        #self.skipTest("Temporarily skipped")
         # Use API to create Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-01', 'country_code_2': 'C1'}
@@ -35,6 +36,7 @@ class TestRegion(BaseTest):
         self.assertTrue(data.get('active'), msg)
 
     def test_create_post_region(self):
+        #self.skipTest("Temporarily skipped")
         # Create the Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-02', 'country_code_2': 'C2'}
@@ -61,6 +63,7 @@ class TestRegion(BaseTest):
         self.assertTrue(data.get('active'), msg)
 
     def test_update_put_country(self):
+        #self.skipTest("Temporarily skipped")
         # Create the Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-03', 'country_code_2': 'C3'}
@@ -71,14 +74,16 @@ class TestRegion(BaseTest):
         # Update with PUT to detail view.
         pk = data.get('id')
         uri = reverse('country-detail', kwargs={'pk': pk})
-        new_data.update({'active': False})
+        new_data['country_code_3'] = 'C03'
         response = self.client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
-        self.assertFalse(data.get('active'), msg)
+        self.assertEqual(data.get('country_code_3'),
+                         new_data.get('country_code_3'), msg)
 
     def test_update_put_region(self):
+        #self.skipTest("Temporarily skipped")
         # Create the Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-04', 'country_code_2': 'C4'}
@@ -98,14 +103,16 @@ class TestRegion(BaseTest):
         # Update with PUT to detail view.
         pk = data.get('id')
         uri = reverse('region-detail', kwargs={'pk': pk})
-        new_data.update({'active': False})
+        new_data['primary_level'] = 'State'
         response = self.client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('region'), new_data.get('region'), msg)
-        self.assertFalse(data.get('active'), msg)
+        self.assertEqual(data.get('primary_level'),
+                         new_data.get('primary_level'), msg)
 
     def test_update_patch_country(self):
+        #self.skipTest("Temporarily skipped")
         # Create the Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-03', 'country_code_2': 'C3'}
@@ -116,14 +123,16 @@ class TestRegion(BaseTest):
         # Update with PATCH to detail view.
         pk = data.get('id')
         uri = reverse('country-detail', kwargs={'pk': pk})
-        update_data = {'active': False}
+        update_data = {'country_code_3': 'C03'}
         response = self.client.patch(uri, update_data, format='json')
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
-        self.assertFalse(data.get('active'), msg)
+        self.assertEqual(data.get('country_code_3'),
+                         update_data.get('country_code_3'), msg)
 
     def test_update_patch_region(self):
+        #self.skipTest("Temporarily skipped")
         # Create the Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-04', 'country_code_2': 'C4'}
@@ -143,14 +152,16 @@ class TestRegion(BaseTest):
         # Update with PATCH to detail view.
         pk = data.get('id')
         uri = reverse('region-detail', kwargs={'pk': pk})
-        update_data = {'active': False}
+        update_data = {'primary_level': 'State'}
         response = self.client.patch(uri, update_data, format='json')
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('region'), new_data.get('region'), msg)
-        self.assertFalse(data.get('active'), msg)
+        self.assertEqual(data.get('primary_level'),
+                         update_data.get('primary_level'), msg)
 
     def test_delete_country(self):
+        #self.skipTest("Temporarily skipped")
         # Use API to create Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-05', 'country_code_2': 'C5'}
@@ -183,6 +194,7 @@ class TestRegion(BaseTest):
         ## self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_delete_region(self):
+        #self.skipTest("Temporarily skipped")
         # Create the Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-06', 'country_code_2': 'C6'}
@@ -219,6 +231,7 @@ class TestRegion(BaseTest):
         ## self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_country(self):
+        #self.skipTest("Temporarily skipped")
         # Use API to create Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-07', 'country_code_2': 'C7'}
@@ -238,6 +251,7 @@ class TestRegion(BaseTest):
         self.assertEqual(data.get('name'), 'Country Detail', msg)
 
     def test_options_region(self):
+        #self.skipTest("Temporarily skipped")
         # Use API to create Country.
         uri = reverse('country-list')
         new_data = {'country': 'Country-08', 'country_code_2': 'C8'}

@@ -18,7 +18,7 @@ class TestAccounts(BaseTest):
     def __init__(self, name):
         super(TestAccounts, self).__init__(name)
 
-    def test_create_post_account(self):
+    def test_create_user_post(self):
         """
         Ensure we can create a new account.
         """
@@ -41,9 +41,9 @@ class TestAccounts(BaseTest):
         msg = "Response Data: {}".format(data)
         self.assertEqual(data.get('username'), new_data.get('username'), msg)
 
-    def test_user_with_no_permissions(self):
+    def test_get_user_no_permissions(self):
         """
-        Test the user_list endpoint with no permissions. We don't use the 
+        Test the user_list endpoint with no permissions. We don't use the
         self.client created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
@@ -57,12 +57,13 @@ class TestAccounts(BaseTest):
         msg = "Response Data: {}".format(data)
         self.assertTrue('detail' in data, msg)
 
-    def test_user_with_token(self):
+    def test_create_user_post_token(self):
         """
-        Test use of API with token. We don't use the self.client created in
+        Test user of API with token. We don't use the self.client created in
         the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
         username = 'Normal User'
         password = '123456'
         user, client = self._create_normal_user(username, password,
@@ -96,8 +97,6 @@ class TestAccounts(BaseTest):
         data = response.data
         self.assertTrue(data.get('is_staff'), msg)
         # Read record with GET.
-        pk = data.get('id')
-        uri = reverse('user-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
@@ -116,13 +115,11 @@ class TestAccounts(BaseTest):
         # Update record with PATCH.
         pk = data.get('id')
         uri = reverse('user-detail', kwargs={'pk': pk})
-        new_data['is_staff'] = True
-        response = self.client.patch(uri, new_data, format='json')
+        update_data = {'is_staff': True}
+        response = self.client.patch(uri, update_data, format='json')
         data = response.data
         self.assertTrue(data.get('is_staff'), msg)
         # Read record with GET.
-        pk = data.get('id')
-        uri = reverse('user-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
@@ -154,7 +151,7 @@ class TestAccounts(BaseTest):
         self.assertTrue(data is None, msg)
         # Get the same record through the API.
         # There is NO reason for the code below to fail, however it throws an
-        # exception in the client.get.
+        # exception in the client.get. It should just return a 404 NOT FOUND.
         #response = self.client.get(uri, format='json')
         #code = response.status_code
         #msg = "Status: {}".format(code)
