@@ -9,6 +9,8 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 
 from inventory.common.api.tests.base_test import BaseTest
+from inventory.regions.models import Country, Region
+
 
 class TestRegion(BaseTest):
 
@@ -61,6 +63,94 @@ class TestRegion(BaseTest):
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('region'), new_data.get('region'), msg)
         self.assertTrue(data.get('active'), msg)
+
+    def test_get_country_with_no_permissions(self):
+        """
+        Test the country_list endpoint with no permissions. We don't use the
+        self.client created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(username, password, login=False)
+        # Use API to get list with unauthenticated user.
+        uri = reverse('country-list')
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response Data: {}".format(data)
+        self.assertTrue('detail' in data, msg)
+
+    def test_get_region_with_no_permissions(self):
+        """
+        Test the region_list endpoint with no permissions. We don't use the
+        self.client created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        region = self._create_region(country)
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(username, password, login=False)
+        # Use API to get list with unauthenticated user.
+        uri = reverse('region-list')
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response Data: {}".format(data)
+        self.assertTrue('detail' in data, msg)
+
+    def test_create_country_post_token(self):
+        """
+        Test supplier with API with token. We don't use the self.client
+        created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(username, password,
+                                                email='test@example.com')
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Use API to create a country.
+        uri = reverse('country-list')
+        new_data = {'country': 'Country-01', 'country_code_2': 'C1'}
+        response = client.post(uri, new_data, format='json')
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, response.data)
+
+    def test_create_region_post_token(self):
+        """
+        Test supplier with API with token. We don't use the self.client
+        created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(username, password,
+                                                email='test@example.com')
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Create the Country.
+        uri = reverse('country-list')
+        new_data = {'country': 'Country-02', 'country_code_2': 'C2'}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        pk = data.get('id')
+        # Use API to create a region.
+        uri = reverse('region-list')
+        country_detail_uri = reverse('country-detail', kwargs={'pk': pk})
+        new_data = {'country': country_detail_uri,
+                    'region': 'New Region',
+                    'region_code': 'NR'}
+        response = client.post(uri, new_data, format='json')
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, response.data)
 
     def test_update_put_country(self):
         #self.skipTest("Temporarily skipped")
@@ -278,3 +368,19 @@ class TestRegion(BaseTest):
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertEqual(data.get('name'), 'Region Detail', msg)
+
+    def _create_country(self):
+        new_data = {'country': 'United States',
+                    'country_code_2': 'US',
+                    'country_code_3': 'USA',
+                    'country_number_code': 840,
+                    'updater': self.user, 'creator': self.user}
+        return Country.objects.create(**new_data)
+
+    def _create_region(self, country):
+        new_data = {'country': country,
+                    'region_code': 'NY',
+                    'region': 'New York',
+                    'primary_level': 'State',
+                    'updater': self.user, 'creator': self.user}
+        return Region.objects.create(**new_data)
