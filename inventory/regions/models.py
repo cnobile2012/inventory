@@ -6,14 +6,14 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from dcolumn.common.model_mixins import (
+from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
 
 
 #
 # Country
 #
-class CountryManager(StatusModelManagerMixin):
+class CountryManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
@@ -50,7 +50,7 @@ class Country(TimeModelMixin, UserModelMixin, StatusModelMixin):
 #
 # Region
 #
-class RegionManager(StatusModelManagerMixin):
+class RegionManager(StatusModelManagerMixin, models.Manager):
     pass
 
 

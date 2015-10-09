@@ -5,13 +5,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from dcolumn.common.model_mixins import (
+from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
-
 from inventory.regions.models import Region, Country
 
 
-class SupplierManager(StatusModelManagerMixin):
+class SupplierManager(StatusModelManagerMixin, models.Manager):
     pass
 
 

@@ -5,12 +5,13 @@
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from dcolumn.common.admin_mixins import UserAdminMixin
+
+from inventory.common.admin_mixins import UserAdminMixin
 
 from .models import Supplier
 
 
-class SupplierAdmin(UserAdminMixin):
+class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('name', 'stype', 'address_01', 'address_02', 'city',
                 'region', 'postal_code', 'country', 'phone', 'fax', 'email',

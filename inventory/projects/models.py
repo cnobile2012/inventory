@@ -8,11 +8,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from dcolumn.common.model_mixins import (
+from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
 
 
-class ProjectManager(StatusModelManagerMixin):
+class ProjectManager(StatusModelManagerMixin, models.Manager):
     pass
 
 

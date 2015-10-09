@@ -9,8 +9,6 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
 
-from dcolumn.common.model_mixins import UserModelMixin, TimeModelMixin
-
 from inventory.projects.models import Project
 from inventory.common.storage import InventoryFileStorage
 

@@ -6,13 +6,13 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from dcolumn.common.admin_mixins import UserAdminMixin
+from inventory.common.admin_mixins import UserAdminMixin
 
 from .models import Country, Region
 
 
 # Admin and Inline
-class RegionAdmin(UserAdminMixin):
+class RegionAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('country', 'region_code', 'region',
                            'primary_level',)}),
@@ -35,7 +35,7 @@ class RegionInline(admin.TabularInline):
     extra = 6
 
 
-class CountryAdmin(UserAdminMixin):
+class CountryAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('country', 'country_code_2', 'country_code_3',
                            'country_number_code',)}),

@@ -5,7 +5,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from dcolumn.common.admin_mixins import UserAdminMixin
+from inventory.common.admin_mixins import UserAdminMixin
 
 from .models import Project
 from .forms import ProjectForm
@@ -14,7 +14,7 @@ from .forms import ProjectForm
 #
 # Project
 #
-class ProjectAdmin(UserAdminMixin):
+class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('name', 'managers', 'members', 'public',)}),
         (_('Status'), {'classes': ('collapse',),
