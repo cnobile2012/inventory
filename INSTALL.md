@@ -20,7 +20,7 @@ $ `sudo pip install virtualenvwrapper`
 
 ## Virtual Wrapper Initialization
 
-Use your favorit editor to add the following lines at the end of your
+Use your favorite editor to add the following lines at the end of your
 `.bashrc` file.
 
 ```
