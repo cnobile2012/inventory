@@ -1,11 +1,8 @@
 #!/usr/bin/env python
+#
 
 import logging
 import os, sys
-import csv
-from datetime import datetime
-#from dateutil import parser as duparser
-#from dateutil.tz import tzutc
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -13,9 +10,7 @@ sys.path.append(BASE_PATH)
 
 import django; django.setup()
 from django.contrib.auth import get_user_model
-#from django.contrib.auth.models import User
 
-#from inventory.accounts.models import User
 from inventory.apps.items.models import Distributor, Manufacturer
 from inventory.regions.models import Region, Country
 from inventory.suppliers.models import Supplier
@@ -206,6 +201,7 @@ class MigrateSuppliers(object):
 if __name__ == '__main__':
     import traceback
     import argparse
+    from datetime import datetime
 
     parser = argparse.ArgumentParser(
         description=("Inventory--Migrate Supplier."))
