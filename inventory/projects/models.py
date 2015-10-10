@@ -45,7 +45,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def process_members(self, members):

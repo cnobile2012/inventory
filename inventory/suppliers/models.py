@@ -62,8 +62,7 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin):
         verbose_name = _("Supplier")
         verbose_name_plural = _("Suppliers")
 
-
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):

@@ -92,7 +92,7 @@ class User(AbstractUser):
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_full_name_reversed()
 
     def get_full_name_reversed(self):
