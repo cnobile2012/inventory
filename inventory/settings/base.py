@@ -186,6 +186,8 @@ INSTALLED_APPS = [
     'inventory.projects',
     'inventory.regions',
     'inventory.suppliers',
+    'inventory.categories',
+    # Will be removed over time.
     'inventory.apps.items',
     'inventory.apps.login',
     'inventory.apps.reports',
