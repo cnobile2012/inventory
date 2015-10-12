@@ -3,6 +3,8 @@
 # inventory/categories/models.py
 #
 
+from collections import OrderedDict
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -92,18 +94,28 @@ class CategoryManager(models.Manager):
         Return a category tree(s) starting from a list of category objects.
         """
         tree = []
+        final = OrderedDict()
 
         for cat in categories:
             iterator = cat.children.iterator()
-            if with_root: tree.append(cat)
+            item = []
+
+            if with_root:
+                item.append(cat)
 
             try:
                 while True:
-                    tree.append(iterator.next())
+                    item.append(iterator.next())
             except StopIteration:
                 pass
 
-        return sorted(tree, cmp=lambda x,y: cmp(x.path.lower(), y.path.lower()))
+            tree.append(tuple(sorted(
+                item, cmp=lambda x,y: cmp(x.path.lower(), y.path.lower()))))
+
+        for item in tree:
+            final[hash(item)] = item
+
+        return final.values()
 
     def get_all_child_paths_for_category_list(self, category_list):
         """
@@ -158,15 +170,18 @@ class Category(TimeModelMixin, UserModelMixin):
         """
         Returns a list of Category objects that are children of this category.
         """
-        return Category.objects.get_child_tree_from_list(
+        children = Category.objects.get_child_tree_from_list(
             (self,), with_root=False)
+        return children[0]
+
 
     def get_children_and_root(self):
         """
         Return a list of Category objects that are children of this category
         including this category.
         """
-        return Category.objects.get_child_tree_from_list((self,))
+        children = Category.objects.get_child_tree_from_list((self,))
+        return children[0]
 
     def _parents_producer(self):
         return self._get_category_path(current=False)

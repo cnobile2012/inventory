@@ -45,8 +45,10 @@ class TestCategoryModel(TestCase):
         #self.skipTest("Temporarily skipped")
         cat0 = self._create_record('TestLevel-0')
         cat1 = self._create_record('TestLevel-1', parent=cat0)
+        cat2 = self._create_record('TestLevel-2', parent=cat1)
         children = cat0.get_children_and_root()
-        msg = "cat0: {}, cat1: {}, children: {}".format(cat0, cat1, children)
+        msg = "cat0: {}, cat1: {}, cat2: {}, children: {}".format(
+            cat0, cat1, cat2, children)
         self.assertTrue(len(children) == 2, msg)
 
     def test_create_category_tree(self):
@@ -61,7 +63,7 @@ class TestCategoryModel(TestCase):
         self.assertTrue(categories_0[-1].level == 2, msg)
         # Test that the same level cannot have more than one category with
         # the same name.
-        create_list_1 = ('TestLevel-0', 'TestLevel-1a', 'TestLevel-2a',)
+        create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
         categories_1 = Category.objects.create_category_tree(
             create_list_0, self.user)
         level_0_cats = Category.objects.filter(name=create_list_1[0], level=0)
@@ -75,7 +77,7 @@ class TestCategoryModel(TestCase):
         categories_0 = Category.objects.create_category_tree(
             create_list_0, self.user)
         # Create three overpapping categories.
-        create_list_1 = ('TestLevel-0', 'TestLevel-1a', 'TestLevel-2a',)
+        create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
         categories_1 = Category.objects.create_category_tree(
             create_list_1, self.user)
         # Delete lest two children from first time.
@@ -92,6 +94,55 @@ class TestCategoryModel(TestCase):
         parents = Category.objects.get_parents(categories_0[-1])
         msg = "categories_0: {}, parents: {}".format(categories_0, parents)
         self.assertEqual(len(parents), 2, msg)
+
+    def test_get_child_tree_from_list_with_root(self):
+        #self.skipTest("Temporarily skipped")
+        # Create two category trees.
+        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories_0 = Category.objects.create_category_tree(
+            create_list_0, self.user)
+        create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
+        categories_1 = Category.objects.create_category_tree(
+            create_list_1, self.user)
+        # Get all children plus the root
+        new_cats = (categories_0[0], categories_1[0])
+        categories = Category.objects.get_child_tree_from_list(new_cats)
+        msg = "categories: {}".format(categories)
+        self.assertEqual(len(categories), 1, msg)
+        self.assertEqual(len(categories[0]), 3, msg)
+
+    def test_get_child_tree_from_list_without_root(self):
+        #self.skipTest("Temporarily skipped")
+        # Create two category trees.
+        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories_0 = Category.objects.create_category_tree(
+            create_list_0, self.user)
+        create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
+        categories_1 = Category.objects.create_category_tree(
+            create_list_1, self.user)
+        # Get all children no root
+        new_cats = (categories_0[0], categories_1[0])
+        categories = Category.objects.get_child_tree_from_list(
+            new_cats, with_root=False)
+        msg = "categories: {}".format(categories)
+        self.assertTrue(len(categories) == 1, msg)
+        self.assertEqual(len(categories[0]), 2, msg)
+
+    def test_get_child_tree_from_list_different_roots(self):
+        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories_0 = Category.objects.create_category_tree(
+            create_list_0, self.user)
+        create_list_1 = ('TestLevel-0.1', 'TestLevel-1.1', 'TestLevel-2.1',)
+        categories_1 = Category.objects.create_category_tree(
+            create_list_1, self.user)
+        # Get all children with seperate roots
+        new_cats = (categories_0[0], categories_1[0])
+        categories = Category.objects.get_child_tree_from_list(new_cats)
+        msg = "categories: {}".format(categories)
+        self.assertTrue(len(categories) == 2, msg)
+        self.assertEqual(len(categories[0]), 2, msg)
+        self.assertEqual(len(categories[1]), 2, msg)
+
 
 
 
