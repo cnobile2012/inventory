@@ -19,7 +19,8 @@ from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager)
 from inventory.common.api.pagination import SmallResultsSetPagination
-from inventory.projects.models import Project
+
+from ..models import Project
 
 from .serializers import ProjectSerializer
 
@@ -79,9 +80,6 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     pagination_class = SmallResultsSetPagination
-
-    def pre_save(self, obj):
-        obj.creator = self.request.user
 
 project_list = ProjectList.as_view()
 
