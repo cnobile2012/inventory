@@ -14,17 +14,18 @@ from .models import Category
 
 class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('parent', 'name', 'path', 'level',)}),
+        (None, {'fields': ('owner', 'parent', 'name', 'path', 'level',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
     readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('name', '_parents_producer', 'path', 'level',)
-    search_fields = ('name',)
-    list_filter = ('level',)
-    ordering = ('path',)
+    list_display = ('name', '_parents_producer', 'path', 'level',
+                    '_owner_producer',)
+    search_fields = ('name', 'owner__username', 'owner__last_name',)
+    list_filter = ('level', 'owner',)
+    ordering = ('owner', 'path',)
     form = CategoryForm
 
 admin.site.register(Category, CategoryAdmin)

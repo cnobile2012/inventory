@@ -30,6 +30,10 @@ def api_root(request, format=None):
         'user-list', request=request, format=format)
     accounts['user-groups'] = reverse(
         'group-list', request=request, format=format)
+    # Categories
+    categories = items.setdefault('categories', OrderedDict())
+    categories['categories'] = reverse(
+        'category-list', request=request, format=format)
     # Oauth2
     oauth2 = items.setdefault('oauth2', OrderedDict())
     oauth2['access-token'] = reverse(

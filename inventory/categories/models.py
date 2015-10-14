@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from inventory.common.model_mixins import UserModelMixin, TimeModelMixin
 
@@ -140,6 +141,10 @@ class CategoryManager(models.Manager):
 class Category(TimeModelMixin, UserModelMixin):
     DEFAULT_SEPARATOR = '>'
 
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=_("Owner"),
+        related_name="%(app_label)s_%(class)s_owner_related",
+        help_text=_("The user that ownes this record."))
     parent = models.ForeignKey(
         "self", verbose_name=_("Parent"), blank=True, null=True, default=None,
         related_name='children')
@@ -178,6 +183,10 @@ class Category(TimeModelMixin, UserModelMixin):
         return self._get_category_path(current=False)
     _parents_producer.short_description = _("Category Parents")
 
+    def _owner_producer(self):
+        return self.owner.get_full_name_reversed()
+    _owner_producer.short_description = _("Category Owner")
+
     def save(self, *args, **kwargs):
         # Fix our self.
         self.path = self._get_category_path()
@@ -198,6 +207,7 @@ class Category(TimeModelMixin, UserModelMixin):
         return "{}".format(self.path)
 
     class Meta:
+        unique_together = (('owner', 'parent', 'name',),)
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
         ordering = ('path',)

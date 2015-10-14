@@ -70,6 +70,7 @@ class MigrateSuppliers(object):
 
         for record in records:
             kwargs = {}
+            kwargs['owner'] = record.user
             kwargs['creator'] = record.user
             kwargs['created'] = record.ctime
             kwargs['updater'] = self.user
@@ -83,6 +84,7 @@ class MigrateSuppliers(object):
                     name=record.name.strip(), defaults=kwargs)
 
                 if not created:
+                    obj.owner = kwargs.get('owner')
                     obj.creator = kwargs.get('creator')
                     obj.created = kwargs.get('created')
                     obj.updator = kwargs.get('updater')

@@ -27,6 +27,7 @@ urlpatterns = patterns(
     url(r'^auth/$', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/v1/$', include('inventory.common.api.urls')),
     url(r'^api/v1/accounts/', include('inventory.accounts.api.urls')),
+    url(r'^api/v1/categories/', include('inventory.categories.api.urls')),
     url(r'^api/v1/oauth2/', include('inventory.oauth2.api.urls')),
     url(r'^api/v1/projects/', include('inventory.projects.api.urls')),
     url(r'^api/v1/regions/', include('inventory.regions.api.urls')),
