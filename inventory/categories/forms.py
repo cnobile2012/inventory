@@ -13,7 +13,7 @@ from .models import Category
 log = logging.getLogger('inventory.categories.forms')
 
 
-class CategoryAdminForm(forms.ModelForm):
+class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         exclude = ()
@@ -32,30 +32,28 @@ class CategoryAdminForm(forms.ModelForm):
         if parent:
             # Test saving a category to itself.
             if name == parent.name:
-                msg = _("You cannot save a category in itself.")
+                msg = _("You cannot save a category as a child to itself.")
                 raise forms.ValidationError(msg)
 
-            # Test that this name does not already exist at this leaf
-            # in this tree.
+            # Test that this name does not already exist as a node in this
+            # tree.
             if not self.initial:
-                name_sets = Category.objects.get_all_root_trees(name)
-                log.debug("All root trees: %s", name_sets)
+                node_trees = Category.objects.get_all_root_trees(name)
+                log.debug("All root trees: %s", node_trees)
                 parents = Category.get_parents(parent)
                 parents.append(parent)
                 log.debug("Parents: %s", parents)
                 flag = False
 
-                for nset in name_sets:
-                    try:
-                        flag = all([nset[c].name == parents[c].name
-                                    for c in range(len(parents))])
+                for nset in node_trees:
+                    for parent in parents:
+                        if parent in nset:
+                            flag = True
 
-                        if flag:
-                            msg = _(("A category at this level with name "
-                                     "[{}] already exists.").format(name))
-                            raise forms.ValidationError(msg)
-                    except IndexError:
-                        continue
+                if flag:
+                    msg = _(("A category in this tree with name [{}] "
+                             "already exists.").format(name))
+                    raise forms.ValidationError(msg)
         # Test that there is not already a root category with this value.
         elif not self.initial and name in [item.name for item in names
                                            if not item.parent]:
@@ -64,4 +62,3 @@ class CategoryAdminForm(forms.ModelForm):
             raise forms.ValidationError(msg)
 
         return self.cleaned_data
-

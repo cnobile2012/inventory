@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin
 
-from .forms import CategoryAdminForm
+from .forms import CategoryForm
 from .models import Category
 
 
@@ -25,6 +25,6 @@ class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
     search_fields = ('name',)
     list_filter = ('level',)
     ordering = ('path',)
-    form = CategoryAdminForm
+    form = CategoryForm
 
 admin.site.register(Category, CategoryAdmin)
