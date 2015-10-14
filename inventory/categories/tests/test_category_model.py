@@ -129,6 +129,8 @@ class TestCategoryModel(TestCase):
         self.assertEqual(len(categories[0]), 2, msg)
 
     def test_get_child_tree_from_list_different_roots(self):
+        #self.skipTest("Temporarily skipped")
+        # Create two category trees.
         create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
         categories_0 = Category.objects.create_category_tree(
             create_list_0, self.user)
@@ -143,14 +145,20 @@ class TestCategoryModel(TestCase):
         self.assertEqual(len(categories[0]), 2, msg)
         self.assertEqual(len(categories[1]), 2, msg)
 
-
-
-
-
-
-
-
-
+    def test_get_all_root_trees(self):
+        #self.skipTest("Temporarily skipped")
+        # Create two category trees.
+        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories_0 = Category.objects.create_category_tree(
+            create_list_0, self.user)
+        create_list_1 = ('TestLevel-0.1', 'TestLevel-1.1', 'TestLevel-2',)
+        categories_1 = Category.objects.create_category_tree(
+            create_list_1, self.user)
+        categories = Category.objects.get_all_root_trees('TestLevel-2')
+        msg = "categories: {}".format(categories)
+        self.assertEqual(len(categories), 2, msg)
+        self.assertEqual(len(categories[0]), 2, msg)
+        self.assertEqual(len(categories[1]), 2, msg)
 
     def _create_record(self, name, parent=None):
         kwargs = {}

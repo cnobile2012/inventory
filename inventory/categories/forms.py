@@ -3,10 +3,14 @@
 # inventory/categories/forms.py
 #
 
+import logging
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Category
+
+log = logging.getLogger('inventory.categories.forms')
 
 
 class CategoryAdminForm(forms.ModelForm):
@@ -34,16 +38,16 @@ class CategoryAdminForm(forms.ModelForm):
             # Test that this name does not already exist at this leaf
             # in this tree.
             if not self.initial:
-                nameSets = Category.objects.get_all_root_trees(name)
-                log.debug("All root trees: %s", nameSets)
+                name_sets = Category.objects.get_all_root_trees(name)
+                log.debug("All root trees: %s", name_sets)
                 parents = Category.get_parents(parent)
                 parents.append(parent)
                 log.debug("Parents: %s", parents)
                 flag = False
 
-                for nSet in nameSets:
+                for nset in name_sets:
                     try:
-                        flag = all([nSet[c].name == parents[c].name
+                        flag = all([nset[c].name == parents[c].name
                                     for c in range(len(parents))])
 
                         if flag:

@@ -32,8 +32,13 @@ class CategoryManager(models.Manager):
                 raise ValueError(msg)
 
             for level, name in enumerate(category_list):
+                if node_list:
+                    parent = node_list[-1].parent
+                else:
+                    parent = None
+
                 try:
-                    node = self.get(name=name, level=level)
+                    node = self.get(name=name, parent=parent, level=level)
                 except self.model.DoesNotExist:
                     if node_list:
                         parent = node_list[-1]
@@ -73,7 +78,7 @@ class CategoryManager(models.Manager):
 
     def get_parents(self, category):
         """
-        Get all the parents to this category item.
+        Get all the parents to this category object.
         """
         parents = self._recurse_parents(category)
         parents.reverse()
@@ -89,14 +94,19 @@ class CategoryManager(models.Manager):
 
         return parents
 
-    def get_child_tree_from_list(self, categories, with_root=True):
+    def get_child_tree_from_list(self, category_list, with_root=True):
         """
-        Return a category tree(s) starting from a list of category objects.
+        Given a list of Category objects, returns a list of all the Categories
+        plus all the Categories' children, plus the childrens' children, etc.
+        For example, if the 'Arts' and 'Color' Categories are passed in a list,
+        this function will return the [['Arts', 'Arts>Music',
+        'Arts>Music>Local', ...], ['Color', 'Red', 'Green', 'Blue', ...]]
+        objects. Duplicates will be removed.
         """
         tree = []
         final = OrderedDict()
 
-        for cat in categories:
+        for cat in category_list:
             iterator = cat.children.iterator()
             item = []
 
@@ -117,31 +127,12 @@ class CategoryManager(models.Manager):
 
         return final.values()
 
-    def get_all_child_paths_for_category_list(self, category_list):
-        """
-        Given a list of Category objects, returns a list of all the
-        Categories plus all the Categories' children, plus the childrens'
-        children, etc. For example, if the 'Arts' Category is passed as a
-        parameter, this function will return the ['Arts', 'Arts>Music',
-        'Arts>Music>Local' ...] objects.
-        """
-        result = []
-
-        if isinstance(category_list, (list, tuple)):
-            if category_list:
-                arg_list = ["models.Q(path='{}')".format(c)
-                            for c in category_list]
-                args = eval(('|'.join(arg_list)))
-                result = self.filter(args)
-
-        return result
-
     def get_all_root_trees(self, name):
         result = []
         records = self.filter(name=name)
 
         if len(records) > 0:
-            result[:] = [self.model.get_parents(record) for record in records]
+            result[:] = [self.get_parents(record) for record in records]
 
         return result
 
