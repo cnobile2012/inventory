@@ -21,6 +21,7 @@ class CategoryForm(forms.ModelForm):
     def clean(self):
         parent = self.cleaned_data.get('parent')
         name = self.cleaned_data.get('name')
+        owner = self.cleaned_data.get('owner')
         names = Category.objects.filter(name=name)
         log.debug("All %s names in all trees: %s", name, names)
 
@@ -38,7 +39,7 @@ class CategoryForm(forms.ModelForm):
             # Test that this name does not already exist as a node in this
             # tree.
             if not self.initial:
-                node_trees = Category.objects.get_all_root_trees(name)
+                node_trees = Category.objects.get_all_root_trees(name, owner)
                 log.debug("All root trees: %s", node_trees)
                 parents = Category.get_parents(parent)
                 parents.append(parent)

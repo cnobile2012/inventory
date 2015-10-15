@@ -3,6 +3,8 @@
 # inventory/categories/models.py
 #
 
+import logging
+
 from collections import OrderedDict
 
 from django.db import models
@@ -11,10 +13,12 @@ from django.conf import settings
 
 from inventory.common.model_mixins import UserModelMixin, TimeModelMixin
 
+log = logging.getLogger('inventory.categories.models')
+
 
 class CategoryManager(models.Manager):
 
-    def create_category_tree(self, category_list, user):
+    def create_category_tree(self, category_list, user, owner):
         """
         Gets and/or creates designated category, creating parent categories
         as necessary. Returns a list of objects in category order or an empty
@@ -34,19 +38,16 @@ class CategoryManager(models.Manager):
 
             for level, name in enumerate(category_list):
                 if node_list:
-                    parent = node_list[-1].parent
+                    parent = node_list[-1]
                 else:
                     parent = None
 
                 try:
-                    node = self.get(name=name, parent=parent, level=level)
+                    node = self.get(owner=owner, name=name, parent=parent,
+                                    level=level)
                 except self.model.DoesNotExist:
-                    if node_list:
-                        parent = node_list[-1]
-                    else:
-                        parent = None
-
                     kwargs = {}
+                    kwargs['owner'] = owner
                     kwargs['name'] = name
                     kwargs['parent'] = parent
                     kwargs['creator'] = user
@@ -58,7 +59,7 @@ class CategoryManager(models.Manager):
 
         return node_list
 
-    def delete_category_tree(self, node_list):
+    def delete_category_tree(self, node_list, owner):
         """
         Deletes the category tree back to the beginning, but will stop if there
         are other children on the category. The result is that it will delete
@@ -69,6 +70,14 @@ class CategoryManager(models.Manager):
         """
         node_list.reverse()
         deleted_nodes = []
+
+        for node in node_list:
+            if node.owner is not owner:
+                msg = ("Delete category: {}, creator: {}, updated: {}, "
+                       "owner: {}, non-owner: {}").format(
+                    node, node.creator, node.updater, node.owner, owner)
+                log.error(msg)
+                raise ValueError(msg)
 
         for node in node_list:
             if node.children.count() > 0: break
@@ -128,9 +137,9 @@ class CategoryManager(models.Manager):
 
         return final.values()
 
-    def get_all_root_trees(self, name):
+    def get_all_root_trees(self, name, owner):
         result = []
-        records = self.filter(name=name)
+        records = self.filter(name=name, owner=owner)
 
         if len(records) > 0:
             result[:] = [self.get_parents(record) for record in records]
