@@ -25,7 +25,7 @@ from ..models import Category
 from .serializers import CategorySerializer
 
 
-log = logging.getLogger('api.projects.views')
+log = logging.getLogger('api.categories.views')
 User = get_user_model()
 
 
