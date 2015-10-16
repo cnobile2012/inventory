@@ -29,8 +29,6 @@ class TestProject(BaseTest):
         data = response.data
         user_pk = data.get('id')
         self.assertTrue(isinstance(user_pk, int))
-        # Use API to create the user's profile.
-        uri = reverse('user-list')
         self.user_uri = reverse('user-detail', kwargs={'pk': user_pk})
 
     def test_create_post_project(self):
