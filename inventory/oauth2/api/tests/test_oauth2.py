@@ -178,12 +178,6 @@ class TestOauth2(BaseTest):
         msg = "Response Data: {}".format(data)
         self.assertEquals(data.get('name'), app_name, msg)
 
-
-
-
-
-
-
     def _get_application(self, client, data):
         uri = data.get('results')[0].get('application')
         response = client.get(uri, format='json')

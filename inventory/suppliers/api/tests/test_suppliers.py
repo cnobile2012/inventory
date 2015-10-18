@@ -81,6 +81,8 @@ class TestSuppliers(BaseTest):
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
     def test_create_supplier_post_token(self):

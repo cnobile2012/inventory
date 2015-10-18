@@ -60,11 +60,13 @@ class TestProject(BaseTest):
         password = '123456'
         user, client = self._create_normal_user(username, password, login=False)
         project = self._create_project(user)
-       # Use API to get user list with unauthenticated user.
+        # Use API to get user list with unauthenticated user.
         uri = reverse('project-list')
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response Data: {}".format(data)
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
     def test_create_project_post_token(self):
