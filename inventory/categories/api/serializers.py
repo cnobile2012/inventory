@@ -6,8 +6,10 @@
 import logging
 
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 
@@ -18,12 +20,36 @@ User = get_user_model()
 
 
 class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
+
     owner = serializers.HyperlinkedRelatedField(
         view_name='user-detail', queryset=User.objects.all())
     parent = serializers.HyperlinkedRelatedField(
-        view_name='category-detail', read_only=True)
+        view_name='category-detail', queryset=Category.objects.all(),
+        default=None)
     uri = serializers.HyperlinkedIdentityField(
         view_name='category-detail')
+
+    def validate_name(self, value):
+        delimiter = Category.DEFAULT_SEPARATOR
+
+        if delimiter in value:
+            raise serializers.ValidationError(
+                _(("A category name cannot contain the category "
+                   "delimiter '{}'.").format(delimiter)))
+
+        return value
+
+    def validate_owner(self, value):
+        if not self.has_full_access():
+            user = self._get_user_object()
+
+            if value.id != user.id:
+                log.info("Owner PK: %s, request user PK: %s", value.id, user.id)
+                raise PermissionDenied(
+                    _("The owner for this record must be the same as the "
+                      "user who is creating or altering the record."))
+
+        return value
 
     def create(self, validated_data):
         user = self._get_user_object()
@@ -34,6 +60,7 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.parent = validated_data.get('parent', instance.parent)
+        instance.owner = validated_data.get('owner', instance.owner)
         instance.updater = self._get_user_object()
         instance.save()
         return instance

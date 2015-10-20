@@ -7,8 +7,10 @@
 
 import base64
 import json
+import types
 
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext
 
 from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
@@ -66,10 +68,11 @@ class BaseTest(APITestCase):
         return client
 
     def _create_normal_user(self, username, password, email=None, login=True):
-        user = self._create_user(username=username, email=email,
-                                 password=password, is_superuser=False)
-        client = self._set_user_auth(user, username=username, password=password,
-                                     login=login)
+        user = self._create_user(
+            username=username, email=email, password=password,
+            is_superuser=False)
+        client = self._set_user_auth(
+            user, username=username, password=password, login=login)
         return user, client
 
     # Register an application and get a token
@@ -123,3 +126,24 @@ class BaseTest(APITestCase):
 
     def _create_grant(self, ):
         pass
+
+    def _clean_data(self, data):
+        if data is not None:
+            if isinstance(data, list):
+                data = self.__clean_value(data)
+            else:
+                for key in data:
+                    data[key] = self.__clean_value(data.get(key))
+
+        return data
+
+    def __clean_value(self, value):
+        if isinstance(value, (list, tuple,)):
+            value = [self.__clean_value(item) for item in value]
+        elif (isinstance(value, (int, long, bool, types.TypeType,)) or
+              value is None):
+            pass
+        else:
+            value = ugettext(value)
+
+        return value

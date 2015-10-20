@@ -6,18 +6,20 @@
 import logging
 
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import serializers
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import Category
@@ -34,21 +36,23 @@ User = get_user_model()
 #
 class CategoryAuthorizationMixin(object):
 
+    def has_full_access(self):
+        return (self.request.user.is_superuser or
+                self.request.user.role == User.ADMINISTRATOR)
+
     def get_queryset(self):
         result = []
 
-        if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+        if self.has_full_access():
             result = Category.objects.all()
         else:
             result = self.request.user.categories_category_owner_related.all()
 
         return result
 
-
 class CategoryList(CategoryAuthorizationMixin, ListCreateAPIView):
     """
-    Country list endpoint.
+    Category list endpoint.
 
     ## Keywords:
       * format `str` (optional)
@@ -76,7 +80,7 @@ class CategoryList(CategoryAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = CategorySerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     pagination_class = SmallResultsSetPagination
@@ -90,7 +94,7 @@ class CategoryDetail(CategoryAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     """
     queryset = Category.objects.all()
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     serializer_class = CategorySerializer
