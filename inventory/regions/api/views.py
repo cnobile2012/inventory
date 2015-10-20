@@ -13,7 +13,7 @@ from rest_condition import ConditionalPermission, C, And, Or, Not
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.regions.models import Country, Region
 
@@ -57,7 +57,7 @@ class CountryList(ListCreateAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        Or(IsAnyUser),# IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     pagination_class = SmallResultsSetPagination
@@ -72,7 +72,7 @@ class CountryDetail(RetrieveUpdateDestroyAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
 
@@ -113,7 +113,7 @@ class RegionList(ListCreateAPIView):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     pagination_class = SmallResultsSetPagination
@@ -128,7 +128,7 @@ class RegionDetail(RetrieveUpdateDestroyAPIView):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUser,),
+        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
 

@@ -111,6 +111,7 @@ class TestSuppliers(BaseTest):
         response = client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_update_put_supplier(self):
         #self.skipTest("Temporarily skipped")

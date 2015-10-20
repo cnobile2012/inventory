@@ -14,7 +14,7 @@ from rest_condition import ConditionalPermission, C, And, Or, Not
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.suppliers.models import Supplier
 
@@ -58,7 +58,7 @@ class SupplierList(ListCreateAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     pagination_class = SmallResultsSetPagination
@@ -75,7 +75,7 @@ class SupplierDetail(RetrieveUpdateDestroyAPIView):
     """
     queryset = Supplier.objects.all()
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,),
+        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     serializer_class = SupplierSerializer

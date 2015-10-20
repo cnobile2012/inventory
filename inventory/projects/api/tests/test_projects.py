@@ -91,8 +91,10 @@ class TestProject(BaseTest):
         response = client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_update_put_project(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
@@ -120,6 +122,7 @@ class TestProject(BaseTest):
         self.assertTrue(data.get('public'), msg)
 
     def test_update_patch_project(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
@@ -147,6 +150,7 @@ class TestProject(BaseTest):
         self.assertEqual(data.get('public'), updated_data.get('public'), msg)
 
     def test_delete_project(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
@@ -177,6 +181,7 @@ class TestProject(BaseTest):
         #self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_project(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
@@ -200,6 +205,7 @@ class TestProject(BaseTest):
         self.assertEqual(data.get('name'), 'Project Detail', msg)
 
     def test_adding_member_patch(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
@@ -233,6 +239,7 @@ class TestProject(BaseTest):
                          len(updated_data.get('members')), msg)
 
     def test_removing_member_patch(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
@@ -267,6 +274,7 @@ class TestProject(BaseTest):
                          len(updated_data.get('members')), msg)
 
     def test_adding_manager_patch(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
@@ -300,6 +308,7 @@ class TestProject(BaseTest):
                          len(updated_data.get('managers')), msg)
 
     def test_removing_manager_patch(self):
+        #self.skipTest("Temporarily skipped")
         # Create Project with POST.
         uri = reverse('project-list')
         new_user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
