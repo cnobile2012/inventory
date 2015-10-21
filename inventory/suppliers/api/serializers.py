@@ -28,7 +28,7 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(view_name='supplier-detail')
 
     def create(self, validated_data):
-        user = self._get_user_object()
+        user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
         obj = Supplier.objects.create(**validated_data)
@@ -57,7 +57,7 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
             'country', instance.country)
         instance.region = validated_data.get(
             'region', instance.region)
-        instance.updater = self._get_user_object()
+        instance.updater = self.get_user_object()
         instance.active = validated_data.get(
             'active', instance.active)
         instance.save()

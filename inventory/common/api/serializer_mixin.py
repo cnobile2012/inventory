@@ -9,8 +9,11 @@ User = get_user_model()
 
 class SerializerMixin(object):
 
-    def _get_user_object(self):
-        request = self.context.get('request', None)
+    def get_request(self):
+        return self.context.get('request', None)
+
+    def get_user_object(self):
+        request = self.get_request()
         user = None
 
         if request is not None:
@@ -19,7 +22,7 @@ class SerializerMixin(object):
         return user
 
     def has_full_access(self):
-        request = self.context.get('request', None)
+        request = self.get_request()
         return (request is not None and
                 (request.user.is_superuser or
                  request.user.role == User.ADMINISTRATOR))

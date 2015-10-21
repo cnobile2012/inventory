@@ -31,7 +31,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(view_name='project-detail')
 
     def create(self, validated_data):
-        user = self._get_user_object()
+        user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
         members = validated_data.pop('members', [])
@@ -47,7 +47,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         instance.active = validated_data.get('active', instance.active)
         instance.process_members(validated_data.get('members', []))
         instance.process_managers(validated_data.get('managers', []))
-        instance.updater = self._get_user_object()
+        instance.updater = self.get_user_object()
         instance.save()
         return instance
 

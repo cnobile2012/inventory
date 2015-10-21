@@ -34,25 +34,27 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
 
         if delimiter in value:
             raise serializers.ValidationError(
-                _(("A category name cannot contain the category "
-                   "delimiter '{}'.").format(delimiter)))
+                detail=_(("A category name cannot contain the category "
+                          "delimiter '{}'.").format(delimiter)))
 
         return value
 
-    def validate_owner(self, value):
+    def validate(self, data):
         if not self.has_full_access():
-            user = self._get_user_object()
+            owner = data.get('owner')
+            user = self.get_user_object()
 
-            if value.id != user.id:
-                log.info("Owner PK: %s, request user PK: %s", value.id, user.id)
+            if owner.id != user.id:
+                log.info("Owner PK: %s, request user PK: %s", owner.id, user.id)
                 raise PermissionDenied(
-                    _("The owner for this record must be the same as the "
-                      "user who is creating or altering the record."))
+                    detail=_("The owner for this record must be the same as "
+                             "the user who is creating or altering the record.")
+                    )
 
-        return value
+        return data
 
     def create(self, validated_data):
-        user = self._get_user_object()
+        user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
         return Category.objects.create(**validated_data)
@@ -61,7 +63,7 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
         instance.name = validated_data.get('name', instance.name)
         instance.parent = validated_data.get('parent', instance.parent)
         instance.owner = validated_data.get('owner', instance.owner)
-        instance.updater = self._get_user_object()
+        instance.updater = self.get_user_object()
         instance.save()
         return instance
 

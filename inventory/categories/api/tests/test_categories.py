@@ -50,7 +50,10 @@ class TestCategories(BaseTest):
         uri = reverse('category-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(self._clean_data(data))
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK,
+            self._clean_data(response.data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
 
     def test_get_category_with_no_permissions(self):
@@ -113,7 +116,7 @@ class TestCategories(BaseTest):
             username, password, email='test@example.com')
         # Use API to create a category.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-09', 'owner': self.user_uri}
+        new_data = {'name': 'TestCategory-02', 'owner': self.user_uri}
         response = client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -138,7 +141,7 @@ class TestCategories(BaseTest):
             grant_type='client_credentials')
         # Use API to create a category.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-01', 'owner': self.user_uri}
+        new_data = {'name': 'TestCategory-03', 'owner': self.user_uri}
         response = client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN,
@@ -149,53 +152,69 @@ class TestCategories(BaseTest):
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-02', 'owner': self.user_uri}
+        new_data = {'name': 'TestCategory-04', 'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        self.assertFalse(data.get('public'), msg)
         # Update record with PUT.
         pk = data.get('id')
         uri = reverse('category-detail', kwargs={'pk': pk})
-        new_data['public'] = True
+        new_data['name'] = 'NewCategoryName'
         response = self.client.put(uri, new_data, format='json')
         data = response.data
-        msg = "Response Data: {}".format(self._clean_data(data))
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK,
+            self._clean_data(response.data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('path'), msg)
         # Read record with GET.
         pk = data.get('id')
         uri = reverse('category-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(self._clean_data(data))
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK,
+            self._clean_data(response.data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
-        self.assertTrue(data.get('path'), msg)
 
-    def test_invalid_user_put(self):
-        self.skipTest("Temporarily skipped")
+    def test_invalid_owner_put(self):
+        #self.skipTest("Temporarily skipped")
         # Create a user
         username = 'Normal User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com')
         pk = user.id
-        uri = reverse('user-detail', kwargs={'pk': pk})
-        new_data = {'name': 'TestCategory-10', 'owner': self.user_uri}
+        user_uri = reverse('user-detail', kwargs={'pk': pk})
+        # Create Category with POST.
+        uri = reverse('category-list')
+        new_data = {'name': 'TestCategory-05', 'owner': user_uri}
+        response = client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Update owner with PUT.
+        pk = data.get('id')
+        uri = reverse('category-detail', kwargs={'pk': pk})
+        new_data['owner'] = self.user_uri
         response = client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST,
+            response.status_code, status.HTTP_403_FORBIDDEN,
             self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_patch_category(self):
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-03', 'owner': self.user_uri}
+        new_data = {'name': 'TestCategory-06', 'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -219,44 +238,100 @@ class TestCategories(BaseTest):
         self.assertEquals(data.get('name'), updated_data.get('name'), msg)
         self.assertTrue(updated_data.get('name') in data.get('path'), msg)
 
+    def test_invalid_owner_patch(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a user
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com')
+        pk = user.id
+        user_uri = reverse('user-detail', kwargs={'pk': pk})
+        # Create Category with POST.
+        uri = reverse('category-list')
+        new_data = {'name': 'TestCategory-07', 'owner': user_uri}
+        response = client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Update owner with PATCH.
+        pk = data.get('id')
+        uri = reverse('category-detail', kwargs={'pk': pk})
+        new_data = {'owner': self.user_uri}
+        response = client.patch(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+
     def test_delete_category(self):
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-04', 'owner': self.user_uri}
+        new_data = {'name': 'TestCategory-08', 'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Get the same record through the API.
+        # Delete the User.
         pk = data.get('id')
         uri = reverse('category-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response Data: {}".format(self._clean_data(data))
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
-        # Delete the User.
         response = self.client.delete(uri, format='json')
         data = response.data
-        msg = "Response data: {}, status_code: {}".format(
-            self._clean_data(data), response.status_code)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertTrue(data is None, msg)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Get the same record through the API.
-        # There is NO reason for the code below to fail, however it throws an
-        # exception in the client.get.
-        #response = self.client.get(uri, format='json')
-        #code = response.status_code
-        #msg = "Status: {}".format(code)
-        #self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+
+    def test_invalid_owner_delete(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a user
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com')
+        # Create Category with POST.
+        uri = reverse('category-list')
+        new_data = {'name': 'TestCategory-09', 'owner': self.user_uri}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Delete the Category with a different user.
+        pk = data.get('id')
+        uri = reverse('category-detail', kwargs={'pk': pk})
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        # Get the same record through the API.
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(code, status.HTTP_200_OK, msg)
 
     def test_options_category(self):
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-05', 'owner': self.user_uri}
+        new_data = {'name': 'TestCategory-10', 'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         pk = data.get('id')
@@ -279,7 +354,7 @@ class TestCategories(BaseTest):
         #self.skipTest("Temporarily skipped")
         # Create Category one.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-06', 'owner': self.user_uri}
+        new_data = {'name': 'TestCategory-11', 'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         pk = data.get('id')
@@ -290,7 +365,7 @@ class TestCategories(BaseTest):
         # Create Category two.
         parent_uri = data.get('uri')
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-07', 'parent': parent_uri,
+        new_data = {'name': 'TestCategory-12', 'parent': parent_uri,
                     'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
@@ -301,7 +376,7 @@ class TestCategories(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Create Category two again.
         uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-07', 'parent': parent_uri,
+        new_data = {'name': 'TestCategory-12', 'parent': parent_uri,
                     'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
@@ -315,7 +390,7 @@ class TestCategories(BaseTest):
         #self.skipTest("Temporarily skipped")
         # Create Category one.
         uri = reverse('category-list')
-        new_data = {'name': 'Test{}Category-08'.format(
+        new_data = {'name': 'Test{}Category-13'.format(
             Category.DEFAULT_SEPARATOR), 'owner': self.user_uri}
         response = self.client.post(uri, new_data, format='json')
         data = response.data

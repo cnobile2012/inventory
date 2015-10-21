@@ -26,7 +26,7 @@ class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='country-detail')
 
     def create(self, validated_data):
-        user = self._get_user_object()
+        user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
         return Country.objects.create(**validated_data)
@@ -40,7 +40,7 @@ class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
             'country_code_3', instance.country_code_3)
         instance.country_number_code = validated_data.get(
             'country_number_code', instance.country_number_code)
-        instance.updater = self._get_user_object()
+        instance.updater = self.get_user_object()
         instance.active = validated_data.get('active', instance.active)
         instance.save()
         return instance
@@ -67,7 +67,7 @@ class RegionSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='region-detail')
 
     def create(self, validated_data):
-        user = self._get_user_object()
+        user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
         return Region.objects.create(**validated_data)
@@ -81,7 +81,7 @@ class RegionSerializer(SerializerMixin, serializers.ModelSerializer):
             'region_code', instance.region_code)
         instance.primary_level = validated_data.get(
             'primary_level', instance.primary_level)
-        instance.updater = self._get_user_object()
+        instance.updater = self.get_user_object()
         instance.active = validated_data.get('active', instance.active)
         instance.save()
         return instance
