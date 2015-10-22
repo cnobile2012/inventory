@@ -46,7 +46,9 @@ class TestProject(BaseTest):
         uri = reverse('project-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
         self.assertTrue(data.get('active'), msg)
 
@@ -64,7 +66,9 @@ class TestProject(BaseTest):
         uri = reverse('project-list')
         response = client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
@@ -89,8 +93,10 @@ class TestProject(BaseTest):
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
                     'members': [self.user_uri,], 'managers': [self.user_uri,]}
         response = client.post(uri, new_data, format='json')
+        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, response.data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_update_put_project(self):
@@ -102,7 +108,8 @@ class TestProject(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertFalse(data.get('public'), msg)
         # Update record with PUT.
@@ -111,13 +118,18 @@ class TestProject(BaseTest):
         new_data['public'] = True
         response = self.client.put(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('public'), msg)
         # Read record with GET.
         pk = data.get('id')
         uri = reverse('project-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
         self.assertTrue(data.get('public'), msg)
 
@@ -130,7 +142,8 @@ class TestProject(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertFalse(data.get('public'), msg)
         # Update record with PATCH.
@@ -139,13 +152,18 @@ class TestProject(BaseTest):
         updated_data = {'public': True}
         response = self.client.patch(uri, updated_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('public'), msg)
         # Read record with GET.
         pk = data.get('id')
         uri = reverse('project-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
         self.assertEqual(data.get('public'), updated_data.get('public'), msg)
 
@@ -158,27 +176,25 @@ class TestProject(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Get the same record through the API.
+        # Delete the User.
         pk = data.get('id')
         uri = reverse('project-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response data: {}".format(data)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
-        # Delete the User.
         response = self.client.delete(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data is None, msg)
         # Get the same record through the API.
-        # There is NO reason for the code below to fail, however it throws an
-        # exception in the client.get.
-        #response = self.client.get(uri, format='json')
-        #code = response.status_code
-        #msg = "Status: {}".format(code)
-        #self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_project(self):
         #self.skipTest("Temporarily skipped")
@@ -190,18 +206,23 @@ class TestProject(BaseTest):
         data = response.data
         pk = data.get('id')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Get the API list OPTIONS.
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Project List', msg)
         # Get the API detail OPTIONS.
         uri = reverse('project-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Project Detail', msg)
 
     def test_adding_member_patch(self):
@@ -213,7 +234,8 @@ class TestProject(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertEqual(len(data.get('members')),
                          len(new_data.get('members')), msg)
@@ -224,13 +246,17 @@ class TestProject(BaseTest):
         updated_data = {'members': [self.user_uri, new_user_uri]}
         response = self.client.patch(uri, updated_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)        
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(len(data.get('members')),
                          len(updated_data.get('members')), msg)
         # Get the same record through the API.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(any([uri for uri in data.get('members')
                              if self.user_uri in uri]), msg)
         self.assertTrue(any([uri for uri in data.get('members')
@@ -249,7 +275,8 @@ class TestProject(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertEqual(len(data.get('members')),
                          len(new_data.get('members')), msg)
@@ -259,13 +286,17 @@ class TestProject(BaseTest):
         updated_data = {'members': [self.user_uri]}
         response = self.client.patch(uri, updated_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(len(data.get('members')),
                          len(updated_data.get('members')), msg)
         # Get the same record through the API.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(any([uri for uri in data.get('members')
                              if self.user_uri in uri]), msg)
         self.assertFalse(any([uri for uri in data.get('members')
@@ -293,13 +324,17 @@ class TestProject(BaseTest):
         updated_data = {'managers': [self.user_uri, new_user_uri]}
         response = self.client.patch(uri, updated_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)        
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(len(data.get('managers')),
                          len(updated_data.get('managers')), msg)
         # Get the same record through the API.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(any([uri for uri in data.get('managers')
                              if self.user_uri in uri]), msg)
         self.assertTrue(any([uri for uri in data.get('managers')
@@ -328,13 +363,17 @@ class TestProject(BaseTest):
         updated_data = {'managers': [self.user_uri]}
         response = self.client.patch(uri, updated_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(len(data.get('managers')),
                          len(updated_data.get('managers')), msg)
         # Get the same record through the API.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(any([uri for uri in data.get('managers')
                              if self.user_uri in uri]), msg)
         self.assertFalse(any([uri for uri in data.get('managers')

@@ -27,13 +27,15 @@ class TestOauth2(BaseTest):
         uri = reverse('access-token-list')
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
 
     def test_superuser_application(self):
         """
-        Ensure the Oauth2 access_token can be accessed by the superuser.
+        Ensure the Oauth2 application list can be accessed by the superuser.
         """
         #self.skipTest("Temporarily skipped")
         self._make_app_token(self.user, "SU_TEST_APP_01", self.client,
@@ -42,7 +44,9 @@ class TestOauth2(BaseTest):
         uri = reverse('application-list')
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
 
@@ -57,7 +61,9 @@ class TestOauth2(BaseTest):
         uri = reverse('grant-list')
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
 
@@ -72,7 +78,9 @@ class TestOauth2(BaseTest):
         uri = reverse('refresh-token-list')
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
 
@@ -94,7 +102,9 @@ class TestOauth2(BaseTest):
         uri = reverse('access-token-list')
         response = client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue('results' in data, msg)
         self.assertEquals(len(data.get('results')), 1, msg)
         # Test that the application is the correct one.
@@ -104,7 +114,7 @@ class TestOauth2(BaseTest):
 
     def test_normal_application(self):
         """
-        Ensure the Oauth2 access_token can be accessed by a normal user and
+        Ensure the Oauth2 application list can be accessed by a normal user and
         they only get their data.
         """
         #self.skipTest("Temporarily skipped")
@@ -149,7 +159,9 @@ class TestOauth2(BaseTest):
         self.assertEquals(len(data.get('results')), 1, msg)
         # Test that the application is the correct one.
         data = self._get_application(client, data)
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), app_name, msg)
 
     def test_normal_refresh_token(self):
@@ -175,7 +187,9 @@ class TestOauth2(BaseTest):
         self.assertEquals(len(data.get('results')), 1, msg)
         # Test that the application is the correct one.
         data = self._get_application(client, data)
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), app_name, msg)
 
     def _get_application(self, client, data):

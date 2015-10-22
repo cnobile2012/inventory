@@ -25,15 +25,17 @@ class TestRegion(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        msg = "Response data: {}".format(data)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
         # Get the same record through the API.
         uri = reverse('country-detail', kwargs={'pk': data.get('id')})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
         self.assertTrue(data.get('active'), msg)
 
@@ -53,14 +55,19 @@ class TestRegion(BaseTest):
                     'region_code': 'NR'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertEqual(data.get('region'), new_data.get('region'), msg)
         # Get the same record through the API.
         pk = data.get('id')
         uri = reverse('region-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('region'), new_data.get('region'), msg)
         self.assertTrue(data.get('active'), msg)
 
@@ -78,7 +85,11 @@ class TestRegion(BaseTest):
         uri = reverse('country-list')
         response = client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
     def test_get_region_with_no_permissions(self):
@@ -96,7 +107,9 @@ class TestRegion(BaseTest):
         uri = reverse('region-list')
         response = client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
@@ -121,7 +134,8 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-01', 'country_code_2': 'C1'}
         response = client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, response.data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_create_region_post_token(self):
@@ -144,6 +158,10 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-02', 'country_code_2': 'C2'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         pk = data.get('id')
         # Use API to create a region.
         uri = reverse('region-list')
@@ -153,7 +171,8 @@ class TestRegion(BaseTest):
                     'region_code': 'NR'}
         response = client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, response.data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_update_put_country(self):
@@ -163,7 +182,10 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-03', 'country_code_2': 'C3'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertTrue(data.get('active'), msg)
         # Update with PUT to detail view.
         pk = data.get('id')
@@ -171,7 +193,9 @@ class TestRegion(BaseTest):
         new_data['country_code_3'] = 'C03'
         response = self.client.put(uri, new_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
         self.assertEqual(data.get('country_code_3'),
                          new_data.get('country_code_3'), msg)
@@ -192,7 +216,10 @@ class TestRegion(BaseTest):
                     'region_code': 'NR'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertTrue(data.get('active'), msg)
         # Update with PUT to detail view.
         pk = data.get('id')
@@ -200,7 +227,9 @@ class TestRegion(BaseTest):
         new_data['primary_level'] = 'State'
         response = self.client.put(uri, new_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('region'), new_data.get('region'), msg)
         self.assertEqual(data.get('primary_level'),
                          new_data.get('primary_level'), msg)
@@ -212,7 +241,10 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-03', 'country_code_2': 'C3'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertTrue(data.get('active'), msg)
         # Update with PATCH to detail view.
         pk = data.get('id')
@@ -220,7 +252,9 @@ class TestRegion(BaseTest):
         update_data = {'country_code_3': 'C03'}
         response = self.client.patch(uri, update_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
         self.assertEqual(data.get('country_code_3'),
                          update_data.get('country_code_3'), msg)
@@ -232,6 +266,10 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-04', 'country_code_2': 'C4'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Create the Region.
         pk = data.get('id')
         country_detail_uri = reverse('country-detail', kwargs={'pk': pk})
@@ -241,7 +279,10 @@ class TestRegion(BaseTest):
                     'region_code': 'NR'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertTrue(data.get('active'), msg)
         # Update with PATCH to detail view.
         pk = data.get('id')
@@ -249,7 +290,9 @@ class TestRegion(BaseTest):
         update_data = {'primary_level': 'State'}
         response = self.client.patch(uri, update_data, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('region'), new_data.get('region'), msg)
         self.assertEqual(data.get('primary_level'),
                          update_data.get('primary_level'), msg)
@@ -262,30 +305,26 @@ class TestRegion(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        msg = "Response data: {}".format(data)
         self.assertEqual(data.get('country'), new_data.get('country'), msg)
-        # Get the same record through the API.
+        # Delete the Country
         pk = data.get('id')
         uri = reverse('country-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response data: {}".format(data)
-        self.assertEqual(data.get('country'), new_data.get('country'), msg)
-        self.assertTrue(data.get('active'), msg)
-        # Delete the Country
         response = self.client.delete(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data is None, msg)
         # Get the same record through the API.
-        # There is NO reason for the code below to fail, however it throws an
-        # exception in the client.get.
-        ## response = self.client.get(uri, format='json')
-        ## code = response.status_code
-        ## msg = "Status: {}".format(code)
-        ## self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_delete_region(self):
         #self.skipTest("Temporarily skipped")
@@ -294,6 +333,10 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-06', 'country_code_2': 'C6'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Create the Region.
         pk = data.get('id')
         country_detail_uri = reverse('country-detail', kwargs={'pk': pk})
@@ -303,26 +346,24 @@ class TestRegion(BaseTest):
                     'region_code': 'NR'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        # Get the same record through the API.
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Delete the Region
         pk = data.get('id')
         uri = reverse('region-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response data: {}".format(data)
-        self.assertEqual(data.get('region'), new_data.get('region'), msg)
-        self.assertTrue(data.get('active'), msg)
-        # Delete the Region
         response = self.client.delete(uri, format='json')
         data = response.data
         msg = "Response data: {}".format(data)
         self.assertTrue(data is None, msg)
         # Get the same record through the API.
-        # There is NO reason for the code below to fail, however it throws an
-        # exception in the client.get.
-        ## response = self.client.get(uri, format='json')
-        ## code = response.status_code
-        ## msg = "Status: {}".format(code)
-        ## self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_country(self):
         #self.skipTest("Temporarily skipped")
@@ -331,17 +372,25 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-07', 'country_code_2': 'C7'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         pk = data.get('id')
         # Get the API list OPTIONS.
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Country List', msg)
         # Get the API detail OPTIONS.
         uri = reverse('country-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Country Detail', msg)
 
     def test_options_region(self):
@@ -351,6 +400,10 @@ class TestRegion(BaseTest):
         new_data = {'country': 'Country-08', 'country_code_2': 'C8'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         pk = data.get('id')
         # Create the Region.
         pk = data.get('id')
@@ -361,16 +414,24 @@ class TestRegion(BaseTest):
                     'region_code': 'NR'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        # Get the API list OPTIONS.
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+         # Get the API list OPTIONS.
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Region List', msg)
         # Get the API detail OPTIONS.
         uri = reverse('region-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Region Detail', msg)
 
     def _create_country(self):

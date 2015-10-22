@@ -54,7 +54,8 @@ class TestSuppliers(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, response.data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         msg = "Response Data: {}".format(data)
         self.assertEqual(data.get('name'), new_data.get('name'), msg)
@@ -63,7 +64,9 @@ class TestSuppliers(BaseTest):
         uri = reverse('supplier-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_get_supplier_with_no_permissions(self):
@@ -80,7 +83,9 @@ class TestSuppliers(BaseTest):
         uri = reverse('supplier-list')
         response = client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
@@ -109,8 +114,10 @@ class TestSuppliers(BaseTest):
                     'postal_code': '55144-1000', 'country': country_uri,
                     'phone': '1-888-364-3577', 'stype': 1,}
         response = client.post(uri, new_data, format='json')
+        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, response.data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_update_put_supplier(self):
@@ -125,7 +132,10 @@ class TestSuppliers(BaseTest):
                     'phone': '1-888-364-3577', 'stype': 1,}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertFalse(data.get('fax'), msg)
         # Update record with PUT.
         pk = data.get('id')
@@ -133,11 +143,16 @@ class TestSuppliers(BaseTest):
         new_data['fax'] = '1-000-000-0000'
         response = self.client.put(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('fax'), msg)
         # Read record with GET.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('fax'), new_data.get('fax'), msg)
 
     def test_update_patch_supplier(self):
@@ -152,7 +167,10 @@ class TestSuppliers(BaseTest):
                     'phone': '1-888-364-3577', 'stype': 1,}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertFalse(data.get('fax'), msg)
         # Update record with PATCH.
         pk = data.get('id')
@@ -160,11 +178,16 @@ class TestSuppliers(BaseTest):
         update_data = {'fax': '1-000-000-0000'}
         response = self.client.patch(uri, update_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('fax'), msg)
         # Read record with GET.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
         self.assertTrue(data.get('fax'), msg)
 
@@ -181,27 +204,25 @@ class TestSuppliers(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Get the same record through the API.
+        # Delete the User.
         pk = data.get('id')
         uri = reverse('supplier-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response data: {}".format(data)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
-        # Delete the User.
         response = self.client.delete(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data is None, msg)
         # Get the same record through the API.
-        # There is NO reason for the code below to fail, however it throws an
-        # exception in the client.get. It should just return a 404 NOT FOUND.
-        #response = self.client.get(uri, format='json')
-        #code = response.status_code
-        #msg = "Status: {}".format(code)
-        #self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_user(self):
         #self.skipTest("Temporarily skipped")
@@ -215,20 +236,25 @@ class TestSuppliers(BaseTest):
                     'phone': '1-888-364-3577', 'stype': 1,}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        pk = data.get('id')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Get the API list OPTIONS.
+        pk = data.get('id')
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Supplier List', msg)
         # Get the API detail OPTIONS.
         uri = reverse('supplier-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Supplier Detail', msg)
 
     def _create_supplier(self):

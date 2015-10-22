@@ -29,7 +29,8 @@ class TestAccounts(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, response.data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         msg = "Response Data: {}".format(data)
         self.assertEqual(data.get('username'), new_data.get('username'), msg)
@@ -38,7 +39,9 @@ class TestAccounts(BaseTest):
         uri = reverse('user-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('username'), new_data.get('username'), msg)
 
     def test_get_user_no_permissions(self):
@@ -54,7 +57,9 @@ class TestAccounts(BaseTest):
         uri = reverse('user-list')
         response = client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
@@ -78,8 +83,10 @@ class TestAccounts(BaseTest):
         uri = reverse('user-list')
         new_data = {'username': 'NewUser_01', 'password': 'NewUserPassword'}
         response = client.post(uri, new_data, format='json')
+        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, response.data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_update_put_user(self):
@@ -89,7 +96,10 @@ class TestAccounts(BaseTest):
         new_data = {'username': 'NewUser_03', 'password': 'NewUserPassword'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertFalse(data.get('is_staff'), msg)
         # Update record with PUT.
         pk = data.get('id')
@@ -97,11 +107,16 @@ class TestAccounts(BaseTest):
         new_data['is_staff'] = True
         response = self.client.put(uri, new_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('is_staff'), msg)
         # Read record with GET.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('username'), new_data.get('username'), msg)
         self.assertTrue(data.get('is_staff'), msg)
 
@@ -112,7 +127,10 @@ class TestAccounts(BaseTest):
         new_data = {'username': 'NewUser_05', 'password': 'NewUserPassword'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         self.assertFalse(data.get('is_staff'), msg)
         # Update record with PATCH.
         pk = data.get('id')
@@ -120,11 +138,16 @@ class TestAccounts(BaseTest):
         update_data = {'is_staff': True}
         response = self.client.patch(uri, update_data, format='json')
         data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('is_staff'), msg)
         # Read record with GET.
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('username'), new_data.get('username'), msg)
         self.assertTrue(data.get('is_staff'), msg)
 
@@ -138,26 +161,24 @@ class TestAccounts(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Get the same record through the API.
+        # Delete the User.
         pk = data.get('id')
         uri = reverse('user-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response data: {}".format(data)
-        self.assertEqual(data.get('username'), new_data.get('username'), msg)
-        self.assertTrue(data.get('is_active'), msg)
-        # Delete the User.
         response = self.client.delete(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data is None, msg)
         # Get the same record through the API.
         # There is NO reason for the code below to fail, however it throws an
         # exception in the client.get. It should just return a 404 NOT FOUND.
-        #response = self.client.get(uri, format='json')
-        #code = response.status_code
-        #msg = "Status: {}".format(code)
-        #self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_user(self):
         #self.skipTest("Temporarily skipped")
@@ -173,11 +194,15 @@ class TestAccounts(BaseTest):
         # Get the API list OPTIONS.
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'User List', msg)
         # Get the API detail OPTIONS.
         uri = reverse('user-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'User Detail', msg)

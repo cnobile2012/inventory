@@ -8,6 +8,7 @@
 import base64
 import json
 import types
+from collections import OrderedDict
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext
@@ -129,7 +130,7 @@ class BaseTest(APITestCase):
 
     def _clean_data(self, data):
         if data is not None:
-            if isinstance(data, list):
+            if isinstance(data, (list, tuple,)):
                 data = self.__clean_value(data)
             else:
                 for key in data:
@@ -140,6 +141,9 @@ class BaseTest(APITestCase):
     def __clean_value(self, value):
         if isinstance(value, (list, tuple,)):
             value = [self.__clean_value(item) for item in value]
+        elif isinstance(value, (dict, OrderedDict,)):
+            for key in value:
+                value[key] = self.__clean_value(value.get(key))
         elif (isinstance(value, (int, long, bool, types.TypeType,)) or
               value is None):
             pass

@@ -51,8 +51,7 @@ class TestCategories(BaseTest):
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(response.data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
 
@@ -70,7 +69,9 @@ class TestCategories(BaseTest):
         uri = reverse('category-list')
         response = client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(self._clean_data(data))
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
@@ -95,9 +96,10 @@ class TestCategories(BaseTest):
         user_uri = reverse('user-detail', kwargs={'pk': user.id})
         new_data = {'name': 'TestCategory-01', 'owner': user_uri}
         response = client.post(uri, new_data, format='json')
+        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(response.data))
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
     def test_invalid_owner_post(self):
@@ -166,8 +168,7 @@ class TestCategories(BaseTest):
         response = self.client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(response.data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('path'), msg)
         # Read record with GET.
@@ -176,8 +177,7 @@ class TestCategories(BaseTest):
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(response.data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
 
@@ -227,14 +227,18 @@ class TestCategories(BaseTest):
         updated_data = {'name': 'NewCategoryName'}
         response = self.client.patch(uri, updated_data, format='json')
         data = response.data
-        msg = "Response Data: {}".format(self._clean_data(data))
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data.get('path'), msg)
         # Read record with GET.
         pk = data.get('id')
         uri = reverse('category-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
-        msg = "Response Data: {}".format(self._clean_data(data))
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), updated_data.get('name'), msg)
         self.assertTrue(updated_data.get('name') in data.get('path'), msg)
 
@@ -285,8 +289,8 @@ class TestCategories(BaseTest):
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertTrue(data is None, msg)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertTrue(data is None, msg)
         # Get the same record through the API.
         response = self.client.get(uri, format='json')
         code = response.status_code
@@ -336,18 +340,23 @@ class TestCategories(BaseTest):
         data = response.data
         pk = data.get('id')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Get the API list OPTIONS.
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Category List', msg)
         # Get the API detail OPTIONS.
         uri = reverse('category-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data
-        msg = "Response data: {}".format(data)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Category Detail', msg)
 
     def test_create_category_twice_to_same_parent(self):
@@ -398,8 +407,6 @@ class TestCategories(BaseTest):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-
-
 
     def _create_category(self, user, parent=None):
         new_data = {'name': 'TestCategory-00', 'parent': parent, 'owner': user,
