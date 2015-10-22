@@ -64,6 +64,7 @@ class MigrateSuppliers(object):
     def start(self):
         self.getCurrentUser()
         self._migrateCategories()
+        self._prune_unused_categories()
 
     def _migrateCategories(self):
         records = OldCategory.objects.all().order_by('path')
@@ -97,6 +98,15 @@ class MigrateSuppliers(object):
                     log.info("Created record: %s--%s", str(obj), kwargs)
             else:
                 log.info("NOOP: %s--%s", Category.__name__, kwargs)
+
+    def _prune_unused_categories(self):
+        old_cat_names = set([obj.name for obj in OldCategory.objects.all()])
+        new_cat_names = set([obj.name for obj in Category.objects.all()])
+        rem_cat_names = list(new_cat_names - old_cat_names)
+        log.info("Categories to be deleted: %s", rem_cat_names)
+
+        if not self._options.noop:
+            Category.objects.filter(name__in=rem_cat_names).delete()
 
 
 if __name__ == '__main__':
