@@ -12,7 +12,7 @@ from django import forms
 
 from inventory.apps.items.models import (
     Item, Category, Distributor, Manufacturer)
-from inventory.apps.maintenance.models import LocationCodeCategory
+from inventory.maintenance.models import LocationCodeCategory
 
 
 class FindChoices(object):

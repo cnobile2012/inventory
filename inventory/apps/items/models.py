@@ -18,7 +18,7 @@ from inventory.settings import CONDITION_TYPES
 from inventory.regions.models import Country, Region
 
 from inventory.apps.utils.models import Base
-from inventory.apps.maintenance.models import LocationCodeCategory
+from inventory.maintenance.models import LocationCodeCategory
 
 
 class BaseBusiness(Base):

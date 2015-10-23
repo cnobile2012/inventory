@@ -187,11 +187,12 @@ INSTALLED_APPS = [
     'inventory.regions',
     'inventory.suppliers',
     'inventory.categories',
+    'inventory.maintenance',
     # Will be removed over time.
     'inventory.apps.items',
     'inventory.apps.login',
     'inventory.apps.reports',
-    'inventory.apps.maintenance',
+    #'inventory.apps.maintenance',
     ]
 
 OAUTH2_PROVIDER = {

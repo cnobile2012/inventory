@@ -11,8 +11,8 @@ sys.path.append(BASE_PATH)
 import django; django.setup()
 from django.contrib.auth import get_user_model
 
-from inventory.apps.items.models import Category as OldCategory
-from inventory.categories.models import Category
+from inventory.apps.items.models import Currency as OldCurrency
+from inventory.maintenance.models import Currency
 
 User = get_user_model()
 
@@ -38,7 +38,7 @@ def setupLogger(name=u'root', fullpath=None, fmt=None, level=logging.INFO):
     return logger
 
 
-class MigrateCategories(object):
+class MigrateCurrencies(object):
     _USERNAME = 'cnobile'
 
     def __init__(self, log, options):
@@ -49,48 +49,46 @@ class MigrateCategories(object):
     def getCurrentUser(self):
         self.user = User.objects.get(username=self._USERNAME)
 
-    def getCategory(self, name):
+    def getCurrency(self, name):
         obj = None
 
         try:
-            obj = Category.objects.get(name=name)
-        except Category.DoesNotExist:
-            self._log.error("Could not find category with name: %s", name)
-        except Category.MultipleObjectsReturned:
-            self._log.error("Found multiple category with name: %s", name)
+            obj = Currency.objects.get(currency=name)
+        except Currency.DoesNotExist:
+            self._log.error("Could not find a currency with name: %s", name)
+        except Currency.MultipleObjectsReturned:
+            self._log.error("Found multiple currencies with name: %s", name)
 
         return obj
 
     def start(self):
         self.getCurrentUser()
-        self._migrateCategories()
-        self._prune_unused_categories()
+        self._migrateCurrencies()
+        self._prune_unused_currencies()
 
-    def _migrateCategories(self):
-        records = OldCategory.objects.all().order_by('path')
+    def _migrateCurrencies(self):
+        records = OldCurrency.objects.all()
 
         for record in records:
             kwargs = {}
-            kwargs['owner'] = record.user
+            kwargs['name'] = record.currency
+            kwargs['symbol'] = record.symbol
             kwargs['creator'] = record.user
             kwargs['created'] = record.ctime
             kwargs['updater'] = self.user
             kwargs['updated'] = record.mtime
 
-            if record.parent:
-                kwargs['parent'] = self.getCategory(record.parent.name)
-
             if not self._options.noop:
-                obj, created = Category.objects.get_or_create(
-                    name=record.name.strip(), defaults=kwargs)
+                obj, created = Currency.objects.get_or_create(
+                    name=record.currency.strip(), defaults=kwargs)
 
                 if not created:
-                    obj.owner = kwargs.get('owner')
+                    obj.name = kwargs.get('name')
+                    obj.symbol = kwargs.get('symbol')
                     obj.creator = kwargs.get('creator')
                     obj.created = kwargs.get('created')
                     obj.updator = kwargs.get('updater')
                     obj.updated = kwargs.get('updated')
-                    obj.parent = kwargs.get('parent')
                     obj.save(**{'disable_created': True,
                                 'disable_updated': True})
                     log.info("Updated record: %s--%s", str(obj), kwargs)
@@ -100,13 +98,13 @@ class MigrateCategories(object):
                 log.info("NOOP: %s--%s", Category.__name__, kwargs)
 
     def _prune_unused_categories(self):
-        old_cat_names = set([obj.name for obj in OldCategory.objects.all()])
-        new_cat_names = set([obj.name for obj in Category.objects.all()])
-        rem_cat_names = list(new_cat_names - old_cat_names)
-        log.info("Categories to be deleted: %s", rem_cat_names)
+        old_cur_names = set([obj.name for obj in OldCurrency.objects.all()])
+        new_cur_names = set([obj.name for obj in Currency.objects.all()])
+        rem_cur_names = list(new_cur_names - old_cur_names)
+        log.info("Currencies to be deleted: %s", rem_cur_names)
 
         if not self._options.noop:
-            Category.objects.filter(name__in=rem_cat_names).delete()
+            Currency.objects.filter(name__in=rem_cur_names).delete()
 
 
 if __name__ == '__main__':
@@ -115,7 +113,7 @@ if __name__ == '__main__':
     from datetime import datetime
 
     parser = argparse.ArgumentParser(
-        description=("Inventory--Migrate Category."))
+        description=("Inventory--Migrate Currency."))
     parser.add_argument(
         '-n', '--noop', action='store_true', default=False, dest='noop',
         help="Run as if migrating, but do nothing.")
@@ -123,17 +121,17 @@ if __name__ == '__main__':
     options = parser.parse_args()
     #print "Options: {}".format(options)
 
-    LOG_FILE = os.path.join(BASE_PATH, 'logs', 'migrate-categories.log')
-    log = setupLogger(name='migrate.supplier', fullpath=LOG_FILE)
+    LOG_FILE = os.path.join(BASE_PATH, 'logs', 'migrate-currencies.log')
+    log = setupLogger(name='migrate.currencies', fullpath=LOG_FILE)
     log.info("Options: %s", options)
     startTime = datetime.now()
 
     try:
-        log.info("Inventory: Migrating Category data starting at %s", startTime)
-        ms = MigrateCategories(log, options)
+        log.info("Inventory: Migrating Currency data starting at %s", startTime)
+        ms = MigrateCurrencies(log, options)
         ms.start()
         endTime = datetime.now()
-        log.info("Inventory: Migrating Category data finished at %s "
+        log.info("Inventory: Migrating Currency data finished at %s "
                  "elapsed time %s", endTime, endTime - startTime)
     except Exception as e:
         tb = sys.exc_info()[2]

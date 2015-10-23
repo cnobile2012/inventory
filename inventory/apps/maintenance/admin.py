@@ -87,21 +87,6 @@ class LocationCodeCategoryForm(forms.ModelForm):
             msg = _("A root level category segment [%s] already exists.")
             raise forms.ValidationError(_(msg % segment))
 
-        ## segmentLength = LocationCodeDefault.getSegmentLength()
-        ## length = len(segment)
-
-        ## # Test that configured segment length is correct.
-        ## if length != segmentLength:
-        ##     msg = _("The segment length is %s must be %s characters.")
-        ##     raise forms.ValidationError(_(msg % (length, segmentLength)))
-
-        #level = self.cleaned_data.get('level')
-
-        ## cDef = LocationCodeDefault.getCharDefinition()
-
-        ## if cDef:
-        ##     formatMap = {'A': cDef.isalpha, 'N': cDef.isdigit, 'P': ''}
-
         return self.cleaned_data
 
 
