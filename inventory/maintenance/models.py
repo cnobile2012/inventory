@@ -30,7 +30,7 @@ class Currency(TimeModelMixin, UserModelMixin):
     name =  models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return self.name
+        return "{} {}".format(self.symbol.encode('utf-8'), self.name)
 
     objects = CurrencyManager()
 

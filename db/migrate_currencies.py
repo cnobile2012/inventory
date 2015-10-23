@@ -73,7 +73,12 @@ class MigrateCurrencies(object):
             kwargs = {}
             kwargs['name'] = record.currency
             kwargs['symbol'] = record.symbol
-            kwargs['creator'] = record.user
+
+            try:
+                kwargs['creator'] = record.user
+            except User.DoesNotExist:
+                kwargs['creator'] = self.user
+
             kwargs['created'] = record.ctime
             kwargs['updater'] = self.user
             kwargs['updated'] = record.mtime
@@ -91,14 +96,14 @@ class MigrateCurrencies(object):
                     obj.updated = kwargs.get('updated')
                     obj.save(**{'disable_created': True,
                                 'disable_updated': True})
-                    log.info("Updated record: %s--%s", str(obj), kwargs)
+                    log.info(u"Updated record: %s--%s", obj, kwargs)
                 else:
-                    log.info("Created record: %s--%s", str(obj), kwargs)
+                    log.info(u"Created record: %s--%s", obj, kwargs)
             else:
-                log.info("NOOP: %s--%s", Category.__name__, kwargs)
+                log.info("NOOP: %s--%s", Currency.__name__, kwargs)
 
-    def _prune_unused_categories(self):
-        old_cur_names = set([obj.name for obj in OldCurrency.objects.all()])
+    def _prune_unused_currencies(self):
+        old_cur_names = set([obj.currency for obj in OldCurrency.objects.all()])
         new_cur_names = set([obj.name for obj in Currency.objects.all()])
         rem_cur_names = list(new_cur_names - old_cur_names)
         log.info("Currencies to be deleted: %s", rem_cur_names)
