@@ -19,7 +19,8 @@ urlpatterns = patterns(
     url(r'^', include('inventory.apps.items.urls')),
     url(r'^login/', include('inventory.apps.login.urls')),
     url(r'^reports/', include('inventory.apps.reports.urls')),
-    url(r'^maintenance/', include('inventory.apps.maintenance.urls')),
+    # Temporarily point to new maintenance package till it gets rewritten.
+    url(r'^maintenance/', include('inventory.maintenance.urls')),
 
     # New Site Web
 
