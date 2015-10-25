@@ -7,12 +7,12 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.conf import settings
 
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,)
 
-from inventory.apps.utils import modelfields
-from inventory.apps.utils.utilities import FormatParser
+from .utilities import FormatParser
 
 
 #
@@ -42,23 +42,53 @@ class Currency(TimeModelMixin, UserModelMixin):
 
 
 #
+# LocationDefault
+#
+class LocationDefaultManager(models.Manager):
+    pass
+
+
+class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+
+    name = models.CharField(
+        verbose_name=_("Name"), max_length=100,
+        help_text=_("Enter a name for this series of formats."))
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=_("Owner"),
+        related_name="%(app_label)s_%(class)s_owner_related",
+        help_text=_("The user that ownes this record."))
+    description = models.CharField(
+        verbose_name=_("Description"), max_length=254, null=True, blank=True,
+        help_text=_("Enter what this series of location formats will be used "
+                    "for."))
+    shared = models.BooleanField(
+        verbose_name=_("Shared"), default=False,
+        help_text=_("If you would like others to make a copy of your formats."))
+    separator = models.CharField(
+        verbose_name=_("Segment Separator"), max_length=3, default=':',
+        help_text=_("The separator to use between segments. Defaults to a "
+                    "colon (:). Max length is three characters."))
+
+    objects = LocationDefaultManager()
+
+    def _owner_producer(self):
+        return self.owner.get_full_name_reversed()
+    _owner_producer.short_description = _("Format Owner")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        unique_together = (('owner', 'name',),)
+        ordering = ('owner__username',)
+        verbose_name = _("Location Default")
+        verbose_name_plural = _("Location Defaults")
+
+
+#
 # LocationFormat
 #
 class LocationFormatManager(models.Manager):
-
-    def get_segment_separator(self):
-        """
-        Get the seperator used as a default.
-
-        TODO -- Expand this to ownership when an owner is implimented.
-        """
-        result = ''
-        records = self.all()
-
-        if len(records) > 0:
-            result = records[0].segment_separator
-
-        return result
 
     def get_max_num_segments(self):
         return self.count()
@@ -76,14 +106,11 @@ class LocationFormatManager(models.Manager):
 
 
 class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
-    _SEGMENT_SEPARATOR = ':'
 
+    location_default = models.ForeignKey(
+        LocationDefault, verbose_name=_("Location Default"))
     segment_length = models.PositiveIntegerField(
         verbose_name=_("Segment Length"), editable=False)
-    segment_separator = models.CharField(
-        verbose_name=_("Segment Separator"), max_length=3, default=':',
-        help_text=_("The separator to use between segments. Separators "
-                    "are hard coded as a colon (:)."))
     char_definition = models.CharField(
         verbose_name=_("Character Definition"), max_length=248, db_index=True,
         help_text=_("Determine the character position definition where "
@@ -95,9 +122,8 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("A number indicating the order that this segment will "
                     "appear in the location code. Numbers should start "
                     "with 0 (Can be editied in the list view also)."))
-    description = modelfields.SizableCharField(
-        verbose_name=_("Description"), max_length=1024, default='',
-        input_size=75, blank=True,
+    description = models.CharField(
+        verbose_name=_("Description"), max_length=1024, default='', blank=True,
         help_text=_("Enter a description of the catageory segments."))
 
     objects = LocationFormatManager()
@@ -161,17 +187,13 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     objects = LocationCodeManager()
 
-    def __init__(self, *args, **kwargs):
-        super(LocationCode, self).__init__(*args, **kwargs)
-        self._formats = [fmt.char_definition
-                         for fmt in LocationFormat.objects.all()]
-        self._separator = LocationFormat.objects.get_segment_separator()
-        self._parser = FormatParser(self._formats, self._separator)
+    def get_separator(self):
+        return self.char_definition.location_default.separator
 
     def _get_category_path(self, current=True):
         parents = LocationCode.objects.get_parents(self)
         if current: parents.append(self)
-        return self._separator.join([parent.segment for parent in parents])
+        return self.get_separator().join([parent.segment for parent in parents])
 
     def _parents_producer(self):
         return self._get_category_path(current=False)
@@ -188,13 +210,15 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
             raise ValidationError(
                 _("You cannot have a category as a child to itself."))
 
-        if self._separator and self._separator in self.segment:
+        separator = self.get_separator()
+
+        if separator in self.segment:
             raise ValidationError(
                 _("A segment cannot contain the segment delimiter "
-                  "'{}'.").format(self._separator))
+                  "'{}'.").format(separator))
 
-        # The next few lines are broken, they don't do what they set out to do.
-        max_num_segments = LocationFormat.objects.get_max_num_segments()
+        max_num_segments = (self.char_definition.location_default.
+                            locationformat_set.count())
         length = len(parents) + 1
 
         if length > max_num_segments:
@@ -203,9 +227,12 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
                   "{}, allowed: {}").format(length, max_num_segments))
 
         try:
+            formats = [fmt.char_definition
+                       for fmt in LocationFormat.objects.all()]
+            parser = FormatParser(formats, separator)
             self.char_definition = (LocationFormat.objects.
                                     get_char_definition_by_segment(
-                                        self._parser.getFormat(self.segment)))
+                                        parser.getFormat(self.segment)))
         except ValueError, e:
             raise ValidationError(
                 _("Segment does not match a Location Format, "
@@ -214,7 +241,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         if not self.char_definition:
              raise ValidationError(
                 _("Invalid segment must conform to one of the following "
-                  "character definitions: {}").format(', '.join(self._formats)))
+                  "character definitions: {}").format(', '.join(formats)))
 
     def save(self, *args, **kwargs):
         # Fix our self.
