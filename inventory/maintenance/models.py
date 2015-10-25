@@ -8,7 +8,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-from inventory.common.model_mixins import UserModelMixin, TimeModelMixin
+from inventory.common.model_mixins import (
+    UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,)
 
 from inventory.apps.utils import modelfields
 from inventory.apps.utils.utilities import FormatParser
@@ -41,9 +42,9 @@ class Currency(TimeModelMixin, UserModelMixin):
 
 
 #
-# LocationCodeDefault
+# LocationFormat
 #
-class LocationCodeDefaultManager(models.Manager):
+class LocationFormatManager(models.Manager):
 
     def get_segment_separator(self):
         """
@@ -74,57 +75,49 @@ class LocationCodeDefaultManager(models.Manager):
         return record
 
 
-class LocationCodeDefault(TimeModelMixin, UserModelMixin):
+class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+    _SEGMENT_SEPARATOR = ':'
 
     segment_length = models.PositiveIntegerField(
         verbose_name=_("Segment Length"), editable=False)
     segment_separator = models.CharField(
-        max_length=3, default=':', verbose_name=_("Segment Separator"),
-        editable=False,
+        verbose_name=_("Segment Separator"), max_length=3, default=':',
         help_text=_("The separator to use between segments. Separators "
                     "are hard coded as a colon (:)."))
     char_definition = models.CharField(
-        max_length=248, verbose_name=_("Character Definition"), db_index=True,
+        verbose_name=_("Character Definition"), max_length=248, db_index=True,
         help_text=_("Determine the character position definition where "
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
                     "any char='any char'. ex. \\a\\d\\d\\d could be B001 "
                     "or \\a@\d\d could be D@99"))
     segment_order =  models.PositiveIntegerField(
-        default=0, verbose_name=_("Segment Order"),
+        verbose_name=_("Segment Order"), default=0,
         help_text=_("A number indicating the order that this segment will "
                     "appear in the location code. Numbers should start "
                     "with 0 (Can be editied in the list view also)."))
     description = modelfields.SizableCharField(
-        max_length=1024, default='', input_size=75,
-        verbose_name=_("Description"),
+        verbose_name=_("Description"), max_length=1024, default='',
+        input_size=75, blank=True,
         help_text=_("Enter a description of the catageory segments."))
 
-    objects = LocationCodeDefaultManager()
+    objects = LocationFormatManager()
 
     def __str__(self):
         return self.char_definition
 
-    def clean(self):
-        self.segment_length = len(self.char_definition.replace('\\', ''))
-
-        if not self.segment_length:
-            raise ValidationError(_("Character definitions are required."))
-
     def save(self, *args, **kwargs):
-        # Run all the validators.
-        self.full_clean()
-        super(LocationCodeDefault, self).save(*args, **kwargs)
+        super(LocationFormat, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ('segment_order',)
-        verbose_name = _("Location Code Default")
-        verbose_name_plural = _("Location Code Defaults")
+        verbose_name = _("Location Format")
+        verbose_name_plural = _("Location Formats")
 
 
 #
-# LocationCodeCategory
+# LocationCode
 #
-class LocationCodeCategory(models.Manager):
+class LocationCodeManager(models.Manager):
 
     def get_parents(self, category):
         parents = self._recurse_parents(category)
@@ -151,35 +144,34 @@ class LocationCodeCategory(models.Manager):
         return result
 
 
-class LocationCodeCategory(TimeModelMixin, UserModelMixin):
+class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     parent = models.ForeignKey(
         "self", blank=True, null=True, default=0, related_name='children')
     segment = models.CharField(
         max_length=248, db_index=True,
-        help_text=_("See the LocationCodeDefault.description for the "
+        help_text=_("See the LocationFormat.description for the "
                     "format used."))
-    path = models.CharField(max_length=248, editable=False)
-    char_definition = models.ForeignKey(LocationCodeDefault, editable=False)
+    path = models.CharField(
+        max_length=248, editable=False)
+    char_definition = models.ForeignKey(
+        LocationFormat, editable=False)
+    level = models.SmallIntegerField(
+        verbose_name=_("Level"), editable=False)
 
-    objects = LocationCodeCategory()
+    objects = LocationCodeManager()
 
     def __init__(self, *args, **kwargs):
-        super(LocationCodeCategory, self).__init__(*args, **kwargs)
+        super(LocationCode, self).__init__(*args, **kwargs)
         self._formats = [fmt.char_definition
-                         for fmt in LocationCodeDefault.objects.all()]
-        self._separator = LocationCodeDefault.objects.get_segment_separator()
+                         for fmt in LocationFormat.objects.all()]
+        self._separator = LocationFormat.objects.get_segment_separator()
         self._parser = FormatParser(self._formats, self._separator)
 
     def _get_category_path(self, current=True):
-        parents = LocationCodeCategory.objects.get_parents(self)
+        parents = LocationCode.objects.get_parents(self)
         if current: parents.append(self)
         return self._separator.join([parent.segment for parent in parents])
-
-    def _level_producer(self):
-        path = self._get_category_path()
-        return path.count(self._separator)
-    _level_producer.short_description = _("Level")
 
     def _parents_producer(self):
         return self._get_category_path(current=False)
@@ -190,17 +182,19 @@ class LocationCodeCategory(TimeModelMixin, UserModelMixin):
     _char_def_producer.short_description = _("Character Definition")
 
     def clean(self):
-        parents = LocationCodeCategory.objects.get_parents(self)
+        parents = LocationCode.objects.get_parents(self)
 
         if self.segment in [parent.segment for parent in parents]:
-            raise ValidationError(_("You cannot save a category in itself."))
+            raise ValidationError(
+                _("You cannot have a category as a child to itself."))
 
         if self._separator and self._separator in self.segment:
             raise ValidationError(
                 _("A segment cannot contain the segment delimiter "
                   "'{}'.").format(self._separator))
 
-        max_num_segments = LocationCodeDefault.objects.get_max_num_segments()
+        # The next few lines are broken, they don't do what they set out to do.
+        max_num_segments = LocationFormat.objects.get_max_num_segments()
         length = len(parents) + 1
 
         if length > max_num_segments:
@@ -209,12 +203,12 @@ class LocationCodeCategory(TimeModelMixin, UserModelMixin):
                   "{}, allowed: {}").format(length, max_num_segments))
 
         try:
-            self.char_definition = (LocationCodeDefault.objects.
+            self.char_definition = (LocationFormat.objects.
                                     get_char_definition_by_segment(
                                         self._parser.getFormat(self.segment)))
         except ValueError, e:
             raise ValidationError(
-                _("Segment does not match a Location Code Default, "
+                _("Segment does not match a Location Format, "
                   "{}").format(e))
 
         if not self.char_definition:
@@ -223,12 +217,10 @@ class LocationCodeCategory(TimeModelMixin, UserModelMixin):
                   "character definitions: {}").format(', '.join(self._formats)))
 
     def save(self, *args, **kwargs):
-        # Run all the validators.
-        self.full_clean()
-
         # Fix our self.
         self.path = self._get_category_path()
-        super(LocationCodeCategory, self).save(*args, **kwargs)
+        self.level = self.path.count(self._separator)
+        super(LocationCode, self).save(*args, **kwargs)
 
         # Fix all the children if any.
         iterator = self.children.iterator()

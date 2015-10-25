@@ -8,8 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin
 
-from .models import Currency, LocationCodeDefault, LocationCodeCategory
-from .forms import LocationCodeDefaultForm, LocationCodeCategoryForm
+from .models import Currency, LocationFormat, LocationCode
+from .forms import LocationFormatForm, LocationCodeForm
 
 
 class CurrencyAdmin(UserAdminMixin, admin.ModelAdmin):
@@ -25,7 +25,7 @@ class CurrencyAdmin(UserAdminMixin, admin.ModelAdmin):
     #list_filter = ('', '',)
 
 
-class LocationCodeDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
+class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('char_definition', 'segment_order',
                            'description',)}),
@@ -35,27 +35,28 @@ class LocationCodeDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
     list_display = ('char_definition', 'segment_order', 'description',
-                    'segment_length', 'segment_separator',)
+                    'segment_length', 'updated',)
     list_editable = ('segment_order',)
-    form = LocationCodeDefaultForm
+    form = LocationFormatForm
 
 
-class LocationCodeCategoryAdmin(UserAdminMixin, admin.ModelAdmin):
+class LocationCodeAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('parent', 'segment', 'path',)}),
+        (None, {'fields': ('parent', 'segment', 'path', 'level',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('path', 'creator', 'created', 'updater', 'updated',)
-    list_display = ('segment', '_parents_producer', '_level_producer',
-                    '_char_def_producer',)
+    readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
+                       'updated',)
+    list_display = ('segment', '_parents_producer', 'path',
+                    '_char_def_producer', 'level', 'updated',)
     search_fields = ('segment', 'path',)
+    list_filter = ('level',)# 'owner',)
     ordering = ('path',)
-    form = LocationCodeCategoryForm
+    form = LocationCodeForm
 
 
 admin.site.register(Currency, CurrencyAdmin)
-admin.site.register(LocationCodeDefault, LocationCodeDefaultAdmin)
-admin.site.register(LocationCodeCategory, LocationCodeCategoryAdmin)
-
+admin.site.register(LocationFormat, LocationFormatAdmin)
+admin.site.register(LocationCode, LocationCodeAdmin)

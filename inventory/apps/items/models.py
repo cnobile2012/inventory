@@ -18,7 +18,7 @@ from inventory.settings import CONDITION_TYPES
 from inventory.regions.models import Country, Region
 
 from inventory.apps.utils.models import Base
-from inventory.maintenance.models import LocationCodeCategory
+from inventory.maintenance.models import LocationCode
 
 
 class BaseBusiness(Base):
@@ -294,14 +294,14 @@ class Item(Base):
     package = models.CharField(max_length=30, blank=True, null=True)
     condition = models.SmallIntegerField(choices=CONDITION_TYPES, default=0)
     quantity = models.PositiveIntegerField(default=0)
-    location_code = models.ManyToManyField(LocationCodeCategory,
-                                           verbose_name=_("Location Codes"))
-    categories = models.ManyToManyField(Category,
-                                        verbose_name=_("Categories"))
-    distributor = models.ForeignKey(Distributor, db_index=True,
-                                    blank=True, null=True)
-    manufacturer = models.ForeignKey(Manufacturer, db_index=True,
-                                     blank=True, null=True)
+    location_code = models.ManyToManyField(
+        LocationCode, verbose_name=_("Location Codes"))
+    categories = models.ManyToManyField(
+        Category, verbose_name=_("Categories"))
+    distributor = models.ForeignKey(
+        Distributor, db_index=True, blank=True, null=True)
+    manufacturer = models.ForeignKey(
+        Manufacturer, db_index=True, blank=True, null=True)
     active = models.BooleanField(default=True)
     obsolete = models.BooleanField(default=False)
     purge = models.BooleanField(default=False)

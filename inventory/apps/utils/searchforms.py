@@ -12,7 +12,7 @@ from django import forms
 
 from inventory.apps.items.models import (
     Item, Category, Distributor, Manufacturer)
-from inventory.maintenance.models import LocationCodeCategory
+from inventory.maintenance.models import LocationCode
 
 
 class FindChoices(object):
@@ -37,9 +37,9 @@ class FindChoices(object):
             records, field, defaultOption=defaultOption, optionName=optionName)
 
     @classmethod
-    def findLocationCodeCategoryFieldList(self, field, defaultOption=True,
-                                          optionName="Location Code"):
-        records = LocationCodeCategory.objects.all()
+    def findLocationCodeFieldList(self, field, defaultOption=True,
+                                  optionName="Location Code"):
+        records = LocationCode.objects.all()
         return FindChoices._findFieldList(
             records, field, defaultOption=defaultOption, optionName=optionName)
 
@@ -114,7 +114,7 @@ class ItemSearchForm(forms.Form):
         required=False,
         widget=forms.Select())
     location_code = forms.ChoiceField(
-        choices=FindChoices.findLocationCodeCategoryFieldList('path'),
+        choices=FindChoices.findLocationCodeFieldList('path'),
         required=False,
         widget=forms.Select())
     categories = forms.ChoiceField(

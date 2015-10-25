@@ -7,7 +7,6 @@
 
 import datetime
 import pytz
-import logging
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -15,10 +14,6 @@ from django.test import TestCase
 from ..models import Category
 
 User = get_user_model()
-
-# Turn off the model logging.
-log = logging.getLogger('inventory.categories.models')
-log.setLevel(logging.CRITICAL)
 
 
 class TestCategoryModel(TestCase):
