@@ -12,7 +12,7 @@ from django.conf import settings
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,)
 
-from .utilities import FormatParser
+from .validation import FormatValidator
 
 
 #
@@ -110,13 +110,13 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     location_default = models.ForeignKey(
         LocationDefault, verbose_name=_("Location Default"))
     segment_length = models.PositiveIntegerField(
-        verbose_name=_("Segment Length"), editable=False)
+        verbose_name=_("Segment Length"), editable=False, default=0)
     char_definition = models.CharField(
-        verbose_name=_("Character Definition"), max_length=248, db_index=True,
+        verbose_name=_("Format"), max_length=248, db_index=True,
         help_text=_("Determine the character position definition where "
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
-                    "any char='any char'. ex. \\a\\d\\d\\d could be B001 "
-                    "or \\a@\d\d could be D@99"))
+                    "any hard coded charactor. ex. \\a\\d\\d\\d could be B001 "
+                    "or \\a@\d\d could be D@99."))
     segment_order =  models.PositiveIntegerField(
         verbose_name=_("Segment Order"), default=0,
         help_text=_("A number indicating the order that this segment will "
@@ -128,11 +128,24 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     objects = LocationFormatManager()
 
-    def __str__(self):
-        return self.char_definition
+    def clean(self):
+        # Test that the format obeys the rules.
+        self.char_definition = FormatValidator(
+            delimiter=self.location_default.separator
+            ).validate_char_definition(self.char_definition)
+
+        self.segment_length = len(self.char_definition.replace('\\', ''))
+
+        # Test that there is a segment length.
+        if not self.segment_length:
+            raise ValidationError(_("Character definition formats are "
+                                    "required."))
 
     def save(self, *args, **kwargs):
         super(LocationFormat, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.char_definition
 
     class Meta:
         ordering = ('segment_order',)
@@ -172,16 +185,17 @@ class LocationCodeManager(models.Manager):
 
 class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
-    parent = models.ForeignKey(
-        "self", blank=True, null=True, default=0, related_name='children')
+    char_definition = models.ForeignKey(
+        LocationFormat, verbose_name=_("Format"),
+        help_text=_("Choose the format that this segment will be based on."))
     segment = models.CharField(
         max_length=248, db_index=True,
         help_text=_("See the LocationFormat.description for the "
                     "format used."))
+    parent = models.ForeignKey(
+        "self", blank=True, null=True, default=0, related_name='children')
     path = models.CharField(
         max_length=248, editable=False)
-    char_definition = models.ForeignKey(
-        LocationFormat, editable=False)
     level = models.SmallIntegerField(
         verbose_name=_("Level"), editable=False)
 
@@ -204,49 +218,61 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     _char_def_producer.short_description = _("Character Definition")
 
     def clean(self):
-        parents = LocationCode.objects.get_parents(self)
+        separator = self.char_definition.location_default.separator
 
-        if self.segment in [parent.segment for parent in parents]:
-            raise ValidationError(
-                _("You cannot have a category as a child to itself."))
-
-        separator = self.get_separator()
-
+        # Test that a delimitor is not in segment itself.
         if separator in self.segment:
             raise ValidationError(
                 _("A segment cannot contain the segment delimiter "
                   "'{}'.").format(separator))
 
+        parents = LocationCode.objects.get_parents(self)
+
+        # Test that a segment is not a parent to itself.
+        if self.segment in [parent.segment for parent in parents]:
+            raise ValidationError(
+                _("You cannot have a segment as a child to itself."))
+
+        default_name = self.char_definition.location_default.name
+
+        # Test that all segments have the same default name.
+        if not all([default_name == parent.char_definition.location_default.name
+                    for parent in parents]):
+            raise ValidationError(
+                _("All segments must be derived from the same default name."))
+
+
+        ## try:
+        ##     formats = [fmt.char_definition
+        ##                for fmt in LocationFormat.objects.all()]
+        ##     parser = FormatParser(formats, separator)
+        ##     self.char_definition = (LocationFormat.objects.
+        ##                             get_char_definition_by_segment(
+        ##                                 parser.getFormat(self.segment)))
+        ## except ValueError, e:
+        ##     raise ValidationError(
+        ##         _("Segment does not match a Location Format, "
+        ##           "{}").format(e))
+
+        ## if not self.char_definition:
+        ##      raise ValidationError(
+        ##         _("Invalid segment must conform to one of the following "
+        ##           "character definitions: {}").format(', '.join(formats)))
+
         max_num_segments = (self.char_definition.location_default.
                             locationformat_set.count())
-        length = len(parents) + 1
+        length = len(parents) + 1 # Parents plus self.
 
         if length > max_num_segments:
             raise ValidationError(
-                _("There are too many segments in this location code, found: "
-                  "{}, allowed: {}").format(length, max_num_segments))
+                _("There are more segments than defined formats, found: {}, "
+                  "allowed: {}").format(length, max_num_segments))
 
-        try:
-            formats = [fmt.char_definition
-                       for fmt in LocationFormat.objects.all()]
-            parser = FormatParser(formats, separator)
-            self.char_definition = (LocationFormat.objects.
-                                    get_char_definition_by_segment(
-                                        parser.getFormat(self.segment)))
-        except ValueError, e:
-            raise ValidationError(
-                _("Segment does not match a Location Format, "
-                  "{}").format(e))
-
-        if not self.char_definition:
-             raise ValidationError(
-                _("Invalid segment must conform to one of the following "
-                  "character definitions: {}").format(', '.join(formats)))
+        self.path = self._get_category_path()
+        self.level = self.path.count(separator)
 
     def save(self, *args, **kwargs):
         # Fix our self.
-        self.path = self._get_category_path()
-        self.level = self.path.count(self._separator)
         super(LocationCode, self).save(*args, **kwargs)
 
         # Fix all the children if any.

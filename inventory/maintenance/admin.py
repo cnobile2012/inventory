@@ -42,12 +42,13 @@ class LocationDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
 class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('location_default', 'char_definition',
-                           'segment_order', 'description',)}),
+                           'segment_order', 'description', 'segment_length',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
+    readonly_fields = ('segment_length', 'creator', 'created', 'updater',
+                       'updated',)
     list_display = ('char_definition', 'location_default', 'segment_order',
                     'description', 'segment_length', 'updated',)
     list_editable = ('segment_order',)
@@ -56,7 +57,8 @@ class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
 
 class LocationCodeAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('parent', 'segment', 'path', 'level',)}),
+        (None, {'fields': ('char_definition', 'segment', 'parent', 'path',
+                           'level',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),

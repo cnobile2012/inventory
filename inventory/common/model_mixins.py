@@ -145,11 +145,11 @@ class StatusModelMixin(models.Model):
         super(StatusModelMixin, self).save(*args, **kwargs)
 
 
-class ValidateOnSaveMixin(object):
+class ValidateOnSaveMixin(models.Model):
 
-    def save(self, force_insert=False, force_update=False, **kwargs):
-        if not (force_insert or force_update):
-            self.full_clean()
+    class Meta:
+        abstract = True
 
-        super(ValidateOnSaveMixin, self).save(
-            force_insert, force_update, **kwargs)
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(ValidateOnSaveMixin, self).save(*args, **kwargs)
