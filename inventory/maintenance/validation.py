@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# maintenance/validation.py
+# inventory/maintenance/validation.py
 #
 
 import re
@@ -17,21 +17,7 @@ class FormatValidator(object):
     __FMT_MAP = {
         r'\d': r'\d',
         r'\a': r'a-zA-Z',
-        r'\p': r'!"#$%&\'\(\)*+,-./:;<=>?@\[\]^_`{|}~\\'
-        }
-    __REGEX_RESERVED_MAP = {
-        '[': '\[',
-        ']': '\]',
-        '\\': '\\',
-        '^': '\^',
-        '$': '\$',
-        '.': '\.',
-        '|': '\|',
-        '?': '\?',
-        '*': '\*',
-        '+': '\+',
-        '(': '\(',
-        ')': '\)',
+        r'\p': r'!"#$%&\'\(\)*+,./:;<=>?@\[\]^_`{|}~-'
         }
 
     def __init__(self, fmt=None, delimiter=None):
@@ -43,54 +29,32 @@ class FormatValidator(object):
         @param delimiter: The delimiter used between formats.
         """
         self.__format = fmt
-        self.__delimiter = self.validate_separator(delimiter)
-        #self.__currentFormat = None
-        #self.__fmtRegEx = self._buildRegEx()
 
-    ## def _buildRegEx(self):
-    ##     splitRegEx = r"(\\[adp]|[a-zA-Z{}])".format(
-    ##         self._removeDelimiter(self.__FMT_MAP.get('\p')[1:-1]))
-    ##     result = []
+        if delimiter is not None:
+            self.__delimiter = self.validate_separator(delimiter)
+        else:
+            self.__delimiter = ''
 
-    ##     for fmt in self.__formats:
-    ##         segList = [x for x in re.split(splitRegEx, fmt) if x]
-    ##         regex = ''
+    def validate_separator(self, value):
+        from .models import LocationDefault
 
-    ##         for seg in segList:
-    ##             tmp = self.__FMT_MAP.get(seg)
-    ##             if tmp: regex += self._removeDelimiter(tmp)
-    ##             else: regex += self._removeDelimiter(seg)
+        if not value:
+            raise ValidationError(
+                _("A separator cannot be empty or a None value."))
 
-    ##         regex = "(" + regex + ")"
-    ##         result.append(re.compile(regex))
-    ##         #print regex
+        size = len(value)
+        separator_obj = LocationDefault._meta.get_field('separator')
 
-    ##     return result
+        if size > separator_obj.max_length:
+            raise ValidationError(
+                _("The length of the separator is {}, the max length "
+                  "is {}").format(size, separator_obj.max_length))
 
-    ## def _removeDelimiter(self, value):
-    ##     for c in self.__delimiter:
-    ##         if c in self.__REGEX_RESERVED_MAP:
-    ##             c = self.__REGEX_RESERVED_MAP.get(c)
-
-    ##         value = value.replace(c, '')
-
-    ##     return value
+        return value
 
     def validate_char_definition(self, value):
         value = temp = value.replace('\x07', '\\a')
-        a = self.__FMT_MAP.get(r'\a', '')
-        p = self._remove_delimiter(self.__FMT_MAP.get(r'\p', ''))
-        regex = r'([{}{}])|(\\[dap])'.format(a, p)
-        iterator = re.finditer(regex, value)
-        operators = []
-
-        try:
-            while True:
-                for j in iterator.next().groups():
-                    if j: operators.append(j)
-        except StopIteration:
-            pass
-
+        operators = self._split_char_definition(value)
         tmp = ''.join(operators)
 
         if self.__delimiter in tmp:
@@ -105,56 +69,35 @@ class FormatValidator(object):
 
         return value
 
-    def validate_separator(self, value):
-        from .models import LocationDefault
-
-        if not value:
+    def validate_segment(self, value):
+        if self.__delimiter in value:
             raise ValidationError(
-                _("A separator cannot be empty or a None value."))
+                _("A separator cannot be in a segment."))
 
-        size = len(value)
-        separator = LocationDefault._meta.get_field('separator')
+        operators = self._split_char_definition(self.__format)
+        regex = ''.join([r'([{}])'.format(self.__FMT_MAP.get(op, op))
+                         for op in operators])
+        rx_obj = re.match(regex, value)
 
-        if size > separator.max_length:
+        if not rx_obj:
             raise ValidationError(
-                _("The length of the separator is {}, the max length "
-                  "is {}").format(size, separator.max_length))
+                _("Invalid segment '{}', does not conform to '{}'.").format(
+                    value, self.__format))
 
         return value
 
-    def validate(self, value):
-        result = None
+    def _split_char_definition(self, fmt):
+        a = self.__FMT_MAP.get(r'\a', '')
+        p = self._remove_delimiter(self.__FMT_MAP.get(r'\p', ''))
+        regex = r'([{}{}])|(\\[dap])'.format(a, p)
+        rx_list = re.findall(regex, fmt)
+        operators = []
 
-        for idx, fmt in enumerate(self.__fmtRegEx, start=0):
-            match = fmt.search(value)
+        for group in rx_list:
+            for item in group:
+                if item: operators.append(item)
 
-            if match:
-                result = match.group(0)
-                self.__currentFormat = idx
-                break
-
-
-
-
-        return result is not None
-
-    def getFormat(self, value):
-        """
-        Find the user entered format that would define the location code.
-
-        @param value: The user entered segment used in the location code.
-        @return: The valid character definition matching a Location Code
-                 Default.
-        """
-        result = None
-
-        if self.validate(value) and self.__currentFormat is not None:
-            result = self.__formats[self.__currentFormat]
-        else:
-            msg = "Invalid value [%s] or format [%s]."
-            raise ValueError(msg % (value, self.__currentFormat))
-
-        return result
+        return operators
 
     def _remove_delimiter(self, value):
         if self.__delimiter in value:

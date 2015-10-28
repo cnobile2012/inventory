@@ -241,33 +241,23 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
             raise ValidationError(
                 _("All segments must be derived from the same default name."))
 
-
-        ## try:
-        ##     formats = [fmt.char_definition
-        ##                for fmt in LocationFormat.objects.all()]
-        ##     parser = FormatParser(formats, separator)
-        ##     self.char_definition = (LocationFormat.objects.
-        ##                             get_char_definition_by_segment(
-        ##                                 parser.getFormat(self.segment)))
-        ## except ValueError, e:
-        ##     raise ValidationError(
-        ##         _("Segment does not match a Location Format, "
-        ##           "{}").format(e))
-
-        ## if not self.char_definition:
-        ##      raise ValidationError(
-        ##         _("Invalid segment must conform to one of the following "
-        ##           "character definitions: {}").format(', '.join(formats)))
+        # Test that this segment follows the rules.
+        self.segment = FormatValidator(
+            fmt=self.char_definition.char_definition, delimiter=separator
+            ).validate_segment(self.segment)
 
         max_num_segments = (self.char_definition.location_default.
                             locationformat_set.count())
         length = len(parents) + 1 # Parents plus self.
 
+        # Test that the number of segments defined are equal to or less than
+        # the number of formats for this location default.
         if length > max_num_segments:
             raise ValidationError(
                 _("There are more segments than defined formats, found: {}, "
                   "allowed: {}").format(length, max_num_segments))
 
+        # Set the path and level.
         self.path = self._get_category_path()
         self.level = self.path.count(separator)
 
