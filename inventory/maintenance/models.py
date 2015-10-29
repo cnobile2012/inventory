@@ -90,14 +90,13 @@ class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 #
 class LocationFormatManager(models.Manager):
 
-    def get_max_num_segments(self):
-        return self.count()
-
-    def get_char_definition_by_segment(self, char_def):
+    def get_char_definition(self, owner, name, fmt):
         record = None
 
         try:
-            record = self.get(char_definition=char_def)
+            record = self.get(location_default__name=name,
+                              location_default__owner=owner,
+                              char_definition=fmt)
         except self.model.DoesNotExist:
             # The record does not exist, so return None.
             pass
@@ -157,6 +156,9 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 # LocationCode
 #
 class LocationCodeManager(models.Manager):
+
+    #def get_max_num_segments(self, name, owner):
+    #    return self.filter(name=name, owner=owner).count()
 
     def get_parents(self, category):
         parents = self._recurse_parents(category)

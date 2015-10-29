@@ -53,14 +53,15 @@ class FormatValidator(object):
         return value
 
     def validate_char_definition(self, value):
-        value = temp = value.replace('\x07', '\\a')
+        value = value.replace('\x07', '\\a') # Fix the \a issue.
+
+        if self.__delimiter in value:
+             raise ValidationError(
+                _("Invalid format, found separator '{}' in '{}'").format(
+                     self.__delimiter, value))
+
         operators = self._split_char_definition(value)
         tmp = ''.join(operators)
-
-        if self.__delimiter in tmp:
-             raise ValidationError(
-                _("Invalid format, found: {} in {}").format(
-                     self.__delimiter, tmp))
 
         if tmp != value or len(value) <= 0:
             raise ValidationError(

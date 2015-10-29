@@ -7,6 +7,7 @@
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 from ..models import LocationDefault, LocationFormat, LocationCode
 
@@ -80,46 +81,62 @@ class TestLocationDefaultModel(BaseLocation):
         self.assertEqual(obj.description, desc, msg)
 
 
-
-
-
-
-
-
-
-
 class TestLocationFormatModel(BaseLocation):
 
     def __init__(self, name):
         super(TestLocationFormatModel, self).__init__(name)
 
+    def setUp(self):
+        super(TestLocationFormatModel, self).setUp()
+        # Create a valid location default object.
+        self.name = "Test Location Default"
+        desc = "Test description."
+        self.loc_def = self._create_location_default_record(self.name, desc)
+
     def test_create_location_format_record(self):
         #self.skipTest("Temporarily skipped")
-        # Create a valid location default object.
-        name = "Test Location Default"
-        desc = "Test description."
-        loc_def = self._create_location_default_record(name, desc)
-        msg = "{} should be {} and {} should be {}".format(
-            loc_def.name, name, loc_def.description, desc)
-        self.assertEqual(loc_def.name, name, msg)
-        self.assertEqual(loc_def.description, desc, msg)
         # Create a location format object.
         char_definition = 'T\\d\\d'
         segment_order = 0
         description = "Test character definition."
         obj = self._create_location_format_record(
-            char_definition, segment_order, description, loc_def)
+            char_definition, segment_order, description, self.loc_def)
         msg = "{} should be {} and {} should be {}".format(
             obj.char_definition, char_definition,
-            obj.location_default.name, name)
+            obj.location_default.name, self.name)
         self.assertEqual(obj.char_definition, char_definition, msg)
-        self.assertEqual(obj.location_default.name, name, msg)
+        self.assertEqual(obj.location_default.name, self.name, msg)
 
+    def test_get_char_definition(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a location format object.
+        char_definition = r'A\d\dB\d\d\d'
+        segment_order = 0
+        description = "Test character definition."
+        obj = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Get format object.
+        fmt_obj = LocationFormat.objects.get_char_definition(
+            self.user, self.name, char_definition)
+        msg = "Created object: {}, queried object: {}".format(obj, fmt_obj)
+        self.assertEqual(obj, fmt_obj, msg)
 
+    def test_failure_on_record_creation(self):
+        #self.skipTest("Temporarily skipped")
+        formats = [
+            r'A\d\d:B\d\d\d', # Should not have colon in format.
+            r'', # Empty format.
+            r'[A\\\d\d]', # Parse error.
+            ]
+        segment_order = 0
+        description = "Test failure."
 
-
-
-
+        for fmt in formats:
+            with self.assertRaises(ValidationError):
+                obj = self._create_location_format_record(
+                    fmt, segment_order, description, self.loc_def)
+                msg = "Created object: {}".format(obj)
+                self.assertFalse(obj, msg)
 
 
 class TestLocationCodeModel(BaseLocation):
@@ -127,38 +144,27 @@ class TestLocationCodeModel(BaseLocation):
     def __init__(self, name):
         super(TestLocationCodeModel, self).__init__(name)
 
-    def test_create_location_code(self):
-        #self.skipTest("Temporarily skipped")
+    def setUp(self):
+        super(TestLocationCodeModel, self).setUp()
         # Create a valid location default object.
-        name = "Test Location Default"
+        self.name = "Test Location Default"
         desc = "Test description."
-        loc_def = self._create_location_default_record(name, desc)
-        msg = "{} should be {} and {} should be {}".format(
-            loc_def.name, name, loc_def.description, desc)
-        self.assertEqual(loc_def.name, name, msg)
-        self.assertEqual(loc_def.description, desc, msg)
+        loc_def = self._create_location_default_record(self.name, desc)
         # Create a location format object.
         char_definition = 'T\\d\\d'
         segment_order = 0
         description = "Test character definition."
-        loc_fmt = self._create_location_format_record(
+        self.loc_fmt = self._create_location_format_record(
             char_definition, segment_order, description, loc_def)
-        msg = "{} should be {} and {} should be {}".format(
-            loc_fmt.char_definition, char_definition,
-            loc_fmt.location_default.name, name)
-        self.assertEqual(loc_fmt.char_definition, char_definition, msg)
-        self.assertEqual(loc_fmt.location_default.name, name, msg)
+
+    def test_create_location_code(self):
+        #self.skipTest("Temporarily skipped")
         # Create a location code object.
         segment = "T01"
-        obj = self._create_location_code_record(segment, loc_fmt)
+        obj = self._create_location_code_record(segment, self.loc_fmt)
         msg = "{} should be {} and {} should be {}".format(
             obj.segment, segment,
-            obj.char_definition.location_default.name, name)
+            obj.char_definition.location_default.name, self.name)
         self.assertEqual(obj.segment, segment, msg)
-        self.assertEqual(obj.char_definition.location_default.name, name, msg)
-
-
-
-
-
-
+        self.assertEqual(obj.char_definition.location_default.name,
+                         self.name, msg)
