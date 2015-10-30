@@ -25,8 +25,8 @@ class BaseLocation(TestCase):
     def setUp(self):
         self.user = self._create_user()
 
-    def _create_user(self, username=_TEST_USERNAME, email=None,
-                     password=_TEST_PASSWORD, is_superuser=True):
+    def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
+                     is_superuser=True):
         user = User.objects.create_user(username=username, password=password)
         user.is_active = True
         user.is_staff = True
@@ -34,9 +34,12 @@ class BaseLocation(TestCase):
         user.save()
         return user
 
-    def _create_location_default_record(self, name, description):
+    def _create_location_default_record(self, name, description, owner=None):
+        if not owner:
+            owner = self.user
+
         kwargs = {}
-        kwargs['owner'] = self.user
+        kwargs['owner'] = owner
         kwargs['name'] = name
         kwargs['description'] = description
         kwargs['creator'] = self.user
@@ -72,6 +75,7 @@ class TestLocationDefaultModel(BaseLocation):
 
     def test_create_location_default_record(self):
         #self.skipTest("Temporarily skipped")
+        # Create a location default.
         name = "Test Location Default"
         desc = "Test description."
         obj = self._create_location_default_record(name, desc)
@@ -79,6 +83,52 @@ class TestLocationDefaultModel(BaseLocation):
             obj.name, name, obj.description, desc)
         self.assertEqual(obj.name, name, msg)
         self.assertEqual(obj.description, desc, msg)
+
+    def test_create_default_tree(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a new user
+        owner = self._create_user(username='Test Non-Super',
+                                  password='0123456789',
+                                  is_superuser=False)
+        # Create a location default.
+        name = "Test Location Default"
+        desc = "Test description."
+        loc_def = self._create_location_default_record(name, desc)
+        msg = "{} should be {} and {} should be {}".format(
+            loc_def.name, name, loc_def.description, desc)
+         # Create a location format object 0.
+        char_definition = 'T\\d\\d'
+        segment_order = 0
+        description = "Test character definition."
+        fmt_obj_0 = self._create_location_format_record(
+            char_definition, segment_order, description, loc_def)
+        # Create a location format object 1.
+        char_definition = 'X\\d\\d'
+        segment_order = 1
+        description = "Test character definition."
+        fmt_obj_1 = self._create_location_format_record(
+            char_definition, segment_order, description, loc_def)
+        # Create a location format object 2.
+        char_definition = 'B\\d\\dC\\d\\dR\\d\\d'
+        segment_order = 2
+        description = "Test character definition."
+        fmt_obj_2 = self._create_location_format_record(
+            char_definition, segment_order, description, loc_def)
+        # Make copy of location default and it's format objects.
+        tree = LocationDefault.objects.create_default_tree(
+            loc_def, owner, owner)
+        msg = ("Loc Default: {}, Loc Format: {}, Loc Format: {}, "
+               "Loc Format: {}").format(loc_def, fmt_obj_0, fmt_obj_1,
+                                        fmt_obj_2)
+        self.assertEqual(len(tree), 4, msg)
+
+
+
+
+
+
+
+
 
 
 class TestLocationFormatModel(BaseLocation):
@@ -149,13 +199,13 @@ class TestLocationCodeModel(BaseLocation):
         # Create a valid location default object.
         self.name = "Test Location Default"
         desc = "Test description."
-        loc_def = self._create_location_default_record(self.name, desc)
+        self.loc_def = self._create_location_default_record(self.name, desc)
         # Create a location format object.
         char_definition = 'T\\d\\d'
         segment_order = 0
         description = "Test character definition."
         self.loc_fmt = self._create_location_format_record(
-            char_definition, segment_order, description, loc_def)
+            char_definition, segment_order, description, self.loc_def)
 
     def test_create_location_code(self):
         #self.skipTest("Temporarily skipped")
@@ -168,3 +218,168 @@ class TestLocationCodeModel(BaseLocation):
         self.assertEqual(obj.segment, segment, msg)
         self.assertEqual(obj.char_definition.location_default.name,
                          self.name, msg)
+
+    def test_invalid_child(self):
+        #self.skipTest("Temporarily skipped")
+        segment = "T01"
+        obj_0 = self._create_location_code_record(segment, self.loc_fmt)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_0.segment, segment,
+            obj_0.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_0.segment, segment, msg)
+        # Try to create a child to itself.
+        with self.assertRaises(ValidationError):
+            segment = "T01"
+            obj_1 = self._create_location_code_record(segment, self.loc_fmt,
+                                                      parent=obj_0)
+            msg = "{} should be {} and {} should be {}".format(
+                obj_1.segment, segment,
+                obj_1.char_definition.location_default.name, self.name)
+            self.assertFalse(obj_1, msg)
+
+    def test_invalid_number_of_segments(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a location code object.
+        segment = "T01"
+        obj_0 = self._create_location_code_record(segment, self.loc_fmt)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_0.segment, segment,
+            obj_0.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_0.segment, segment, msg)
+        # Create 2nd location format object.
+        char_definition = 'C\\d\\d' # Container nn
+        segment_order = 1
+        description = "Test character definition."
+        loc_fmt_1 = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Create a 2nd location code parent.
+        segment = "C01" # Container 01
+        obj_1 = self._create_location_code_record(segment, loc_fmt_1,
+                                                  parent=obj_0)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_1.segment, segment,
+            obj_1.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_1.segment, segment, msg)
+        # Create 3rd location format object.
+        char_definition = 'B\\d\\d' # Container nn
+        segment_order = 2
+        description = "Test character definition."
+        loc_fmt_2 = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Create a 3nd location code parent.
+        segment = "B01" # Bin 01
+        obj_2 = self._create_location_code_record(segment, loc_fmt_2,
+                                                  parent=obj_1)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_2.segment, segment,
+            obj_2.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_2.segment, segment, msg)
+        # Try to create a 4nd parent, but with no new format object.
+        with self.assertRaises(ValidationError):
+            segment = "B02" # Bin 02
+            obj_3 = self._create_location_code_record(segment, loc_fmt_2,
+                                                      parent=obj_2)
+            msg = "{} should be {} and {} should be {}".format(
+                obj_3.segment, segment,
+                obj_3.char_definition.location_default.name, self.name)
+            self.assertFalse(obj_3, msg)
+
+    def test_get_parents(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a location code object.
+        segment = "T01"
+        obj_0 = self._create_location_code_record(segment, self.loc_fmt)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_0.segment, segment,
+            obj_0.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_0.segment, segment, msg)
+        # Test get_parent
+        parents = LocationCode.objects.get_parents(obj_0)
+        msg = "parents: {}".format(parents)
+        self.assertEqual(len(parents), 0, msg)
+        # Create 2nd location format object.
+        char_definition = 'C\\d\\d' # Container nn
+        segment_order = 1
+        description = "Test character definition."
+        loc_fmt_1 = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Create a 2nd location code parent.
+        segment = "C01" # Container 01
+        obj_1 = self._create_location_code_record(segment, loc_fmt_1,
+                                                  parent=obj_0)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_1.segment, segment,
+            obj_1.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_1.segment, segment, msg)
+        # Test get_parent
+        parents = LocationCode.objects.get_parents(obj_1)
+        msg = "parents: {}".format(parents)
+        self.assertEqual(len(parents), 1, msg)
+        # Create 3rd location format object.
+        char_definition = 'B\\d\\d' # Container nn
+        segment_order = 2
+        description = "Test character definition."
+        loc_fmt_2 = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Create a 3nd location code parent.
+        segment = "B01" # Bin 01
+        obj_2 = self._create_location_code_record(segment, loc_fmt_2,
+                                                  parent=obj_1)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_2.segment, segment,
+            obj_2.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_2.segment, segment, msg)
+        # Test get_parent
+        parents = LocationCode.objects.get_parents(obj_2)
+        msg = "parents: {}".format(parents)
+        self.assertEqual(len(parents), 2, msg)
+
+    def test_get_all_root_trees(self):
+        #self.skipTest("Temporarily skipped")
+        # Create 1st tree.
+        # Create a location code object.
+        segment = "T01"
+        obj_0 = self._create_location_code_record(segment, self.loc_fmt)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_0.segment, segment,
+            obj_0.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_0.segment, segment, msg)
+        # Create 2nd location format object.
+        char_definition = 'C\\d\\d' # Container nn
+        segment_order = 1
+        description = "Test character definition."
+        loc_fmt_1 = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Create a 2nd location code parent.
+        segment = "C01" # Container 01
+        obj_1 = self._create_location_code_record(segment, loc_fmt_1,
+                                                  parent=obj_0)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_1.segment, segment,
+            obj_1.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_1.segment, segment, msg)
+        # Create 2nd tree.
+        segment = "T02"
+        obj_0 = self._create_location_code_record(segment, self.loc_fmt)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_0.segment, segment,
+            obj_0.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_0.segment, segment, msg)
+        # Create 2nd location format object.
+        char_definition = 'C\\d\\d' # Container nn
+        segment_order = 1
+        description = "Test character definition."
+        loc_fmt_1 = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Create a 2nd location code parent.
+        segment = "C01" # Container 01
+        obj_1 = self._create_location_code_record(segment, loc_fmt_1,
+                                                  parent=obj_0)
+        msg = "{} should be {} and {} should be {}".format(
+            obj_1.segment, segment,
+            obj_1.char_definition.location_default.name, self.name)
+        self.assertEqual(obj_1.segment, segment, msg)
+        # get_all_root_trees
+        trees = LocationCode.objects.get_all_root_trees(segment, self.user)
+        msg = "Root trees: {}".format(trees)
+        self.assertEqual(len(trees), 2, msg)

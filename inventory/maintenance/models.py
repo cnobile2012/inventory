@@ -45,7 +45,69 @@ class Currency(TimeModelMixin, UserModelMixin):
 # LocationDefault
 #
 class LocationDefaultManager(models.Manager):
-    pass
+
+    def create_default_tree(self, default_obj, owner, user):
+        """
+        Gets and/or creates designated location default, from the location
+        default provided, then creates all location formats as necessary.
+        Returns a list of objects or an empty list if 'format_list' is the
+        wrong data type.
+
+        raise ValueError If the delimiter is found in a format name.
+        """
+        node_list = []
+        kwargs = {}
+        kwargs['description'] = default_obj.description
+        kwargs['shared'] = default_obj.shared
+        kwargs['separator'] = default_obj.separator
+        kwargs['creator'] = user
+        kwargs['updater'] = user
+        obj, created = self.get_or_create(
+            name=default_obj.name, owner=owner, defaults=kwargs)
+
+        if created and obj:
+            node_list.append(obj)
+            from .models import LocationFormat
+
+            for fmt_obj in default_obj.locationformat_set.all():
+                kwargs = {}
+                kwargs['location_default'] = obj
+                kwargs['char_definition'] = fmt_obj.char_definition
+                kwargs['segment_order'] = fmt_obj.segment_order
+                kwargs['description'] = fmt_obj.description
+                kwargs['creator'] = user
+                kwargs['updater'] = user
+                node = LocationFormat.objects.create(**kwargs)
+                node_list.append(node)
+
+        return node_list
+
+    def delete_category_tree(self, node_list, owner):
+        """
+        Deletes the category tree back to the beginning, but will stop if there
+        are other children on the category. The result is that it will delete
+        whatever was just added. This is useful for rollbacks. The 'node_list'
+        should be the unaltered result of the create_category_tree method or
+        its equivalent. A list of strings is returned representing the deleted
+        nodes.
+        """
+        node_list.reverse()
+        deleted_nodes = []
+
+        for node in node_list:
+            if node.owner is not owner:
+                msg = ("Delete category: {}, creator: {}, updated: {}, "
+                       "owner: {}, non-owner: {}").format(
+                    node, node.creator, node.updater, node.owner, owner)
+                log.error(msg)
+                raise ValueError(msg)
+
+        for node in node_list:
+            if node.children.count() > 0: break
+            deleted_nodes.append(node.path)
+            node.delete()
+
+        return deleted_nodes
 
 
 class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
@@ -157,27 +219,25 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 #
 class LocationCodeManager(models.Manager):
 
-    #def get_max_num_segments(self, name, owner):
-    #    return self.filter(name=name, owner=owner).count()
-
-    def get_parents(self, category):
-        parents = self._recurse_parents(category)
+    def get_parents(self, fmt_obj):
+        parents = self._recurse_parents(fmt_obj)
         parents.reverse()
         return parents
 
-    def _recurse_parents(self, category):
+    def _recurse_parents(self, fmt_obj):
         parents = []
 
-        if category.parent_id:
-            parents.append(category.parent)
-            more = self._recurse_parents(category.parent)
+        if fmt_obj.parent_id:
+            parents.append(fmt_obj.parent)
+            more = self._recurse_parents(fmt_obj.parent)
             parents.extend(more)
 
         return parents
 
-    def get_all_root_trees(self, segment):
+    def get_all_root_trees(self, segment, owner):
         result = []
-        records = self.filter(segment=segment)
+        records = self.filter(
+            segment=segment, char_definition__location_default__owner=owner)
 
         if len(records) > 0:
             result[:] = [self.get_parents(record) for record in records]
