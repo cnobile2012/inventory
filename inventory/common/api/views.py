@@ -34,6 +34,13 @@ def api_root(request, format=None):
     categories = items.setdefault('categories', OrderedDict())
     categories['categories'] = reverse(
         'category-list', request=request, format=format)
+    # Maintenance
+    maintenance = items.setdefault('maintenance', OrderedDict())
+    maintenance['currencies'] = reverse(
+        'currency-list', request=request, format=format)
+
+
+
     # Oauth2
     oauth2 = items.setdefault('oauth2', OrderedDict())
     oauth2['access-token'] = reverse(

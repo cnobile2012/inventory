@@ -48,7 +48,7 @@ class ProjectAuthorizationMixin(object):
 
 class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
     """
-    Country list endpoint.
+    Project list endpoint.
 
     ## Keywords:
       * format `str` (optional)
