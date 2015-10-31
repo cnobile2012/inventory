@@ -46,16 +46,13 @@ class Currency(TimeModelMixin, UserModelMixin):
 #
 class LocationDefaultManager(models.Manager):
 
-    def create_default_tree(self, default_obj, owner, user):
+    def clone_default_tree(self, default_obj, owner, user):
         """
-        Gets and/or creates designated location default, from the location
-        default provided, then creates all location formats as necessary.
-        Returns a list of objects or an empty list if 'format_list' is the
-        wrong data type.
-
-        raise ValueError If the delimiter is found in a format name.
+        Gets and/or creates designated location default with a new owner, from
+        the location default provided, then creates all location formats as
+        necessary. Returns a list of objects or an empty list if the new
+        location default already existed.
         """
-        node_list = []
         kwargs = {}
         kwargs['description'] = default_obj.description
         kwargs['shared'] = default_obj.shared
@@ -64,6 +61,7 @@ class LocationDefaultManager(models.Manager):
         kwargs['updater'] = user
         obj, created = self.get_or_create(
             name=default_obj.name, owner=owner, defaults=kwargs)
+        node_list = []
 
         if created and obj:
             node_list.append(obj)
@@ -82,30 +80,38 @@ class LocationDefaultManager(models.Manager):
 
         return node_list
 
-    def delete_category_tree(self, node_list, owner):
+    def delete_default_tree(self, default_obj, owner, user):
         """
-        Deletes the category tree back to the beginning, but will stop if there
-        are other children on the category. The result is that it will delete
-        whatever was just added. This is useful for rollbacks. The 'node_list'
-        should be the unaltered result of the create_category_tree method or
-        its equivalent. A list of strings is returned representing the deleted
-        nodes.
+        Deletes the default tree starting with any location code objects,
+        continuing with location format objects, then deleting the location
+        default object itself. Since this is a full removal of an entire tree
+        it will invalidate any items that used any location code objects.
         """
-        node_list.reverse()
         deleted_nodes = []
 
-        for node in node_list:
-            if node.owner is not owner:
-                msg = ("Delete category: {}, creator: {}, updated: {}, "
-                       "owner: {}, non-owner: {}").format(
-                    node, node.creator, node.updater, node.owner, owner)
-                log.error(msg)
-                raise ValueError(msg)
+        for fmt in default_obj.locationformat_set.all():
+            child_nodes = []
 
-        for node in node_list:
-            if node.children.count() > 0: break
-            deleted_nodes.append(node.path)
-            node.delete()
+            for code in fmt.locationcode_set.all():
+                child_nodes += self._recurse_children(code)
+
+            fmt_obj = [fmt.char_definition, child_nodes]
+            fmt.delete()
+            deleted_nodes.append(fmt_obj)
+
+        deleted_nodes.insert(0, default_obj.name)
+        default_obj.delete()
+        return deleted_nodes
+
+    def _recurse_children(self, child):
+        deleted_nodes = []
+
+        for c in child.children.all():
+            if c.children.count():
+                deleted_nodes += self._recurse_children(c)
+            else:
+                deleted_nodes.append(c.path)
+                c.delete()
 
         return deleted_nodes
 

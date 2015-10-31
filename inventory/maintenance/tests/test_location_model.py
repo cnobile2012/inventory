@@ -84,7 +84,7 @@ class TestLocationDefaultModel(BaseLocation):
         self.assertEqual(obj.name, name, msg)
         self.assertEqual(obj.description, desc, msg)
 
-    def test_create_default_tree(self):
+    def test_clone_default_tree(self):
         #self.skipTest("Temporarily skipped")
         # Create a new user
         owner = self._create_user(username='Test Non-Super',
@@ -115,20 +115,69 @@ class TestLocationDefaultModel(BaseLocation):
         fmt_obj_2 = self._create_location_format_record(
             char_definition, segment_order, description, loc_def)
         # Make copy of location default and it's format objects.
-        tree = LocationDefault.objects.create_default_tree(
+        tree = LocationDefault.objects.clone_default_tree(
             loc_def, owner, owner)
         msg = ("Loc Default: {}, Loc Format: {}, Loc Format: {}, "
-               "Loc Format: {}").format(loc_def, fmt_obj_0, fmt_obj_1,
-                                        fmt_obj_2)
+               "Loc Format: {}").format(
+            loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2)
         self.assertEqual(len(tree), 4, msg)
 
-
-
-
-
-
-
-
+    def test_delete_default_tree(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a location default.
+        name = "Test Location Default"
+        desc = "Test description."
+        loc_def = self._create_location_default_record(name, desc)
+        msg = "{} should be {} and {} should be {}".format(
+            loc_def.name, name, loc_def.description, desc)
+         # Create a location format object 0.
+        char_definition = 'T\\d\\d'
+        segment_order = 0
+        description = "Test character definition."
+        fmt_obj_0 = self._create_location_format_record(
+            char_definition, segment_order, description, loc_def)
+        # Create a location format object 1.
+        char_definition = 'X\\d\\d'
+        segment_order = 1
+        description = "Test character definition."
+        fmt_obj_1 = self._create_location_format_record(
+            char_definition, segment_order, description, loc_def)
+        # Create a location format object 2.
+        char_definition = 'B\\d\\dC\\d\\dR\\d\\d'
+        segment_order = 2
+        description = "Test character definition."
+        fmt_obj_2 = self._create_location_format_record(
+            char_definition, segment_order, description, loc_def)
+        # Create location code objects .
+        code_0 = self._create_location_code_record("T01", fmt_obj_0)
+        code_1 = self._create_location_code_record("X01", fmt_obj_1,
+                                                   parent=code_0)
+        code_1a = self._create_location_code_record("X02", fmt_obj_1,
+                                                    parent=code_0)
+        code_2 = self._create_location_code_record("B01C01R01", fmt_obj_2,
+                                                   parent=code_1)
+        code_2a = self._create_location_code_record("B01C01R01", fmt_obj_2,
+                                                    parent=code_1a)
+        # Test for correct number of objects.
+        msg = "Location Default: {}".format(loc_def)
+        self.assertEquals(LocationDefault.objects.count(), 1, msg)
+        msg = "Location Formats: {}, {}, {}".format(
+            fmt_obj_0, fmt_obj_1, fmt_obj_2)
+        self.assertEquals(LocationFormat.objects.count(), 3, msg)
+        msg = "Location Codes: {}, {}, {}".format(code_0, code_1, code_2)
+        self.assertEquals(LocationCode.objects.count(), 5, msg)
+        # Test delete_default_tree
+        nodes = LocationDefault.objects.delete_default_tree(
+            loc_def, self.user, self.user)
+        #print nodes
+        # Test for correct number of objects.
+        msg = "Location Default: {}".format(loc_def)
+        self.assertEquals(LocationDefault.objects.count(), 0, msg)
+        msg = "Location Formats: {}, {}, {}".format(
+            fmt_obj_0, fmt_obj_1, fmt_obj_2)
+        self.assertEquals(LocationFormat.objects.count(), 0, msg)
+        msg = "Location Codes: {}, {}, {}".format(code_0, code_1, code_2)
+        self.assertEquals(LocationCode.objects.count(), 0, msg)
 
 
 class TestLocationFormatModel(BaseLocation):
