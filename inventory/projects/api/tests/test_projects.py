@@ -33,6 +33,7 @@ class TestProject(BaseTest):
 
     def test_create_post_project(self):
         # Create Project with POST.
+        #self.skipTest("Temporarily skipped")
         uri = reverse('project-list')
         new_data = {'name': 'Test Project', 'public': False, 'active': True,
                     'members': [self.user_uri,], 'managers': [self.user_uri,]}
