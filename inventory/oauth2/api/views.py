@@ -49,30 +49,6 @@ class ApplicationList(ApplicationAuthorizationMixin, ListCreateAPIView):
     """
     Oauth2 Application list endpoint.
 
-    ## Keywords:
-      * format `str` (optional)
-        * Determines which output format to use.
-      * page `int` (optional)
-        * Page number, starts at 1.
-      * page_size `int` (optional)
-        * Number of items to return in the page. Default is 25 maximum is 200.
-
-    ## Examples:
-      1. `/?format=api`
-        * Returns items in HTML format.
-      2. `/?format=json`
-        * Returns items in JSON format.
-      3. `/?format=xml`
-        * Returns items in XML format.
-      3. `/?format=yaml`
-        * Returns items in YAML format.
-      4. `/`
-        * Returns the first page of 25 items.
-      5. `/?page=1`
-        * Returns the first page of 25 items.
-      6. `/?page=3&page_size=100`
-        * Returns the third page of 100 items.
-
     ## Valid Values:
       1. `client_type`
         * `confidential`
@@ -133,30 +109,6 @@ class AccessTokenAuthorizationMixin(object):
 class AccessTokenList(AccessTokenAuthorizationMixin, ListCreateAPIView):
     """
     Oauth2 AccessToken list endpoint.
-
-    ## Keywords:
-      * format `str` (optional)
-        * Determines which output format to use.
-      * page `int` (optional)
-        * Page number, starts at 1.
-      * page_size `int` (optional)
-        * Number of items to return in the page. Default is 25 maximum is 200.
-
-    ## Examples:
-      1. `/?format=api`
-        * Returns items in HTML format.
-      2. `/?format=json`
-        * Returns items in JSON format.
-      3. `/?format=xml`
-        * Returns items in XML format.
-      3. `/?format=yaml`
-        * Returns items in YAML format.
-      4. `/`
-        * Returns the first page of 25 items.
-      5. `/?page=1`
-        * Returns the first page of 25 items.
-      6. `/?page=3&page_size=100`
-        * Returns the third page of 100 items.
     """
     serializer_class = AccessTokenSerializer
     permission_classes = (
@@ -206,30 +158,6 @@ class GrantAuthorizationMixin(object):
 class GrantList(GrantAuthorizationMixin, ListCreateAPIView):
     """
     Oauth2 Grant list endpoint.
-
-    ## Keywords:
-      * format `str` (optional)
-        * Determines which output format to use.
-      * page `int` (optional)
-        * Page number, starts at 1.
-      * page_size `int` (optional)
-        * Number of items to return in the page. Default is 25 maximum is 200.
-
-    ## Examples:
-      1. `/?format=api`
-        * Returns items in HTML format.
-      2. `/?format=json`
-        * Returns items in JSON format.
-      3. `/?format=xml`
-        * Returns items in XML format.
-      3. `/?format=yaml`
-        * Returns items in YAML format.
-      4. `/`
-        * Returns the first page of 25 items.
-      5. `/?page=1`
-        * Returns the first page of 25 items.
-      6. `/?page=3&page_size=100`
-        * Returns the third page of 100 items.
     """
     serializer_class = GrantSerializer
     permission_classes = (
@@ -278,30 +206,6 @@ class RefreshTokenAuthorizationMixin(object):
 class RefreshTokenList(RefreshTokenAuthorizationMixin, ListCreateAPIView):
     """
     Oauth2 RefreshToken list endpoint.
-
-    ## Keywords:
-      * format `str` (optional)
-        * Determines which output format to use.
-      * page `int` (optional)
-        * Page number, starts at 1.
-      * page_size `int` (optional)
-        * Number of items to return in the page. Default is 25 maximum is 200.
-
-    ## Examples:
-      1. `/?format=api`
-        * Returns items in HTML format.
-      2. `/?format=json`
-        * Returns items in JSON format.
-      3. `/?format=xml`
-        * Returns items in XML format.
-      3. `/?format=yaml`
-        * Returns items in YAML format.
-      4. `/`
-        * Returns the first page of 25 items.
-      5. `/?page=1`
-        * Returns the first page of 25 items.
-      6. `/?page=3&page_size=100`
-        * Returns the third page of 100 items.
     """
     serializer_class = RefreshTokenSerializer
     permission_classes = (

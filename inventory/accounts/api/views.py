@@ -48,30 +48,6 @@ class UserAuthorizationMixin(object):
 class UserList(UserAuthorizationMixin, ListCreateAPIView):
     """
     User list endpoint.
-
-    ## Keywords:
-      * format `str` (optional)
-        * Determines which output format to use.
-      * page `int` (optional)
-        * Page number, starts at 1.
-      * page_size `int` (optional)
-        * Number of items to return in the page. Default is 25 maximum is 200.
-
-    ## Examples:
-      1. `/?format=api`
-        * Returns items in HTML format.
-      2. `/?format=json`
-        * Returns items in JSON format.
-      3. `/?format=xml`
-        * Returns items in XML format.
-      3. `/?format=yaml`
-        * Returns items in YAML format.
-      4. `/`
-        * Returns the first page of 25 items.
-      5. `/?page=1`
-        * Returns the first page of 25 items.
-      6. `/?page=3&page_size=100`
-        * Returns the third page of 100 items..
     """
     serializer_class = UserSerializer
     permission_classes = (
@@ -117,30 +93,6 @@ class GroupAuthorizationMixin(object):
 class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
     """
     Group list endpoint.
-
-    ## Keywords:
-      * format `str` (optional)
-        * Determines which output format to use.
-      * page `int` (optional)
-        * Page number, starts at 1.
-      * page_size `int` (optional)
-        * Number of items to return in the page. Default is 25 maximum is 200.
-
-    ## Examples:
-      1. `/?format=api`
-        * Returns items in HTML format.
-      2. `/?format=json`
-        * Returns items in JSON format.
-      3. `/?format=xml`
-        * Returns items in XML format.
-      3. `/?format=yaml`
-        * Returns items in YAML format.
-      4. `/`
-        * Returns the first page of 25 items.
-      5. `/?page=1`
-        * Returns the first page of 25 items.
-      6. `/?page=3&page_size=100`
-        * Returns the third page of 100 items.
     """
     serializer_class = GroupSerializer
     permission_classes = (

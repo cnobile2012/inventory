@@ -12,8 +12,7 @@ from rest_framework import serializers
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.accounts.models import User
 
-from ..models import (
-    Currency, LocationDefault, LocationFormat, LocationCode)
+from ..models import Currency, LocationDefault, LocationFormat, LocationCode
 
 log = logging.getLogger('api.maintenance.serializers')
 User = get_user_model()

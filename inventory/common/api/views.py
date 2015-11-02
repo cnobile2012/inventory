@@ -13,7 +13,40 @@ from rest_framework.reverse import reverse
 @api_view(('GET',))
 def api_root(request, format=None):
     """
-    The root of all URIs found in this web service.
+    The root of all URIs found in this web API.
+
+    In general all the API endpoints below will follow these basic rules.
+
+    ## Keywords:
+      * format `str` (optional)
+        * Determines which output format to use.
+      * page `int` (optional)
+        * Page number, starts at 1.
+      * page_size `int` (optional)
+        * Number of items to return in the page. Default is 25 maximum is 200.
+
+    ## Examples:
+      1. `/?format=api`
+        * Returns items in HTML format.
+      2. `/?format=json`
+        * Returns items in JSON format.
+      3. `/?format=xml`
+        * Returns items in XML format.
+      3. `/?format=yaml`
+        * Returns items in YAML format.
+      4. `/`
+        * Returns the first page of 25 items.
+      5. `/?page=1`
+        * Returns the first page of 25 items.
+      6. `/?page=3&page_size=100`
+        * Returns 100 items in the third page.
+
+    ## Notes:
+      1. When access is done through a non-browser client use the `Accept`
+         header instead of passing parameters on the URI.
+      2. When paging through a list the `next` and `previous` link relations
+         should be used. They will default to 25 items per page, adding the
+         appropriate `page_size` can be done.
     """
     # Buffer
     buff = OrderedDict()

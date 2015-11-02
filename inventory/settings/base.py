@@ -10,7 +10,6 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-from inventory.setupenv import *
 from inventory.apps.items.settings import *
 from inventory.apps.login.settings import *
 

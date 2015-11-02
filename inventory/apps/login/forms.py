@@ -3,13 +3,12 @@
 #
 
 import re
+import logging
+
 from django import forms
 from django.contrib.auth import get_user_model
 
-from inventory.settings import getLogger
-
-
-log = getLogger()
+log = logging.getLogger('inventory.apps.login.forms')
 User = get_user_model()
 
 

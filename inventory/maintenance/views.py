@@ -3,6 +3,8 @@
 #
 
 import json
+import logging
+
 from django.http import HttpResponse, HttpResponseRedirect, \
      HttpResponseBadRequest
 from django.template import Context, loader
@@ -10,14 +12,14 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.context_processors import csrf
 
-from inventory.settings import SITE_NAME, getLogger
+from inventory.settings import SITE_NAME
 from inventory.apps.utils.views import ViewBase
 from inventory.apps.utils.search import ItemSearch
 from inventory.apps.utils.exceptions import DoesNotExist
 from inventory.apps.items.models import Item, Cost, Specification
 
 
-log = getLogger()
+log = logging.getLogger()
 
 
 class Confirm(ViewBase):

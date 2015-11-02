@@ -3,6 +3,7 @@
 #
 
 import json
+import logging
 import datetime, pytz
 
 from django.http import HttpResponse
@@ -14,10 +15,9 @@ from django.utils.decorators import method_decorator
 from inventory.regions.models import Country
 from inventory.apps.utils.views import ViewBase
 from inventory.apps.items.models import Distributor, Manufacturer
-from inventory.settings import SITE_NAME, getLogger
+from inventory.settings import SITE_NAME
 
-
-log = getLogger()
+log = logging.getLogger('inventory.apps.items.views')
 
 
 class FrontPage(ViewBase):

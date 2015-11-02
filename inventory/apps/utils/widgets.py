@@ -1,5 +1,5 @@
 #
-# utils/widget.py
+# utils/widgets.py
 #
 # SVN/CVS Keywords
 #----------------------------------
@@ -8,13 +8,12 @@
 # $Revision: 12 $
 #----------------------------------
 
+import logging
+
 from django.forms.widgets import Widget
 from django.utils.safestring import mark_safe
 
-from inventory.settings import getLogger
-
-
-log = getLogger()
+log = logging.getLogger('inventory.apps.utils.widgets')
 
 
 class TextDisplay(Widget):

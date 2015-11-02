@@ -9,6 +9,8 @@
 #----------------------------------
 
 import json
+import logging
+
 from StringIO import StringIO
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -20,10 +22,9 @@ from django.contrib.auth import get_user_model
 
 from inventory.apps.login.forms import LoginForm, RegistrationForm
 from inventory.apps.utils.views import ViewBase
-from inventory.settings import SITE_NAME, getLogger
+from inventory.settings import SITE_NAME
 
-
-log = getLogger()
+log = logging.getLogger('inventory.apps.login.views')
 User = get_user_model()
 
 

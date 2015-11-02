@@ -8,10 +8,11 @@
 # $Revision: 26 $
 #----------------------------------
 
-from django import template
-from inventory.setupenv import getLogger
+import logging
 
-log = getLogger()
+from django import template
+
+log = logging.getLogger('inventory.common.templatetags')
 
 register = template.Library()
 

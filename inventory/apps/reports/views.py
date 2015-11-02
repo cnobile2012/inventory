@@ -2,6 +2,8 @@
 # reports/views.py
 #
 
+import logging
+
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
@@ -14,10 +16,9 @@ from inventory.apps.reports.forms import ItemForm, CostFormSet, BusinessForm
 from inventory.apps.utils.search import ItemSearch, DistributorSearch, \
      ManufacturerSearch
 from inventory.apps.utils.views import ViewBase
-from inventory.settings import SITE_NAME, getLogger
+from inventory.settings import SITE_NAME
 
-
-log = getLogger()
+log = logging.getLogger('inventory.apps.reports.views')
 
 RESPONSE_400 = "400 Bad Request"
 RESPONSE_404 = "404 Not Found"
