@@ -10,6 +10,8 @@
 # $Revision: 95 $
 #------------------------------
 
+import logging
+
 from django import forms
 from django.forms.fields import EMPTY_VALUES
 from django.contrib import admin
@@ -22,9 +24,8 @@ from inventory.regions.models import Region, Country
 from inventory.apps.items.models import Manufacturer, Distributor, \
      Category, Currency, Cost, Specification, Item
 from inventory.apps.utils.admin import BaseAdmin
-from inventory.setupenv import getLogger
 
-log = getLogger()
+log = logging.getLogger('inventoryapps.items.admin')
 
 
 # Custom field types
