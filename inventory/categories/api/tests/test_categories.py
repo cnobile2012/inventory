@@ -61,7 +61,7 @@ class TestCategories(BaseTest):
         self.client created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password, login=False)
         category = self._create_category(user)
@@ -83,7 +83,7 @@ class TestCategories(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com')
@@ -112,7 +112,7 @@ class TestCategories(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a user
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com')
@@ -133,7 +133,7 @@ class TestCategories(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com')
@@ -184,7 +184,7 @@ class TestCategories(BaseTest):
     def test_invalid_owner_put(self):
         #self.skipTest("Temporarily skipped")
         # Create a user
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com')
@@ -245,7 +245,7 @@ class TestCategories(BaseTest):
     def test_invalid_owner_patch(self):
         #self.skipTest("Temporarily skipped")
         # Create a user
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com')
@@ -302,7 +302,7 @@ class TestCategories(BaseTest):
     def test_invalid_owner_delete(self):
         #self.skipTest("Temporarily skipped")
         # Create a user
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com')

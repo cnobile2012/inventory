@@ -87,7 +87,7 @@ class TestLocationDefaultModel(BaseLocation):
     def test_clone_default_tree(self):
         #self.skipTest("Temporarily skipped")
         # Create a new user
-        owner = self._create_user(username='Test Non-Super',
+        owner = self._create_user(username='Test_Non-Super',
                                   password='0123456789',
                                   is_superuser=False)
         # Create a location default.

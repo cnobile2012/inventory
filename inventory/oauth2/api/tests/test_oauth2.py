@@ -93,7 +93,7 @@ class TestOauth2(BaseTest):
         self._make_app_token(self.user, "SU_TEST_APP_01", self.client,
                              username=TestOauth2._TEST_USERNAME,
                              password=TestOauth2._TEST_PASSWORD)
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
         app_name = 'SU_TEST_APP_02'
@@ -121,7 +121,7 @@ class TestOauth2(BaseTest):
         self._make_app_token(self.user, "SU_TEST_APP_01", self.client,
                              username=TestOauth2._TEST_USERNAME,
                              password=TestOauth2._TEST_PASSWORD)
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
         app_name = 'SU_TEST_APP_02'
@@ -145,7 +145,7 @@ class TestOauth2(BaseTest):
         self._make_app_token(self.user, "SU_TEST_APP_01", self.client,
                              username=TestOauth2._TEST_USERNAME,
                              password=TestOauth2._TEST_PASSWORD)
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
         app_name = 'SU_TEST_APP_02'
@@ -173,7 +173,7 @@ class TestOauth2(BaseTest):
         self._make_app_token(self.user, "SU_TEST_APP_01", self.client,
                              username=TestOauth2._TEST_USERNAME,
                              password=TestOauth2._TEST_PASSWORD)
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password)
         app_name = 'SU_TEST_APP_02'

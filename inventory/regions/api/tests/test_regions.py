@@ -78,7 +78,7 @@ class TestRegion(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password, login=False)
         # Use API to get list with unauthenticated user.
@@ -100,7 +100,7 @@ class TestRegion(BaseTest):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         region = self._create_region(country)
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password, login=False)
         # Use API to get list with unauthenticated user.
@@ -121,7 +121,7 @@ class TestRegion(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password,
                                                 email='test@example.com')
@@ -145,7 +145,7 @@ class TestRegion(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password,
                                                 email='test@example.com')

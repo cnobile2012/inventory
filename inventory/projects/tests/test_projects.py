@@ -28,11 +28,11 @@ class TestProjects(TestCase):
     def test_process_members(self):
         #self.skipTest("Temporarily skipped")
         project = self._create_project_record('Test Project')
-        username_0 = 'Test User 00'
+        username_0 = 'Test_User_00'
         user_0 = self._create_user(username=username_0,
                                    password='0123456',
                                    is_superuser=False)
-        username_1 = 'Test User 01'
+        username_1 = 'Test_User_01'
         user_1 = self._create_user(username=username_1,
                                    password='1234567',
                                    is_superuser=False)
@@ -57,12 +57,12 @@ class TestProjects(TestCase):
     def test_process_managers(self):
         #self.skipTest("Temporarily skipped")
         project = self._create_project_record('Test Project')
-        username_0 = 'Test User 00'
+        username_0 = 'Test_User_00'
         user_0 = self._create_user(username=username_0,
                                    password='0123456',
                                    is_superuser=False)
         pk_0 = user_0.pk
-        username_1 = 'Test User 01'
+        username_1 = 'Test_User_01'
         user_1 = self._create_user(username=username_1,
                                    password='1234567',
                                    is_superuser=False)

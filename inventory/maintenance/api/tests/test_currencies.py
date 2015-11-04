@@ -14,6 +14,7 @@ from rest_framework import status
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.maintenance.models import Currency
+from inventory.projects.models import Project
 
 User = get_user_model()
 
@@ -60,7 +61,7 @@ class TestCurrencies(BaseTest):
         self.client created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password, login=False)
         currency = self._create_currency()
@@ -101,7 +102,7 @@ class TestCurrencies(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com',
@@ -127,15 +128,27 @@ class TestCurrencies(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
-            username, password, email='test@example.com',
-            role=User.PROJECT_MANAGER)
+            username, password, email='test@example.com')
         app_name = 'Token Test'
         data = self._make_app_token(
             user, app_name, client, client_type='public',
             grant_type='client_credentials')
+        # Create a project for this user.
+        kwargs = {}
+        kwargs['name'] = "My Test Project"
+        kwargs['public'] = True
+        kwargs['creator'] = user
+        kwargs['updater'] = user
+        project = Project.objects.create(**kwargs)
+        project.process_members([user])
+        project.process_managers([user])
+        user = User.objects.get(pk=user.pk)
+        msg = "user.role: {} sould be {}.".format(
+            user.role,  User.PROJECT_MANAGER)
+        self.assertEqual(user.role, User.PROJECT_MANAGER, msg)
         # Use API to create a supplier.
         uri = reverse('currency-list')
         new_data = {'name': 'US Dollar', 'symbol': '$'}
@@ -153,7 +166,7 @@ class TestCurrencies(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com',
@@ -207,7 +220,7 @@ class TestCurrencies(BaseTest):
     def test_update_put_currency_default_user(self):
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(
             username, password, email='test@example.com',

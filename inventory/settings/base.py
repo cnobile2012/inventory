@@ -182,7 +182,7 @@ INSTALLED_APPS = [
     'dcolumn.dcolumns',
     'rest_framework',
     'oauth2_provider',
-    'guardian',
+    #'guardian',
     'inventory.common',
     'inventory.accounts',
     'inventory.oauth2',

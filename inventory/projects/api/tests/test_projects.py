@@ -59,7 +59,7 @@ class TestProject(BaseTest):
         self.client created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password, login=False)
         project = self._create_project(user)
@@ -81,7 +81,7 @@ class TestProject(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal User'
+        username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password,
                                                 email='test@example.com')
