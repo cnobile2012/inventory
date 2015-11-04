@@ -5,6 +5,7 @@
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
 
+import logging
 import datetime
 import pytz
 
@@ -14,6 +15,9 @@ from django.test import TestCase
 from ..models import Category
 
 User = get_user_model()
+# Turn off logging
+log = logging.getLogger('inventory')
+log.setLevel(logging.CRITICAL)
 
 
 class TestCategoryModel(TestCase):

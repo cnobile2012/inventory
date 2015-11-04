@@ -7,11 +7,15 @@
 
 import random
 
+from django.contrib.auth import get_user_model
+
 from rest_framework.reverse import reverse
 from rest_framework import status
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.maintenance.models import Currency
+
+User = get_user_model()
 
 
 class TestCurrencies(BaseTest):
@@ -71,7 +75,26 @@ class TestCurrencies(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
-    def test_create_currency_post_token(self):
+    def test_create_currency_post_token_superuser(self):
+        """
+        Test currency with API with token.
+        """
+        #self.skipTest("Temporarily skipped")
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            self.user, app_name, self.client, client_type='public',
+            grant_type='client_credentials')
+        # Use API to create a supplier.
+        uri = reverse('currency-list')
+        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+
+    def test_create_currency_post_token_administrator(self):
         """
         Test currency with API with token. We don't use the self.client
         created in the setUp method from the base class.
@@ -80,8 +103,9 @@ class TestCurrencies(BaseTest):
         # Create a non-logged in user, but one that has a valid token.
         username = 'Normal User'
         password = '123456'
-        user, client = self._create_normal_user(username, password,
-                                                email='test@example.com')
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com',
+            role=User.ADMINISTRATOR)
         app_name = 'Token Test'
         data = self._make_app_token(
             user, app_name, client, client_type='public',
@@ -95,6 +119,58 @@ class TestCurrencies(BaseTest):
             response.status_code, status.HTTP_201_CREATED,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+
+    def test_create_currency_post_token_project_manager(self):
+        """
+        Test currency with API with token. We don't use the self.client
+        created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com',
+            role=User.PROJECT_MANAGER)
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Use API to create a supplier.
+        uri = reverse('currency-list')
+        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        response = client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+
+    def test_create_currency_post_token_default_user(self):
+        """
+        Test currency with API with token. We don't use the self.client
+        created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com',
+            role=User.DEFAULT_USER)
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Use API to create a supplier.
+        uri = reverse('currency-list')
+        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        response = client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_put_currency(self):
         #self.skipTest("Temporarily skipped")
@@ -127,6 +203,39 @@ class TestCurrencies(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
         self.assertEquals(data.get('symbol'), new_data.get('symbol'), msg)
+
+    def test_update_put_currency_default_user(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com',
+            role=User.DEFAULT_USER)
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Create currency with POST by superuser.
+        uri = reverse('currency-list')
+        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self.assertFalse(data.get('public'), msg)
+        # Update record with PUT by default role.
+        pk = data.get('id')
+        uri = reverse('currency-detail', kwargs={'pk': pk})
+        new_data['name'] = 'Hong Kong Dollar'
+        response = client.put(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_patch_currency(self):
         #self.skipTest("Temporarily skipped")

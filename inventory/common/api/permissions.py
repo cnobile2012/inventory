@@ -55,15 +55,15 @@ class IsProjectManager(BasePermission):
         result = False
 
         if (hasattr(request, 'user') and
-            hasattr(request.user, 'project_managers') and
-            request.user.project_managers.count()):
+            hasattr(request.user, 'role') and
+            request.user.role == User.PROJECT_MANAGER):
             result = True
 
         log.debug("IsProjectManager: %s", result)
         return result
 
 
-class IsUser(BasePermission):
+class IsDefaultUser(BasePermission):
     """
     Allows access only to a logged in user with a profile.
     """
@@ -73,10 +73,10 @@ class IsUser(BasePermission):
 
         if (hasattr(request, 'user') and
             hasattr(request.user, 'role') and
-            request.user.role == User.DEFAULT_ROLE):
+            request.user.role == User.DEFAULT_USER):
             result = True
 
-        log.debug("IsUser: %s", result)
+        log.debug("IsDefaultUser: %s", result)
         return result
 
 
@@ -90,10 +90,24 @@ class IsAnyUser(BasePermission):
 
         if (hasattr(request, 'user') and
             (hasattr(request.user, 'role') and
-             request.user.role in (User.ADMINISTRATOR, User.DEFAULT_ROLE)) or
-            (hasattr(request.user, 'project_managers') and
-             request.user.project_managers.count())):
+             request.user.role in (User.DEFAULT_USER, User.PROJECT_MANAGER,
+                                   User.ADMINISTRATOR,))):
             result = True
 
-        log.debug("IsUser: %s", result)
+        log.debug("IsAnyUser: %s", result)
+        return result
+
+
+class IsReadOnly(BasePermission):
+    """
+    The request is authenticated as a user, or is a read-only request.
+    """
+    SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS',)
+
+    def has_permission(self, request, view):
+        result = False
+
+        if request.method in self.SAFE_METHODS:
+            result = True
+
         return result

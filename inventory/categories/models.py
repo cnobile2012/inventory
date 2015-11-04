@@ -8,7 +8,7 @@ import logging
 from collections import OrderedDict
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from django.conf import settings
 
 from inventory.common.model_mixins import UserModelMixin, TimeModelMixin
@@ -32,8 +32,9 @@ class CategoryManager(models.Manager):
             delimiter = self.model.DEFAULT_SEPARATOR
 
             if any([cat for cat in category_list if delimiter in cat]):
-                msg = _(("A category name cannot contain the category "
-                         "delimiter '{}'.").format(delimiter))
+                msg = _("A category name cannot contain the category "
+                        "delimiter '{}'.").format(delimiter)
+                log.error(ugettext(msg))
                 raise ValueError(msg)
 
             for level, name in enumerate(category_list):
@@ -73,10 +74,10 @@ class CategoryManager(models.Manager):
 
         for node in node_list:
             if node.owner is not owner:
-                msg = ("Delete category: {}, creator: {}, updated: {}, "
-                       "owner: {}, non-owner: {}").format(
-                    node, node.creator, node.updater, node.owner, owner)
-                log.error(msg)
+                msg = _("Delete category: {}, updater: {}, updated: {}, "
+                        "owner: {}, non-owner: {}").format(
+                    node, node.updater, node.updated, node.owner, owner)
+                log.error(ugettext(msg))
                 raise ValueError(msg)
 
         for node in node_list:

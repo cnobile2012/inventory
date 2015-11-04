@@ -16,7 +16,7 @@ djangorestframework-xml
 djangorestframework-yaml
 rest_condition
 django-filter
-django-guardian
+#django-guardian
 pyyaml
 markdown
 

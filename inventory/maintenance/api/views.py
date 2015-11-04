@@ -17,7 +17,8 @@ from rest_condition import ConditionalPermission, C, And, Or, Not
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsDefaultUser,
+    IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import (
@@ -40,8 +41,10 @@ class CurrencyList(ListCreateAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     permission_classes = (
-        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
-        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
+           And(IsDefaultUser, IsReadOnly),
+           And(TokenHasReadWriteScope, IsAuthenticated),
+           ),
         )
     pagination_class = SmallResultsSetPagination
 
@@ -54,8 +57,10 @@ class CurrencyDetail(RetrieveUpdateDestroyAPIView):
     """
     queryset = Currency.objects.all()
     permission_classes = (
-        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
-        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
+           And(IsDefaultUser, IsReadOnly),
+           And(TokenHasReadWriteScope, IsAuthenticated),
+           ),
         )
     serializer_class = CurrencySerializer
 

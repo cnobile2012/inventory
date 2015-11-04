@@ -3,6 +3,8 @@
 # inventory/projects/models.py
 #
 
+import logging
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -10,6 +12,8 @@ from django.contrib.auth import get_user_model
 
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
+
+log = logging.getLogger('inventory.projects.models')
 
 
 class ProjectManager(StatusModelManagerMixin, models.Manager):
@@ -54,6 +58,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         rem_pks = list(set(old_pks) - set(new_pks))
         # Remove unwanted members.
         self.members.remove(*self.members.filter(pk__in=rem_pks))
+        # Add new members.
         add_pks = list(set(new_pks) - set(old_pks))
         new_mem = get_user_model().objects.filter(pk__in=add_pks)
         self.members.add(*new_mem)
@@ -62,8 +67,19 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         new_pks = [inst.pk for inst in managers]
         old_pks = [inst.pk for inst in self.managers.all()]
         rem_pks = list(set(old_pks) - set(new_pks))
+        User = get_user_model()
         # Remove unwanted managers.
         self.managers.remove(*self.managers.filter(pk__in=rem_pks))
+        self._bulk_update_role(rem_pks, User.DEFAULT_USER)
+        # Add new managers.
         add_pks = list(set(new_pks) - set(old_pks))
-        new_man = get_user_model().objects.filter(pk__in=add_pks)
+        new_man = User.objects.filter(pk__in=add_pks)
+        self._bulk_update_role(add_pks, User.PROJECT_MANAGER)
         self.managers.add(*new_man)
+
+    def _bulk_update_role(self, pks, role):
+        User = get_user_model()
+        query = [models.Q(pk__in=pks) &
+                 ~models.Q(role__gt=User.PROJECT_MANAGER)]
+        num = User.objects.filter(*query).update(role=role)
+        log.debug("PKs: %s, role: %s, num affected rows: %s", pks, role, num)

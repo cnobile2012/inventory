@@ -3,14 +3,20 @@
 # inventory/accounts/models.py
 #
 
+import logging
+
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
 
 from inventory.projects.models import Project
 from inventory.common.storage import InventoryFileStorage
+from inventory.common.model_mixins import ValidateOnSaveMixin
+
+log = logging.getLogger('inventory.accounts.models')
 
 
 class UserManager(BaseUserManager):
@@ -40,7 +46,7 @@ class UserManager(BaseUserManager):
             extra_fields['need_password'] = False
 
         if role is None:
-            extra_fields['role'] = self.model.DEFAULT_ROLE
+            extra_fields['role'] = self.model.DEFAULT_USER
 
         user = self.model(username=username, email=email,
                           is_staff=is_staff, is_active=True,
@@ -59,11 +65,13 @@ class UserManager(BaseUserManager):
                                  **extra_fields)
 
 
-class User(AbstractUser):
-    DEFAULT_ROLE = 0
-    ADMINISTRATOR = 1
+class User(AbstractUser, ValidateOnSaveMixin):
+    DEFAULT_USER = 0
+    PROJECT_MANAGER = 1
+    ADMINISTRATOR = 2
     ROLE = (
-        (DEFAULT_ROLE, _('Default User')),
+        (DEFAULT_USER, _('Default User')),
+        (PROJECT_MANAGER, _("Project Manager")),
         (ADMINISTRATOR, _("Administrator")),
         )
     YES = True
@@ -74,7 +82,7 @@ class User(AbstractUser):
         )
 
     role = models.SmallIntegerField(
-        verbose_name=_("Role"), choices=ROLE, default=DEFAULT_ROLE)
+        verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER)
     projects = models.ManyToManyField(
         Project, verbose_name=_("Projects"), blank=True)
     picture = models.ImageField(
@@ -87,13 +95,25 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    def clean(self):
+        # Test that the role obays the rules.
+        if self.role == self.PROJECT_MANAGER and self.projects.count() <= 0:
+            self.role = self.DEFAULT_USER
+            msg = _("Found user '{}' set to 'Project Manager' when they had no "
+                    "projects assigned.").format(self.get_full_name_reversed())
+            log.error(ugettext(msg))
+            raise ValidationError(msg)
+
+    def save(self, *args, **kwargs):
+        super(User, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.get_full_name_reversed()
+
     class Meta:
         ordering = ('last_name', 'username',)
         verbose_name = _("User")
         verbose_name_plural = _("Users")
-
-    def __str__(self):
-        return self.get_full_name_reversed()
 
     def get_full_name_reversed(self):
         result = None

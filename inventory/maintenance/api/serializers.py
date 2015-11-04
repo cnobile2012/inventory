@@ -18,6 +18,9 @@ log = logging.getLogger('api.maintenance.serializers')
 User = get_user_model()
 
 
+#
+# Currency
+#
 class CurrencySerializer(SerializerMixin, serializers.ModelSerializer):
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
@@ -44,3 +47,8 @@ class CurrencySerializer(SerializerMixin, serializers.ModelSerializer):
         fields = ('id', 'name', 'symbol', 'creator', 'created', 'updater',
                   'updated', 'uri',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
+
+
+#
+# Location
+#
