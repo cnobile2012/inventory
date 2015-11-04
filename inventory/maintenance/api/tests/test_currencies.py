@@ -145,6 +145,7 @@ class TestCurrencies(BaseTest):
         project = Project.objects.create(**kwargs)
         project.process_members([user])
         project.process_managers([user])
+        # Get the user, to be sure we get the updated members and managers.
         user = User.objects.get(pk=user.pk)
         msg = "user.role: {} sould be {}.".format(
             user.role,  User.PROJECT_MANAGER)
