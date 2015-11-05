@@ -71,9 +71,12 @@ def api_root(request, format=None):
     maintenance = items.setdefault('maintenance', OrderedDict())
     maintenance['currencies'] = reverse(
         'currency-list', request=request, format=format)
-
-
-
+    maintenance['location-default'] = reverse(
+        'location-default-list', request=request, format=format)
+    maintenance['location-format'] = reverse(
+        'location-format-list', request=request, format=format)
+    maintenance['location-code'] = reverse(
+        'location-code-list', request=request, format=format)
     # Oauth2
     oauth2 = items.setdefault('oauth2', OrderedDict())
     oauth2['access-token'] = reverse(
