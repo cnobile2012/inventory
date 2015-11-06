@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/api/tests/test_currencies.py
+# inventory/maintenance/api/tests/test_locations.py
 #
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
@@ -13,41 +13,59 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 
 from inventory.common.api.tests.base_test import BaseTest
-from inventory.maintenance.models import Currency
+from inventory.maintenance.models import (
+    LocationDefault, LocationFormat, LocationCode)
 from inventory.projects.models import Project
 
 User = get_user_model()
 
 
-class TestCurrencies(BaseTest):
+class BaseLocation(BaseTest):
 
     def __init__(self, name):
-        super(TestCurrencies, self).__init__(name)
+        super(BaseLocation, self).__init__(name)
 
-    def setUp(self):
-        super(TestCurrencies, self).setUp()
-        # Use API to create a test user.
-        uri = reverse('user-list')
-        new_data = {'username': "TEMP-{}".format(random.randint(10000, 99999)),
-                    'password': "TEMP-{}".format(random.randint(10000, 99999))}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        user_pk = data.get('id')
-        self.assertTrue(isinstance(user_pk, int))
-        self.user_uri = reverse('user-detail', kwargs={'pk': user_pk})
+    def _create_location_default(self):
+        new_data = {'name': 'Test Location Default', 'owner': self.user,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':', 'creator': self.user,
+                    'updater': self.user}
+        return LocationDefault.objects.create(**new_data)
 
-    def test_create_post_currency(self):
+    def _create_location_format(self):
+        ld = self._create_location_default()
+        new_data = {'location_default': ld, 'char_definition': r'T\d\d',
+                    'segment_order': 0, 'description': ""}
+        return LocationFormat.objects.create(**new_data)
+
+    def _create_location_code(self):
+        lf = self._create_location_format()
+        new_data = {'char_definition': lf, 'segment': 'T01', 'parent': None}
+        return LocationCode.objects.create(**new_data)
+
+
+class TestLocationDefault(BaseLocation):
+
+    def __init__(self, name):
+        super(TestLocationDefault, self).__init__(name)
+
+    def test_create_post_location_default(self):
+        # Create LocationDefault with POST.
         #self.skipTest("Temporarily skipped")
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Read record with GET.
         pk = data.get('id')
-        uri = reverse('currency-detail', kwargs={'pk': pk})
+        uri = reverse('location-default-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -55,18 +73,18 @@ class TestCurrencies(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
 
-    def test_get_currency_with_no_permissions(self):
+    def test_get_location_default_with_no_permissions(self):
         """
-        Test the currency_list endpoint with no permissions. We don't use the
-        self.client created in the setUp method from the base class.
+        Test the location_default_list endpoint with no permissions. We don't
+        use the self.client created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
         username = 'Normal_User'
         password = '123456'
         user, client = self._create_normal_user(username, password, login=False)
-        currency = self._create_currency()
+        ld = self._create_location_default()
         # Use API to get user list with unauthenticated user.
-        uri = reverse('currency-list')
+        uri = reverse('location-default-list')
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -76,18 +94,21 @@ class TestCurrencies(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
-    def test_create_currency_post_token_superuser(self):
+    def test_create_location_default_post_token_superuser(self):
         """
-        Test currency with API with token.
+        Test LocationDefault with API with token.
         """
         #self.skipTest("Temporarily skipped")
         app_name = 'Token Test'
         data = self._make_app_token(
             self.user, app_name, self.client, client_type='public',
             grant_type='client_credentials')
-        # Use API to create a supplier.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        # Use API to create a LocationDefault.
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -95,9 +116,9 @@ class TestCurrencies(BaseTest):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
-    def test_create_currency_post_token_administrator(self):
+    def test_create_location_default_post_token_administrator(self):
         """
-        Test currency with API with token. We don't use the self.client
+        Test LocationDefault with API with token. We don't use the self.client
         created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
@@ -112,8 +133,11 @@ class TestCurrencies(BaseTest):
             user, app_name, client, client_type='public',
             grant_type='client_credentials')
         # Use API to create a supplier.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -121,9 +145,9 @@ class TestCurrencies(BaseTest):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
-    def test_create_currency_post_token_project_manager(self):
+    def test_create_location_default_post_token_project_manager(self):
         """
-        Test currency with API with token. We don't use the self.client
+        Test LocationDefault with API with token. We don't use the self.client
         created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
@@ -151,8 +175,11 @@ class TestCurrencies(BaseTest):
             user.role,  User.PROJECT_MANAGER)
         self.assertEqual(user.role, User.PROJECT_MANAGER, msg)
         # Use API to create a supplier.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -160,9 +187,9 @@ class TestCurrencies(BaseTest):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
 
-    def test_create_currency_post_token_default_user(self):
+    def test_create_location_default_post_token_default_user(self):
         """
-        Test currency with API with token. We don't use the self.client
+        Test LocationDefault with API with token. We don't use the self.client
         created in the setUp method from the base class.
         """
         #self.skipTest("Temporarily skipped")
@@ -177,8 +204,11 @@ class TestCurrencies(BaseTest):
             user, app_name, client, client_type='public',
             grant_type='client_credentials')
         # Use API to create a supplier.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -186,11 +216,14 @@ class TestCurrencies(BaseTest):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
-    def test_update_put_currency(self):
+    def test_update_put_location_default(self):
         #self.skipTest("Temporarily skipped")
         # Create currency with POST.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -200,8 +233,8 @@ class TestCurrencies(BaseTest):
         self.assertFalse(data.get('public'), msg)
         # Update record with PUT.
         pk = data.get('id')
-        uri = reverse('currency-detail', kwargs={'pk': pk})
-        new_data['name'] = 'Hong Kong Dollar'
+        uri = reverse('location-default-detail', kwargs={'pk': pk})
+        new_data['shared'] = False
         response = self.client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -209,16 +242,16 @@ class TestCurrencies(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Read record with GET.
         pk = data.get('id')
-        uri = reverse('currency-detail', kwargs={'pk': pk})
+        uri = reverse('location-default-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEquals(data.get('name'), new_data.get('name'), msg)
-        self.assertEquals(data.get('symbol'), new_data.get('symbol'), msg)
+        self.assertEquals(data.get('shared'), new_data.get('shared'), msg)
 
-    def test_update_put_currency_default_user(self):
+    def test_update_put_location_default_default_user(self):
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
         username = 'Normal_User'
@@ -231,19 +264,21 @@ class TestCurrencies(BaseTest):
             user, app_name, client, client_type='public',
             grant_type='client_credentials')
         # Create currency with POST by superuser.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        self.assertFalse(data.get('public'), msg)
         # Update record with PUT by default role.
         pk = data.get('id')
         uri = reverse('currency-detail', kwargs={'pk': pk})
-        new_data['name'] = 'Hong Kong Dollar'
+        new_data['shared'] = False
         response = client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -251,11 +286,14 @@ class TestCurrencies(BaseTest):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
-    def test_update_patch_currency(self):
+    def test_update_patch_location_default(self):
         #self.skipTest("Temporarily skipped")
         # Create currency with POST.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Currency', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -264,8 +302,8 @@ class TestCurrencies(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Update record with PATCH.
         pk = data.get('id')
-        uri = reverse('currency-detail', kwargs={'pk': pk})
-        updated_data = {'name': 'Hong Kong Dollar'}
+        uri = reverse('location-default-detail', kwargs={'pk': pk})
+        updated_data = {'separator': '->'}
         response = self.client.patch(uri, updated_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -273,20 +311,24 @@ class TestCurrencies(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Read record with GET.
         pk = data.get('id')
-        uri = reverse('currency-detail', kwargs={'pk': pk})
+        uri = reverse('location-default-detail', kwargs={'pk': pk})
         response = self.client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), updated_data.get('name'), msg)
-        self.assertEquals(data.get('symbol'), new_data.get('symbol'), msg)
+        self.assertEquals(data.get('name'), new_data.get('name'), msg)
+        self.assertEquals(data.get('separator'), updated_data.get('separator'),
+                          msg)
 
-    def test_delete_currency(self):
+    def test_delete_location_default(self):
         #self.skipTest("Temporarily skipped")
         # Create currency with POST.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -295,7 +337,7 @@ class TestCurrencies(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Delete the User.
         pk = data.get('id')
-        uri = reverse('currency-detail', kwargs={'pk': pk})
+        uri = reverse('location-default-detail', kwargs={'pk': pk})
         response = self.client.delete(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -310,11 +352,14 @@ class TestCurrencies(BaseTest):
             self._clean_data(data))
         self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
-    def test_options_currency(self):
+    def test_options_location_default(self):
         #self.skipTest("Temporarily skipped")
         # Create currency with POST.
-        uri = reverse('currency-list')
-        new_data = {'name': 'US Dollar', 'symbol': '$'}
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': ':'}
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         pk = data.get('id')
@@ -328,17 +373,38 @@ class TestCurrencies(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'Currency List', msg)
+        self.assertEqual(data.get('name'), 'Location Default List', msg)
         # Get the API detail OPTIONS.
-        uri = reverse('currency-detail', kwargs={'pk': pk})
+        uri = reverse('location-default-detail', kwargs={'pk': pk})
         response = self.client.options(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'Currency Detail', msg)
+        self.assertEqual(data.get('name'), 'Location Default Detail', msg)
 
-    def _create_currency(self):
-        new_data = {'name': 'US Dollar', 'symbol': '$', 'updater': self.user,
-                    'creator': self.user}
-        return Currency.objects.create(**new_data)
+
+class TestLocationFormat(BaseLocation):
+
+    def __init__(self, name):
+        super(TestLocationFormat, self).__init__(name)
+
+
+
+
+
+
+
+
+class TestLocationCode(BaseLocation):
+
+    def __init__(self, name):
+        super(TestLocationCode, self).__init__(name)
+
+
+
+
+
+
+
+

@@ -40,7 +40,7 @@ class TestProject(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
+            response.status_code, status.HTTP_201_CREATED, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Read record with GET.
         pk = data.get('id')

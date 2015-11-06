@@ -53,7 +53,7 @@ class CurrencySerializer(SerializerMixin, serializers.ModelSerializer):
 #
 class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
     owner = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', queryset=User.objects.all())
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
@@ -91,7 +91,8 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
 
 class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
     location_default = serializers.HyperlinkedRelatedField(
-        view_name='location-default-detail', read_only=True)
+        view_name='location-default-detail',
+        queryset=LocationDefault.objects.all())
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
@@ -120,25 +121,25 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = LocationFormat
-        fields = ('id', 'location_default', 'segment_length',
-                  'char_definition', 'segment_order', 'description',
+        fields = ('id', 'location_default', 'char_definition',
+                  'segment_order', 'segment_length', 'description',
                   'locationcode_set', 'creator', 'created', 'updater',
                   'updated', 'uri',)
-        read_only_fields = ('id', 'char_definition', 'segment_order',
-                            'creator', 'created', 'updater', 'updated',)
+        read_only_fields = ('id', 'segment_length', 'creator', 'created',
+                            'updater', 'updated',)
 
 
 class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     char_definition = serializers.HyperlinkedRelatedField(
-        view_name='location-format-detail', read_only=True)
+        view_name='location-format-detail',
+        queryset=LocationFormat.objects.all())
     parent = serializers.HyperlinkedRelatedField(
-        view_name='location-code-detail', queryset=LocationCode.objects.all())
+        view_name='location-code-detail',
+        queryset=LocationCode.objects.all())
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
-    char_definition = serializers.HyperlinkedRelatedField(
-        view_name='location-format-detail', read_only=True)
     #item_set = serializers.HyperlinkedRelatedField(
     #    view_name='item-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
@@ -164,7 +165,6 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = LocationCode
         fields = ('id', 'char_definition', 'segment', 'parent', 'path',
-                  'level', 'char_definition', 'creator', 'created', 'updater',
-                  'updated', 'uri',)
+                  'level', 'creator', 'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'path', 'level', 'creator', 'created',
                             'updater', 'updated',)
