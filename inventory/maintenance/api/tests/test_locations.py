@@ -48,6 +48,16 @@ class BaseLocation(BaseTest):
             }
         return LocationCode.objects.create(**new_data)
 
+    def _create_project(self, user):
+        kwargs = {}
+        kwargs['name'] = "My Test Project"
+        kwargs['public'] = True
+        kwargs['creator'] = user
+        kwargs['updater'] = user
+        project = Project.objects.create(**kwargs)
+        project.process_members([user])
+        project.process_managers([user])
+        return project
 
 class TestLocationDefault(BaseLocation):
 
@@ -166,14 +176,7 @@ class TestLocationDefault(BaseLocation):
             user, app_name, client, client_type='public',
             grant_type='client_credentials')
         # Create a project for this user.
-        kwargs = {}
-        kwargs['name'] = "My Test Project"
-        kwargs['public'] = True
-        kwargs['creator'] = user
-        kwargs['updater'] = user
-        project = Project.objects.create(**kwargs)
-        project.process_members([user])
-        project.process_managers([user])
+        project = self._create_project(user)
         # Get the user, to be sure we get the updated members and managers.
         user = User.objects.get(pk=user.pk)
         msg = "user.role: {} sould be {}.".format(
@@ -390,7 +393,7 @@ class TestLocationFormat(BaseLocation):
         super(TestLocationFormat, self).__init__(name)
 
     def test_create_post_location_format(self):
-        # Create LocationDefault with POST.
+        # Create LocationFormat with POST.
         #self.skipTest("Temporarily skipped")
         ld = self._create_location_default()
         ld_uri = reverse('location-default-detail', kwargs={'pk': ld.id})
@@ -447,10 +450,10 @@ class TestLocationFormat(BaseLocation):
         # Use API to create a LocationDefault.
         ld = self._create_location_default()
         ld_uri = reverse('location-default-detail', kwargs={'pk': ld.id})
-        uri = reverse('location-format-list')
         owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
         new_data = {'location_default': ld_uri, 'char_definition': r'T\d\d' ,
                     'segment_order': 0, 'description': "Test POST"}
+        uri = reverse('location-format-list')
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -477,9 +480,9 @@ class TestLocationFormat(BaseLocation):
         # Use API to create a supplier.
         ld = self._create_location_default()
         ld_uri = reverse('location-default-detail', kwargs={'pk': ld.id})
-        uri = reverse('location-format-list')
         new_data = {'location_default': ld_uri, 'char_definition': r'T\d\d' ,
                     'segment_order': 0, 'description': "Test POST"}
+        uri = reverse('location-format-list')
         response = client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -503,14 +506,7 @@ class TestLocationFormat(BaseLocation):
             user, app_name, client, client_type='public',
             grant_type='client_credentials')
         # Create a project for this user.
-        kwargs = {}
-        kwargs['name'] = "My Test Project"
-        kwargs['public'] = True
-        kwargs['creator'] = user
-        kwargs['updater'] = user
-        project = Project.objects.create(**kwargs)
-        project.process_members([user])
-        project.process_managers([user])
+        project = self._create_project(user)
         # Get the user, to be sure we get the updated members and managers.
         user = User.objects.get(pk=user.pk)
         msg = "user.role: {} sould be {}.".format(
@@ -727,10 +723,329 @@ class TestLocationCode(BaseLocation):
     def __init__(self, name):
         super(TestLocationCode, self).__init__(name)
 
+    def test_create_post_location_code(self):
+        # Create LocationCode with POST.
+        #self.skipTest("Temporarily skipped")
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        #, 'parent': None} This should be permitted
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Read record with GET.
+        pk = data.get('id')
+        uri = reverse('location-code-detail', kwargs={'pk': pk})
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEquals(data.get('segment'), new_data.get('segment'), msg)
+
+    def test_get_location_code_with_no_permissions(self):
+        """
+        Test the location_code_list endpoint with no permissions. We don't
+        use the self.client created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        username = 'Normal_User'
+        password = '123456'
+        user, client = self._create_normal_user(username, password, login=False)
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lc = self._create_location_code(lf)
+        # Use API to get user list with unauthenticated user.
+        uri = reverse('location-code-list')
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue('detail' in data, msg)
+
+    def test_create_location_code_post_token_superuser(self):
+        """
+        Test LocationCode with API with token.
+        """
+        #self.skipTest("Temporarily skipped")
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            self.user, app_name, self.client, client_type='public',
+            grant_type='client_credentials')
+        # Use API to create a LocationDefault.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        #, 'parent': None} This should be permitted
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+
+    def test_create_location_code_post_token_administrator(self):
+        """
+        Test LocationCode with API with token. We don't use the self.client
+        created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal_User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com',
+            role=User.ADMINISTRATOR)
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Use API to create a supplier.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        #, 'parent': None} This should be permitted
+        uri = reverse('location-code-list')
+        response = client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+
+    def test_create_location_code_post_token_project_manager(self):
+        """
+        Test LocationCode with API with token. We don't use the self.client
+        created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal_User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com')
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Create a project for this user.
+        project = self._create_project(user)
+        # Get the user, to be sure we get the updated members and managers.
+        user = User.objects.get(pk=user.pk)
+        msg = "user.role: {} sould be {}.".format(
+            user.role,  User.PROJECT_MANAGER)
+        self.assertEqual(user.role, User.PROJECT_MANAGER, msg)
+        # Use API to create a supplier.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        #, 'parent': None} This should be permitted
+        uri = reverse('location-code-list')
+        response = client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+
+    def test_create_location_code_post_token_default_user(self):
+        """
+        Test LocationCode with API with token. We don't use the self.client
+        created in the setUp method from the base class.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal_User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com',
+            role=User.DEFAULT_USER)
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Use API to create a supplier.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+
+    def test_update_put_location_code(self):
+        #self.skipTest("Temporarily skipped")
+        # Create LocationCode with POST.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Update record with PUT.
+        pk = data.get('id')
+        uri = reverse('location-code-detail', kwargs={'pk': pk})
+        new_data['segment'] = r'T02'
+        response = self.client.put(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        # Read record with GET.
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}, new_data: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data),
+            new_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEquals(data.get('segment'), new_data.get('segment'), msg)
+
+    def test_update_put_location_code_default_user(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a non-logged in user, but one that has a valid token.
+        username = 'Normal_User'
+        password = '123456'
+        user, client = self._create_normal_user(
+            username, password, email='test@example.com',
+            role=User.DEFAULT_USER)
+        app_name = 'Token Test'
+        data = self._make_app_token(
+            user, app_name, client, client_type='public',
+            grant_type='client_credentials')
+        # Create LocationCode with POST by superuser.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Update record with PUT by default role.
+        pk = data.get('id')
+        uri = reverse('location-code-detail', kwargs={'pk': pk})
+        new_data['segment'] = 'T02'
+        response = client.put(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
 
+    def test_update_patch_location_code(self):
+        #self.skipTest("Temporarily skipped")
+        # Create LocationCode with POST.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Update record with PATCH.
+        pk = data.get('id')
+        uri = reverse('location-code-detail', kwargs={'pk': pk})
+        updated_data = {'segment': 'T02'}
+        response = self.client.patch(uri, updated_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        # Read record with GET.
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEquals(data.get('segment'), updated_data.get('segment'), msg)
 
+    def test_delete_location_code(self):
+        #self.skipTest("Temporarily skipped")
+        # Create LocationCode with POST.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Delete the User.
+        pk = data.get('id')
+        uri = reverse('location-code-detail', kwargs={'pk': pk})
+        response = self.client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertTrue(data is None, msg)
+        # Get the same record through the API.
+        response = self.client.get(uri, format='json')
+        code = response.status_code
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
-
-
-
+    def test_options_location_code(self):
+        #self.skipTest("Temporarily skipped")
+        # Create LocationCode with POST.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        pk = data.get('id')
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Get the API list OPTIONS.
+        response = self.client.options(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEqual(data.get('name'), 'Location Code List', msg)
+        # Get the API detail OPTIONS.
+        uri = reverse('location-code-detail', kwargs={'pk': pk})
+        response = self.client.options(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEqual(data.get('name'), 'Location Code Detail', msg)

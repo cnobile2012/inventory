@@ -136,7 +136,7 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='location-format-detail',
         queryset=LocationFormat.objects.all())
     parent = serializers.HyperlinkedRelatedField(
-        view_name='location-code-detail',
+        view_name='location-code-detail', default=None,
         queryset=LocationCode.objects.all())
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)

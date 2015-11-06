@@ -38,7 +38,7 @@ class TestCategories(BaseTest):
         #self.skipTest("Temporarily skipped")
         uri = reverse('category-list')
         new_data = {'name': 'Test Category-0', 'owner': self.user_uri,}
-        #'parent': None}
+        #'parent': None} This should be permitted
         response = self.client.post(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
