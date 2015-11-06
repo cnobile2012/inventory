@@ -109,6 +109,8 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
         return LocationFormat.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.char_definition = validated_data.get(
+            'char_definition', instance.char_definition)
         instance.location_default = validated_data.get(
             'location_default', instance.location_default)
         instance.segment_order =  validated_data.get(
