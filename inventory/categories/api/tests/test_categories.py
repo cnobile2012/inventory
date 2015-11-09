@@ -5,9 +5,6 @@
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
 
-import random
-import types
-
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
