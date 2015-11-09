@@ -24,15 +24,7 @@ class TestCategories(BaseTest):
 
     def setUp(self):
         super(TestCategories, self).setUp()
-        # Use API to create a test user.
-        uri = reverse('user-list')
-        new_data = {'username': "TEMP-{}".format(random.randint(10000, 99999)),
-                    'password': "TEMP-{}".format(random.randint(10000, 99999))}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        user_pk = data.get('id')
-        self.assertTrue(isinstance(user_pk, int))
-        self.user_uri = reverse('user-detail', kwargs={'pk': user_pk})
+        self.user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
 
     def test_create_post_category(self):
         #self.skipTest("Temporarily skipped")
@@ -408,7 +400,23 @@ class TestCategories(BaseTest):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
-    def _create_category(self, user, parent=None):
-        new_data = {'name': 'TestCategory-00', 'parent': parent, 'owner': user,
+    def test_root_level_category_exists(self):
+        #self.skipTest("Temporarily skipped")
+        name = "Duplicate Name"
+        cat = self._create_category(self.user, name=name)
+        new_data = {'name': name, 'owner': self.user_uri}
+        uri = reverse('category-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+
+    def _create_category(self, user, name=None, parent=None):
+        if not name:
+            name = 'TestCategory-00'
+
+        new_data = {'name': name, 'parent': parent, 'owner': user,
                     'updater': self.user, 'creator': self.user}
         return Category.objects.create(**new_data)

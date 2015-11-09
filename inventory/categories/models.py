@@ -8,10 +8,12 @@ import logging
 from collections import OrderedDict
 
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.conf import settings
 
-from inventory.common.model_mixins import UserModelMixin, TimeModelMixin
+from inventory.common.model_mixins import (
+    UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,)
 
 log = logging.getLogger('inventory.categories.models')
 
@@ -73,7 +75,7 @@ class CategoryManager(models.Manager):
         deleted_nodes = []
 
         for node in node_list:
-            if node.owner is not owner:
+            if node.owner != owner:
                 msg = _("Delete category: {}, updater: {}, updated: {}, "
                         "owner: {}, non-owner: {}").format(
                     node, node.updater, node.updated, node.owner, owner)
@@ -87,10 +89,18 @@ class CategoryManager(models.Manager):
 
         return deleted_nodes
 
-    def get_parents(self, category):
+    def get_parents(self, category, owner):
         """
         Get all the parents to this category object.
         """
+        if category.owner != owner:
+            msg = _("Trying to access a category with an invalid owner, "
+                    "updater: {}, updated: {}, owner: {}, non-owner: {}"
+                    ).format(category.updater, category.updated,
+                             category.owner, owner)
+            log.error(ugettext(msg))
+            raise ValueError(msg)
+
         parents = self._recurse_parents(category)
         parents.reverse()
         return parents
@@ -100,14 +110,13 @@ class CategoryManager(models.Manager):
 
         if category.parent_id:
             parents.append(category.parent)
-            more = self._recurse_parents(category.parent)
-            parents.extend(more)
+            parents.extend(self._recurse_parents(category.parent))
 
         return parents
 
     def get_child_tree_from_list(self, category_list, with_root=True):
         """
-        Given a list of Category objects, returns a list of all the Categories
+        Given a list of Category objects, return a list of all the Categories
         plus all the Categories' children, plus the childrens' children, etc.
         For example, if the 'Arts' and 'Color' Categories are passed in a list,
         this function will return the [['Arts', 'Arts>Music',
@@ -139,16 +148,22 @@ class CategoryManager(models.Manager):
         return final.values()
 
     def get_all_root_trees(self, name, owner):
+        """
+        Given a category 'name' and 'owner' return a list of trees where each
+        each tree has the category 'name' as one of its members. ex. [[<color>,
+        <color>red>, <color>green>], [<light>, <light>red>]] Red is in both
+        trees.
+        """
         result = []
         records = self.filter(name=name, owner=owner)
 
         if len(records) > 0:
-            result[:] = [self.get_parents(record) for record in records]
+            result[:] = [self.get_parents(record, owner) for record in records]
 
         return result
 
 
-class Category(TimeModelMixin, UserModelMixin):
+class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     DEFAULT_SEPARATOR = '>'
 
     owner = models.ForeignKey(
@@ -167,8 +182,30 @@ class Category(TimeModelMixin, UserModelMixin):
 
     objects = CategoryManager()
 
+    def clean(self):
+        self.path = self._get_category_path()
+        self.level = self.path.count(self.DEFAULT_SEPARATOR)
+        delimiter = self.DEFAULT_SEPARATOR
+
+        # Check that the separator is not in the name.
+        if delimiter in self.name:
+            raise ValidationError(
+                _("A category 'name' cannot contain the category delimiter "
+                  "'{}'.").format(delimiter))
+
+        # Check that this category is not a parent.
+        if self.parent:
+            parents = Category.objects.get_parents(self.parent, self.owner)
+            parents.append(self.parent)
+
+            for parent in parents:
+                if parent.name == self.name:
+                    raise ValidationError(
+                        _("A category in this tree with name [{}] already "
+                          "exists.").format(self.name))
+
     def _get_category_path(self, current=True):
-        parents = Category.objects.get_parents(self)
+        parents = Category.objects.get_parents(self, self.owner)
         if current: parents.append(self)
         return self.DEFAULT_SEPARATOR.join([parent.name for parent in parents])
 
@@ -198,12 +235,9 @@ class Category(TimeModelMixin, UserModelMixin):
     _owner_producer.short_description = _("Category Owner")
 
     def save(self, *args, **kwargs):
-        # Fix our self.
-        self.path = self._get_category_path()
-        self.level = self.path.count(self.DEFAULT_SEPARATOR)
         super(Category, self).save(*args, **kwargs)
 
-        # Fix all the children if any.
+        # Fix all children if any.
         iterator = self.children.iterator()
 
         try:

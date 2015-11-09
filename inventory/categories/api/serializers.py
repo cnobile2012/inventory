@@ -7,6 +7,7 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
@@ -29,16 +30,6 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='category-detail')
 
-    def validate_name(self, value):
-        delimiter = Category.DEFAULT_SEPARATOR
-
-        if delimiter in value:
-            raise serializers.ValidationError(
-                detail=_(("A category name cannot contain the category "
-                          "delimiter '{}'.").format(delimiter)))
-
-        return value
-
     def validate(self, data):
         if not self.has_full_access():
             owner = data.get('owner')
@@ -50,6 +41,29 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
                     detail=_("The owner for this record must be the same as "
                              "the user who is creating or altering the record.")
                     )
+
+        # Run the model validation
+        if self.instance is not None:
+            instance = self.instance
+        else:
+            instance = self.Meta.model(**data)
+
+        instance.clean()
+        request = self.get_request()
+
+        # Check that there are not any root categories with this name.
+        if request.method == "POST":
+            level = data.get('level', 0)
+            name = data.get('name')
+            owner = data.get('owner')
+            log.debug("name: %s, owner: %s, level: %s", name, owner, level)
+
+            if level == 0:
+                if len(Category.objects.filter(
+                    name=name, owner=owner, level=0)):
+                    raise ValidationError(
+                        _("A root level category name [{}] already exists."
+                          ).format(name))
 
         return data
 
@@ -73,3 +87,4 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
                   'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'path', 'level', 'creator', 'created',
                             'updater', 'updated',)
+        extra_kwargs = {'level': {'default': 0}}

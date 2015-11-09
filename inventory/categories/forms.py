@@ -19,47 +19,19 @@ class CategoryForm(forms.ModelForm):
         exclude = ()
 
     def clean(self):
-        parent = self.cleaned_data.get('parent')
         name = self.cleaned_data.get('name')
         owner = self.cleaned_data.get('owner')
-        names = Category.objects.filter(name=name)
-        log.debug("All %s names in all trees: %s", name, names)
+        level = self.cleaned_data.get('level')
 
-        if Category.DEFAULT_SEPARATOR in name:
-            msg = _(("A category name cannot contain the category delimiter"
-                     " '{}'.").format(Category.DEFAULT_SEPARATOR))
-            raise ValidationError(msg)
-
-        if parent:
-            # Test saving a category to itself.
-            if name == parent.name:
-                msg = _("You cannot save a category as a child to itself.")
-                raise forms.ValidationError(msg)
-
-            # Test that this name does not already exist as a node in this
-            # tree.
-            if not self.initial:
-                node_trees = Category.objects.get_all_root_trees(name, owner)
-                log.debug("All root trees: %s", node_trees)
-                parents = Category.get_parents(parent)
-                parents.append(parent)
-                log.debug("Parents: %s", parents)
-                flag = False
-
-                for nset in node_trees:
-                    for parent in parents:
-                        if parent in nset:
-                            flag = True
-
-                if flag:
-                    msg = _(("A category in this tree with name [{}] "
-                             "already exists.").format(name))
-                    raise forms.ValidationError(msg)
         # Test that there is not already a root category with this value.
-        elif not self.initial and name in [item.name for item in names
-                                           if not item.parent]:
-            msg = _(("A root level category name [{}] already "
-                     "exists.").format(name))
-            raise forms.ValidationError(msg)
+        if not self.initial and level == 0:
+            try:
+                cat = Category.objects.filter(name=name, owner=owner, level=0)
+            except self.DoesNotExist:
+                pass
+            else:
+                raise forms.ValidationError(
+                    _("A root level category name [{}] already exists."
+                      ).format(self.name))
 
         return self.cleaned_data

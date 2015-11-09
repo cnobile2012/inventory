@@ -102,6 +102,15 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-format-detail')
 
+    def validate(self, data):
+        if self.instance is not None:
+            instance = self.instance
+        else:
+            instance = self.Meta.model(**data)
+
+        instance.clean()
+        return data
+
     def create(self, validated_data):
         user = self.get_user_object()
         validated_data['creator'] = user
@@ -146,6 +155,15 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     #    view_name='item-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-code-detail')
+
+    def validate(self, data):
+        if self.instance is not None:
+            instance = self.instance
+        else:
+            instance = self.Meta.model(**data)
+
+        instance.clean()
+        return data
 
     def create(self, validated_data):
         user = self.get_user_object()

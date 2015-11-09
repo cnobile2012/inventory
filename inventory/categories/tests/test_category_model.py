@@ -9,6 +9,7 @@ import logging
 import datetime
 import pytz
 
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
@@ -113,7 +114,8 @@ class TestCategoryModel(TestCase):
         create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
         categories_0 = Category.objects.create_category_tree(
             create_list_0, self.user, self.user)
-        parents = Category.objects.get_parents(categories_0[-1])
+        parents = Category.objects.get_parents(
+            categories_0[-1], categories_0[-1].owner)
         msg = "categories_0: {}, parents: {}".format(categories_0, parents)
         self.assertEqual(len(parents), 2, msg)
 
@@ -182,6 +184,30 @@ class TestCategoryModel(TestCase):
         self.assertEqual(len(categories), 2, msg)
         self.assertEqual(len(categories[0]), 2, msg)
         self.assertEqual(len(categories[1]), 2, msg)
+
+    def test_separaror_in_name(self):
+        #self.skipTest("Temporarily skipped")
+        with self.assertRaises(ValidationError):
+            self._create_record(
+                'Test{}SeparatorInNme'.format(Category.DEFAULT_SEPARATOR))
+
+    def test_category_not_in_same_tree(self):
+        #self.skipTest("Temporarily skipped")
+        name_0 = "First Category"
+        name_1 = "Second Category"
+        parent_0 = self._create_record(name_0)
+        parent_1 = self._create_record(name_1, parent=parent_0)
+
+        with self.assertRaises(ValidationError):
+            self._create_record(name_0, parent=parent_1)
+
+    def test_no_duplicate_root_categories(self):
+        self.skipTest("Temporarily skipped")
+        name = "First Category"
+        parent = self._create_record(name)
+
+        with self.assertRaises(ValidationError):
+            self._create_record(name)
 
     def _create_record(self, name, parent=None):
         kwargs = {}

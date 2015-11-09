@@ -717,6 +717,37 @@ class TestLocationFormat(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Location Format Detail', msg)
 
+    def test_delimitor_in_location_format_char_definition(self):
+        #self.skipTest("Temporarily skipped")
+        # Test delimitor in char_definition.
+        ld = self._create_location_default()
+        ld_uri = reverse('location-default-detail', kwargs={'pk': ld.id})
+        new_data = {'location_default': ld_uri,
+                    'char_definition': r'T{}\d\d'.format(ld.separator),
+                    'segment_order': 0, 'description': "Test POST"}
+        uri = reverse('location-format-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+
+    def test_segment_length_is_not_zero(self):
+        #self.skipTest("Temporarily skipped")
+        # Test that segment_length is not zero..
+        ld = self._create_location_default()
+        ld_uri = reverse('location-default-detail', kwargs={'pk': ld.id})
+        new_data = {'location_default': ld_uri, 'char_definition': r'',
+                    'segment_order': 0, 'description': "Test POST"}
+        uri = reverse('location-format-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+
 
 class TestLocationCode(BaseLocation):
 
@@ -1049,3 +1080,20 @@ class TestLocationCode(BaseLocation):
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Location Code Detail', msg)
+
+    def test_delimitor_in_location_code_segment(self):
+        #self.skipTest("Temporarily skipped")
+        # Test delimitor in segment.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        new_data = {
+            'char_definition': lf_uri, 'segment': 'T{}01'.format(ld.separator)
+            }
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
