@@ -96,7 +96,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
     objects = UserManager()
 
     def clean(self):
-        # Test that the role obays the rules.
+        # Test that the role obeys the rules.
         if self.role == self.PROJECT_MANAGER and self.projects.count() <= 0:
             self.role = self.DEFAULT_USER
             msg = _("Found user '{}' set to 'Project Manager' when they had no "
