@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from ..models import Question, Answer
+from ..models import Question, Answer, create_hash
 
 User = get_user_model()
 
@@ -38,9 +38,10 @@ class BaseAccounts(TestCase):
         user.save()
         return user
 
-    def _create_question_record(self, question):
+    def _create_question_record(self, question, active=True):
         kwargs = {}
         kwargs['question'] = question
+        kwargs['active'] = active
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
         return Question.objects.create(**kwargs)
@@ -156,7 +157,7 @@ class TestUser(BaseAccounts):
         """
         Test that only unused questions are returned as choices.
         """
-        # Create some questions.
+        # Create some stupid questions.
         q1 = self._create_question_record("What is your favorite color?")
         q2 = self._create_question_record("What is your favorite animal?")
         q3 = self._create_question_record("In what country is New York?")
@@ -172,4 +173,68 @@ class TestUser(BaseAccounts):
         self.assertTrue(q3.pk in [q.pk for q in questions], msg)
 
 
+class TestQuestion(BaseAccounts):
 
+    def __init__(self, name):
+        super(TestQuestion, self).__init__(name)
+
+    def test_get_active_questions(self):
+        """
+        Test that only active questions are returned.
+        """
+        # Create some stupid questions.
+        q1 = self._create_question_record("What is your favorite color?")
+        q2 = self._create_question_record("What is your favorite animal?",
+                                          active=False)
+        q3 = self._create_question_record("In what country is New York?")
+        # Get the active questions.
+        questions = Question.objects.get_active_questions()
+        msg = "Active Questions: {}".format(questions)
+        self.assertEqual(len(questions), 2, msg)
+        self.assertTrue(q2.pk not in [q.pk for q in questions], msg)
+
+
+class TestAnswer(BaseAccounts):
+
+    def __init__(self, name):
+        super(TestAnswer, self).__init__(name)
+
+    def test_model_validation(self):
+        """
+        Test that the validation works for the answer field.
+        """
+        # Create a stupid question.
+        q1 = self._create_question_record("What is your favorite color?")
+        # Create an answer to the question.
+        answer = "Blue"
+        a1 = self._create_answer_record(answer, q1)
+        # Check that the answer is encripted.
+        algorithum, hash_value = create_hash(answer, Answer.ANSWER_SALT)
+        msg = "Question: {}, algorithum: {}".format(a1, algorithum)
+        self.assertEqual(hash_value, a1.answer, msg)
+        # Check that the hash of the answer does not change on subsequent
+        # updates to the answer where the answer itself does not change.
+        a1.save()
+        self.assertEqual(hash_value, a1.answer, msg)
+        # Check that the hash of the answer does change on subsequent
+        # updates to the answer where the answer itself does change.
+        a1.answer = "Green"
+        a1.save()
+        self.assertTrue(algorithum in a1.answer, msg)
+        self.assertNotEqual(hash_value, a1.answer, msg)
+
+    def test_process_owner(self):
+        """
+        Test that the owner of the answer gets attached to the answer.
+        """
+        # Create a stupid question.
+        q1 = self._create_question_record("What is your favorite color?")
+        # Create an answer to the question.
+        a1 = self._create_answer_record("Blue", q1)
+        # Test that there is no owner associated with this answer.
+        msg = "Question: {}".format(a1)
+        self.assertFalse(a1.owners.all().count(), msg)
+        # Attach user to the answer.
+        a1.process_owner([self.user])
+        self.assertTrue(a1.owners.all().count() == 1, msg)
+        self.assertTrue(self.user.answers.all().count() == 1, msg)
