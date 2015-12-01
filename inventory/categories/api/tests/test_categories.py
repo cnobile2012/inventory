@@ -42,7 +42,7 @@ class TestCategories(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_get_category_with_no_permissions(self):
         """
@@ -168,7 +168,7 @@ class TestCategories(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_invalid_owner_put(self):
         #self.skipTest("Temporarily skipped")
@@ -228,7 +228,7 @@ class TestCategories(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), updated_data.get('name'), msg)
+        self.assertEqual(data.get('name'), updated_data.get('name'), msg)
         self.assertTrue(updated_data.get('name') in data.get('path'), msg)
 
     def test_invalid_owner_patch(self):

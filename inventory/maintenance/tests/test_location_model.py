@@ -160,24 +160,24 @@ class TestLocationDefaultModel(BaseLocation):
                                                     parent=code_1a)
         # Test for correct number of objects.
         msg = "Location Default: {}".format(loc_def)
-        self.assertEquals(LocationDefault.objects.count(), 1, msg)
+        self.assertEqual(LocationDefault.objects.count(), 1, msg)
         msg = "Location Formats: {}, {}, {}".format(
             fmt_obj_0, fmt_obj_1, fmt_obj_2)
-        self.assertEquals(LocationFormat.objects.count(), 3, msg)
+        self.assertEqual(LocationFormat.objects.count(), 3, msg)
         msg = "Location Codes: {}, {}, {}".format(code_0, code_1, code_2)
-        self.assertEquals(LocationCode.objects.count(), 5, msg)
+        self.assertEqual(LocationCode.objects.count(), 5, msg)
         # Test delete_default_tree
         nodes = LocationDefault.objects.delete_default_tree(
             loc_def, self.user, self.user)
         #print nodes
         # Test for correct number of objects.
         msg = "Location Default: {}".format(loc_def)
-        self.assertEquals(LocationDefault.objects.count(), 0, msg)
+        self.assertEqual(LocationDefault.objects.count(), 0, msg)
         msg = "Location Formats: {}, {}, {}".format(
             fmt_obj_0, fmt_obj_1, fmt_obj_2)
-        self.assertEquals(LocationFormat.objects.count(), 0, msg)
+        self.assertEqual(LocationFormat.objects.count(), 0, msg)
         msg = "Location Codes: {}, {}, {}".format(code_0, code_1, code_2)
-        self.assertEquals(LocationCode.objects.count(), 0, msg)
+        self.assertEqual(LocationCode.objects.count(), 0, msg)
 
 
 class TestLocationFormatModel(BaseLocation):

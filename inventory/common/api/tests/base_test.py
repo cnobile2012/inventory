@@ -125,7 +125,7 @@ class BaseTest(APITestCase):
         data = json.loads(response.content.decode('utf-8'))
         msg = "Oauth2 content: {}, code: {}, Reason: {}".format(
             response.content, response.status_code, response.reason_phrase)
-        self.assertEquals(response.status_code, 200, msg)
+        self.assertEqual(response.status_code, 200, msg)
         return data
 
     def _create_grant(self, ):

@@ -153,7 +153,7 @@ class TestSuppliers(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('fax'), new_data.get('fax'), msg)
+        self.assertEqual(data.get('fax'), new_data.get('fax'), msg)
 
     def test_update_patch_supplier(self):
         #self.skipTest("Temporarily skipped")
@@ -188,7 +188,7 @@ class TestSuppliers(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
         self.assertTrue(data.get('fax'), msg)
 
     def test_delete_supplier(self):

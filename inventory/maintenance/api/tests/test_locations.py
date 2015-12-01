@@ -86,7 +86,7 @@ class TestLocationDefault(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_get_location_default_with_no_permissions(self):
         """
@@ -105,8 +105,8 @@ class TestLocationDefault(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_401_UNAUTHORIZED,
             self._clean_data(data))
-        self.assertEqual(
-            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertEqual(response.status_code,
+                         status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
     def test_create_location_default_post_token_superuser(self):
@@ -253,8 +253,8 @@ class TestLocationDefault(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
-        self.assertEquals(data.get('shared'), new_data.get('shared'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('shared'), new_data.get('shared'), msg)
 
     def test_update_put_location_default_default_user(self):
         #self.skipTest("Temporarily skipped")
@@ -320,9 +320,9 @@ class TestLocationDefault(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
-        self.assertEquals(data.get('separator'), updated_data.get('separator'),
-                          msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('separator'), updated_data.get('separator'),
+                         msg)
 
     def test_delete_location_default(self):
         #self.skipTest("Temporarily skipped")
@@ -414,7 +414,7 @@ class TestLocationFormat(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_get_location_format_with_no_permissions(self):
         """
@@ -434,8 +434,8 @@ class TestLocationFormat(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_401_UNAUTHORIZED,
             self._clean_data(data))
-        self.assertEqual(
-            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertEqual(response.status_code,
+                         status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
     def test_create_location_format_post_token_superuser(self):
@@ -584,8 +584,8 @@ class TestLocationFormat(BaseLocation):
             response.status_code, status.HTTP_200_OK, self._clean_data(data),
             new_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('char_definition'),
-                          new_data.get('char_definition'), msg)
+        self.assertEqual(data.get('char_definition'),
+                         new_data.get('char_definition'), msg)
 
     def test_update_put_location_format_default_user(self):
         #self.skipTest("Temporarily skipped")
@@ -651,9 +651,9 @@ class TestLocationFormat(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
-        self.assertEquals(data.get('description'),
-                          updated_data.get('description'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('description'),
+                         updated_data.get('description'), msg)
 
     def test_delete_location_format(self):
         #self.skipTest("Temporarily skipped")
@@ -777,7 +777,7 @@ class TestLocationCode(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('segment'), new_data.get('segment'), msg)
+        self.assertEqual(data.get('segment'), new_data.get('segment'), msg)
 
     def test_get_location_code_with_no_permissions(self):
         """
@@ -798,8 +798,8 @@ class TestLocationCode(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_401_UNAUTHORIZED,
             self._clean_data(data))
-        self.assertEqual(
-            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertEqual(response.status_code,
+                         status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
     def test_create_location_code_post_token_superuser(self):
@@ -950,7 +950,7 @@ class TestLocationCode(BaseLocation):
             response.status_code, status.HTTP_200_OK, self._clean_data(data),
             new_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('segment'), new_data.get('segment'), msg)
+        self.assertEqual(data.get('segment'), new_data.get('segment'), msg)
 
     def test_update_put_location_code_default_user(self):
         #self.skipTest("Temporarily skipped")
@@ -1017,7 +1017,7 @@ class TestLocationCode(BaseLocation):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('segment'), updated_data.get('segment'), msg)
+        self.assertEqual(data.get('segment'), updated_data.get('segment'), msg)
 
     def test_delete_location_code(self):
         #self.skipTest("Temporarily skipped")

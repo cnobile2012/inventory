@@ -70,10 +70,10 @@ class TestUser(BaseAccounts):
         user = User.objects.create_superuser(username, email, password)
         msg = "Username: {}, email: {}, is_superuser: {}, role: {}".format(
             user.username, user.email, user.is_superuser, user.role)
-        self.assertEquals(user.username, username, msg)
-        self.assertEquals(user.email, email, msg)
-        self.assertEquals(user.is_superuser, True, msg)
-        self.assertEquals(user.role, User.DEFAULT_USER, msg)
+        self.assertEqual(user.username, username, msg)
+        self.assertEqual(user.email, email, msg)
+        self.assertEqual(user.is_superuser, True, msg)
+        self.assertEqual(user.role, User.DEFAULT_USER, msg)
 
     def test_create_user(self):
         """
@@ -85,10 +85,10 @@ class TestUser(BaseAccounts):
         user = User.objects.create_user(username, email, password)
         msg = "Username: {}, email: {}, is_superuser: {}, role: {}".format(
             user.username, user.email, user.is_superuser, user.role)
-        self.assertEquals(user.username, username, msg)
-        self.assertEquals(user.email, email, msg)
-        self.assertEquals(user.is_superuser, False, msg)
-        self.assertEquals(user.role, User.DEFAULT_USER, msg)
+        self.assertEqual(user.username, username, msg)
+        self.assertEqual(user.email, email, msg)
+        self.assertEqual(user.is_superuser, False, msg)
+        self.assertEqual(user.role, User.DEFAULT_USER, msg)
 
     def test_update_user(self):
         """
@@ -106,13 +106,12 @@ class TestUser(BaseAccounts):
                "address_01: {}, postal_code: {}").format(
             user.username, user.email, user.is_superuser, user.role,
             user.address_01, user.postal_code)
-        self.assertEquals(user.username, username, msg)
-        self.assertEquals(user.email, email, msg)
-        self.assertEquals(user.is_superuser, True, msg)
-        self.assertEquals(user.role, User.ADMINISTRATOR, msg)
-        self.assertEquals(user.address_01, extra_fields.get('address_01'), msg)
-        self.assertEquals(user.postal_code, extra_fields.get('postal_code'),
-                          msg)
+        self.assertEqual(user.username, username, msg)
+        self.assertEqual(user.email, email, msg)
+        self.assertEqual(user.is_superuser, True, msg)
+        self.assertEqual(user.role, User.ADMINISTRATOR, msg)
+        self.assertEqual(user.address_01, extra_fields.get('address_01'), msg)
+        self.assertEqual(user.postal_code, extra_fields.get('postal_code'), msg)
 
     def test_get_full_name_reversed(self):
         """
@@ -121,7 +120,7 @@ class TestUser(BaseAccounts):
         name = self.user.get_full_name_reversed()
         msg = "Username: {}, First Name: {}, Last Name: {}".format(
             self.user.username, self.user.first_name, self.user.last_name)
-        self.assertEquals(name, "{}, {}".format(self.user.last_name,
+        self.assertEqual(name, "{}, {}".format(self.user.last_name,
                                                 self.user.first_name), msg)
 
     def test_process_answers(self):
@@ -137,20 +136,40 @@ class TestUser(BaseAccounts):
         a2 = self._create_answer_record("Dog", q2)
         a3 = self._create_answer_record("USA", q3)
         # Set the two answers on the user.
-        self.user.process_answers((q1, q2))
+        self.user.process_answers((a1, a2))
         answers = [a.pk for a in self.user.answers.all()]
         msg = "q1: {}, q2: {}, q3: {}".format(q1, q2, q3)
-        self.assertEquals(self.user.answers.count(), 2, msg)
-        self.assertTrue(q1.pk in answers and q2.pk in answers, msg)
+        self.assertEqual(self.user.answers.count(), 2, msg)
+        self.assertTrue(a1.pk in answers and a2.pk in answers, msg)
         # Remove one answer.
-        self.user.process_answers((q1,))
+        self.user.process_answers((a1,))
         answers = [a.pk for a in self.user.answers.all()]
-        self.assertEquals(self.user.answers.count(), 1, msg)
-        self.assertTrue(q1.pk in answers, msg)
+        self.assertEqual(self.user.answers.count(), 1, msg)
+        self.assertTrue(a1.pk in answers, msg)
         # Add a new answer.
-        self.user.process_answers((q1, q3))
+        self.user.process_answers((a1, a3))
         answers = [a.pk for a in self.user.answers.all()]
-        self.assertEquals(self.user.answers.count(), 2, msg)
-        self.assertTrue(q1.pk in answers and q3.pk in answers, msg)
+        self.assertEqual(self.user.answers.count(), 2, msg)
+        self.assertTrue(a1.pk in answers and a3.pk in answers, msg)
+
+    def test_get_unused_questions(self):
+        """
+        Test that only unused questions are returned as choices.
+        """
+        # Create some questions.
+        q1 = self._create_question_record("What is your favorite color?")
+        q2 = self._create_question_record("What is your favorite animal?")
+        q3 = self._create_question_record("In what country is New York?")
+        # Create two answers.
+        a1 = self._create_answer_record("Blue", q1)
+        a2 = self._create_answer_record("Dog", q2)
+        # Set the anwers on the user object.
+        self.user.process_answers((a1, a2))
+        # Get any remaining questions that have not been used yet.
+        questions = self.user.get_unused_questions()
+        msg = "Unused Questions: {}".format(questions)
+        self.assertEqual(len(questions), 1, msg)
+        self.assertTrue(q3.pk in [q.pk for q in questions], msg)
+
 
 

@@ -53,7 +53,7 @@ class TestCurrencies(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_get_currency_with_no_permissions(self):
         """
@@ -215,8 +215,8 @@ class TestCurrencies(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), new_data.get('name'), msg)
-        self.assertEquals(data.get('symbol'), new_data.get('symbol'), msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
+        self.assertEqual(data.get('symbol'), new_data.get('symbol'), msg)
 
     def test_update_put_currency_default_user(self):
         #self.skipTest("Temporarily skipped")
@@ -279,8 +279,8 @@ class TestCurrencies(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('name'), updated_data.get('name'), msg)
-        self.assertEquals(data.get('symbol'), new_data.get('symbol'), msg)
+        self.assertEqual(data.get('name'), updated_data.get('name'), msg)
+        self.assertEqual(data.get('symbol'), new_data.get('symbol'), msg)
 
     def test_delete_currency(self):
         #self.skipTest("Temporarily skipped")

@@ -282,7 +282,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         super(Answer, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.answer
+        return self.question.question
 
     class Meta:
         verbose_name = _("Answer")

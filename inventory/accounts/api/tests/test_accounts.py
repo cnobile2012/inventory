@@ -117,7 +117,7 @@ class TestAccounts(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('username'), new_data.get('username'), msg)
+        self.assertEqual(data.get('username'), new_data.get('username'), msg)
         self.assertTrue(data.get('is_staff'), msg)
 
     def test_update_patch_user(self):
@@ -148,7 +148,7 @@ class TestAccounts(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEquals(data.get('username'), new_data.get('username'), msg)
+        self.assertEqual(data.get('username'), new_data.get('username'), msg)
         self.assertTrue(data.get('is_staff'), msg)
 
     def test_delete_user(self):
