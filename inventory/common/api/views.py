@@ -60,6 +60,10 @@ def api_root(request, format=None):
     items = collection.setdefault('items', OrderedDict())
     # Accounts
     accounts = items.setdefault('accounts', OrderedDict())
+    accounts['answers'] = reverse(
+        'answer-list', request=request, format=format)
+    accounts['questions'] = reverse(
+        'question-list', request=request, format=format)
     accounts['users'] = reverse(
         'user-list', request=request, format=format)
     accounts['user-groups'] = reverse(

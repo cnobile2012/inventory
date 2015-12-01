@@ -12,13 +12,24 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.projects.models import Project
+from inventory.regions.models import Region, Country
 
+from ..models import Question, Answer
 
 log = logging.getLogger('api.accounts.serializers')
 User = get_user_model()
 
 
+#
+# User
+#
 class UserSerializer(serializers.ModelSerializer):
+    region = serializers.HyperlinkedRelatedField(
+        view_name='region-detail', queryset=Region.objects.all(),
+        default=None)
+    country = serializers.HyperlinkedRelatedField(
+        view_name='country-detail', queryset=Country.objects.all(),
+        default=None)
     projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', many=True, read_only=True)
     oauth2_provider_application = serializers.HyperlinkedRelatedField(
@@ -45,6 +56,20 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name', instance.first_name)
         instance.last_name = validated_data.get(
             'last_name', instance.last_name)
+        instance.address_01 = validated_data.get(
+            'address_01', instance.address_01)
+        instance.address_02 = validated_data.get(
+            'address_02', instance.address_02)
+        instance.city = validated_data.get(
+            'city', instance.city)
+        instance.region = validated_data.get(
+            'region', instance.region)
+        instance.postal_code = validated_data.get(
+            'postal_code', instance.postal_code)
+        instance.country = validated_data.get(
+            'country', instance.country)
+        instance.dob = validated_data.get(
+            'dob', instance.dob)
         instance.email = validated_data.get(
             'email', instance.email)
         instance.role = validated_data.get(
@@ -61,13 +86,18 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'send_email', 'need_password',
-                  'first_name', 'last_name', 'email', 'role', 'projects',
-                  'oauth2_provider_application', 'is_active', 'is_staff',
-                  'is_superuser', 'last_login', 'date_joined', 'uri',)
+                  'first_name', 'last_name', 'address_01', 'address_02',
+                  'city', 'region', 'postal_code', 'country', 'email', 'dob',
+                  'role', 'projects', 'oauth2_provider_application',
+                  'is_active', 'is_staff', 'is_superuser', 'last_login',
+                  'date_joined', 'uri',)
         read_only_fields = ('id', 'last_login', 'date_joined',)
         extra_kwargs = {'password': {'write_only': True}}
 
 
+#
+# Group
+#
 class GroupSerializer(serializers.ModelSerializer):
     user_set = serializers.HyperlinkedRelatedField(
         many=True, read_only=True, view_name='user-detail')
@@ -86,3 +116,65 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ('id', 'name', 'user_set', 'uri',)
         read_only_fields = ('id',)
+
+
+#
+# Question
+#
+class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
+    creator = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True)
+    updater = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True)
+    uri = serializers.HyperlinkedIdentityField(view_name='question-detail')
+
+    def create(self, validated_data):
+        user = self.get_user_object()
+        validated_data['creator'] = user
+        validated_data['updater'] = user
+        return Question.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.question = validated_data.get('question', instance.question)
+        instance.active = validated_data.get('active', instance.active)
+        instance.updater = self.get_user_object()
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Question
+        fields = ('id', 'question', 'active', 'creator', 'created', 'updater',
+                  'updated', 'uri',)
+        read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
+
+
+#
+# Answer
+#
+class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
+    question = serializers.HyperlinkedRelatedField(
+        view_name='question-detail', queryset=Question.objects.all())
+    creator = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True)
+    updater = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True)
+    uri = serializers.HyperlinkedIdentityField(view_name='answer-detail')
+
+    def create(self, validated_data):
+        user = self.get_user_object()
+        validated_data['creator'] = user
+        validated_data['updater'] = user
+        return Answer.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.answer = validated_data.get('answer', instance.answer)
+        instance.question = validated_data.get('question', instance.question)
+        instance.updater = self.get_user_object()
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Answer
+        fields = ('id', 'answer', 'question', 'creator', 'created', 'updater',
+                  'updated', 'uri',)
+        read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)

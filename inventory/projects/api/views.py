@@ -63,7 +63,7 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     """
     Project detail endpoint.
     """
-    queryset = Project.objects.all()
+    #queryset = Project.objects.all()
     permission_classes = (
         And(IsAnyUser,
             Or(TokenHasReadWriteScope, IsAuthenticated)),

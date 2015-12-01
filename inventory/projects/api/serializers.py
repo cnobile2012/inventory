@@ -29,7 +29,8 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
-    uri = serializers.HyperlinkedIdentityField(view_name='project-detail')
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='project-detail')
 
     def create(self, validated_data):
         user = self.get_user_object()

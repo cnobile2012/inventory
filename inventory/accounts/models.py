@@ -4,19 +4,31 @@
 #
 
 import logging
+import hashlib
 
 from django.db import models
+from django.contrib.auth.hashers import get_hasher
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
 
+from inventory.regions.models import Region, Country
 from inventory.projects.models import Project
 from inventory.common.storage import InventoryFileStorage
-from inventory.common.model_mixins import ValidateOnSaveMixin
+from inventory.common.model_mixins import (
+    ValidateOnSaveMixin, UserModelMixin, TimeModelMixin, StatusModelMixin,
+    StatusModelManagerMixin)
 
 log = logging.getLogger('inventory.accounts.models')
+
+
+def create_hash(value, salt, hasher='default'):
+    hasher = get_hasher(hasher)
+    # Need to encript the salt
+    return (hasher.algorithm,
+            hasher.encode(value, hashlib.sha256(salt).hexdigest()))
 
 
 class UserManager(BaseUserManager):
@@ -48,9 +60,8 @@ class UserManager(BaseUserManager):
         if role is None:
             extra_fields['role'] = self.model.DEFAULT_USER
 
-        user = self.model(username=username, email=email,
-                          is_staff=is_staff, is_active=True,
-                          is_superuser=is_superuser,
+        user = self.model(username=username, email=email, is_staff=is_staff,
+                          is_active=True, is_superuser=is_superuser,
                           date_joined=now, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -64,13 +75,38 @@ class UserManager(BaseUserManager):
         return self._create_user(username, email, password, True, True,
                                  **extra_fields)
 
+    def update_user(self, pk=None, username=None, email=None, **extra_fields):
+        query = []
+
+        if pk is not None:
+            query.append(models.Q(pk=pk))
+
+        if username is not None:
+            query.append(models.Q(username=username))
+
+        if email is not None:
+            query.append(models.Q(email=email))
+
+        if len(query) <= 0:
+            raise ValueError(_("At least one of pk, username, or email needs "
+                               "to be provided."))
+
+        users = self.filter(*query)
+
+        if users.count() != 1:
+             raise ValueError(_("Please supply both the username and email "
+                                "to narrow down the search."))
+
+        users.update(**extra_fields)
+        return users[0]
+
 
 class User(AbstractUser, ValidateOnSaveMixin):
     DEFAULT_USER = 0
     PROJECT_MANAGER = 1
     ADMINISTRATOR = 2
     ROLE = (
-        (DEFAULT_USER, _('Default User')),
+        (DEFAULT_USER, _("Default User")),
         (PROJECT_MANAGER, _("Project Manager")),
         (ADMINISTRATOR, _("Administrator")),
         )
@@ -83,6 +119,8 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
     role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER)
+    answers = models.ManyToManyField(
+        'Answer', verbose_name=_("Answers"), blank=True)
     projects = models.ManyToManyField(
         Project, verbose_name=_("Projects"), blank=True)
     picture = models.ImageField(
@@ -92,6 +130,21 @@ class User(AbstractUser, ValidateOnSaveMixin):
         verbose_name=_("Send Email"), default=NO, choices=YES_NO)
     need_password = models.BooleanField(
         verbose_name=_("Need Password"), default=NO, choices=YES_NO)
+    dob = models.DateField(
+        verbose_name=_("Date of Birth"), null=True, blank=True,
+        help_text=_("The date of your birth."))
+    address_01 = models.CharField(
+        verbose_name=_("Address 1"), max_length=50, null=True, blank=True,)
+    address_02 = models.CharField(
+        verbose_name=_("Address 2"), max_length=50, null=True, blank=True)
+    city = models.CharField(
+        verbose_name=_("City"), max_length=30, null=True, blank=True)
+    region = models.ForeignKey(
+        Region, verbose_name=_("State/Province"), null=True, blank=True)
+    postal_code = models.CharField(
+        verbose_name=_("Postal Code"), max_length=15, null=True, blank=True)
+    country = models.ForeignKey(
+        Country, verbose_name=_("Country"), null=True, blank=True)
 
     objects = UserManager()
 
@@ -125,6 +178,21 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
         return result
 
+    def process_answers(self, answers):
+        new_pks = [inst.pk for inst in answers]
+        old_pks = [inst.pk for inst in self.answers.all()]
+        rem_pks = list(set(old_pks) - set(new_pks))
+        # remove unwanted answers.
+        self.answers.remove(*self.answers.filter(pk__in=rem_pks))
+        # Add new members.
+        add_pks = list(set(new_pks) - set(old_pks))
+        new_ans = Answers.objects.filter(pk__in=add_pks)
+        self.answers.add(*new_ans)
+
+    def get_unused_questions(self):
+        used_pks = [answer.question.pk for answer in self.answers.all()]
+        return Question.objects.get_active_questions(exclude_pks=used_pks)
+
     def _full_name_reversed_producer(self):
         return self.get_full_name_reversed()
     _full_name_reversed_producer.short_description = _("User")
@@ -156,3 +224,75 @@ class User(AbstractUser, ValidateOnSaveMixin):
         return result
     _image_thumb_producer.short_description = _("Thumb")
     _image_thumb_producer.allow_tags = True
+
+
+#
+# Question
+#
+class QuestionManager(StatusModelManagerMixin, models.Manager):
+
+    def get_active_questions(self, exclude_pks=[]):
+        return self.filter(active=True).exclude(pk__in=exclude_pks)
+
+
+class Question(TimeModelMixin, UserModelMixin, StatusModelMixin,
+               ValidateOnSaveMixin):
+
+    question = models.CharField(
+        verbose_name=_("Question"), max_length=100)
+
+    objects = QuestionManager()
+
+    def save(self, *args, **kwargs):
+        super(Question, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.question
+
+    class Meta:
+        verbose_name = _("Question")
+        verbose_name_plural = _("Questions")
+
+
+#
+# Answer
+#
+class AnswerManager(models.Manager):
+    pass
+
+
+class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+    ANSWER_SALT = "inventory.accounts.models.Answer.clean"
+
+    answer = models.CharField(
+        verbose_name=_("Answer"), max_length=255)
+    question = models.ForeignKey(
+        Question, verbose_name=_("Question"))
+
+    objects = AnswerManager()
+
+    def clean(self):
+        algorithum, hash_value = create_hash(self.answer, self.ANSWER_SALT)
+
+        if algorithum not in self.answer:
+            self.answer = hash_value
+
+    def save(self, *args, **kwargs):
+        super(Answer, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.answer
+
+    class Meta:
+        verbose_name = _("Answer")
+        verbose_name_plural = _("Answers")
+
+    def _owner_producer(self):
+        owners = self.user_set.all()
+
+        if 0 <= len(owners) > 1:
+            raise ValueError(_("There should not be more that one answer "
+                               "owner. Found {}").format(owners))
+
+        return owners[0]
+    _owner_producer.short_description = _("Owner")

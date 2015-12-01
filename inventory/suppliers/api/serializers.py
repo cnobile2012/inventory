@@ -31,8 +31,7 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        obj = Supplier.objects.create(**validated_data)
-        return obj
+        return Supplier.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get(

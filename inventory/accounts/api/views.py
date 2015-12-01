@@ -21,8 +21,9 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
-from .serializers import UserSerializer, GroupSerializer
-
+from ..models import Question, Answer
+from .serializers import (
+    UserSerializer, GroupSerializer, QuestionSerializer, AnswerSerializer)
 
 log = logging.getLogger('api.accounts.views')
 User = get_user_model()
@@ -118,3 +119,92 @@ class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     required_scopes = ('read', 'write', 'groups',)
 
 group_detail = GroupDetail.as_view()
+
+
+#
+# Question
+#
+class QuestionAuthorizationMixin(object):
+
+    def get_queryset(self):
+        result = []
+
+        if (self.request.user.is_superuser or
+            self.request.user.role == User.ADMINISTRATOR):
+            result = Question.objects.all()
+        else:
+            result = [answer.question
+                      for answer in self.request.user.answers.all()]
+
+        return result
+
+
+class QuestionList(QuestionAuthorizationMixin, ListCreateAPIView):
+    """
+    Question list endpoint.
+    """
+    serializer_class = QuestionSerializer
+    permission_classes = (
+        And(IsAnyUser,
+            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        )
+    pagination_class = SmallResultsSetPagination
+
+question_list = QuestionList.as_view()
+
+
+class QuestionDetail(QuestionAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+    """
+    Question detail endpoint.
+    """
+    permission_classes = (
+        And(IsAnyUser,
+            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        )
+    serializer_class = QuestionSerializer
+
+question_detail = QuestionDetail.as_view()
+
+
+#
+# Answer
+#
+class AnswerAuthorizationMixin(object):
+
+    def get_queryset(self):
+        result = []
+
+        if (self.request.user.is_superuser or
+            self.request.user.role == User.ADMINISTRATOR):
+            result = Answer.objects.all()
+        else:
+            result = self.request.user.answers.all()
+
+        return result
+
+
+class AnswerList(AnswerAuthorizationMixin, ListCreateAPIView):
+    """
+    Answer list endpoint.
+    """
+    serializer_class = AnswerSerializer
+    permission_classes = (
+        And(IsAnyUser,
+            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        )
+    pagination_class = SmallResultsSetPagination
+
+answer_list = AnswerList.as_view()
+
+
+class AnswerDetail(AnswerAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+    """
+    Answer detail endpoint.
+    """
+    permission_classes = (
+        And(IsAnyUser,
+            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        )
+    serializer_class = AnswerSerializer
+
+answer_detail = AnswerDetail.as_view()
