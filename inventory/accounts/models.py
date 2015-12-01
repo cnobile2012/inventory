@@ -41,7 +41,7 @@ class UserManager(BaseUserManager):
         now = timezone.now()
 
         if not username:
-            raise ValueError("The given username must be set.")
+            raise ValueError(_("The given username must be set."))
 
         email = self.normalize_email(email)
         role = extra_fields.get('role')
@@ -52,7 +52,7 @@ class UserManager(BaseUserManager):
                 extra_fields['send_email'] = True
                 extra_fields['need_password'] = True
             else:
-                raise ValueError("Must have a valid email or password.")
+                raise ValueError(_("Must have a valid email or password."))
         else:
             extra_fields['send_email'] = False
             extra_fields['need_password'] = False
@@ -120,7 +120,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
     role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER)
     answers = models.ManyToManyField(
-        'Answer', verbose_name=_("Answers"), blank=True)
+        'Answer', verbose_name=_("Answers"), related_name='owners', blank=True)
     projects = models.ManyToManyField(
         Project, verbose_name=_("Projects"), blank=True)
     picture = models.ImageField(
@@ -186,7 +186,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
         self.answers.remove(*self.answers.filter(pk__in=rem_pks))
         # Add new members.
         add_pks = list(set(new_pks) - set(old_pks))
-        new_ans = Answers.objects.filter(pk__in=add_pks)
+        new_ans = Answer.objects.filter(pk__in=add_pks)
         self.answers.add(*new_ans)
 
     def get_unused_questions(self):
@@ -272,6 +272,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     objects = AnswerManager()
 
     def clean(self):
+        # Convert the ASCII text answer to a one way hash.
         algorithum, hash_value = create_hash(self.answer, self.ANSWER_SALT)
 
         if algorithum not in self.answer:
@@ -287,8 +288,11 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
 
+    def process_owner(self, owners):
+        self.owners.add(*owners)
+
     def _owner_producer(self):
-        owners = self.user_set.all()
+        owners = self.owners.all()
 
         if 0 <= len(owners) > 1:
             raise ValueError(_("There should not be more that one answer "

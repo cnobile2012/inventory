@@ -152,6 +152,8 @@ class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
 # Answer
 #
 class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
+    owners = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', many=True, queryset=User.objects.all())
     question = serializers.HyperlinkedRelatedField(
         view_name='question-detail', queryset=Question.objects.all())
     creator = serializers.HyperlinkedRelatedField(
@@ -164,17 +166,21 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return Answer.objects.create(**validated_data)
+        owner = validated_data.pop('owners')
+        obj = Answer.objects.create(**validated_data)
+        obj.process_owner(owners)
+        return obj
 
     def update(self, instance, validated_data):
         instance.answer = validated_data.get('answer', instance.answer)
         instance.question = validated_data.get('question', instance.question)
         instance.updater = self.get_user_object()
+        # The owner should never change.
         instance.save()
         return instance
 
     class Meta:
         model = Answer
-        fields = ('id', 'answer', 'question', 'creator', 'created', 'updater',
-                  'updated', 'uri',)
+        fields = ('id', 'owners', 'answer', 'question', 'creator', 'created',
+                  'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)

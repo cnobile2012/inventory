@@ -124,4 +124,33 @@ class TestUser(BaseAccounts):
         self.assertEquals(name, "{}, {}".format(self.user.last_name,
                                                 self.user.first_name), msg)
 
+    def test_process_answers(self):
+        """
+        Test that answers get added and removed properly from the user.
+        """
+        # Create some questions.
+        q1 = self._create_question_record("What is your favorite color?")
+        q2 = self._create_question_record("What is your favorite animal?")
+        q3 = self._create_question_record("In what country is New York?")
+        # Create answers.
+        a1 = self._create_answer_record("Blue", q1)
+        a2 = self._create_answer_record("Dog", q2)
+        a3 = self._create_answer_record("USA", q3)
+        # Set the two answers on the user.
+        self.user.process_answers((q1, q2))
+        answers = [a.pk for a in self.user.answers.all()]
+        msg = "q1: {}, q2: {}, q3: {}".format(q1, q2, q3)
+        self.assertEquals(self.user.answers.count(), 2, msg)
+        self.assertTrue(q1.pk in answers and q2.pk in answers, msg)
+        # Remove one answer.
+        self.user.process_answers((q1,))
+        answers = [a.pk for a in self.user.answers.all()]
+        self.assertEquals(self.user.answers.count(), 1, msg)
+        self.assertTrue(q1.pk in answers, msg)
+        # Add a new answer.
+        self.user.process_answers((q1, q3))
+        answers = [a.pk for a in self.user.answers.all()]
+        self.assertEquals(self.user.answers.count(), 2, msg)
+        self.assertTrue(q1.pk in answers and q3.pk in answers, msg)
+
 
