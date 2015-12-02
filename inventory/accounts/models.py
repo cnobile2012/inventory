@@ -122,7 +122,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
     answers = models.ManyToManyField(
         'Answer', verbose_name=_("Answers"), related_name='owners', blank=True)
     projects = models.ManyToManyField(
-        Project, verbose_name=_("Projects"), blank=True)
+        Project, verbose_name=_("Projects"), related_name='owners', blank=True)
     picture = models.ImageField(
         verbose_name=_("Picture"), upload_to='user_photos', null=True,
         blank=True, storage=InventoryFileStorage())
@@ -178,16 +178,29 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
         return result
 
+    def process_projects(self, projects):
+        if projects:
+            new_pks = [inst.pk for inst in projects]
+            old_pks = [inst.pk for inst in self.projects.all()]
+            rem_pks = list(set(old_pks) - set(new_pks))
+            # remove unwanted projects.
+            self.projects.remove(*self.projects.filter(pk__in=rem_pks))
+            # Add new projects.
+            add_pks = list(set(new_pks) - set(old_pks))
+            new_prj = Project.objects.filter(pk__in=add_pks)
+            self.projects.add(*new_prj)
+
     def process_answers(self, answers):
-        new_pks = [inst.pk for inst in answers]
-        old_pks = [inst.pk for inst in self.answers.all()]
-        rem_pks = list(set(old_pks) - set(new_pks))
-        # remove unwanted answers.
-        self.answers.remove(*self.answers.filter(pk__in=rem_pks))
-        # Add new members.
-        add_pks = list(set(new_pks) - set(old_pks))
-        new_ans = Answer.objects.filter(pk__in=add_pks)
-        self.answers.add(*new_ans)
+        if answers:
+            new_pks = [inst.pk for inst in answers]
+            old_pks = [inst.pk for inst in self.answers.all()]
+            rem_pks = list(set(old_pks) - set(new_pks))
+            # remove unwanted answers.
+            self.answers.remove(*self.answers.filter(pk__in=rem_pks))
+            # Add new answers.
+            add_pks = list(set(new_pks) - set(old_pks))
+            new_ans = Answer.objects.filter(pk__in=add_pks)
+            self.answers.add(*new_ans)
 
     def get_unused_questions(self):
         used_pks = [answer.question.pk for answer in self.answers.all()]

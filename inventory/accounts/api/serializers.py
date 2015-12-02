@@ -31,7 +31,11 @@ class UserSerializer(serializers.ModelSerializer):
         view_name='country-detail', queryset=Country.objects.all(),
         default=None)
     projects = serializers.HyperlinkedRelatedField(
-        view_name='project-detail', many=True, read_only=True)
+        view_name='project-detail', many=True, queryset=Project.objects.all(),
+        default=None)
+    answers = serializers.HyperlinkedRelatedField(
+        view_name='answer-detail', many=True, queryset=Answer.objects.all(),
+        default=None)
     oauth2_provider_application = serializers.HyperlinkedRelatedField(
         view_name='application-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(view_name='user-detail')
@@ -40,8 +44,13 @@ class UserSerializer(serializers.ModelSerializer):
         username = validated_data.pop('username', '')
         password = validated_data.pop('password', '')
         email = validated_data.pop('email', '')
-        return User.objects.create_user(
+        projects = validated_data.pop('projects', [])
+        answers = validated_data.pop('answers', [])
+        obj = User.objects.create_user(
             username, email=email, password=password, **validated_data)
+        obj.process_projects(projects)
+        obj.process_answers(answers)
+        return obj
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get(
@@ -81,6 +90,8 @@ class UserSerializer(serializers.ModelSerializer):
         instance.is_superuser = validated_data.get(
             'is_superuser', instance.is_superuser)
         instance.save()
+        instance.process_projects(validated_data.get('projects', []))
+        instance.process_answers(validated_data.get('answers', []))
         return instance
 
     class Meta:
@@ -88,7 +99,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'password', 'send_email', 'need_password',
                   'first_name', 'last_name', 'address_01', 'address_02',
                   'city', 'region', 'postal_code', 'country', 'email', 'dob',
-                  'role', 'projects', 'oauth2_provider_application',
+                  'role', 'answers', 'projects', 'oauth2_provider_application',
                   'is_active', 'is_staff', 'is_superuser', 'last_login',
                   'date_joined', 'uri',)
         read_only_fields = ('id', 'last_login', 'date_joined',)

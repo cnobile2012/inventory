@@ -53,29 +53,31 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         return self.name
 
     def process_members(self, members):
-        new_pks = [inst.pk for inst in members]
-        old_pks = [inst.pk for inst in self.members.all()]
-        rem_pks = list(set(old_pks) - set(new_pks))
-        # Remove unwanted members.
-        self.members.remove(*self.members.filter(pk__in=rem_pks))
-        # Add new members.
-        add_pks = list(set(new_pks) - set(old_pks))
-        new_mem = get_user_model().objects.filter(pk__in=add_pks)
-        self.members.add(*new_mem)
+        if members:
+	    new_pks = [inst.pk for inst in members]
+            old_pks = [inst.pk for inst in self.members.all()]
+            rem_pks = list(set(old_pks) - set(new_pks))
+            # Remove unwanted members.
+            self.members.remove(*self.members.filter(pk__in=rem_pks))
+            # Add new members.
+            add_pks = list(set(new_pks) - set(old_pks))
+            new_mem = get_user_model().objects.filter(pk__in=add_pks)
+            self.members.add(*new_mem)
 
     def process_managers(self, managers):
-        new_pks = [inst.pk for inst in managers]
-        old_pks = [inst.pk for inst in self.managers.all()]
-        rem_pks = list(set(old_pks) - set(new_pks))
-        User = get_user_model()
-        # Remove unwanted managers.
-        self.managers.remove(*self.managers.filter(pk__in=rem_pks))
-        self._bulk_update_role(rem_pks, User.DEFAULT_USER)
-        # Add new managers.
-        add_pks = list(set(new_pks) - set(old_pks))
-        new_man = User.objects.filter(pk__in=add_pks)
-        self._bulk_update_role(add_pks, User.PROJECT_MANAGER)
-        self.managers.add(*new_man)
+        if managers:
+            new_pks = [inst.pk for inst in managers]
+            old_pks = [inst.pk for inst in self.managers.all()]
+            rem_pks = list(set(old_pks) - set(new_pks))
+            User = get_user_model()
+            # Remove unwanted managers.
+            self.managers.remove(*self.managers.filter(pk__in=rem_pks))
+            self._bulk_update_role(rem_pks, User.DEFAULT_USER)
+            # Add new managers.
+            add_pks = list(set(new_pks) - set(old_pks))
+            new_man = User.objects.filter(pk__in=add_pks)
+            self._bulk_update_role(add_pks, User.PROJECT_MANAGER)
+            self.managers.add(*new_man)
 
     def _bulk_update_role(self, pks, role):
         User = get_user_model()

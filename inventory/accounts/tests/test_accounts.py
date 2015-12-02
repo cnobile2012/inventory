@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
+from inventory.projects.models import Project
+
 from ..models import Question, Answer, create_hash
 
 User = get_user_model()
@@ -53,6 +55,14 @@ class BaseAccounts(TestCase):
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
         return Answer.objects.create(**kwargs)
+
+    def _create_project_record(self, name, public=True):
+        kwargs = {}
+        kwargs['name'] = name
+        kwargs['public'] = public
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return Project.objects.create(**kwargs)
 
 
 class TestUser(BaseAccounts):
@@ -124,6 +134,36 @@ class TestUser(BaseAccounts):
         self.assertEqual(name, "{}, {}".format(self.user.last_name,
                                                 self.user.first_name), msg)
 
+    def test_process_projects(self):
+        """
+        Test that projects can be added and removed from a user.
+        """
+        # Create a project.
+        p1 = self._create_project_record("My Electronic Parts")
+        p2 = self._create_project_record("My Music")
+        p3 = self._create_project_record("My Stamp Collection")
+        # Set two projects on the user.
+        self.user.process_projects((p1, p2))
+        projects = self.user.projects.all()
+        msg = "Projects: {}".format(projects)
+        pks = [p.pk for p in projects]
+        self.assertEqual(projects.count(), 2, msg)
+        self.assertTrue(p1.pk in pks and p2.pk in pks, msg)
+        # Remove one project.
+        self.user.process_projects((p1,))
+        projects = self.user.projects.all()
+        msg = "Projects: {}".format(projects)
+        pks = [p.pk for p in projects]
+        self.assertEqual(projects.count(), 1, msg)
+        self.assertTrue(p1.pk in pks, msg)
+        # Add a new project.
+        self.user.process_projects((p1, p3))
+        projects = self.user.projects.all()
+        msg = "Projects: {}".format(projects)
+        pks = [p.pk for p in projects]
+        self.assertEqual(projects.count(), 2, msg)
+        self.assertTrue(p1.pk in pks and p3.pk in pks, msg)
+
     def test_process_answers(self):
         """
         Test that answers get added and removed properly from the user.
@@ -138,20 +178,25 @@ class TestUser(BaseAccounts):
         a3 = self._create_answer_record("USA", q3)
         # Set the two answers on the user.
         self.user.process_answers((a1, a2))
-        answers = [a.pk for a in self.user.answers.all()]
-        msg = "q1: {}, q2: {}, q3: {}".format(q1, q2, q3)
-        self.assertEqual(self.user.answers.count(), 2, msg)
-        self.assertTrue(a1.pk in answers and a2.pk in answers, msg)
+        answers = self.user.answers.all()
+        msg = "Answers: {}".format(answers)
+        pks = [a.pk for a in answers]
+        self.assertEqual(answers.count(), 2, msg)
+        self.assertTrue(a1.pk in pks and a2.pk in pks, msg)
         # Remove one answer.
         self.user.process_answers((a1,))
-        answers = [a.pk for a in self.user.answers.all()]
-        self.assertEqual(self.user.answers.count(), 1, msg)
-        self.assertTrue(a1.pk in answers, msg)
+        answers = self.user.answers.all()
+        msg = "Answers: {}".format(answers)
+        pks = [a.pk for a in answers]
+        self.assertEqual(answers.count(), 1, msg)
+        self.assertTrue(a1.pk in pks, msg)
         # Add a new answer.
         self.user.process_answers((a1, a3))
-        answers = [a.pk for a in self.user.answers.all()]
-        self.assertEqual(self.user.answers.count(), 2, msg)
-        self.assertTrue(a1.pk in answers and a3.pk in answers, msg)
+        answers = self.user.answers.all()
+        msg = "Answers: {}".format(answers)
+        pks = [a.pk for a in answers]
+        self.assertEqual(answers.count(), 2, msg)
+        self.assertTrue(a1.pk in pks and a3.pk in pks, msg)
 
     def test_get_unused_questions(self):
         """

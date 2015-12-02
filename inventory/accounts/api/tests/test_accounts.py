@@ -13,10 +13,10 @@ from rest_framework.test import APIClient
 from inventory.common.api.tests.base_test import BaseTest
 
 
-class TestAccounts(BaseTest):
+class TestUser(BaseTest):
 
     def __init__(self, name):
-        super(TestAccounts, self).__init__(name)
+        super(TestUser, self).__init__(name)
 
     def test_create_user_post(self):
         """
@@ -171,8 +171,6 @@ class TestAccounts(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue(data is None, msg)
         # Get the same record through the API.
-        # There is NO reason for the code below to fail, however it throws an
-        # exception in the client.get. It should just return a 404 NOT FOUND.
         response = self.client.get(uri, format='json')
         code = response.status_code
         msg = "Response: {} should be {}, content: {}".format(
@@ -206,3 +204,17 @@ class TestAccounts(BaseTest):
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'User Detail', msg)
+
+
+class TestQuestion(BaseTest):
+
+    def __init__(self, name):
+        super(TestQuestion, self).__init__(name)
+
+
+
+class TestAnswer(BaseTest):
+
+    def __init__(self, name):
+        super(TestAnswer, self).__init__(name)
+
