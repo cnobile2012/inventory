@@ -20,7 +20,7 @@ doc	:
 	@(cd $(DOCS_DIR); make)
 #----------------------------------------------------------------------
 tar	: clean
-	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz --exclude=".svn" \
+	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz --exclude=".git" \
           $(PACKAGE_DIR))
 #----------------------------------------------------------------------
 clean	:
