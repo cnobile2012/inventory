@@ -53,6 +53,9 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         return self.name
 
     def process_members(self, members):
+        """
+        This method adds or removes members to the project.
+        """
         if members:
 	    new_pks = [inst.pk for inst in members]
             old_pks = [inst.pk for inst in self.members.all()]
@@ -65,6 +68,9 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
             self.members.add(*new_mem)
 
     def process_managers(self, managers):
+        """
+        This method adds or removes managers to the project.
+        """
         if managers:
             new_pks = [inst.pk for inst in managers]
             old_pks = [inst.pk for inst in self.managers.all()]
@@ -78,6 +84,22 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
             new_man = User.objects.filter(pk__in=add_pks)
             self._bulk_update_role(add_pks, User.PROJECT_MANAGER)
             self.managers.add(*new_man)
+
+    def process_owners(self, owners):
+        """
+        Owners are essentially the same as members. This method is here for
+        completeness only and will not be reflected in the RESTful API.
+        """
+        if owners:
+            new_pks = [inst.pk for inst in owners]
+            old_pks = [inst.pk for inst in self.owners.all()]
+            rem_pks = list(set(old_pks) - set(new_pks))
+            # Remove unwanted managers.
+            self.owners.remove(*self.owners.filter(pk__in=rem_pks))
+            # Add new managers.
+            add_pks = list(set(new_pks) - set(old_pks))
+            new_own = get_user_model().objects.filter(pk__in=add_pks)
+            self.owners.add(*new_own)
 
     def _bulk_update_role(self, pks, role):
         User = get_user_model()

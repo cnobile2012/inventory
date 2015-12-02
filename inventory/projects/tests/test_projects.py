@@ -26,6 +26,9 @@ class TestProjects(TestCase):
         self.user = self._create_user()
 
     def test_process_members(self):
+        """
+        Test that project members get added and removed properly.
+        """
         #self.skipTest("Temporarily skipped")
         project = self._create_project_record('Test Project')
         username_0 = 'Test_User_00'
@@ -55,6 +58,9 @@ class TestProjects(TestCase):
         self.assertEqual(users[0].username, username_1, msg)
 
     def test_process_managers(self):
+        """
+        Test that project managers get added and removed properly.
+        """
         #self.skipTest("Temporarily skipped")
         project = self._create_project_record('Test Project')
         username_0 = 'Test_User_00'
@@ -100,6 +106,48 @@ class TestProjects(TestCase):
         user_1 = User.objects.get(pk=pk_1)
         self.assertEqual(user_0.role, User.DEFAULT_USER, msg)
         self.assertEqual(user_1.role, User.PROJECT_MANAGER, msg)
+
+    def test_process_owners(self):
+        """
+        Test that project owners get added and removed properly.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create three owners.
+        username_0 = 'Test_User_00'
+        user_0 = self._create_user(username=username_0,
+                                   password='0123456',
+                                   is_superuser=False)
+        username_1 = 'Test_User_01'
+        user_1 = self._create_user(username=username_1,
+                                   password='1234567',
+                                   is_superuser=False)
+        username_2 = 'Test_User_02'
+        user_2 = self._create_user(username=username_2,
+                                   password='1234567',
+                                   is_superuser=False)
+        # Create a project
+        project = self._create_project_record('Test Project')
+        # Set two owners on the project.
+        project.process_owners((user_0, user_1))
+        users = project.owners.all()
+        msg = "Users: {}".format(users)
+        pks = [u.pk for u in users]
+        self.assertEqual(users.count(), 2, msg)
+        self.assertTrue(user_0.pk in pks and user_1.pk in pks, msg)
+        # Remove one owner.
+        project.process_owners((user_0,))
+        users = project.owners.all()
+        msg = "Users: {}".format(users)
+        pks = [u.pk for u in users]
+        self.assertEqual(users.count(), 1, msg)
+        self.assertTrue(user_0.pk in pks, msg)
+        # Add a new owner.
+        project.process_owners((user_0, user_2))
+        users = project.owners.all()
+        msg = "Users: {}".format(users)
+        pks = [u.pk for u in users]
+        self.assertEqual(users.count(), 2, msg)
+        self.assertTrue(user_0.pk in pks and user_2.pk in pks, msg)
 
     def _create_project_record(self, name, public=True):
         kwargs = {}

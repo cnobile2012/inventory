@@ -22,9 +22,11 @@ User = get_user_model()
 
 class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     members = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', many=True, queryset=User.objects.all())
+        view_name='user-detail', many=True, queryset=User.objects.all(),
+        default=None)
     managers = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', many=True, queryset=User.objects.all())
+        view_name='user-detail', many=True, queryset=User.objects.all(),
+        default=None)
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
