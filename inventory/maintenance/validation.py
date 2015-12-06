@@ -20,7 +20,7 @@ class FormatValidator(object):
         r'\p': r'!"#$%&\'\(\)*+,./:;<=>?@\[\]^_`{|}~-'
         }
 
-    def __init__(self, fmt=None, delimiter=None):
+    def __init__(self, delimiter, fmt=None):
         """
         FormatValidator constructor.
 
@@ -28,19 +28,18 @@ class FormatValidator(object):
                        code.
         @param delimiter: The delimiter used between formats.
         """
-        self.__format = fmt
+        self._format = fmt
+        self._delimiter = self.__validate_separator(delimiter)
 
-        if delimiter is not None:
-            self.__delimiter = self.validate_separator(delimiter)
-        else:
-            self.__delimiter = ''
-
-    def validate_separator(self, value):
+    def __validate_separator(self, value):
+        """
+        This method has mixed exception types.
+        """
         from .models import LocationDefault
 
+        # This is not a validation error, but could be a programming error.
         if not value:
-            raise ValidationError(
-                _("A separator cannot be empty or a None value."))
+            raise ValueError(_("A separator cannot be empty or a None value."))
 
         size = len(value)
         separator_obj = LocationDefault._meta.get_field('separator')
@@ -55,10 +54,10 @@ class FormatValidator(object):
     def validate_char_definition(self, value):
         value = value.replace('\x07', '\\a') # Fix the \a issue.
 
-        if self.__delimiter in value:
+        if self._delimiter in value:
              raise ValidationError(
                 _("Invalid format, found separator '{}' in '{}'").format(
-                     self.__delimiter, value))
+                     self._delimiter, value))
 
         operators = self._split_char_definition(value)
         tmp = ''.join(operators)
@@ -71,19 +70,18 @@ class FormatValidator(object):
         return value
 
     def validate_segment(self, value):
-        if self.__delimiter in value:
-            raise ValidationError(
-                _("A separator cannot be in a segment."))
+        rx_obj = None
 
-        operators = self._split_char_definition(self.__format)
-        regex = ''.join([r'([{}])'.format(self.__FMT_MAP.get(op, op))
+        if value is not None:
+            operators = self._split_char_definition(self._format)
+            regex = ''.join([r'([{}])'.format(self.__FMT_MAP.get(op, op))
                          for op in operators])
-        rx_obj = re.match(regex, value)
+            rx_obj = re.match(regex, value)
 
         if not rx_obj:
             raise ValidationError(
                 _("Invalid segment '{}', does not conform to '{}'.").format(
-                    value, self.__format))
+                    value, self._format))
 
         return value
 
@@ -101,7 +99,7 @@ class FormatValidator(object):
         return operators
 
     def _remove_delimiter(self, value):
-        if self.__delimiter in value:
-            value = value.replace(self.__delimiter, '')
+        if self._delimiter in value:
+            value = value.replace(self._delimiter, '')
 
         return value

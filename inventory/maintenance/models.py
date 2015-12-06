@@ -143,6 +143,13 @@ class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         return self.owner.get_full_name_reversed()
     _owner_producer.short_description = _("Format Owner")
 
+    def clean(self):
+        # Check the length of the separator.
+        FormatValidator(self.separator)
+
+    def save(self, *args, **kwargs):
+        super(LocationDefault, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
@@ -198,7 +205,7 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     def clean(self):
         # Test that the format obeys the rules.
         self.char_definition = FormatValidator(
-            delimiter=self.location_default.separator
+            self.location_default.separator
             ).validate_char_definition(self.char_definition)
 
         self.segment_length = len(self.char_definition.replace('\\', ''))
@@ -286,40 +293,34 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     _char_def_producer.short_description = _("Character Definition")
 
     def clean(self):
+        # Test that this segment follows the rules.
         separator = self.char_definition.location_default.separator
 
-        # Test that a delimitor is not in segment itself.
-        if separator in self.segment:
-            raise ValidationError(
-                _("A segment cannot contain the segment delimiter "
-                  "'{}'.").format(separator))
-
-        parents = LocationCode.objects.get_parents(self)
+        self.segment = FormatValidator(
+            separator, fmt=self.char_definition.char_definition
+            ).validate_segment(self.segment)
 
         # Test that a segment is not a parent to itself.
+        parents = LocationCode.objects.get_parents(self)
+
         if self.segment in [parent.segment for parent in parents]:
             raise ValidationError(
                 _("You cannot have a segment as a child to itself."))
 
+        # Test that all segments have the same location default.
         default_name = self.char_definition.location_default.name
 
-        # Test that all segments have the same default name.
         if not all([default_name == parent.char_definition.location_default.name
                     for parent in parents]):
-            raise ValidationError(
-                _("All segments must be derived from the same default name."))
+            raise ValidationError(_("All segments must be derived from the "
+                                    "same location default."))
 
-        # Test that this segment follows the rules.
-        self.segment = FormatValidator(
-            fmt=self.char_definition.char_definition, delimiter=separator
-            ).validate_segment(self.segment)
-
+        # Test that the number of segments defined are equal to or less than
+        # the number of formats for this location default.
         max_num_segments = (self.char_definition.location_default.
                             locationformat_set.count())
         length = len(parents) + 1 # Parents plus self.
 
-        # Test that the number of segments defined are equal to or less than
-        # the number of formats for this location default.
         if length > max_num_segments:
             raise ValidationError(
                 _("There are more segments than defined formats, found: {}, "

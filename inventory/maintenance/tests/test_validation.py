@@ -21,20 +21,24 @@ class TestValidation(TestCase):
         delimiters = ['-', ':', '->', '-->', '&']
 
         for delim in delimiters:
-            value = FormatValidator().validate_separator(delim)
-            msg = "{}".format(value, delim)
-            self.assertEqual(value, delim, msg)
+            obj = FormatValidator(delim)
+            msg = "delim: {}, set delimitor: {}".format(delim, obj._delimiter)
+            self.assertEqual(delim, obj._delimiter, msg)
 
     def test_validate_separator_failures(self):
         #self.skipTest("Temporarily skipped")
-        delimiters = ['', '--->', None]
+        delimiters = {'': (ValueError, "empty or a None value."),
+                      '--->': (ValidationError, "the max length is"),
+                      None: (ValueError, "empty or a None value.")}
 
-        for delim in delimiters:
-            msg = "{}".format(delim)
+        for delim, values in delimiters.items():
+            exception, message = values
 
-            with self.assertRaises(ValidationError):
-                value = FormatValidator().validate_separator(delim)
-                self.assertFalse(value, msg)
+            with self.assertRaises(exception) as cm:
+                obj = FormatValidator(delim)
+
+            msg = "Exception: {}".format(cm.exception)
+            self.assertTrue(message in cm.exception.message, msg)
 
     def test_validate_char_definition(self):
         #self.skipTest("Temporarily skipped")
@@ -66,7 +70,6 @@ class TestValidation(TestCase):
     def test_validate_char_definition_failures(self):
         #self.skipTest("Temporarily skipped")
         formats = [
-            ('', r'T\d\d',), # Empty separator
             (':', r'',), # Empty format
             (':', r'T:\d\d',), # Separator in format, 1st case
             ('->', r'T\d->\d',), # Separator in format 2nd case
@@ -75,7 +78,7 @@ class TestValidation(TestCase):
 
         for delim, fmt in formats:
             with self.assertRaises(ValidationError):
-                FormatValidator(delimiter=delim).validate_char_definition(fmt)
+                FormatValidator(delim).validate_char_definition(fmt)
 
     def test_validate_segment(self):
         #self.skipTest("Temporarily skipped")

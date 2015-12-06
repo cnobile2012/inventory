@@ -34,7 +34,8 @@ class BaseLocation(TestCase):
         user.save()
         return user
 
-    def _create_location_default_record(self, name, description, owner=None):
+    def _create_location_default_record(self, name, description, owner=None,
+                                        separator=None):
         if not owner:
             owner = self.user
 
@@ -42,6 +43,10 @@ class BaseLocation(TestCase):
         kwargs['owner'] = owner
         kwargs['name'] = name
         kwargs['description'] = description
+
+        if separator:
+            kwargs['separator'] = separator
+
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
         return LocationDefault.objects.create(**kwargs)
@@ -179,6 +184,24 @@ class TestLocationDefaultModel(BaseLocation):
         msg = "Location Codes: {}, {}, {}".format(code_0, code_1, code_2)
         self.assertEqual(LocationCode.objects.count(), 0, msg)
 
+    def test_length_of_separator(self):
+        """
+        Test that the length of the separator is not longer than the defined
+        length of the database column.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a location default object.
+        with self.assertRaises(ValidationError) as cm:
+            obj = self._create_location_default_record(
+                "Another Default", "Test Description 2", separator='--->')
+            msg = "Created Object: {}".format(obj)
+            self.assertFalse(obj, msg)
+
+        msg = "Exception: {}".format(cm.exception)
+        messages = [msg for msg in cm.exception.messages
+                    if "The length of the separator is" in msg]
+        self.assertTrue(messages, msg)
+
 
 class TestLocationFormatModel(BaseLocation):
 
@@ -222,20 +245,25 @@ class TestLocationFormatModel(BaseLocation):
 
     def test_failure_on_record_creation(self):
         #self.skipTest("Temporarily skipped")
-        formats = [
-            r'A\d\d:B\d\d\d', # Should not have colon in format.
-            r'', # Empty format.
-            r'[A\\\d\d]', # Parse error.
-            ]
+        formats = {
+            # Should not have colon in format.
+            r'A\d\d:B\d\d\d': "Invalid format, found separator ",
+            r'': "Invalid format, found: ", # Empty format.
+            r'[A\\\d\d]': "Invalid format, found: ", # Parse error.
+            }
         segment_order = 0
         description = "Test failure."
 
-        for fmt in formats:
-            with self.assertRaises(ValidationError):
+        for fmt, message in formats.items():
+            with self.assertRaises(ValidationError) as cm:
                 obj = self._create_location_format_record(
                     fmt, segment_order, description, self.loc_def)
                 msg = "Created object: {}".format(obj)
                 self.assertFalse(obj, msg)
+
+            msg = "Exception: {}".format(cm.exception)
+            messages = [msg for msg in cm.exception.messages if message in msg]
+            self.assertTrue(messages, msg)
 
 
 class TestLocationCodeModel(BaseLocation):
@@ -432,3 +460,95 @@ class TestLocationCodeModel(BaseLocation):
         trees = LocationCode.objects.get_all_root_trees(segment, self.user)
         msg = "Root trees: {}".format(trees)
         self.assertEqual(len(trees), 2, msg)
+
+    def test_invalid_segment(self):
+        """
+        Test that the segment validates properly.
+        """
+        #self.skipTest("Temporarily skipped")
+        segments = ('T:01', 'S01')
+
+        for segment in segments:
+            with self.assertRaises(ValidationError) as cm:
+                obj = self._create_location_code_record(segment, self.loc_fmt)
+                msg = "Created object: {}".format(obj)
+                self.assertFalse(obj, msg)
+
+            msg = "Exception: {}".format(cm.exception)
+            messages = [msg for msg in cm.exception.messages
+                        if "does not conform to" in msg]
+            self.assertTrue(messages, msg)
+
+    def test_segment_not_parent_to_itself(self):
+        """
+        Test that a segment is not a parent to itself.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a location code object.
+        segment = "T01"
+        obj0 = self._create_location_code_record(segment, self.loc_fmt)
+
+        with self.assertRaises(ValidationError) as cm:
+            obj = self._create_location_code_record(
+                segment, self.loc_fmt, parent=obj0)
+            msg = "Created object: {}".format(obj)
+            self.assertFalse(obj, msg)
+
+        msg = "Exception: {}".format(cm.exception)
+        self.assertTrue("child to itself." in cm.exception.messages[0], msg)
+
+    def test_segments_have_same_location_default(self):
+        """
+        Test that all the segments in a given tree have the same location
+        default.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a location default object.
+        loc_def1 = self._create_location_default_record(
+            "Another Default", "Test Description 2")
+        # Create a location format object with loc_def1.
+        char_definition = 'C\\d\\dR\\d\\d'
+        segment_order = 1
+        description = "Test character definition level 1."
+        loc_fmt1 = self._create_location_format_record(
+            char_definition, segment_order, description, loc_def1)
+        # Create two location codes.
+        obj0 = self._create_location_code_record("T01", self.loc_fmt)
+
+        with self.assertRaises(ValidationError) as cm:
+            obj1 = self._create_location_code_record("C01R01", loc_fmt1,
+                                                     parent=obj0)
+            msg = "Created object: {}".format(obj)
+            self.assertFalse(obj, msg)
+
+        msg = "Exception: {}".format(cm.exception)
+        self.assertTrue("same location default." in cm.exception.messages[0],
+                        msg)
+
+    def test_number_segments_number_formats(self):
+        """
+        Test that the number of segments defined are equal to or less than
+        the number of formats for this location default.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a location format object.
+        char_definition = 'C\\d\\dR\\d\\d'
+        segment_order = 1
+        description = "Test character definition level 1."
+        loc_fmt1 = self._create_location_format_record(
+            char_definition, segment_order, description, self.loc_def)
+        # Create three location codes, last one will fail.
+        obj0 = self._create_location_code_record(
+            "T01", self.loc_fmt)
+        obj1 = self._create_location_code_record(
+            "C01R01", loc_fmt1, parent=obj0)
+
+        with self.assertRaises(ValidationError) as cm:
+            obj2 = self._create_location_code_record(
+                "C02R02", loc_fmt1, parent=obj1)
+            msg = "Created Object: {}".format(obj2)
+            self.assertFalse(obj2, msg)
+
+        msg = "Exception: {}".format(cm.exception)
+        self.assertTrue("There are more segments " in cm.exception.messages[0],
+                        msg)
