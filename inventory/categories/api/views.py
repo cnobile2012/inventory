@@ -7,6 +7,7 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
@@ -61,6 +62,13 @@ class CategoryList(CategoryAuthorizationMixin, ListCreateAPIView):
         )
     pagination_class = SmallResultsSetPagination
 
+    def perform_create(self, serializer):
+        try:
+            instance = serializer.save()
+        except ValidationError as detail:
+            msg = "%s" % detail
+            raise serializers.ValidationError(msg)
+
 category_list = CategoryList.as_view()
 
 
@@ -74,5 +82,12 @@ class CategoryDetail(CategoryAuthorizationMixin, RetrieveUpdateDestroyAPIView):
         And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
         )
     serializer_class = CategorySerializer
+
+    def perform_update(self, serializer):
+        try:
+            instance = serializer.save()
+        except ValidationError as detail:
+            msg = "%s" % detail
+            raise serializers.ValidationError(msg)
 
 category_detail = CategoryDetail.as_view()

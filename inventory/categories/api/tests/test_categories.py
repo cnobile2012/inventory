@@ -24,6 +24,9 @@ class TestCategories(BaseTest):
         self.user_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
 
     def test_create_post_category(self):
+        """
+        Test that a category can be POSTed by it's owner.
+        """
         #self.skipTest("Temporarily skipped")
         uri = reverse('category-list')
         new_data = {'name': 'Test Category-0', 'owner': self.user_uri,}
@@ -140,6 +143,9 @@ class TestCategories(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_put_category(self):
+        """
+        Test that a category can be PUT by it's owner.
+        """
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
@@ -171,6 +177,9 @@ class TestCategories(BaseTest):
         self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_invalid_owner_put(self):
+        """
+        Test that one owner cannot PUT another owner's records.
+        """
         #self.skipTest("Temporarily skipped")
         # Create a user
         username = 'Normal_User'
@@ -200,6 +209,9 @@ class TestCategories(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_patch_category(self):
+        """
+        Test that a category can be PATCHed by it's owner.
+        """
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
@@ -232,6 +244,9 @@ class TestCategories(BaseTest):
         self.assertTrue(updated_data.get('name') in data.get('path'), msg)
 
     def test_invalid_owner_patch(self):
+        """
+        Test that one owner cannot PATCH another owner's records.
+        """
         #self.skipTest("Temporarily skipped")
         # Create a user
         username = 'Normal_User'
@@ -261,6 +276,9 @@ class TestCategories(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_delete_category(self):
+        """
+        Test that a category can be DELETEd by it's owner.
+        """
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
@@ -289,6 +307,9 @@ class TestCategories(BaseTest):
         self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_invalid_owner_delete(self):
+        """
+        Test that one owner cannot DELETE another owner's records.
+        """
         #self.skipTest("Temporarily skipped")
         # Create a user
         username = 'Normal_User'
@@ -321,6 +342,9 @@ class TestCategories(BaseTest):
         self.assertEqual(code, status.HTTP_200_OK, msg)
 
     def test_options_category(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
         #self.skipTest("Temporarily skipped")
         # Create Category with POST.
         uri = reverse('category-list')
@@ -349,6 +373,9 @@ class TestCategories(BaseTest):
         self.assertEqual(data.get('name'), 'Category Detail', msg)
 
     def test_create_category_twice_to_same_parent(self):
+        """
+        Test that a category is not created twice with the same composite key.
+        """
         #self.skipTest("Temporarily skipped")
         # Create Category one.
         uri = reverse('category-list')
@@ -385,6 +412,9 @@ class TestCategories(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
     def test_delimitor_in_category_name(self):
+        """
+        Test that the delimitoe is not in the category name.
+        """
         #self.skipTest("Temporarily skipped")
         # Create Category one.
         uri = reverse('category-list')
@@ -397,10 +427,40 @@ class TestCategories(BaseTest):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
-    def test_root_level_category_exists(self):
+    def test_category_is_not_parent(self):
+        """
+        Test that this category does not exist in the current tree.
+        """
         #self.skipTest("Temporarily skipped")
+        # Create three catagories.
+        name = "Test Category 1"
+        cat0 = self._create_category(self.user, name=name)
+        name = "Test Category 2"
+        cat1 = self._create_category(self.user, name=name, parent=cat0)
+        name = "Test Category 3"
+        cat2 = self._create_category(self.user, name=name, parent=cat1)
+        # Try adding 'Test Category 2' to the tree using the API.
+        uri = reverse('category-list')
+        cat2_uri = reverse('category-detail', kwargs={'pk': cat2.pk})
+        new_data = {'name': "Test Category 2", 'owner': self.user_uri,
+                    'parent': cat2_uri}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+
+    def test_root_level_category_exists(self):
+        """
+        Test that there are no root level categories with this name that
+        already exist for this owner.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a catagory.
         name = "Duplicate Name"
         cat = self._create_category(self.user, name=name)
+        # Create a category through the API.
         new_data = {'name': name, 'owner': self.user_uri}
         uri = reverse('category-list')
         response = self.client.post(uri, new_data, format='json')

@@ -42,29 +42,6 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
                              "the user who is creating or altering the record.")
                     )
 
-        # Run the model validation
-        if self.instance is not None:
-            instance = self.instance
-        else:
-            instance = self.Meta.model(**data)
-
-        instance.clean()
-        request = self.get_request()
-
-        # Check that there are not any root categories with this name.
-        if request.method == "POST":
-            level = data.get('level', 0)
-            name = data.get('name')
-            owner = data.get('owner')
-            log.debug("name: %s, owner: %s, level: %s", name, owner, level)
-
-            if level == 0:
-                if len(Category.objects.filter(
-                    name=name, owner=owner, level=0)):
-                    raise ValidationError(
-                        _("A root level category name [{}] already exists."
-                          ).format(name))
-
         return data
 
     def create(self, validated_data):

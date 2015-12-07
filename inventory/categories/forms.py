@@ -18,16 +18,16 @@ class CategoryForm(forms.ModelForm):
         model = Category
         exclude = ()
 
-    def clean(self):
-        name = self.cleaned_data.get('name')
-        owner = self.cleaned_data.get('owner')
-        level = self.cleaned_data.get('level', 0)
+    #def clean(self):
+    #    name = self.cleaned_data.get('name')
+    #    owner = self.cleaned_data.get('owner')
+    #    level = self.cleaned_data.get('level', 0)
 
         # Test that there is not already a root category with this value.
-        if not self.initial and level == 0:
-            if len(Category.objects.filter(name=name, owner=owner, level=0)):
-                raise forms.ValidationError(
-                    _("A root level category name [{}] already exists."
-                      ).format(name))
+    #    if not self.initial and level == 0:
+    #        if len(Category.objects.filter(name=name, owner=owner, level=0)):
+    #            raise forms.ValidationError(
+    #                _("A root level category name [{}] already exists."
+    #                  ).format(name))
 
-        return self.cleaned_data
+    #    return self.cleaned_data
