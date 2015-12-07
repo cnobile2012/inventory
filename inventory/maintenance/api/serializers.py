@@ -102,14 +102,14 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-format-detail')
 
-    def validate(self, data):
-        if self.instance is not None:
-            instance = self.instance
-        else:
-            instance = self.Meta.model(**data)
+    ## def validate(self, data):
+    ##     if self.instance is not None:
+    ##         instance = self.instance
+    ##     else:
+    ##         instance = self.Meta.model(**data)
 
-        instance.clean()
-        return data
+    ##     instance.clean()
+    ##     return data
 
     def create(self, validated_data):
         user = self.get_user_object()

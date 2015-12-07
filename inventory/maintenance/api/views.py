@@ -6,10 +6,12 @@
 import logging
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import serializers
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -154,6 +156,13 @@ class LocationFormatList(LocationFormatAuthorizationMixin,
         )
     pagination_class = SmallResultsSetPagination
 
+    def perform_create(self, serializer):
+        try:
+            instance = serializer.save()
+        except ValidationError as detail:
+            msg = "%s" % detail
+            raise serializers.ValidationError(msg)
+
 location_format_list = LocationFormatList.as_view()
 
 
@@ -170,6 +179,13 @@ class LocationFormatDetail(LocationFormatAuthorizationMixin,
            And(TokenHasReadWriteScope, IsAuthenticated),
            ),
         )
+
+    def perform_update(self, serializer):
+        try:
+            instance = serializer.save()
+        except ValidationError as detail:
+            msg = "%s" % detail
+            raise serializers.ValidationError(msg)
 
 location_format_detail = LocationFormatDetail.as_view()
 
@@ -209,6 +225,13 @@ class LocationCodeList(LocationCodeAuthorizationMixin,
         )
     pagination_class = SmallResultsSetPagination
 
+    def perform_create(self, serializer):
+        try:
+            instance = serializer.save()
+        except ValidationError as detail:
+            msg = "%s" % detail
+            raise serializers.ValidationError(msg)
+
 location_code_list = LocationCodeList.as_view()
 
 
@@ -225,5 +248,12 @@ class LocationCodeDetail(LocationCodeAuthorizationMixin,
            And(TokenHasReadWriteScope, IsAuthenticated),
            ),
         )
+
+    def perform_update(self, serializer):
+        try:
+            instance = serializer.save()
+        except ValidationError as detail:
+            msg = "%s" % detail
+            raise serializers.ValidationError(msg)
 
 location_code_detail = LocationCodeDetail.as_view()

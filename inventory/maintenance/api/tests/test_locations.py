@@ -25,20 +25,32 @@ class BaseLocation(BaseTest):
     def __init__(self, name):
         super(BaseLocation, self).__init__(name)
 
-    def _create_location_default(self):
+    def _create_location_default(self, name=None):
         new_data = {
             'name': 'Test Location Default', 'owner': self.user,
             'shared': True, 'description': "Test Location Default",
             'separator': ':', 'creator': self.user, 'updater': self.user
             }
+
+        if name:
+            new_data['name'] = name
+
         return LocationDefault.objects.create(**new_data)
 
-    def _create_location_format(self, location_default):
+    def _create_location_format(self, location_default, char_definition=None,
+                                segment_order=None):
         new_data = {
             'location_default': location_default, 'char_definition': r'T\d\d',
             'segment_order': 0, 'description': "Test Location Format",
             'creator': self.user, 'updater': self.user
             }
+
+        if char_definition:
+            new_data['char_definition'] = char_definition
+
+        if segment_order:
+            new_data['segment_order'] = segment_order
+
         return LocationFormat.objects.create(**new_data)
 
     def _create_location_code(self, location_format):
@@ -65,6 +77,9 @@ class TestLocationDefault(BaseLocation):
         super(TestLocationDefault, self).__init__(name)
 
     def test_create_post_location_default(self):
+        """
+        Test that we can create a new location_default with a POST.
+        """
         # Create LocationDefault with POST.
         #self.skipTest("Temporarily skipped")
         uri = reverse('location-default-list')
@@ -225,6 +240,9 @@ class TestLocationDefault(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_put_location_default(self):
+        """
+        Teat that we can do an update with a PUT.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationDefault with POST.
         uri = reverse('location-default-list')
@@ -257,6 +275,9 @@ class TestLocationDefault(BaseLocation):
         self.assertEqual(data.get('shared'), new_data.get('shared'), msg)
 
     def test_update_put_location_default_default_user(self):
+        """
+        Teat that we can do an update with a PUT by a default user.
+        """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
         username = 'Normal_User'
@@ -292,6 +313,9 @@ class TestLocationDefault(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_patch_location_default(self):
+        """
+        Test that we can do an update with a PATCH.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationDefault with POST.
         uri = reverse('location-default-list')
@@ -325,6 +349,9 @@ class TestLocationDefault(BaseLocation):
                          msg)
 
     def test_delete_location_default(self):
+        """
+        Test that we can remove a record with a DELETE.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationDefault with POST.
         uri = reverse('location-default-list')
@@ -356,6 +383,9 @@ class TestLocationDefault(BaseLocation):
         self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_location_default(self):
+        """
+        Test that the OPTIONS method returns the correct data.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationDefault with POST.
         uri = reverse('location-default-list')
@@ -386,6 +416,27 @@ class TestLocationDefault(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Location Default Detail', msg)
 
+    def test_length_of_separator(self):
+        """
+        Test that the length of the separator is not longer than the defined
+        length of the database column.
+        """
+        #self.skipTest("Temporarily skipped")
+        uri = reverse('location-default-list')
+        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
+        new_data = {'name': 'Test Location Default', 'owner': owner_uri,
+                    'shared': True, 'description': "Test POST",
+                    'separator': '--->'}
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        pk = data.get('id')
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue("Ensure this field has " in data.get('separator')[0],
+                        msg)
+
 
 class TestLocationFormat(BaseLocation):
 
@@ -393,6 +444,9 @@ class TestLocationFormat(BaseLocation):
         super(TestLocationFormat, self).__init__(name)
 
     def test_create_post_location_format(self):
+        """
+        Test that a record can be created with a POST.
+        """
         # Create LocationFormat with POST.
         #self.skipTest("Temporarily skipped")
         ld = self._create_location_default()
@@ -555,6 +609,9 @@ class TestLocationFormat(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_put_location_format(self):
+        """
+        Test that an update can be done with a PUT.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationFormat with POST.
         ld = self._create_location_default()
@@ -588,6 +645,9 @@ class TestLocationFormat(BaseLocation):
                          new_data.get('char_definition'), msg)
 
     def test_update_put_location_format_default_user(self):
+        """
+        Test that an update can be done with a PUT by a default user.
+        """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
         username = 'Normal_User'
@@ -623,6 +683,9 @@ class TestLocationFormat(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_patch_location_format(self):
+        """
+        Test that an update can e dome with a PATCH.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationFormat with POST.
         ld = self._create_location_default()
@@ -656,6 +719,9 @@ class TestLocationFormat(BaseLocation):
                          updated_data.get('description'), msg)
 
     def test_delete_location_format(self):
+        """
+        Test that a record can be removed with a DELETE.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationFormat with POST.
         ld = self._create_location_default()
@@ -687,6 +753,9 @@ class TestLocationFormat(BaseLocation):
         self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_location_format(self):
+        """
+        Test that the correct data is returned with OPTIONS.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationFormat with POST.
         ld = self._create_location_default()
@@ -717,7 +786,10 @@ class TestLocationFormat(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Location Format Detail', msg)
 
-    def test_delimitor_in_location_format_char_definition(self):
+    def test_delimitor_in_char_definition(self):
+        """
+        Test that the delimitor is not in the character definition.
+        """
         #self.skipTest("Temporarily skipped")
         # Test delimitor in char_definition.
         ld = self._create_location_default()
@@ -732,10 +804,14 @@ class TestLocationFormat(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue("Invalid format, found separator " in data[0], msg)
 
-    def test_segment_length_is_not_zero(self):
+    def test_char_definition_length_is_not_zero(self):
+        """
+        Test that the char_definition length is not zero.
+        """
         #self.skipTest("Temporarily skipped")
-        # Test that segment_length is not zero..
+        # Test that character_definition length is not zero.
         ld = self._create_location_default()
         ld_uri = reverse('location-default-detail', kwargs={'pk': ld.id})
         new_data = {'location_default': ld_uri, 'char_definition': r'',
@@ -747,6 +823,9 @@ class TestLocationFormat(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(
+            "This field may not be blank." in data.get('char_definition'),
+            msg)
 
 
 class TestLocationCode(BaseLocation):
@@ -755,6 +834,9 @@ class TestLocationCode(BaseLocation):
         super(TestLocationCode, self).__init__(name)
 
     def test_create_post_location_code(self):
+        """
+        Test that a record can be created with a POST.
+        """
         # Create LocationCode with POST.
         #self.skipTest("Temporarily skipped")
         ld = self._create_location_default()
@@ -921,6 +1003,9 @@ class TestLocationCode(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_put_location_code(self):
+        """
+        Test that a record can be updated with a PUT.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationCode with POST.
         ld = self._create_location_default()
@@ -953,6 +1038,9 @@ class TestLocationCode(BaseLocation):
         self.assertEqual(data.get('segment'), new_data.get('segment'), msg)
 
     def test_update_put_location_code_default_user(self):
+        """
+        Test that a record can be updated with a PUT for a default user.
+        """
         #self.skipTest("Temporarily skipped")
         # Create a non-logged in user, but one that has a valid token.
         username = 'Normal_User'
@@ -989,6 +1077,9 @@ class TestLocationCode(BaseLocation):
 
 
     def test_update_patch_location_code(self):
+        """
+        Test that a record can be updated with a PATCH.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationCode with POST.
         ld = self._create_location_default()
@@ -1020,6 +1111,9 @@ class TestLocationCode(BaseLocation):
         self.assertEqual(data.get('segment'), updated_data.get('segment'), msg)
 
     def test_delete_location_code(self):
+        """
+        Test that a record can be removed with a DELETE.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationCode with POST.
         ld = self._create_location_default()
@@ -1051,6 +1145,9 @@ class TestLocationCode(BaseLocation):
         self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
 
     def test_options_location_code(self):
+        """
+        Test that OPTIONS returns the correct data.
+        """
         #self.skipTest("Temporarily skipped")
         # Create LocationCode with POST.
         ld = self._create_location_default()
@@ -1081,7 +1178,10 @@ class TestLocationCode(BaseLocation):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('name'), 'Location Code Detail', msg)
 
-    def test_delimitor_in_location_code_segment(self):
+    def test_invalid_segment(self):
+        """
+        Test that a segment obays the rules.
+        """
         #self.skipTest("Temporarily skipped")
         # Test delimitor in segment.
         ld = self._create_location_default()
@@ -1097,3 +1197,135 @@ class TestLocationCode(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(
+            "does not conform to " in data.get('non_field_errors')[0], msg)
+        # Test inconsistant format.
+        new_data = {'char_definition': lf_uri, 'segment': 'S01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(
+            "does not conform to " in data.get('non_field_errors')[0], msg)
+
+    def test_segment_not_parent_to_itself(self):
+        """
+        Test that a segment is not a parent to itself.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create the location default and format objects.
+        ld = self._create_location_default()
+        lf = self._create_location_format(ld)
+        lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
+        # Create the first location code.
+        new_data = {'char_definition': lf_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Create a second location code.
+        lc_uri = reverse('location-code-detail', kwargs={'pk': data.get('id')})
+        new_data = {'char_definition': lf_uri, 'segment': 'T01',
+                    'parent': lc_uri}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue("child to itself." in data.get('non_field_errors')[0],
+                        msg)
+
+    def test_segments_have_same_location_default(self):
+        """
+        Test that all the segments in a given tree have the same location
+        default.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create the location default and format objects.
+        ld0 = self._create_location_default()
+        lf0 = self._create_location_format(ld0)
+        lf0_uri = reverse('location-format-detail', kwargs={'pk': lf0.id})
+        # Create second set of location default and format objects.
+        ld1 = self._create_location_default(name="This one fails")
+        lf1 = self._create_location_format(ld1, char_definition=r'C\d\dR\d\d',
+                                           segment_order=1)
+        lf1_uri = reverse('location-format-detail', kwargs={'pk': lf1.id})
+        # Create first location code.
+        new_data = {'char_definition': lf0_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Create second location code.
+        lc0_uri = reverse('location-code-detail', kwargs={'pk': data.get('id')})
+        new_data = {'char_definition': lf1_uri, 'segment': 'C01R01',
+                    'parent': lc0_uri}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(
+            "All segments must be derived" in data.get('non_field_errors')[0],
+            msg)
+
+    def test_number_segments_number_formats(self):
+        """
+        Test that the number of segments defined are equal to or less than
+        the number of formats for this location default.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create the location default and format objects.
+        ld0 = self._create_location_default()
+        lf0 = self._create_location_format(ld0)
+        lf0_uri = reverse('location-format-detail', kwargs={'pk': lf0.id})
+        # Create second set of location format object.
+        lf1 = self._create_location_format(ld0, char_definition=r'C\d\dR\d\d',
+                                           segment_order=1)
+        lf1_uri = reverse('location-format-detail', kwargs={'pk': lf1.id})
+        # Create first location code.
+        new_data = {'char_definition': lf0_uri, 'segment': 'T01'}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Create second location code.
+        lc0_uri = reverse('location-code-detail', kwargs={'pk': data.get('id')})
+        new_data = {'char_definition': lf1_uri, 'segment': 'C01R01',
+                    'parent': lc0_uri}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Create third location code which will fail.
+        lc1_uri = reverse('location-code-detail', kwargs={'pk': data.get('id')})
+        new_data = {'char_definition': lf1_uri, 'segment': 'C01R01',
+                    'parent': lc1_uri}
+        uri = reverse('location-code-list')
+        response = self.client.post(uri, new_data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(
+            "as a child to itself." in data.get('non_field_errors')[0], msg)
