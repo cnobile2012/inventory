@@ -189,7 +189,7 @@ class TestCategoryModel(TestCase):
         #self.skipTest("Temporarily skipped")
         with self.assertRaises(ValidationError):
             self._create_record(
-                'Test{}SeparatorInNme'.format(Category.DEFAULT_SEPARATOR))
+                'Test{}SeparatorInName'.format(Category.DEFAULT_SEPARATOR))
 
     def test_category_not_in_same_tree(self):
         #self.skipTest("Temporarily skipped")

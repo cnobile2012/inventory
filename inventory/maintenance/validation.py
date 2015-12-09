@@ -46,8 +46,9 @@ class FormatValidator(object):
 
         if size > separator_obj.max_length:
             raise ValidationError(
-                _("The length of the separator is {}, the max length "
-                  "is {}").format(size, separator_obj.max_length))
+                {'separator': _("The length of the separator is {}, the max "
+                                "length is {}").format(
+                     size, separator_obj.max_length)})
 
         return value
 
@@ -56,16 +57,16 @@ class FormatValidator(object):
 
         if self._delimiter in value:
              raise ValidationError(
-                _("Invalid format, found separator '{}' in '{}'").format(
-                     self._delimiter, value))
+                {'char_definition': _("Invalid format, found separator '{}' in"
+                                      " '{}'").format(self._delimiter, value)})
 
         operators = self._split_char_definition(value)
         tmp = ''.join(operators)
 
         if tmp != value or len(value) <= 0:
             raise ValidationError(
-                _("Invalid format, found: {}, parsed: {}").format(
-                    value, operators))
+                {'char_definition': _("Invalid format, found: {}, "
+                                      "parsed: {}").format(value, operators)})
 
         return value
 
@@ -80,8 +81,8 @@ class FormatValidator(object):
 
         if not rx_obj:
             raise ValidationError(
-                _("Invalid segment '{}', does not conform to '{}'.").format(
-                    value, self._format))
+                {'segment': _("Invalid segment '{}', does not conform "
+                              "to '{}'.").format(value, self._format)})
 
         return value
 

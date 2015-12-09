@@ -426,6 +426,7 @@ class TestCategories(BaseTest):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue("A category name cannot " in data.get('name')[0], msg)
 
     def test_category_is_not_parent(self):
         """
@@ -450,6 +451,7 @@ class TestCategories(BaseTest):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue("A category in this tree " in data.get('name')[0], msg)
 
     def test_root_level_category_exists(self):
         """
@@ -469,6 +471,8 @@ class TestCategories(BaseTest):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue("A root level category name " in data.get('name')[0],
+                        msg)
 
     def _create_category(self, user, name=None, parent=None):
         if not name:

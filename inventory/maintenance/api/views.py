@@ -6,12 +6,12 @@
 import logging
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers
+
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -21,6 +21,8 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager, IsDefaultUser,
     IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.view_mixins import (
+    TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import (
     Currency, LocationDefault, LocationFormat, LocationCode)
@@ -88,6 +90,7 @@ class LocationDefaultAuthorizationMixin(object):
 
 
 class LocationDefaultList(LocationDefaultAuthorizationMixin,
+                          TrapDjangoValidationErrorCreateMixin,
                           ListCreateAPIView):
     """
     LocationDefault list endpoint.
@@ -106,6 +109,7 @@ location_default_list = LocationDefaultList.as_view()
 
 
 class LocationDefaultDetail(LocationDefaultAuthorizationMixin,
+                            TrapDjangoValidationErrorUpdateMixin,
                             RetrieveUpdateDestroyAPIView):
     """
     LocationDefault detail endpoint.
@@ -142,6 +146,7 @@ class LocationFormatAuthorizationMixin(object):
 
 
 class LocationFormatList(LocationFormatAuthorizationMixin,
+                         TrapDjangoValidationErrorCreateMixin,
                          ListCreateAPIView):
     """
     LocationFormat list endpoint.
@@ -156,17 +161,11 @@ class LocationFormatList(LocationFormatAuthorizationMixin,
         )
     pagination_class = SmallResultsSetPagination
 
-    def perform_create(self, serializer):
-        try:
-            instance = serializer.save()
-        except ValidationError as detail:
-            msg = "%s" % detail
-            raise serializers.ValidationError(msg)
-
 location_format_list = LocationFormatList.as_view()
 
 
 class LocationFormatDetail(LocationFormatAuthorizationMixin,
+                           TrapDjangoValidationErrorUpdateMixin,
                            RetrieveUpdateDestroyAPIView):
     """
     LocationFormat detail endpoint.
@@ -179,13 +178,6 @@ class LocationFormatDetail(LocationFormatAuthorizationMixin,
            And(TokenHasReadWriteScope, IsAuthenticated),
            ),
         )
-
-    def perform_update(self, serializer):
-        try:
-            instance = serializer.save()
-        except ValidationError as detail:
-            msg = "%s" % detail
-            raise serializers.ValidationError(msg)
 
 location_format_detail = LocationFormatDetail.as_view()
 
@@ -211,6 +203,7 @@ class LocationCodeAuthorizationMixin(object):
 
 
 class LocationCodeList(LocationCodeAuthorizationMixin,
+                       TrapDjangoValidationErrorCreateMixin,
                        ListCreateAPIView):
     """
     LocationCode list endpoint.
@@ -225,17 +218,11 @@ class LocationCodeList(LocationCodeAuthorizationMixin,
         )
     pagination_class = SmallResultsSetPagination
 
-    def perform_create(self, serializer):
-        try:
-            instance = serializer.save()
-        except ValidationError as detail:
-            msg = "%s" % detail
-            raise serializers.ValidationError(msg)
-
 location_code_list = LocationCodeList.as_view()
 
 
 class LocationCodeDetail(LocationCodeAuthorizationMixin,
+                         TrapDjangoValidationErrorUpdateMixin,
                          RetrieveUpdateDestroyAPIView):
     """
     LocationCode detail endpoint.
@@ -248,12 +235,5 @@ class LocationCodeDetail(LocationCodeAuthorizationMixin,
            And(TokenHasReadWriteScope, IsAuthenticated),
            ),
         )
-
-    def perform_update(self, serializer):
-        try:
-            instance = serializer.save()
-        except ValidationError as detail:
-            msg = "%s" % detail
-            raise serializers.ValidationError(msg)
 
 location_code_detail = LocationCodeDetail.as_view()

@@ -190,8 +190,8 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         # Check that the separator is not in the name.
         if delimiter in self.name:
             raise ValidationError(
-                _("A category name cannot contain the category delimiter "
-                  "'{}'.").format(delimiter))
+                {'name': _("A category name cannot contain the category "
+                           "delimiter '{}'.").format(delimiter)})
 
         if self.parent:
             # Check that this category is not a parent.
@@ -201,14 +201,15 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
             for parent in parents:
                 if parent.name == self.name:
                     raise ValidationError(
-                        _("A category in this tree with name [{}] already "
-                          "exists.").format(self.name))
+                        {'name': _("A category in this tree with name [{}] "
+                                   "already exists.").format(self.name)})
         # Check that a root level name does not already exist for this owner
         # on a create only.
         elif self.pk is None and Category.objects.filter(
             name=self.name, owner=self.owner, level=0).count():
-            raise ValidationError(_("A root level category name [{}] "
-                                    "already exists.").format(self.name))
+            raise ValidationError(
+                {'name': _("A root level category name [{}] already exists."
+                           ).format(self.name)})
 
     def _get_category_path(self, current=True):
         parents = Category.objects.get_parents(self, self.owner)

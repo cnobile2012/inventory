@@ -804,7 +804,9 @@ class TestLocationFormat(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue("Invalid format, found separator " in data[0], msg)
+        self.assertTrue(
+            "Invalid format, found separator" in data.get('char_definition')[0],
+            msg)
 
     def test_char_definition_length_is_not_zero(self):
         """
@@ -1197,8 +1199,7 @@ class TestLocationCode(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(
-            "does not conform to " in data.get('non_field_errors')[0], msg)
+        self.assertTrue("does not conform to " in data.get('segment')[0], msg)
         # Test inconsistant format.
         new_data = {'char_definition': lf_uri, 'segment': 'S01'}
         uri = reverse('location-code-list')
@@ -1208,8 +1209,7 @@ class TestLocationCode(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(
-            "does not conform to " in data.get('non_field_errors')[0], msg)
+        self.assertTrue("does not conform to " in data.get('segment')[0], msg)
 
     def test_segment_not_parent_to_itself(self):
         """
@@ -1240,8 +1240,7 @@ class TestLocationCode(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue("child to itself." in data.get('non_field_errors')[0],
-                        msg)
+        self.assertTrue("child to itself." in data.get('__all__')[0], msg)
 
     def test_segments_have_same_location_default(self):
         """
@@ -1279,8 +1278,7 @@ class TestLocationCode(BaseLocation):
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
-            "All segments must be derived" in data.get('non_field_errors')[0],
-            msg)
+            "All segments must be derived" in data.get('__all__')[0], msg)
 
     def test_number_segments_number_formats(self):
         """
@@ -1327,5 +1325,4 @@ class TestLocationCode(BaseLocation):
             response.status_code, status.HTTP_400_BAD_REQUEST,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(
-            "as a child to itself." in data.get('non_field_errors')[0], msg)
+        self.assertTrue("as a child to itself." in data.get('__all__')[0], msg)

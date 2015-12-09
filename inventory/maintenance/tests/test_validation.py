@@ -38,7 +38,13 @@ class TestValidation(TestCase):
                 obj = FormatValidator(delim)
 
             msg = "Exception: {}".format(cm.exception)
-            self.assertTrue(message in cm.exception.message, msg)
+
+            if hasattr(cm.exception, 'message_dict'):
+                self.assertTrue(
+                    message in cm.exception.message_dict.get('separator')[0],
+                    msg)
+            else:
+                self.assertTrue(message in cm.exception.message, msg)
 
     def test_validate_char_definition(self):
         #self.skipTest("Temporarily skipped")
