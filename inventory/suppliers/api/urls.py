@@ -2,11 +2,13 @@
 # inventory/suppliers/api/urls.py
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from inventory.suppliers.api import views
 
 
-urlpatterns = patterns(
-    'inventory.suppliers.api.views',
-    url(r'suppliers/$', 'supplier_list', name="supplier-list"),
-    url(r'supplier/(?P<pk>\d+)/$', 'supplier_detail', name="supplier-detail"),
-    )
+urlpatterns = [
+    url(r'suppliers/$', views.supplier_list, name="supplier-list"),
+    url(r'supplier/(?P<pk>\d+)/$', views.supplier_detail,
+        name="supplier-detail"),
+    ]

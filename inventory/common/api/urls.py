@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/common/api/urls.py
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from inventory.common.api import views
 
 
-urlpatterns = patterns(
-    'inventory.common.api.views',
-    url(r'$', 'api_root', name='api-root'),
-    )
+urlpatterns = [
+    url(r'$', views.api_root, name='api-root'),
+    ]

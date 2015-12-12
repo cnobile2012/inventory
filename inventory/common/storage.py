@@ -10,8 +10,6 @@ from django.utils._os import safe_join
 
 class InventoryFileStorage(FileSystemStorage):
 
-    
-
     def path(self, name):
         if not os.path.isdir(self.location):
             os.mkdir(self.location, 0775)

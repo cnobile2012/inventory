@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect, \
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 
 from inventory.settings import SITE_NAME
 from inventory.apps.utils.views import ViewBase

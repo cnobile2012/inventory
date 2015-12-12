@@ -1,13 +1,15 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/maintenance/urls.py
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from inventory.maintenance import views
 
 
-urlpatterns = patterns(
-    'inventory.maintenance.views',
-    url(r'^purge/$', 'purge'),
-    url(r'^confirm/$', 'confirm'),
-    url(r'^delete/$', 'delete'),
-)
+urlpatterns = [
+    url(r'^purge/$', views.purge),
+    url(r'^confirm/$', views.confirm),
+    url(r'^delete/$', views.delete),
+    ]

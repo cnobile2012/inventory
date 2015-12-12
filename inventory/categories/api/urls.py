@@ -3,11 +3,14 @@
 # inventory/categories/api/urls.py
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from inventory.categories.api import views
 
 
-urlpatterns = patterns(
-    'inventory.categories.api.views',
-    url(r'categories/$', 'category_list', name="category-list"),
-    url(r'category/(?P<pk>\d+)/$', 'category_detail', name="category-detail"),
-    )
+urlpatterns = [
+    url(r'categories/$', views.category_list,
+        name="category-list"),
+    url(r'category/(?P<pk>\d+)/$', views.category_detail,
+        name="category-detail"),
+    ]

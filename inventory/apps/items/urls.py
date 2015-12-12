@@ -8,9 +8,12 @@
 # $Revision: 87 $
 #----------------------------------
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
-urlpatterns = patterns('inventory.apps.items.views',
-    url(r'^$', 'frontPage'),
-    url(r'^lookup/regions/', 'processRegion'),
-)
+from inventory.apps.items import views
+
+
+urlpatterns = [
+    url(r'^$', views.frontPage),
+    url(r'^lookup/regions/', views.processRegion),
+    ]

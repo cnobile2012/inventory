@@ -38,7 +38,6 @@ class IPList(list):
 
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ('Sysadmins', 'carl.nobile@gmail.com'),
@@ -123,13 +122,6 @@ AUTHENTICATION_BACKENDS = (
 # Guardian requirement
 ANONYMOUS_USER_ID = -1
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    #'django.template.loaders.eggs.Loader',
-    )
-
 MIDDLEWARE_CLASSES = [
     # UpdateCacheMiddleware must be first on the list
     'django.middleware.cache.UpdateCacheMiddleware',
@@ -160,14 +152,6 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'inventory.wsgi.application'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or
-    # "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'templates'),
-    )
-
 AUTH_USER_MODEL = 'accounts.User'
 
 INSTALLED_APPS = [
@@ -191,12 +175,36 @@ INSTALLED_APPS = [
     'inventory.suppliers',
     'inventory.categories',
     'inventory.maintenance',
+    #'inventory.objects',
     # Will be removed over time.
     'inventory.apps.items',
     'inventory.apps.login',
     'inventory.apps.reports',
-    #'inventory.apps.maintenance',
     ]
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(SITE_ROOT, 'templates'),
+            ],
+#        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                ],
+            'debug': DEBUG,
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+                #'django.template.loaders.eggs.Loader',
+                ],
+        },
+    },
+]
 
 OAUTH2_PROVIDER = {
     # This is the list of available scopes.

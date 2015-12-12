@@ -3,11 +3,12 @@
 # inventory/projects/api/urls.py
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from inventory.projects.api import views
 
 
-urlpatterns = patterns(
-    'inventory.projects.api.views',
-    url(r'projects/$', 'project_list', name="project-list"),
-    url(r'project/(?P<pk>\d+)/$', 'project_detail', name="project-detail"),
-    )
+urlpatterns = [
+    url(r'projects/$', views.project_list, name="project-list"),
+    url(r'project/(?P<pk>\d+)/$', views.project_detail, name="project-detail"),
+    ]

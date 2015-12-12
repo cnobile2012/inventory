@@ -30,10 +30,10 @@ class Currency(TimeModelMixin, UserModelMixin):
     symbol =  models.CharField(max_length=1)
     name =  models.CharField(max_length=20, unique=True)
 
+    objects = CurrencyManager()
+
     def __str__(self):
         return "{} {}".format(self.symbol.encode('utf-8'), self.name)
-
-    objects = CurrencyManager()
 
     class Meta:
         ordering = ('name',)
