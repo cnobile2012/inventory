@@ -9,5 +9,5 @@ from inventory.common.api import views
 
 
 urlpatterns = [
-    url(r'$', views.api_root, name='api-root'),
+    url(r'^$', views.api_root, name='api-root'),
     ]

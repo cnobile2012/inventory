@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/urls.py
 #
@@ -6,11 +7,13 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.views.static import serve
 from django.contrib import admin
+
 admin.autodiscover()
+
 
 urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^oauth2/', include('oauth2_provider.urls',
                              namespace='oauth2_provider')),
 

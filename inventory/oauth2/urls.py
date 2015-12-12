@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
-# inventory/oauth2/api/urls.py
+# inventory/oauth2/urls.py
 #

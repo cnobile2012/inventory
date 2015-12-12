@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/regions/api/urls.py
 #
