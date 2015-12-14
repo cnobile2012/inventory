@@ -3,18 +3,54 @@
 # inventory/regions/models.py
 #
 
+import logging
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
 
+log = logging.getLogger('inventory.regions.models')
+
 
 #
 # Country
 #
 class CountryManager(StatusModelManagerMixin, models.Manager):
-    pass
+
+    def get_regions_by_country(self, country, code=False):
+        """
+        Get the regions associated with the provided country.
+        """
+        query = []
+        result = []
+
+        if isinstance(country, int):
+            if not code:
+                query.append(models.Q(pk=country))
+            else:
+                query.append(models.Q(country_number_code=country))
+        else:
+            # Could just be luck, but couldn't find any country names
+            # shorter that four characters.
+            if len(country) == 2:
+                query.append(models.Q(country_code_2=country))
+            elif len(country) == 3:
+                query.append(models.Q(country_code_3=country))
+            else:
+                query.append(models.Q(country=country))
+
+        countries = self.filter(*query)
+
+        if countries:
+            if countries.count() > 1:
+                log.error("Something is wrong, should only have one country "
+                          "object, found: %s", countries)
+
+            result = countries[0].region_set.all()
+
+        return result
 
 
 class Country(TimeModelMixin, UserModelMixin, StatusModelMixin):
@@ -59,7 +95,7 @@ class Region(TimeModelMixin, UserModelMixin, StatusModelMixin):
     This model implements region functionality.
     """
     country = models.ForeignKey(
-        Country, verbose_name=_("Country"))
+        Country, verbose_name=_("Country"), related_name='regions')
     region_code = models.CharField(
         verbose_name=_("Region Code"), max_length=10, db_index=True)
     region = models.CharField(

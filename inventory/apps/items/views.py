@@ -81,7 +81,7 @@ class ProcessRegion(ViewBase):
             response['regions'] = [
                 ("%s (%s: %s)" %
                 (m['region'], m['region_code'], m['primary_level']), m['id'])
-                for m in record.region_set.values()]
+                for m in record.regions.values()]
             response['selected'] = selected
         except Exception, e:
             msg = "Failed to find region records"
