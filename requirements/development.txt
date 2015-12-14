@@ -2,3 +2,6 @@
 -r base.txt
 
 django_debug_toolbar
+
+# SlimIt - JavaScript minifier
+slimit
