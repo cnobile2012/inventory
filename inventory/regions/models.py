@@ -80,7 +80,7 @@ class Country(TimeModelMixin, UserModelMixin, StatusModelMixin):
         super(Country, self).save(*args, **kwargs)
 
     def __str__(self):
-        return u"{} ({})".format(self.country, self.country_code_2)
+        return "{} ({})".format(self.country, self.country_code_2)
 
 
 #
@@ -115,5 +115,4 @@ class Region(TimeModelMixin, UserModelMixin, StatusModelMixin):
         super(Region, self).save(*args, **kwargs)
 
     def __str__(self):
-        return u"{} ({} {})".format(self.region_code, self.region,
-                                    self.primary_level)
+        return self.region

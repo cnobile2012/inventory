@@ -15,5 +15,5 @@ from inventory.apps.items import views
 
 urlpatterns = [
     url(r'^$', views.frontPage),
-    url(r'^lookup/regions/', views.processRegion),
+    #url(r'^lookup/regions/', views.processRegion),
     ]

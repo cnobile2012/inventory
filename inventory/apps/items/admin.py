@@ -182,8 +182,9 @@ class DistributorAdmin(BaseAdmin):
     form = DistributorAdminForm
 
     class Media:
-        js = ('js/jquery-1.10.1.min.js', 'js/jquery.cookie.js',
-              'js/ajaxbase.js', "js/regions.js",)
+        js = ("js/js.cookie-2.0.4.min.js",
+              "js/inheritance.js",
+              "js/regions.js",)
 
 admin.site.register(Distributor, DistributorAdmin)
 
@@ -194,8 +195,9 @@ class ManufacturerAdmin(BaseAdmin):
     form = ManufacturerAdminForm
 
     class Media:
-        js = ("js/jquery-1.10.1.min.js", 'js/jquery.cookie.js',
-              'js/ajaxbase.js', "js/regions.js",)
+        js = ("js/js.cookie-2.0.4.min.js",
+              "js/inheritance.js",
+              "js/regions.js",)
 
 admin.site.register(Manufacturer, ManufacturerAdmin)
 

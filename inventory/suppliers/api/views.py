@@ -21,7 +21,7 @@ from inventory.suppliers.models import Supplier
 from .serializers import SupplierSerializer
 
 
-log = logging.getLogger('api.supplier.views')
+log = logging.getLogger('api.suppliers.views')
 
 
 #

@@ -40,6 +40,11 @@ class UserAdmin(UserAdmin):
     search_fields = ('username', 'last_name', 'email',)
     filter_horizontal = ('projects', 'groups', 'user_permissions', 'answers',)
 
+    class Media:
+        js = ('js/js.cookie-2.0.4.min.js',
+              'js/inheritance.js',
+              'js/regions.js',)
+
 
 #
 # Question

@@ -28,4 +28,9 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     list_filter = ('stype', 'active',)
     ordering = ('name',)
 
+    class Media:
+        js = ('js/js.cookie-2.0.4.min.js',
+              'js/inheritance.js',
+              'js/regions.js',)
+
 admin.site.register(Supplier, SupplierAdmin)
