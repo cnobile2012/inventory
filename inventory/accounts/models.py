@@ -263,6 +263,7 @@ class Question(TimeModelMixin, UserModelMixin, StatusModelMixin,
         return self.question
 
     class Meta:
+        ordering = ('question',)
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
 
@@ -298,6 +299,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         return self.question.question
 
     class Meta:
+        ordering = ('question__question',)
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
 
