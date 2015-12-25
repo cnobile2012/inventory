@@ -32,7 +32,7 @@ class RegionAdmin(UserAdminMixin, admin.ModelAdmin):
 
 class RegionInline(admin.TabularInline):
     model = Region
-    extra = 6
+    extra = 1
 
 
 class CountryAdmin(UserAdminMixin, admin.ModelAdmin):

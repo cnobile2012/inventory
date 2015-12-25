@@ -83,6 +83,8 @@ class UserSerializer(serializers.ModelSerializer):
             'email', instance.email)
         instance.role = validated_data.get(
             'role', instance.role)
+        instance.project_default = validated_data.get(
+            'project_default', instance.project_default)
         instance.is_active = validated_data.get(
             'is_active', instance.is_active)
         instance.is_staff = validated_data.get(
@@ -98,10 +100,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'password', 'send_email', 'need_password',
                   'first_name', 'last_name', 'address_01', 'address_02',
-                  'city', 'region', 'postal_code', 'country', 'email', 'dob',
-                  'role', 'answers', 'projects', 'oauth2_provider_application',
-                  'is_active', 'is_staff', 'is_superuser', 'last_login',
-                  'date_joined', 'uri',)
+                  'city', 'region', 'postal_code', 'country', 'dob', 'email',
+                  'answers', 'role', 'project_default', 'projects',
+                  'oauth2_provider_application', 'is_active', 'is_staff',
+                  'is_superuser', 'last_login', 'date_joined', 'uri',)
         read_only_fields = ('id', 'last_login', 'date_joined',)
         extra_kwargs = {'password': {'write_only': True}}
 

@@ -58,7 +58,7 @@ class RegionSerializer(SerializerMixin, serializers.ModelSerializer):
 # Country
 #
 class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
-    regions = RegionSerializer(many=True)
+    regions = RegionSerializer(many=True, default=None)
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
@@ -70,7 +70,10 @@ class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return Country.objects.create(**validated_data)
+        regions = validated_data.pop('regions', [])
+        obj = Country.objects.create(**validated_data)
+        obj.process_regions(regions)
+        return obj
 
     def update(self, instance, validated_data):
         instance.country = validated_data.get(
@@ -83,6 +86,7 @@ class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
             'country_number_code', instance.country_number_code)
         instance.updater = self.get_user_object()
         instance.active = validated_data.get('active', instance.active)
+        instance.process_regions(validated_data.get('regions', []))
         instance.save()
         return instance
 
