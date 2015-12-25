@@ -24,7 +24,7 @@ class UserAdmin(UserAdmin):
                                          'address_01', 'address_02', 'city',
                                          'region', 'postal_code', 'country',
                                          'dob', 'email', 'answers',)}),
-        (_("Projects"), {'fields': ('role', 'projects',)}),
+        (_("Projects"), {'fields': ('role', 'project_default', 'projects',)}),
         (_("Permissions"), {'classes': ('collapse',),
                             'fields': ('is_active', 'is_staff',
                                        'is_superuser', 'groups',

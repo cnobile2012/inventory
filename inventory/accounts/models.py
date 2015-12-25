@@ -117,6 +117,13 @@ class User(AbstractUser, ValidateOnSaveMixin):
         (NO, _("No")),
         )
 
+    LAST_USED = 0
+    NONE = 1
+    P_DEFAULTS = (
+        (LAST_USED, _("Last Project Used")),
+        (NONE, _("Always Choose Project")),
+        )
+
     role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER)
     answers = models.ManyToManyField(
@@ -145,6 +152,9 @@ class User(AbstractUser, ValidateOnSaveMixin):
         verbose_name=_("Postal Code"), max_length=15, null=True, blank=True)
     country = models.ForeignKey(
         Country, verbose_name=_("Country"), null=True, blank=True)
+    project_default = models.SmallIntegerField(
+        verbose_name=_("Project Default"), choices=P_DEFAULTS,
+        default=LAST_USED)
 
     objects = UserManager()
 
