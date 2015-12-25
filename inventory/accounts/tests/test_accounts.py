@@ -70,7 +70,6 @@ class TestUser(BaseAccounts):
     def __init__(self, name):
         super(TestUser, self).__init__(name)
 
-
     def test_create_superuser(self):
         """
         Test that a superuser was created.
