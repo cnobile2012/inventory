@@ -26,7 +26,7 @@ class CountryManager(StatusModelManagerMixin, models.Manager):
         query = []
         result = []
 
-        if isinstance(country, int):
+        if isinstance(country, (int, long)):
             if not code:
                 query.append(models.Q(pk=country))
             else:
@@ -46,9 +46,10 @@ class CountryManager(StatusModelManagerMixin, models.Manager):
         if countries:
             if countries.count() > 1:
                 log.error("Something is wrong, should only have one country "
-                          "object, found: %s", countries)
+                          "object, found: %s, country: %s, code: %s",
+                          countries, country, code)
 
-            result = countries[0].region_set.all()
+            result = countries[0].regions.all()
 
         return result
 
@@ -81,21 +82,6 @@ class Country(TimeModelMixin, UserModelMixin, StatusModelMixin):
 
     def __str__(self):
         return "{} ({})".format(self.country, self.country_code_2)
-
-    def process_regions(self, regions):
-        """
-        This method adds or removes regions to the country.
-        """
-        if regions:
-            new_pks = [inst.pk for inst in regions]
-            old_pks = [inst.pk for inst in self.regions.all()]
-            rem_pks = list(set(old_pks) - set(new_pks))
-            # Remove unwanted regions.
-            self.regions.remove(*self.regions.filter(pk__in=rem_pks))
-            # Add new regions.
-            add_pks = list(set(new_pks) - set(old_pks))
-            new_rgn = get_user_model().objects.filter(pk__in=add_pks)
-            self.regions.add(*new_rgn)
 
 
 #

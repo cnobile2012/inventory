@@ -31,6 +31,10 @@ class RegionAdmin(UserAdminMixin, admin.ModelAdmin):
 
 
 class RegionInline(admin.TabularInline):
+    fields = ('region', 'region_code', 'primary_level', 'active', 'creator',
+              'created', 'updater', 'updated',)
+    readonly_fields = ('creator', 'created', 'updater', 'updated',)
+    ordering = ('region',)
     model = Region
     extra = 1
 
