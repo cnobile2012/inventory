@@ -54,6 +54,8 @@ CACHES = {
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')
 
+TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
+
 # Setup the IP address from the internal clients.
 #INTERNAL_IPS = IPList(['127.0.0.1', '10.10.10.1', '192.168.1.0/24'])
 
