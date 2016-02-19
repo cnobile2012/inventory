@@ -116,7 +116,7 @@ SECRET_KEY = 'bjwykl6a7km26!0bsx%$v8g#s=+s5-(v2&d0^r8tl5++4ip$u4'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # default
-    'guardian.backends.ObjectPermissionBackend',
+    #'guardian.backends.ObjectPermissionBackend',
     )
 
 # Guardian requirement
@@ -193,9 +193,9 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.static',
                 ],
             'debug': DEBUG,
             'loaders': [
