@@ -7,8 +7,7 @@
 
 from rest_framework.reverse import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase, APIClient
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.suppliers.models import Supplier

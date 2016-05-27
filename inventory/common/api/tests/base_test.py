@@ -13,8 +13,7 @@ from collections import OrderedDict
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext
 
-from rest_framework.test import APITestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 
 from oauth2_provider.models import (
