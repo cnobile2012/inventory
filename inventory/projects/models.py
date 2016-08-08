@@ -57,7 +57,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         This method adds or removes members to the project.
         """
         if members:
-	    new_pks = [inst.pk for inst in members]
+            new_pks = [inst.pk for inst in members]
             old_pks = [inst.pk for inst in self.members.all()]
             rem_pks = list(set(old_pks) - set(new_pks))
             # Remove unwanted members.

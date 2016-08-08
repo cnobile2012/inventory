@@ -83,7 +83,7 @@ class ProcessRegion(ViewBase):
                 (m['region'], m['region_code'], m['primary_level']), m['id'])
                 for m in record.regions.values()]
             response['selected'] = selected
-        except Exception, e:
+        except Exception as e:
             msg = "Failed to find region records"
             self._log.error(msg + ": %s", e)
             response['valid'] = False

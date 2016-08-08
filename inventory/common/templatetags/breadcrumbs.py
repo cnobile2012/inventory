@@ -12,7 +12,7 @@
 
 import logging
 
-from StringIO import StringIO
+from django.utils import six
 from django import template
 
 log = logging.getLogger('inventory.common.templatetags')
@@ -72,7 +72,7 @@ class BreadcrumbNode(template.Node):
         except:
             locations = eval(self._pagesVar.var)
 
-        if not isinstance(self._imgVar, (str, unicode)):
+        if not isinstance(self._imgVar, six.string_types):
             try:
                 img = self._imgVar.resolve(context)
             except:
@@ -87,7 +87,7 @@ class BreadcrumbNode(template.Node):
         """
         Assemble the breadcrumbs.
         """
-        buff = StringIO()
+        buff = six.StringIO()
         count = 0
         size = len(locations) - 1
 

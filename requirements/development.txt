@@ -1,7 +1,10 @@
 # Include the bare minimum.
 -r base.txt
 
+coverage
 django_debug_toolbar
+django-extensions
+IPy
 
-# SlimIt - JavaScript minifier
 slimit
+Sphinx

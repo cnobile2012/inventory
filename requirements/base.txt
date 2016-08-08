@@ -1,27 +1,28 @@
 django
 django-dcolumns
-
-mysql_python
-pytz
-Pillow
-IPy
-
-# Caching
-redis
+#django-filter
+#django-guardian
+django-oauth-toolkit
 django-redis-cache
-
-# Provides REST API support.
 djangorestframework
 djangorestframework-xml
 djangorestframework-yaml
+
+docutils
+dateutils
+python-dateutil
+
+ipython
+
+mysqlclient
+pytz
+Pillow
+
+redis
 rest_condition
-django-filter
-#django-guardian
 pyyaml
 markdown
 
-# Auth
-django-oauth-toolkit
 
 # Utilities
 ipython

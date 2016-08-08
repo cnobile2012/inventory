@@ -7,35 +7,9 @@
 
 import os
 import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
 from inventory.apps.items.settings import *
 from inventory.apps.login.settings import *
-
-
-class IPList(list):
-
-    def __init__(self, ips):
-        try:
-            #http://software.inl.fr/trac/wiki/IPy
-            #ubuntu: apt-get install python-ipy
-            from IPy import IP
-            for ip in ips:
-                self.append(IP(ip))
-        except ImportError:
-            pass
-
-    def __contains__(self, ip):
-        try:
-            for net in self:
-                if ip in net:
-                    return True
-        except:
-            pass
-
-        return False
-
 
 DEBUG = False
 

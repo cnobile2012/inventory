@@ -12,6 +12,6 @@ class InventoryFileStorage(FileSystemStorage):
 
     def path(self, name):
         if not os.path.isdir(self.location):
-            os.mkdir(self.location, 0775)
+            os.mkdir(self.location, 0o0775)
 
         return safe_join(self.location, name)

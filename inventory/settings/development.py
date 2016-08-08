@@ -1,5 +1,8 @@
-from .base import *
 
+
+from inventory.common.utils import IPList
+
+from .base import *
 
 DEBUG = True
 
@@ -18,9 +21,11 @@ DATABASES = {
         'HOST': 'localhost',
         # Set to empty string for default. Not used with sqlite3.
         'PORT': '',
-        # Only Use when DB is created then comment.
-        #'OPTIONS': {'init_command': 'SET storage_engine=InnoDB;',
-        #            'charset': 'utf8'},
+        'OPTIONS': {
+            'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
+                             "SET default_storage_engine=INNODB;"),
+            'charset': 'utf8'
+            },
         }
     }
 
@@ -53,11 +58,12 @@ CACHES = {
 
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')
+INSTALLED_APPS.append('django_extensions')
 
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 
 # Setup the IP address from the internal clients.
-#INTERNAL_IPS = IPList(['127.0.0.1', '10.10.10.1', '192.168.1.0/24'])
+INTERNAL_IPS = IPList(['127.0.0.1', '192.168.1.0/24'])
 
 # If it were working, set it to follow redirects by default.
 DEBUG_TOOLBAR_CONFIG = {

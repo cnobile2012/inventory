@@ -11,7 +11,6 @@
 import json
 import logging
 
-from StringIO import StringIO
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template import Context, loader
