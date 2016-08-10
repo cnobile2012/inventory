@@ -50,9 +50,14 @@ MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'redis_cache.RedisDummyCache',
         #'BACKEND': 'redis_cache.RedisCache',
-        #'LOCATION': '/var/run/redis/redis.sock',
+        'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 0,
+            'PARSER_CLASS': 'redis.connection.HiredisParser',
+            'PICKLE_VERSION': 2,
+            },
         },
     }
 

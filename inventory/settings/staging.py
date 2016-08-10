@@ -20,12 +20,6 @@ DATABASES = {
 ## KEY_PREFIX = 'stg'
 ## #KEY_FUNCTION = 'testsite.common.caching.make_key'
 
-# Add to the MIDDLEWARE_CLASSES here.
-#MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
-
-# Setup the IP address from the internal clients.
-#INTERNAL_IPS = IPList(['127.0.0.1', '10.10.10.1', '192.168.1.0/24'])
-
 # Add to the INSTALLED_APPS here.
 #INSTALLED_APPS.append('debug_toolbar')
 
