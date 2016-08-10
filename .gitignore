@@ -9,7 +9,6 @@
 !production.txt
 !staging.txt
 *.pdf
-docs/api
 #!docs/*.pdf
 .~lock.*
 local.py
