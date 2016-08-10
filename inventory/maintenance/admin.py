@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from inventory.common.admin_mixins import UserAdminMixin
 
 from .models import Currency, LocationDefault, LocationFormat, LocationCode
-from .forms import LocationFormatForm, LocationCodeForm
+from .forms import LocationDefaultForm, LocationFormatForm, LocationCodeForm
 
 
 class CurrencyAdmin(UserAdminMixin, admin.ModelAdmin):
@@ -37,6 +37,7 @@ class LocationDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
                     'updated',)
     list_editable = ('separator', 'shared',)
     list_filter = ('owner',)
+    form = LocationDefaultForm
 
 
 class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
