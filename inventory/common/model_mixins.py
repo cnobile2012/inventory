@@ -49,22 +49,41 @@ class UserModelMixin(models.Model):
     def save(self, *args, **kwargs):
         """
         Save is here to assure that save is executed throughout the MRO.
+
+        :param args: Positional arguments.
+        :param kwargs: Keyword arguments.
         """
         super(UserModelMixin, self).save(*args, **kwargs)
 
-    def _updater_producer(self):
+    def updater_producer(self):
         """
-        Primary use is in the admin class to supply the user's full name.
-        """
-        return self.updater.get_full_name()
-    _updater_producer.short_description = _("Updater")
+        Primary use is in an admin class to supply the updater's full name if
+        available else the username.
 
-    def _creator_producer(self):
+        :rtype: String of updater's full name.
         """
-        Primary use is in the admin class to supply the creator's full name.
+        result = self.updater.get_full_name()
+
+        if not result:
+            result = self.updater.username
+
+        return result
+    updater_producer.short_description = _("Updater")
+
+    def creator_producer(self):
         """
-        return self.creator.get_full_name()
-    _creator_producer.short_description = _("Creator")
+        Primary use is in an admin class to supply the creator's full name if
+        available else the username.
+
+        :rtype: String of creator's full name.
+        """
+        result = self.creator.get_full_name()
+
+        if not result:
+            result = self.creator.username
+
+        return result
+    creator_producer.short_description = _("Creator")
 
 
 #
@@ -88,7 +107,14 @@ class TimeModelMixin(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Permit the disabling of the created and updated date times.
+        Understands two keyword arguments, ``disable_created`` and
+        ``disable_updated``. These arguments are used to optionally turn off
+        the updating of the ``created`` and ``updated`` fields on the model.
+        This can be used when migrating data into a model that already has
+        these fields set so the original date ad times can be kept.
+
+        :param args: Positional arguments.
+        :param kwargs: Keyword arguments.
         """
         if not kwargs.pop(u'disable_created', False) and self.created is None:
             self.created = datetime.now(tzutc())
@@ -113,10 +139,12 @@ class StatusModelManagerMixin(object):
         """
         Return as default only active database objects.
 
-        :Parameters:
-          active : `bool`
-            If `True` return only active records else if `False` return
-            non-active records. If `None` return all records.
+        :param active: If ``True`` return only active records else if ``False``
+                       return non-active records. If ``None`` return all
+                       records.
+        :type active: bool
+        :rtype: Django query results.
+
         """
         query = []
 
@@ -141,15 +169,27 @@ class StatusModelMixin(models.Model):
     def save(self, *args, **kwargs):
         """
         Save is here to assure that save is executed throughout the MRO.
+
+        :param args: Positional arguments.
+        :param kwargs: Keyword arguments.
         """
         super(StatusModelMixin, self).save(*args, **kwargs)
 
 
+#
+# ValidateOnSaveMixin
+#
 class ValidateOnSaveMixin(models.Model):
 
     class Meta:
         abstract = True
 
     def save(self, *args, **kwargs):
+        """
+        Execute ``full_clean``.
+
+        :param args: Positional arguments.
+        :param kwargs: Keyword arguments.
+        """
         self.full_clean()
         super(ValidateOnSaveMixin, self).save(*args, **kwargs)
