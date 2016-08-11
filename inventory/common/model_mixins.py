@@ -116,10 +116,10 @@ class TimeModelMixin(models.Model):
         :param args: Positional arguments.
         :param kwargs: Keyword arguments.
         """
-        if not kwargs.pop(u'disable_created', False) and self.created is None:
+        if not kwargs.pop('disable_created', False) and self.created is None:
             self.created = datetime.now(tzutc())
 
-        if not kwargs.pop(u'disable_updated', False):
+        if not kwargs.pop('disable_updated', False):
             self.updated = datetime.now(tzutc())
 
         log.debug("kwargs: %s, created: %s, updated: %s",
