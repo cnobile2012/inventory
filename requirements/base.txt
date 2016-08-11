@@ -19,5 +19,3 @@ redis
 rest_condition
 markdown
 
-# Utilities
-docutils
