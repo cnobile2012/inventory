@@ -112,7 +112,7 @@ if __name__ == '__main__':
     from datetime import datetime
 
     parser = argparse.ArgumentParser(
-        description=("Location processing..."))
+        description=("Category processing..."))
     parser.add_argument(
         '-n', '--noop', action='store_true', default=False, dest='noop',
         help="Run as if migrating, but do nothing.")
