@@ -18,7 +18,7 @@ from inventory.apps.regions.models import Country
 from inventory.settings import SITE_NAME, getLogger
 
 
-log = getLogger()
+log = getLogger('inventory.views.items')
 
 
 class FrontPage(ViewBase):
@@ -32,6 +32,7 @@ class FrontPage(ViewBase):
         response = {}
         username = request.user.username
         self._setBreadcrumb(request, 'Home', '/')
+        self._log.info("SERVER_NAME: %s", request.get_host())
 
         if username:
             tmpl = loader.get_template('frontPage_user.html')
@@ -41,7 +42,7 @@ class FrontPage(ViewBase):
 
         response['name'] = SITE_NAME
         context = Context(response)
-        log.debug("Context dump for %s: %s", self.__module__, context)
+        self._log.debug("Context dump for %s: %s", self.__module__, context)
         return HttpResponse(tmpl.render(context))
 
 
