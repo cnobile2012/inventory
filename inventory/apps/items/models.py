@@ -39,8 +39,8 @@ class BaseBusiness(Base):
 
 class Distributor(BaseBusiness):
 
-    def __unicode__(self):
-        return u"%s" % (self.name)
+    def __str__(self):
+        return self.name
 
     class Meta:
         ordering = ('name',)
@@ -48,8 +48,8 @@ class Distributor(BaseBusiness):
 
 class Manufacturer(BaseBusiness):
 
-    def __unicode__(self):
-        return u"%s" % (self.name)
+    def __str__(self):
+        return self.name
 
     class Meta:
         ordering = ('name',)
@@ -228,8 +228,8 @@ class Category(Base):
 
         return result
 
-    def __unicode__(self):
-        return u"%s" % self.path
+    def __str__(self):
+        return self.path
 
     class Meta:
         verbose_name_plural = _("Categories")
@@ -240,8 +240,8 @@ class Currency(Base):
     symbol =  models.CharField(max_length=1)
     currency =  models.CharField(max_length=20)
 
-    def __unicode__(self):
-        return u"%s %s" % (self.symbol, self.currency)
+    def __str__(self):
+        return "%s %s" % (self.symbol, self.currency)
 
     class Meta:
         verbose_name_plural = _("Currencies")
@@ -257,8 +257,8 @@ class Cost(Base):
     distributor = models.ForeignKey(Distributor, blank=True, null=True)
     manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
 
-    def __unicode__(self):
-        return u"%s: %s (%s)" % (self.currency, self.value, self.item)
+    def __str__(self):
+        return "%s: %s (%s)" % (self.currency, self.value, self.item)
 
     class Meta:
         ordering = ('item__title', 'invoice_number', 'date_acquired',)
@@ -273,8 +273,8 @@ class Specification(Base):
         return "%s" % self.item.title
     _displayItemTitle.short_description = _("Item Title")
 
-    def __unicode__(self):
-        return u"%s: %s (%s)" % (self.name, self.value, self.item)
+    def __str__(self):
+        return "%s: %s (%s)" % (self.name, self.value, self.item)
 
     class Meta:
         ordering = ('name',)
@@ -329,8 +329,8 @@ class Item(Base):
         return result
     _aquiredDateProducer.short_description = _("Date Aquired")
 
-    def __unicode__(self):
-        return u"%s" % self.title
+    def __str__(self):
+        return self.title
 
     class Meta:
         ordering = ('categories__path',)

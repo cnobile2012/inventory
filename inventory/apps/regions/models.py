@@ -24,6 +24,7 @@
 #----------------------------------
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from inventory.apps.utils.models import Base
 
@@ -46,11 +47,11 @@ class Country(Base):
     country_number_code = models.PositiveIntegerField(
         default=0, blank=True, null=True, verbose_name="Country Number Code")
 
-    def __unicode__(self):
-        return u"%s (%s)" % ( self.country, self.country_code_2)
+    def __str__(self):
+        return "%s (%s)" % ( self.country, self.country_code_2)
 
     class Meta:
-        verbose_name_plural = "Countries"
+        verbose_name_plural = _("Countries")
         ordering = ('country',)
 
 
@@ -62,9 +63,9 @@ class Region(Base):
     primary_level = models.CharField(max_length=50, blank=True, null=True,
                                      verbose_name="Primary Level")
 
-    def __unicode__(self):
-        return u"%s (%s %s)" % (self.region_code, self.region,
-                                self.primary_level)
+    def __str__(self):
+        return "%s (%s %s)" % (self.region_code, self.region,
+                               self.primary_level)
 
     class Meta:
         ordering = ('region', 'region_code',)
