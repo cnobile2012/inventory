@@ -75,19 +75,27 @@ class MigrateLocation(MigrateBase):
                 'char_definition',
                 'parent',
                 'segment',
+                'level',
                 'user',
                 'ctime',
                 'mtime',
                 ])
+            loc_list = []
 
             for record in LocationCodeCategory.objects.all():
                 parent = record.parent.char_definition if record.parent else ''
-                writer.writerow([record.char_definition.char_definition,
+                loc_list.append([record.char_definition.char_definition,
                                  parent,
                                  record.segment,
+                                 record._levelProducer(),
                                  record.user.username,
                                  record.ctime.isoformat(),
                                  record.mtime.isoformat()])
+
+            loc_list.sort(key=lambda x: int(x[3]))
+
+            for item in loc_list:
+                writer.writerow(item)
 
     def _create_location_defaults(self):
         data = [
@@ -100,7 +108,7 @@ class MigrateLocation(MigrateBase):
         for kwargs in data:
             name = kwargs.pop('name', '')
 
-            if not self._objects.noop:
+            if not self._options.noop:
                 obj, created = LocationDefault.objects.get_or_create(
                     name=name, defaults=kwargs)
                 defaults.append(obj)
@@ -115,13 +123,15 @@ class MigrateLocation(MigrateBase):
         default = defaults[0]
 
         with open(self._LOCATION_FORMAT, mode='r') as csvfile:
-            for row in csv.reader(csvfile):
+            for idx, row in enumerate(csv.reader(csvfile)):
+                if idx == 0: continue # Skip the header
                 char_definition = row[0]
                 segment_order = int(row[1])
                 description = row[2]
-                user = self.get_user(username=row[3])
-                ctime = parser.parse(row[4])
-                mtime = parser.parse(row[5])
+                level = row[3] # Throw away, it's auto-generated.
+                user = self.get_user(username=row[4])
+                ctime = parser.parse(row[5])
+                mtime = parser.parse(row[6])
                 kwargs = {}
                 kwargs['location_default'] = default
                 kwargs['segment_order'] = segment_order
@@ -133,25 +143,32 @@ class MigrateLocation(MigrateBase):
                 kwargs['disable_created'] = True
                 kwargs['disable_updated'] = True
 
-                obj, created = LocationFormat.objects.get_create(
-                    char_definition=char_definition, defaults=kwargs)
+                if not self._options.noop:
+                    obj, created = LocationFormat.objects.get_create(
+                        char_definition=char_definition, defaults=kwargs)
 
-                if not created:
-                    obj.location_default = default
-                    obj.segment_order = segment_order
-                    obj.description = description
-                    obj.creator = user
-                    obj.created = ctime
-                    obj.updater = user
-                    obj.updated = mtime
-                    obj.save(**{'disable_created': True,
-                                'disable_updated': True})
+                    if not created:
+                        obj.location_default = default
+                        obj.segment_order = segment_order
+                        obj.description = description
+                        obj.creator = user
+                        obj.created = ctime
+                        obj.updater = user
+                        obj.updated = mtime
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                    self._log.info("Created location format: %s", name)
+                else:
+                    self._log.info("NOOP Mode: Found location format: %s",
+                                   name)
 
     def _create_location_code(self):
         with open(self._LOCATION_CODE, mode='r') as csvfile:
-            for row in csv.reader(csvfile):
+            for idx, row in enumerate(csv.reader(csvfile)):
+                if idx == 0: continue # Skip the header
                 char_definition = row[0]
                 parent = row[1]
+                level = row[2] # Throw away, it's auto-generated.
                 segment = row[2]
                 user = self.get_user(username=row[3])
                 ctime = parser.parse(row[4])
@@ -174,18 +191,22 @@ class MigrateLocation(MigrateBase):
                 kwargs['disable_created'] = True
                 kwargs['disable_updated'] = True
 
-                obj, created = LocationCode.objects.get_or_create(
-                    char_definition=char_definition, defaults=kwargs)
+                if not self._options.noop:
+                    obj, created = LocationCode.objects.get_or_create(
+                        char_definition=char_definition, defaults=kwargs)
 
-                if not created:
-                    obj.parent = p_obj
-                    obj.segment = segment
-                    obj.creator = user
-                    obj.created = ctime
-                    obj.updater = user
-                    obj.updated = mtime
-                    obj.save(**{'disable_created': True,
-                                'disable_updated': True})
+                    if not created:
+                        obj.parent = p_obj
+                        obj.segment = segment
+                        obj.creator = user
+                        obj.created = ctime
+                        obj.updater = user
+                        obj.updated = mtime
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                    self._log.info("Created location code: %s", name)
+                else:
+                    self._log.info("NOOP Mode: Found location code: %s", name)
 
 
 if __name__ == '__main__':

@@ -15,6 +15,7 @@ inventory/static/*/
 db-snapshots/*.sql
 db-snapshots/*.sql.gz
 logs/*.log*
+*.csv
 old
 
 # C extensions
