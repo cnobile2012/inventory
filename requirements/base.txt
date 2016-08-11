@@ -22,8 +22,3 @@ redis
 rest_condition
 pyyaml
 markdown
-
-
-# Utilities
-ipython
-docutils
