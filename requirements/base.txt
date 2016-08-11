@@ -20,5 +20,4 @@ rest_condition
 markdown
 
 # Utilities
-ipython
 docutils
