@@ -22,7 +22,8 @@
 # $Date: 2010-08-29 22:22:56 -0400 (Sun, 29 Aug 2010) $
 # $Revision: 12 $
 #----------------------------------
-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -36,6 +37,7 @@ class ChooseField(object):
         pass
 
 
+@python_2_unicode_compatible
 class Country(Base):
     country = models.CharField(max_length=100)
     country_code_2 = models.CharField(
@@ -48,13 +50,14 @@ class Country(Base):
         default=0, blank=True, null=True, verbose_name="Country Number Code")
 
     def __str__(self):
-        return "%s (%s)" % ( self.country, self.country_code_2)
+        return "%s (%s)" % (self.country, self.country_code_2)
 
     class Meta:
         verbose_name_plural = _("Countries")
         ordering = ('country',)
 
 
+@python_2_unicode_compatible
 class Region(Base):
     country = models.ForeignKey(Country)
     region_code = models.CharField(max_length=10, db_index=True,

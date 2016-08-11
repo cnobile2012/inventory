@@ -10,6 +10,8 @@
 # $Revision: 88 $
 #----------------------------------
 
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -37,6 +39,7 @@ class BaseBusiness(Base):
         abstract = True
 
 
+@python_2_unicode_compatible
 class Distributor(BaseBusiness):
 
     def __str__(self):
@@ -46,6 +49,7 @@ class Distributor(BaseBusiness):
         ordering = ('name',)
 
 
+@python_2_unicode_compatible
 class Manufacturer(BaseBusiness):
 
     def __str__(self):
@@ -55,6 +59,7 @@ class Manufacturer(BaseBusiness):
         ordering = ('name',)
 
 
+@python_2_unicode_compatible
 class Category(Base):
     parent = models.ForeignKey("self", blank=True, null=True,
                                default=0, related_name='children')
@@ -236,6 +241,7 @@ class Category(Base):
         ordering = ('path',)
 
 
+@python_2_unicode_compatible
 class Currency(Base):
     symbol =  models.CharField(max_length=1)
     currency =  models.CharField(max_length=20)
@@ -248,6 +254,7 @@ class Currency(Base):
         ordering = ('symbol',)
 
 
+@python_2_unicode_compatible
 class Cost(Base):
     value = models.DecimalField(max_digits=10, decimal_places=4)
     currency = models.ForeignKey("Currency", default=1)
@@ -264,6 +271,7 @@ class Cost(Base):
         ordering = ('item__title', 'invoice_number', 'date_acquired',)
 
 
+@python_2_unicode_compatible
 class Specification(Base):
     name = models.CharField(max_length=248, blank=True, null=True)
     value = models.CharField(max_length=248, blank=True, null=True)
@@ -280,6 +288,7 @@ class Specification(Base):
         ordering = ('name',)
 
 
+@python_2_unicode_compatible
 class Item(Base):
     title = models.CharField(max_length=248, verbose_name=_("Description"))
     item_number = models.CharField(max_length=50, db_index=True,
