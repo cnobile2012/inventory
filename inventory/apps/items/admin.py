@@ -14,8 +14,8 @@ from django import forms
 from django.forms.fields import EMPTY_VALUES
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
+from django.utils import six
 
 from inventory.apps.items.models import Manufacturer, Distributor, \
      Category, Currency, Cost, Specification, Item
@@ -32,7 +32,7 @@ class RegionTypedChoiceField(forms.TypedChoiceField):
     def __init__(self, *args, **kwargs):
         empty_label = kwargs.pop('empty_label', None)
 
-        if isinstance(empty_label, (unicode, str)):
+        if isinstance(empty_label, six.string_types):
             choices = list(kwargs.get('choices', ()))
             choices.insert(0, (0, empty_label))
             kwargs['choices'] = choices
@@ -50,7 +50,7 @@ class RegionTypedChoiceField(forms.TypedChoiceField):
         if value in EMPTY_VALUES:
             value = u''
 
-        value = smart_unicode(value)
+        #value = smart_unicode(value)
 
         if value == self.empty_value or value in EMPTY_VALUES:
             return self.empty_value
@@ -103,7 +103,7 @@ class CostAdminForm(forms.ModelForm):
         log.debug("mfg: %s, dst: %s, cleaned_data: %s", mfg, dst,
                   self.cleaned_data)
 
-	if mfg and dst:
+        if mfg and dst:
             msg = _("A cost can only be assigned to one business type, " +
                     "either a distributor or a manufacturer.")
             raise forms.ValidationError(msg)

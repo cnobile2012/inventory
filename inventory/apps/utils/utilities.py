@@ -118,5 +118,5 @@ if __name__ == "__main__":
     fp = FormatParser(formats, delimiter)
 
     for seq in ('T01', 'X55', 'B01R05C09', 'A!339', '01###!AQ', 'TBD'):
-        print "Validate: %s, %s" % (seq, fp.validate(seq))
-        print "Format: %s, from: %s\n" % (fp.getFormat(seq), seq)
+        print("Validate: %s, %s" % (seq, fp.validate(seq)))
+        print("Format: %s, from: %s\n" % (fp.getFormat(seq), seq))

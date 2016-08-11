@@ -8,11 +8,13 @@
 # $Revision: 87 $
 #----------------------------------
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from inventory.apps.maintenance.views import purge, confirm, delete
 
 
-urlpatterns = patterns('inventory.apps.maintenance.views',
-    url(r'^purge/$', 'purge'),
-    url(r'^confirm/$', 'confirm'),
-    url(r'^delete/$', 'delete'),
-)
+urlpatterns = [
+    url(r'^purge/$', purge),
+    url(r'^confirm/$', confirm),
+    url(r'^delete/$', delete),
+    ]

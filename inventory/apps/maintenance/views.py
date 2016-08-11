@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, \
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 
 from inventory.settings import SITE_NAME, getLogger
 from inventory.apps.utils.views import ViewBase
@@ -63,9 +63,9 @@ class Delete(ViewBase):
                     self._deleteRecords(pks)
                     response['message'] = u"The selected records" + \
                                           u" have been deleted."
-                except DoesNotExist, e:
+                except DoesNotExist as e:
                     response['message'] = unicode(str(e))
-                except Exception, e:
+                except Exception as e:
                     # Send error message
                     pass
 
@@ -80,11 +80,11 @@ class Delete(ViewBase):
         for pk in pks:
             try:
                 record = Item.objects.get(pk=pk)
-            except Item.DoesNotExist, e:
+            except Item.DoesNotExist as e:
                 msg = u"Record [%s] does not exist" % pk
                 self._log.warning(msg + u", %s", e)
                 raise DoesNotExist(msg + u".")
-            except Exception, e:
+            except Exception as e:
                 self._log.warning(str(e))
                 raise e
 
@@ -104,7 +104,7 @@ class Delete(ViewBase):
                 self._log.info(u"Deteted record: %s with pk: %s", value, pk)
             except StopIteration:
                 break
-            except Exception, e:
+            except Exception as e:
                 self._log.error(str(e), exc_info=True)
                 raise e
 
@@ -120,7 +120,7 @@ class Delete(ViewBase):
                 self._log.info(u"Deteted record: %s with pk: %s", name, pk)
             except StopIteration:
                 break
-            except Exception, e:
+            except Exception as e:
                 self._log.error(str(e), exc_info=True)
                 raise e
 
@@ -130,7 +130,7 @@ class Delete(ViewBase):
             pk = record.pk
             record.delete()
             self._log.info(u"Deteted record: %s with pk: %s", title, pk)
-        except Exception, e:
+        except Exception as e:
             self._log.error(str(e), exc_info=True)
             raise e
 

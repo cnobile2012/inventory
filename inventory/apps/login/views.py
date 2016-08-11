@@ -9,14 +9,14 @@
 #----------------------------------
 
 import json
-from StringIO import StringIO
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template import Context, loader
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.db import models
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 
 from inventory.apps.login.forms import LoginForm, RegistrationForm
 from inventory.apps.utils.views import ViewBase

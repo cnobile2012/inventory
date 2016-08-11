@@ -2,7 +2,6 @@ from .base import *
 
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     'default': {
@@ -19,8 +18,13 @@ DATABASES = {
         'HOST': 'localhost',
         # Set to empty string for default. Not used with sqlite3.
         'PORT': '',
+        'OPTIONS': {
+            'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
+                             "SET default_storage_engine=INNODB;"),
+            'charset': 'utf8'
+            },
+        }
     }
-}
 
 #KEY_PREFIX = 'dev'
 #KEY_FUNCTION = 'inventory.common.caching.make_key'
@@ -29,7 +33,7 @@ DATABASES = {
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-#STATIC_ROOT = os.path.join(SITE_ROOT, 'dev/')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'dev/')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -43,6 +47,8 @@ MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')
+
+TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 
 # Setup the IP address from the internal clients.
 #INTERNAL_IPS = IPList(['127.0.0.1', '10.10.10.1', '192.168.1.0/24'])

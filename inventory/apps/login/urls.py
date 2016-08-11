@@ -8,13 +8,16 @@
 # $Revision: 87 $
 #----------------------------------
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from inventory.apps.login.views import (
+    createUser, processCreateUser, processLogin, logout, login)
 
 
-urlpatterns = patterns('inventory.apps.login.views',
-    url(r'^createUser/$', 'createUser'),
-    url(r'^processCreateUser/$', 'processCreateUser'),
-    url(r'^validate/$', 'processLogin'),
-    url(r'^logout/$', 'logout'),
-    url(r'^(?P<path>.*)$', 'login'),
-)
+urlpatterns = [
+    url(r'^createUser/$', createUser),
+    url(r'^processCreateUser/$', processCreateUser),
+    url(r'^validate/$', processLogin),
+    url(r'^logout/$', logout),
+    url(r'^(?P<path>.*)$', login),
+    ]

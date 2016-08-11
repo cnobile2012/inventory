@@ -10,7 +10,7 @@
 # $Revision: 78 $
 #------------------------------
 
-from StringIO import StringIO
+from django.utils import six
 from django import template
 from inventory.setupenv import getLogger
 
@@ -86,7 +86,7 @@ class BreadcrumbNode(template.Node):
         """
         Assemble the breadcrumbs.
         """
-        buff = StringIO()
+        buff = six.StringIO()
         count = 0
         size = len(locations) - 1
 

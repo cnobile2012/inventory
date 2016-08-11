@@ -18,7 +18,7 @@ log = getLogger()
 
 
 class PostalCodeField(models.CharField):
-    __metaclass__ = models.SubfieldBase
+    #__metaclass__ = models.from_db_value()
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 10
@@ -35,7 +35,7 @@ class PostalCodeField(models.CharField):
 
 
 class SizableCharField(models.CharField):
-    __metaclass__ = models.SubfieldBase
+    #__metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kwargs):
         self.input_size = kwargs.pop('input_size', 50)
@@ -51,7 +51,7 @@ class SizableCharField(models.CharField):
 
 
 class SizableTextField(models.TextField):
-    __metaclass__ = models.SubfieldBase
+    #__metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kwargs):
         self.rows = kwargs.pop('rows', 10)

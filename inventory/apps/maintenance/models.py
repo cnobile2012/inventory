@@ -174,7 +174,7 @@ class LocationCodeCategory(Base):
             self.char_definition = \
                                  LocationCodeDefault.getCharDefinitionBySegment(
                 self._parser.getFormat(self.segment))
-        except ValueError, e:
+        except ValueError as e:
             msg = "Segment does not match a Location Code Default, %s"
             raise ValidationError(msg % e)
 

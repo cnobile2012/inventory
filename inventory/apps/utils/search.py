@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 
 from inventory.apps.items.models import Item, Distributor, Manufacturer
 from .views import ViewBase

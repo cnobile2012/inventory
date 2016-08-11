@@ -99,9 +99,14 @@ class MigrateLocation(MigrateBase):
 
         for kwargs in data:
             name = kwargs.pop('name', '')
-            obj, created = LocationDefault.objects.get_or_create(
-                name=name, defaults=kwargs)
-            defaults.append(obj)
+
+            if not self._objects.noop:
+                obj, created = LocationDefault.objects.get_or_create(
+                    name=name, defaults=kwargs)
+                defaults.append(obj)
+                self._log.info("Created location default: %s", name)
+            else:
+                self._log.info("NOOP Mode: Found location default: %s", name)
 
         return defaults
 
