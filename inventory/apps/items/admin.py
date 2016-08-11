@@ -175,7 +175,15 @@ class ItemAdminForm(forms.ModelForm):
 
 # Admin and Inline
 class DistributorAdmin(BaseAdmin):
+    fieldsets = (
+        (None, {'fields': ('name', 'address_01', 'address_02', 'city',
+                'state', 'postal_code', 'country', 'phone', 'fax', 'email',
+                'url',)}),
+        (_('Status'), {'classes': ('collapse',),
+                       'fields': ('user', 'ctime', 'mtime',)}),
+        )
     list_display = ('name', 'phone', 'fax', 'email', 'url',)
+    readonly_fields = ('user', 'ctime', 'mtime',)
     ordering = ('name',)
     form = DistributorAdminForm
 
@@ -187,7 +195,15 @@ admin.site.register(Distributor, DistributorAdmin)
 
 
 class ManufacturerAdmin(BaseAdmin):
+    fieldsets = (
+        (None, {'fields': ('name', 'address_01', 'address_02', 'city',
+                'state', 'postal_code', 'country', 'phone', 'fax', 'email',
+                'url',)}),
+        (_('Status'), {'classes': ('collapse',),
+                       'fields': ('user', 'ctime', 'mtime',)}),
+        )
     list_display = ('name', 'phone', 'fax', 'email', 'url',)
+    readonly_fields = ('user', 'ctime', 'mtime',)
     ordering = ('name',)
     form = ManufacturerAdminForm
 
