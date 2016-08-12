@@ -50,7 +50,7 @@ class MigrateItem(MigrateBase):
         ##     self._create_cost()
 
     def _create_item_csv(self):
-        dynamic_columns = []
+        specifications = []
 
         with open(self._ITEM, mode='w') as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
@@ -96,24 +96,25 @@ class MigrateItem(MigrateBase):
                     ])
 
                 dc = {
-                    'item_number': record.item_number,
-                    'package': record.package,
                     'condition': record.condition,
-                    'obsolete': record.obsolete,
+                    'item_number': record.item_number,
                     'notes': record.notes,
+                    'obsolete': record.obsolete,
+                    'package': record.package,
                     }
 
                 for spec in record.specification_set.all():
                     dc[spec.name] = spec.value
 
-                dynamic_columns.append(dc)
+                specifications.append(dc)
 
-        #self._print_potential_dynamic_columns(dynamic_columns)
+        keys = self._get_dynamic_column_keys(specifications)
+        self._create_dynamic_columns(keys, specifications)
 
-    def _print_potential_dynamic_columns(self, dynamic_columns):
+    def _get_dynamic_column_keys(self, specifications):
         specs = {}
 
-        for dc in dynamic_columns:
+        for dc in specifications:
             for key in dc.keys():
                 if key in specs:
                     specs[key] += 1
@@ -123,8 +124,23 @@ class MigrateItem(MigrateBase):
         keys = list(specs.keys())
         keys.sort()
 
-        for key in keys:
-            print("{}: {}".format(key, specs.get(key)))
+        #for key in keys:
+        #    print("{}: {}".format(key, specs.get(key)))
+        return keys
+
+    def _create_dynamic_columns(self, keys, specifications):
+        dynamic_columns = []
+        #header = []
+
+        for spec in specifications:
+            dc = []
+
+            for key in keys:
+                dc.append(spec.get(key, ''))
+
+            dynamic_columns.append(dc)
+
+        print(dynamic_columns)
 
 
 if __name__ == '__main__':
