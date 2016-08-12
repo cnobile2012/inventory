@@ -268,11 +268,13 @@ class ItemAdmin(BaseAdmin):
         ('Description', {'classes': ('collapse',),
                          'fields': ('package', 'notes',)}),
         ('Status', {'classes': ('collapse',),
-                    'fields': ('active', 'obsolete', 'purge',)}),
+                    'fields': ('active', 'obsolete', 'purge', 'user', 'ctime',
+                               'mtime',)}),
         )
     list_display = ('item_number', 'title', 'quantity', 'condition',
                     '_categoryProducer', '_locationCodeProducer',
                     '_aquiredDateProducer',)
+    readonly_fields = ('user', 'ctime', 'mtime',)
     search_fields = ('item_number', 'item_number_dst', 'categories__path',
                      'item_number_mfg', 'title', 'package', 'condition',
                      'distributor__name', 'manufacturer__name', 'notes',)

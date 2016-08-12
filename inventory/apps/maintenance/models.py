@@ -83,7 +83,7 @@ class LocationCodeDefault(Base):
         return record
 
     def __str__(self):
-        return "%s" % self.char_definition
+        return self.char_definition
 
     def clean(self):
         self.segment_length = len(self.char_definition.replace('\\', ''))
@@ -227,7 +227,7 @@ class LocationCodeCategory(Base):
     ##     #return self.segment_length
 
     def __str__(self):
-        return "%s" % self.path
+        return self.path
 
     class Meta:
         verbose_name = _("Location Code")
