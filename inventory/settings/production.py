@@ -8,8 +8,13 @@ DATABASES = {
         'PASSWORD': 'inventory',
         'HOST': '',
         'PORT': '',
+        'OPTIONS': {
+            'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
+                             "SET default_storage_engine=INNODB;"),
+            'charset': 'utf8'
+            },
+        }
     }
-}
 
 #KEY_PREFIX = 'prod'
 #KEY_FUNCTION = 'testsite.common.caching.make_key'
