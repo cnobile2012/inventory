@@ -285,6 +285,7 @@ class ItemAdmin(BaseAdmin):
     ordering = ('categories__path',)
     filter_horizontal = ('categories', 'location_code',)
     inlines = (CostInline, SpecificationInline,)
+    date_hierarchy = 'ctime'
     save_as = True
 
     class Media:
