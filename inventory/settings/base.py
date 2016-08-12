@@ -48,7 +48,7 @@ TIME_ZONE = 'America/New_York'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-US'
 
 SITE_ID = 1
 
@@ -142,6 +142,23 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'inventory.wsgi.application'
+
+# Password validation
+# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'UserAttributeSimilarityValidator'),
+     },
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'MinimumLengthValidator'),
+     },
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'CommonPasswordValidator'),
+     },
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'NumericPasswordValidator'),
+     },
+    ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
