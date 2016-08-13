@@ -140,7 +140,7 @@ class MigrateItem(MigrateBase):
 
             dynamic_columns.append(dc)
 
-        print(dynamic_columns)
+        print(dynamic_columns, len(dynamic_columns))
 
 
 if __name__ == '__main__':
