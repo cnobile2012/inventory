@@ -294,10 +294,9 @@ class ItemAdmin(BaseAdmin):
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
 
-        for instance in instances:
-            instance.user = request.user
-            instance.save()
+        for form in formset.forms:
+            form.instance.user = request.user
 
-        formset.save_m2m()
+        formset.save()
 
 admin.site.register(Item, ItemAdmin)
