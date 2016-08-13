@@ -124,8 +124,10 @@ class MigrateItem(MigrateBase):
         keys = list(specs.keys())
         keys.sort()
 
-        #for key in keys:
-        #    print("{}: {}".format(key, specs.get(key)))
+        for key in keys:
+            print("{}: {}".format(key, specs.get(key)))
+
+        print(len(keys))
         return keys
 
     def _create_dynamic_columns(self, keys, specifications):
@@ -140,7 +142,7 @@ class MigrateItem(MigrateBase):
 
             dynamic_columns.append(dc)
 
-        print(dynamic_columns, len(dynamic_columns))
+        #print(dynamic_columns, len(dynamic_columns))
 
 
 if __name__ == '__main__':
