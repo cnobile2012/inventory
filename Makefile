@@ -11,6 +11,9 @@ PACKAGE_DIR	= $(shell echo $${PWD\#\#*/})
 APACHE_DIR	= $(PREFIX)/apache
 DOCS_DIR	= $(PREFIX)/docs
 LOGS_DIR	= $(PREFIX)/logs
+RM_REGEX	= '(^.*.pyc$$)|(^.*.wsgic$$)|(^.*~$$)|(.*\#$$)|(^.*,cover$$)'
+RM_CMD		= find $(PREFIX) -regextype posix-egrep -regex $(RM_REGEX) \
+                  -exec rm {} \;
 
 #----------------------------------------------------------------------
 all	: doc tar
@@ -24,8 +27,7 @@ tar	: clean
           $(PACKAGE_DIR))
 #----------------------------------------------------------------------
 clean	:
-	$(shell $(PREFIX)/cleanDirs.sh clean)
-	@(cd ${DOCS_DIR}; make clean)
+	$(shell $(RM_CMD))
 
 clobber	: clean
 	@(cd $(DOCS_DIR); make clobber)
