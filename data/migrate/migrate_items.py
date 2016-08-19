@@ -96,7 +96,7 @@ class MigrateItem(MigrateBase):
         'Length': [COLLECTION_4, ORDER_11, ''],
         'Material': [COLLECTION_4, ORDER_12, ''],
         'Mount': [COLLECTION_4, ORDER_13, ''],
-        'notes': [COLLECTION_4,, ORDER_14, '']
+        'notes': [COLLECTION_4, ORDER_14, ''],
         'obsolete': [COLLECTION_4, ORDER_15, ''],
         'Orientation': [COLLECTION_4, ORDER_16, ''],
         'package': [COLLECTION_4, ORDER_17, ''],
@@ -419,7 +419,7 @@ class MigrateItem(MigrateBase):
                 key, ('', '', 0, ''))
             user = self.get_user()
 
-            if preferred_slug and name and order, and location:
+            if preferred_slug and name and order and location:
                 kwargs = {}
 
                 if preferred_slug == 'notes':
