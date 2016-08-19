@@ -112,7 +112,7 @@ class MigrateLocation(MigrateBase):
                 obj, created = LocationDefault.objects.get_or_create(
                     name=name, defaults=kwargs)
                 defaults.append(obj)
-                self._log.info("Created location default: %s", name)
+                self._log.info("Created/Updated location default: %s", name)
             else:
                 self._log.info("NOOP Mode: Found location default: %s", name)
 
@@ -204,7 +204,9 @@ class MigrateLocation(MigrateBase):
                         obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                    self._log.info("Created location code: %s", name)
+                        self._log.info("Updated location code: %s", name)
+                    else:
+                        self._log.info("Created location code: %s", name)
                 else:
                     self._log.info("NOOP Mode: Found location code: %s", name)
 

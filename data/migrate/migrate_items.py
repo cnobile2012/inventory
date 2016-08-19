@@ -29,16 +29,93 @@ try:
     from inventory.apps.regions.models import Country
 except:
     from inventory.suppliers.models import Supplier
-    from inventory.items.models import Item, Cost
+    from inventory.items.models import Item, Cost, Condition
     from inventory.regions.models import Country
     from inventory.maintanence.models import Currency, LocationCode
     from dcolumn.dcolumns.models import ColumnCollection, DynamicColumn
+    from dcolumn.dcolumns.manager import dcolumn_manager
 
 
 class MigrateItem(MigrateBase):
     _ITEM = 'item.csv'
     _COST = 'cost.csv'
     _DYNAMIC_COLUMN = 'dynamic_column.csv'
+
+    COLLECTION_1 = "Battery (Electric)"
+    COLLECTION_2 = "Capacitor (Electric)"
+    COLLECTION_3 = "Fan (Electric)"
+    COLLECTION_4 = "General (Electric)"
+    COLLECTION_5 = "Hardware (Electric)"
+    COLLECTION_6 = "Inductor (Electric)"
+    COLLECTION_7 = "Motor (Electric)"
+    COLLECTION_8 = "Resistor (Electric)"
+    COLLECTION_9 = "Switch/Relay (Electric)"
+    COLLECTION_10 = "Wire (Electric)"
+    ORDER_1 = 1
+    ORDER_2 = 2
+    ORDER_3 = 3
+    ORDER_4 = 4
+    ORDER_5 = 5
+    ORDER_6 = 6
+    ORDER_7 = 7
+    ORDER_8 = 8
+    ORDER_9 = 9
+    ORDER_10 = 10
+    ORDER_11 = 11
+    ORDER_12 = 12
+    ORDER_13 = 13
+    ORDER_14 = 14
+    ORDER_15 = 15
+    ORDER_16 = 16
+    ORDER_17 = 17
+    ORDER_18 = 18
+    ORDER_19 = 19
+    ORDER_20 = 20
+    ORDER_21 = 21
+    ORDER_22 = 22
+    ORDER_23 = 23
+    ORDER_24 = 24
+    ORDER_25 = 25
+    ORDER_26 = 26
+
+    SPECS = {
+        'AWG': [COLLECTION_10, ORDER_1, ''],
+        'Amp Hours': [COLLECTION_1, ORDER_1, ''],
+        'CFM': [COLLECTION_3, ORDER_1, ''],
+        'Capacitance': [COLLECTION_2, ORDER_1, ''],
+        'Color': [COLLECTION_4, ORDER_1, ''],
+        'condition': [COLLECTION_4, ORDER_2, ''],
+        'Configuration': [COLLECTION_4, ORDER_3, ''],
+        'Contacts': [COLLECTION_4, ORDER_4, ''],
+        'Current': [COLLECTION_4, ORDER_5, ''],
+        'Depth': [COLLECTION_4, ORDER_6, ''],
+        'Diameter': [COLLECTION_4, ORDER_7, ''],
+        'Dimensions': [COLLECTION_4, ORDER_8, ''],
+        'Height': [COLLECTION_4, ORDER_9, ''],
+        'Lead Spacing': [COLLECTION_4, ORDER_10, ''],
+        'Length': [COLLECTION_4, ORDER_11, ''],
+        'Material': [COLLECTION_4, ORDER_12, ''],
+        'Mount': [COLLECTION_4, ORDER_13, ''],
+        'notes': [COLLECTION_4,, ORDER_14, '']
+        'obsolete': [COLLECTION_4, ORDER_15, ''],
+        'Orientation': [COLLECTION_4, ORDER_16, ''],
+        'package': [COLLECTION_4, ORDER_17, ''],
+        'Pins': [COLLECTION_4, ORDER_18, ''],
+        'Polarity': [COLLECTION_4, ORDER_19, ''],
+        'Positions': [COLLECTION_9, ORDER_1, ''],
+        'Power': [COLLECTION_4, ORDER_20, ''],
+        'Resistance': [COLLECTION_8, ORDER_1, ''],
+        'Shaft': [COLLECTION_7, ORDER_1, ''],
+        'Step Angle': [COLLECTION_7, ORDER_2, ''],
+        'Temperature': [COLLECTION_4, ORDER_21, ''],
+        'Thread': [COLLECTION_5, ORDER_1, ''],
+        'Tolerance': [COLLECTION_4, ORDER_22, ''],
+        'Turns': [COLLECTION_6, ORDER_1, ''],
+        'Type': [COLLECTION_4, ORDER_23, ''],
+        'Voltage': [COLLECTION_4, ORDER_24, ''],
+        'Weight': [COLLECTION_4, ORDER_25, ''],
+        'Width': [COLLECTION_4, ORDER_26, ''],
+        }
 
     def __init__(self, log, options):
         super(MigrateItem, self).__init__(log)
@@ -52,7 +129,9 @@ class MigrateItem(MigrateBase):
         if self._options.populate:
             self._create_item()
             self._create_cost()
-            self._create_dynamic_column()
+            slug_map, dc_map = self._create_dynamic_column()
+            self._create_collection(dc_map)
+            self._create_key_value(slug_map)
 
     def _create_item_csv(self):
         specifications = []
@@ -258,7 +337,10 @@ class MigrateItem(MigrateBase):
                         obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                    self._log.info("Created item: %s", name)
+                        self._log.info("Updated item: %s", name)
+                    else:
+                        self._log.info("Created item: %s", name)
+
                 else:
                     self._log.info("NOOP Mode: Found item: %s", name)
 
@@ -313,110 +395,119 @@ class MigrateItem(MigrateBase):
                         obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                    self._log.info("Created cost: %s", name)
+                        self._log.info("Updated cost: %s", name)
+                    else:
+                        self._log.info("Created cost: %s", name)
                 else:
                     self._log.info("NOOP Mode: Found cost: %s", name)
 
     def _create_dynamic_column(self):
-        with open(self._DYNAMIC_COLUMN, mode='r') as csvfile:
-            slug_map = {}
+        slug_map = {}
+        dc_map = {}
+        choice2index = dict(
+            [(v, k) for k, v in dcolumn_manager.choice_relations])
 
+        with open(self._DYNAMIC_COLUMN, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0:
                     slug_map.update(self._remap_key_names(row))
+                    break
 
-                awg = row[0]
-                amp_hour = row[1]
-                cfm = row[2]
-                capacitance = row[3]
-                color = row[4]
-                configuration = row[5]
-                contacts = row[6]
-                current = row[7]
-                depth = row[8]
-                diameter = row[9]
-                dimensions = row[10]
-                height = row[11]
-                lead_spacing = row[12]
-                length = row[13]
-                material = row[14]
-                mount = row[15]
-                orientation = row[16]
-                pins = row[17]
-                polarity = row[18]
-                positions = row[19]
-                power = row[20]
-                resistance = row[21]
-                shaft = row[22]
-                step_angle = row[23]
-                temperature = row[24]
-                thread = row[25]
-                tolerance = row[26]
-                turns = row[27]
-                typeX = row[28]
-                voltage = row[29]
-                weight = row[30]
-                width = row[31]
-                condition = row[32]
-                item_number = row[33]
-                notes = row[34]
-                obsolete = row[35]
-                package = row[36]
+        for key in slug_map:
+            name = key
+            preferred_slug, collection_name, order, location = slug_map.get(
+                key, ('', '', 0, ''))
+            user = self.get_user()
+
+            if preferred_slug and name and order, and location:
                 kwargs = {}
 
+                if preferred_slug == 'notes':
+                    value_type = DynamicColumn.TEXT_BLOCK
+                elif preferred_slug == 'obsolete':
+                    value_type = DynamicColumn.BOOLEAN
+                    required = DynamicColumn.YES
+                elif preferred_slug == 'positions':
+                    value_type = DynamicColumn.NUMBER
+                elif preferred_slug == 'condition':
+                    value_type = DynamicColumn.CHOICE
+                    relation = choice2index.get('Condition')
+                    required = DynamicColumn.YES
+                    kwargs['relation'] = relation
+                    kwargs['required'] = required
+                else:
+                    value_type = DynamicColumn.TEXT
+            else:
+                msg = ("Invalid preferred_slug: {}, or name: {}, or order: {} "
+                       "objects for {}.").format(
+                    preferred_slug, name, order, key)
+                self._log.critical(msg)
+                raise ValueError(msg)
 
+            kwargs['value_type'] = value_type
+            kwargs['order'] = order
+            kwargs['location'] = location
+            kwargs['creator'] = user
+            kwargs['updater'] = user
 
+            if not self._options.noop:
+                obj, created = DynamicColumn.objects.get_or_create(
+                    slug=preferred_slug, defaults=kwargs)
 
+                if not created:
+                    obj.name = name
+                    obj.value_type = value_type
 
-    COLLECTION_1 = "Battery (Electric)"
-    COLLECTION_2 = "Capacitor (Electric)"
-    COLLECTION_3 = "Fan (Electric)"
-    COLLECTION_4 = "General (Electric)"
-    COLLECTION_5 = "Hardware (Electric)"
-    COLLECTION_6 = "Inductor (Electric)"
-    COLLECTION_7 = "Motor (Electric)"
-    COLLECTION_8 = "Resistor (Electric)"
-    COLLECTION_9 = "Switch/Relay (Electric)"
-    COLLECTION_10 = "Wire (Electric)"
+                    if kwargs.get('relation'):
+                        obj.relation = relation
 
-    SPECS = {
-        'AWG': COLLECTION_10,
-        'Amp Hours': COLLECTION_1,
-        'CFM': COLLECTION_3,
-        'Capacitance': COLLECTION_2,
-        'Color': COLLECTION_4,
-        'condition': COLLECTION_4,
-        'Configuration': COLLECTION_4,
-        'Contacts': COLLECTION_4,
-        'Current': COLLECTION_4,
-        'Depth': COLLECTION_4,
-        'Diameter': COLLECTION_4,
-        'Dimensions': COLLECTION_4,
-        'Height': COLLECTION_4,
-        'Lead Spacing': COLLECTION_4,
-        'Length': COLLECTION_4,
-        'Material': COLLECTION_4,
-        'Mount': COLLECTION_4,
-        'notes': COLLECTION_4,
-        'obsolete': COLLECTION_4,
-        'Orientation': COLLECTION_4,
-        'package': COLLECTION_4,
-        'Pins': COLLECTION_4,
-        'Polarity': COLLECTION_4,
-        'Positions': COLLECTION_9,
-        'Power': COLLECTION_4,
-        'Resistance': COLLECTION_8,
-        'Shaft': COLLECTION_7,
-        'Step Angle': COLLECTION_7,
-        'Temperature': COLLECTION_4,
-        'Thread': COLLECTION_5,
-        'Tolerance': COLLECTION_4,
-        'Turns': COLLECTION_6,
-        'Type': COLLECTION_4,
-        'Voltage': COLLECTION_4,
-        'Weight': COLLECTION_4,
-        'Width': COLLECTION_4,
-        }
+                    if kwargs.get('required'):
+                        obj.required = required
+
+                    obj.location = location
+                    obj.order = order
+                    obj.save(**{'disable_created': True,
+                                'disable_updated': True})
+                    self._log.info("Updated DynamicColumn: %s", name)
+                else:
+                    self._log.info("Created DynamicColumn: %s", name)
+
+                collection = dc_map.setdefault(collection_name, set())
+                collection.add(obj)
+            else:
+                self._log.info("NOOP Mode: Found DynamicColumn: %s", name)
+
+        return slug_map, dc_map
+
+    def _create_collection(self, dc_map):
+        for key, value in dc_map.items():
+            if not self._options.noop:
+                obj, created = ColumnCollection.objects.get_or_create(
+                    name=key, related_model=Item.__name__)
+                obj.process_dynamic_columns(value)
+                self._log.info("Created/Updated ColumnCollection: %s", key)
+            else:
+                self._log.info("NOOP Mode: Found ColumnCollection: %s", key)
+
+    def _create_key_value(self, slug_map):
+        with open(self._DYNAMIC_COLUMN, mode='r') as csvfile:
+            headers = []
+
+            for idx, row in enumerate(csv.reader(csvfile)):
+                if idx == 0:
+                    headers[:] = row
+                    continue
+
+                item_number = row[33]
+                item_obj = Item.objects.get(item_number=item_number)
+                # Get only the columns used with this item.
+                values = [col for col in row if col not in ("", 'item_number')]
+
+                for value in values:
+                    header = headers[row.index(value)]
+                    slug, collection_name, order, location = slug_map.get(
+                        header, ('', '', 0, ''))
+                    item_obj.set_key_value(slug, value)
 
     def _remap_key_names(self, keys):
         slug_map = {key: [slugify(key)] for key in keys}
@@ -424,39 +515,10 @@ class MigrateItem(MigrateBase):
 
         for key, value in self.SPECS.items():
             key_list = slug_map.get(key, [])
-            key_list.append(value)
+            key_list += value
 
         #print(slug_map)
         return slug_map
-
-    def _create_dynamic_column_record(
-        self, name, value_type, location, order, preferred_slug=None,
-        relation=None, required=False, active=True, store_relation=False):
-        kwargs = {}
-        kwargs['name'] = name
-        kwargs['preferred_slug'] = preferred_slug
-        kwargs['value_type'] = value_type
-        kwargs['relation'] = relation
-        kwargs['required'] = required
-        kwargs['store_relation'] = store_relation
-        kwargs['location'] = location
-        kwargs['order'] = order
-        kwargs['active'] = active
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
-        return DynamicColumn.objects.create(**kwargs)
-
-    def _create_column_collection_record(self, name, related_model,
-                                         dynamic_columns=[], active=True):
-        kwargs = {}
-        kwargs['name'] = name
-        kwargs['related_model'] = related_model
-        kwargs['active'] = active
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
-        obj = ColumnCollection.objects.create(**kwargs)
-        obj.process_dynamic_columns(dynamic_columns)
-        return obj
 
 
 if __name__ == '__main__':

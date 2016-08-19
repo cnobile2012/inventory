@@ -98,7 +98,9 @@ class MigrateCategory(MigrateBase):
                         obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                    self._log.info("Created category: %s", name)
+                        self._log.info("Updated category: %s", name)
+                    else:
+                        self._log.info("Created category: %s", name)
                 else:
                     self._log.info("NOOP Mode: Found category: %s", name)
 

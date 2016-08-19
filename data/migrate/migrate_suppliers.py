@@ -128,7 +128,7 @@ class MigrateSupplier(MigrateBase):
                 kwargs['disable_updated'] = True
 
                 if not self._options.noop:
-                    obj, created = Supplier.objects.get_create(
+                    obj, created = Supplier.objects.get_or_create(
                         name=name, defaults=kwargs)
 
                     if not created:
@@ -149,7 +149,9 @@ class MigrateSupplier(MigrateBase):
                         obj.updated = updated
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                    self._log.info("Created supplier: %s", name)
+                        self._log.info("Updated supplier: %s", name)
+                    else:
+                        self._log.info("Created supplier: %s", name)
                 else:
                     self._log.info("NOOP Mode: Found supplier: %s", name)
 
