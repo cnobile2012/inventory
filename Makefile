@@ -16,19 +16,27 @@ RM_CMD		= find $(PREFIX) -regextype posix-egrep -regex $(RM_REGEX) \
                   -exec rm {} \;
 
 #----------------------------------------------------------------------
-all	: doc tar
+all	: tar
 
-#----------------------------------------------------------------------
-doc	:
-	@(cd $(DOCS_DIR); make)
-#----------------------------------------------------------------------
+.PHONY	: tar
 tar	: clean
 	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz --exclude=".svn" \
           $(PACKAGE_DIR))
+
+.PHONY	: coverage
+coverage: clean
+	@rm -rf $(DOCS_DIR)/htmlcov
+	coverage erase
+	coverage run ./manage.py test
+	coverage report
+	coverage html
+
 #----------------------------------------------------------------------
+.PHONE	: clean
 clean	:
 	$(shell $(RM_CMD))
 
+.PHONE	: clobber
 clobber	: clean
 	@(cd $(DOCS_DIR); make clobber)
 	@rm -f $(LOGS_DIR)/*.log*

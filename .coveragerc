@@ -1,0 +1,22 @@
+[run]
+source = .
+
+omit =
+    ../*migrations*
+    *urls*
+    *tests*
+    *admin*
+
+[report]
+show_missing = True
+skip_covered = True
+precision = 2
+
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+[html]
+title = Inventory Coverage Report
+directory = docs/htmlcov
