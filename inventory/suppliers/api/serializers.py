@@ -10,15 +10,13 @@ from rest_framework import serializers
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.accounts.api.serializers import UserSerializer
 from inventory.suppliers.models import Supplier
-from inventory.regions.models import Region, Country
+from inventory.regions.models import Country
 
 
 log = logging.getLogger('api.suppliers.serializers')
 
 
 class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
-    region = serializers.HyperlinkedRelatedField(
-        view_name='region-detail', queryset=Region.objects.all())
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', queryset=Country.objects.all())
     creator = serializers.HyperlinkedRelatedField(

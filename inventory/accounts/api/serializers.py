@@ -12,7 +12,7 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.projects.models import Project
-from inventory.regions.models import Region, Country
+from inventory.regions.models import Country
 
 from ..models import Question, Answer
 
@@ -24,9 +24,6 @@ User = get_user_model()
 # User
 #
 class UserSerializer(serializers.ModelSerializer):
-    region = serializers.HyperlinkedRelatedField(
-        view_name='region-detail', queryset=Region.objects.all(),
-        default=None)
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', queryset=Country.objects.all(),
         default=None)

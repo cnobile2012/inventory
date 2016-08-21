@@ -14,7 +14,7 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
 
-from inventory.regions.models import Region, Country
+from inventory.regions.models import Country
 from inventory.projects.models import Project
 from inventory.common.storage import InventoryFileStorage
 from inventory.common.model_mixins import (
@@ -146,8 +146,8 @@ class User(AbstractUser, ValidateOnSaveMixin):
         verbose_name=_("Address 2"), max_length=50, null=True, blank=True)
     city = models.CharField(
         verbose_name=_("City"), max_length=30, null=True, blank=True)
-    region = models.ForeignKey(
-        Region, verbose_name=_("State/Province"), null=True, blank=True)
+    region = models.CharField(
+        verbose_name=_("State/Province"), max_length=30, null=True, blank=True)
     postal_code = models.CharField(
         verbose_name=_("Postal Code"), max_length=15, null=True, blank=True)
     country = models.ForeignKey(

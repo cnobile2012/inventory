@@ -81,41 +81,6 @@ class Country(StatusModelMixin):
 
 
 #
-# Region
-#
-class RegionManager(StatusModelManagerMixin, models.Manager):
-    pass
-
-
-class Region(TimeModelMixin, UserModelMixin, StatusModelMixin):
-    """
-    This model implements region functionality.
-    """
-    country = models.ForeignKey(
-        Country, verbose_name=_("Country"), related_name='regions')
-    region_code = models.CharField(
-        verbose_name=_("Region Code"), max_length=10, db_index=True)
-    region = models.CharField(
-        verbose_name=_("Region"), max_length=100)
-    primary_level = models.CharField(
-        verbose_name=_("Primary Level"), max_length=50, blank=True, null=True)
-
-    objects = RegionManager()
-
-    class Meta:
-        unique_together = ('country', 'region',)
-        ordering = ('region', 'region_code',)
-        verbose_name = _("Region")
-        verbose_name_plural = _("Regions")
-
-    def save(self, *args, **kwargs):
-        super(Region, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.region
-
-
-#
 # Language
 #
 class LanguageManager(StatusModelManagerMixin, models.Manager):

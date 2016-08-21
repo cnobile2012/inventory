@@ -8,9 +8,6 @@
 import os
 import sys
 
-from inventory.apps.items.settings import *
-from inventory.apps.login.settings import *
-
 DEBUG = False
 
 ADMINS = (
@@ -30,8 +27,6 @@ TIME_ZONE = 'America/New_York'
 LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
-
-SITE_NAME = "TetraSys Inventory"
 
 # Where is the 'website' directory with settings dir, apps, urls.py, etc. are.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -143,21 +138,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dcolumn.dcolumns',
     'rest_framework',
-    'oauth2_provider',
+    #'oauth2_provider',
     #'guardian',
     'inventory.common',
     'inventory.accounts',
-    'inventory.oauth2',
+    #'inventory.oauth2',
     'inventory.projects',
     'inventory.regions',
     'inventory.suppliers',
     'inventory.categories',
     'inventory.maintenance',
     #'inventory.objects',
-    # Will be removed over time.
-    'inventory.apps.items',
-    'inventory.apps.login',
-    'inventory.apps.reports',
     ]
 
 TEMPLATES = [
@@ -166,7 +157,6 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
             ],
-#        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -181,18 +171,18 @@ TEMPLATES = [
                 'django.template.loaders.app_directories.Loader',
                 #'django.template.loaders.eggs.Loader',
                 ],
+            },
         },
-    },
-]
+    ]
 
-OAUTH2_PROVIDER = {
-    # This is the list of available scopes.
-    'SCOPES': {
-        'read': 'Read scope',
-        'write': 'Write scope',
-        'groups': 'Access to your groups'
-        }
-    }
+## OAUTH2_PROVIDER = {
+##     # This is the list of available scopes.
+##     'SCOPES': {
+##         'read': 'Read scope',
+##         'write': 'Write scope',
+##         'groups': 'Access to your groups'
+##         }
+##     }
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -234,11 +224,11 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': "%(asctime)s %(levelname)s %(module)s %(funcName)s "
-            "[line:%(lineno)d] %(message)s"
+            'format': ("%(asctime)s %(levelname)s %(name)s %(funcName)s "
+                       "[line:%(lineno)d] %(message)s"),
             },
         'simple': {
-            'format': '%(asctime)s %(levelname)s %(message)s'
+            'format': '%(asctime)s %(levelname)s %(message)s',
             },
         },
     'filters': {
@@ -251,15 +241,15 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
+            'include_html': 'True',
             },
         'console': {
             'level': 'WARNING',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
             },
-        # Remove this one in the future.
         'inventory_file': {
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'inventory.common.loghandlers.DeferredRotatingFileHandler',
             'level': 'DEBUG',
             'formatter': 'verbose',
             'filename': '/dev/null',
@@ -277,18 +267,23 @@ LOGGING = {
         },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': True,
             },
         'inventory': {
-            'handlers': ('inventory_file', 'console', 'mail_admins',),
+            'handlers': ('inventory_file', 'mail_admins',),
             'level': 'ERROR',
             'propagate': True,
             },
         'api': {
-            'handlers': ('api_file', 'console', 'mail_admins',),
+            'handlers': ('api_file', 'mail_admins',),
             'level': 'ERROR',
+            'propagate': True,
+            },
+        'test': {
+            'handlers': ('inventory_file', 'mail_admins',),
+            'level': 'DEBUG',
             'propagate': True,
             },
         }

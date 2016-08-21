@@ -5,7 +5,7 @@
 
 from django import forms
 
-from .models import Country, Language, TimeZone, Region
+from .models import Country, Language, TimeZone
 
 
 #
@@ -59,14 +59,4 @@ class TimeZoneForm(forms.ModelForm):
 
     class Meta:
         model = TimeZone
-        exclude = []
-
-
-#
-# Region
-#
-class RegionForm(forms.ModelForm):
-
-    class Meta:
-        model = Region
         exclude = []

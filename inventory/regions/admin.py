@@ -8,37 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin
 
-from .models import Country, Language, TimeZone, Region
+from .models import Country, Language, TimeZone
 from .forms import CountryForm, LanguageForm, TimeZoneForm
-
-
-# Admin and Inline
-@admin.register(Region)
-class RegionAdmin(UserAdminMixin, admin.ModelAdmin):
-    fieldsets = (
-        (None, {'fields': ('country', 'region_code', 'region',
-                           'primary_level',)}),
-        (_('Status'), {'classes': ('collapse',),
-                       'fields': ('active', 'creator', 'created', 'updater',
-                                  'updated',)}),
-        )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('country', 'region', 'primary_level', 'region_code',
-                    'active',)
-    list_editable = ('active',)
-    search_fields = ('country__country', 'region_code', 'region',
-                     'primary_level',)
-    list_filter = ('active',)
-    ordering = ('country__country', 'region_code',)
-
-
-class RegionInline(admin.TabularInline):
-    fields = ('region', 'region_code', 'primary_level', 'active', 'creator',
-              'created', 'updater', 'updated',)
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    ordering = ('region',)
-    model = Region
-    extra = 1
 
 
 #

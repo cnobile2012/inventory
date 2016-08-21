@@ -9,7 +9,4 @@ from inventory.maintenance import views
 
 
 urlpatterns = [
-    url(r'^purge/$', views.purge),
-    url(r'^confirm/$', views.confirm),
-    url(r'^delete/$', views.delete),
     ]
