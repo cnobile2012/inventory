@@ -250,12 +250,10 @@ class MigrateItem(MigrateBase):
                 'currency',
                 'date_acquired',
                 'invoice_number',
-                'item',
+                'item_number',
+                'item_created',
                 'distributor',
                 'manufacturer',
-                'user',
-                'ctime',
-                'mtime'
                 ])
 
             for record in Cost.objects.all():
@@ -267,11 +265,9 @@ class MigrateItem(MigrateBase):
                     date_acquired,
                     record.invoice_number.encode('utf-8'),
                     record.item.item_number.encode('utf-8'),
+                    record.item.ctime.isoformat(),
                     record.distributor.name if record.distributor else '',
                     record.manufacturer.name if record.manufacturer else '',
-                    record.user.username,
-                    record.ctime.isoformat(),
-                    record.mtime.isoformat()
                     ])
 
     def _create_item(self):
@@ -299,9 +295,9 @@ class MigrateItem(MigrateBase):
 
                 active = row[9]
                 purge = row[10]
-                user = self.get_user(username=row[3])
-                ctime = parser.parse(row[4])
-                mtime = parser.parse(row[5])
+                user = self.get_user(username=row[11])
+                ctime = parser.parse(row[12])
+                mtime = parser.parse(row[13])
                 kwargs = {}
                 kwargs['description'] = title
                 kwargs['item_number_mfg'] = item_number_mfg
@@ -355,29 +351,20 @@ class MigrateItem(MigrateBase):
                 currency = row[1]
                 date_acquired = parser.parse(row[2])
                 invoice_number = row[3]
-                item = Item.objects.get(item_number=row[4])
+                item = Item.objects.get(item_number=row[4], created=row[5])
 
                 if row[5]:
-                    supplier = Supplier.object.get(name=row[5])
-                elif row[6]:
                     supplier = Supplier.object.get(name=row[6])
+                elif row[6]:
+                    supplier = Supplier.object.get(name=row[7])
                 else:
                     supplier = ''
 
-                user = self.get_user(username=row[3])
-                ctime = parser.parse(row[4])
-                mtime = parser.parse(row[5])
                 kwargs = {}
                 kwargs['currency'] = Currency.objects.get(symbol=currency)
                 kwargs['date_acquired'] = date_acquired
                 kwargs['item'] = item
                 kwargs['supplier'] = supplier
-                kwargs['creator'] = user
-                kwargs['created'] = ctime
-                kwargs['updater'] = user
-                kwargs['updated'] = mtime
-                kwargs['disable_created'] = True
-                kwargs['disable_updated'] = True
 
                 if not self._options.noop:
                     obj, created = Cost.objects.get_or_create(
@@ -389,12 +376,7 @@ class MigrateItem(MigrateBase):
                         obj.date_acquired = date_acquired
                         obj.item = item
                         obj.supplier = supplier
-                        obj.creator = user
-                        obj.created = ctime
-                        obj.updater = user
-                        obj.updated = mtime
-                        obj.save(**{'disable_created': True,
-                                    'disable_updated': True})
+                        obj.save()
                         self._log.info("Updated cost: %s", name)
                     else:
                         self._log.info("Created cost: %s", name)
