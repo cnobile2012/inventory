@@ -38,6 +38,11 @@ urlpatterns = [
 if settings.DEBUG:
     # Static media files.
     urlpatterns += [
-        url(r'^media/(?P<path>.*)$', serve,
-            {'document_root': settings.MEDIA_ROOT}),
+        url(r'^dev/(?P<path>.*)$', serve,
+            {'document_root': settings.STATIC_URL, 'show_indexes': True}),
+        ]
+else:
+    urlpatterns += [
+        url(r'^static/(?P<path>.*)$', serve,
+            {'document_root': settings.STATIC_URL, 'show_indexes': True}),
         ]
