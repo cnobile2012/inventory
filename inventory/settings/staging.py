@@ -42,9 +42,12 @@ DOC_CONTACTS = (
 LOG_ENV = 'stage'
 LOG_FILE = '{}/{}-general.log'.format(LOG_DIR, LOG_ENV)
 LOG_API_FILE = '{}/{}-api.log'.format(LOG_DIR, LOG_ENV)
+LOG_CMD_FILE = '{}/{}-commands.log'.format(LOG_DIR, LOG_ENV)
 
 LOGGING.get('handlers', {}).get('inventory_file', {})['filename'] = LOG_FILE
 LOGGING.get('handlers', {}).get('api_file', {})['filename'] = LOG_API_FILE
+LOGGING.get('handlers', {}).get('command_file', {})['filename'] = LOG_API_FILE
 
 LOGGING.get('loggers', {}).get('inventory', {})['level'] = 'INFO'
 LOGGING.get('loggers', {}).get('api', {})['level'] = 'INFO'
+LOGGING.get('loggers', {}).get('commands', {})['level'] = 'DEBUG'

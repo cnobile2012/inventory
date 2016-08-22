@@ -286,6 +286,14 @@ LOGGING = {
             'maxBytes': 50000000,  # 50 Meg bytes
             'backupCount': 5,
             },
+        'command_file': {
+            'class': 'inventory.common.loghandlers.DeferredRotatingFileHandler',
+            'level': 'DEBUG',
+            'formatter': 'verbose',
+            'filename': '/dev/null',
+            'maxBytes': 50000000,  # 50 Meg bytes
+            'backupCount': 5,
+            },
         },
     'loggers': {
         'django.request': {
@@ -303,7 +311,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
             },
-        'test': {
+        'commands': {
+            'handlers': ('command_file', 'mail_admins',),
+            'level': 'ERROR',
+            'propagate': True,
+            },
+        'tests': {
             'handlers': ('inventory_file', 'mail_admins',),
             'level': 'DEBUG',
             'propagate': True,
