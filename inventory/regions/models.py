@@ -2,10 +2,17 @@
 #
 # inventory/regions/models.py
 #
+from __future__ import unicode_literals
+
+"""
+Country, Language, and Timezone region models.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.model_mixins import (
@@ -19,42 +26,10 @@ log = logging.getLogger('inventory.regions.models')
 # Country
 #
 class CountryManager(StatusModelManagerMixin, models.Manager):
-
-    def get_regions_by_country(self, country, code=False):
-        """
-        Get the regions associated with the provided country.
-        """
-        query = []
-        result = []
-
-        if isinstance(country, (int, long)):
-            if not code:
-                query.append(models.Q(pk=country))
-            else:
-                query.append(models.Q(country_number_code=country))
-        else:
-            # Could just be luck, but couldn't find any country names
-            # shorter that four characters.
-            if len(country) == 2:
-                query.append(models.Q(country_code_2=country))
-            elif len(country) == 3:
-                query.append(models.Q(country_code_3=country))
-            else:
-                query.append(models.Q(country=country))
-
-        countries = self.filter(*query)
-
-        if countries:
-            if countries.count() > 1:
-                log.error("Something is wrong, should only have one country "
-                          "object, found: %s, country: %s, code: %s",
-                          countries, country, code)
-
-            result = countries[0].regions.all()
-
-        return result
+    pass
 
 
+@python_2_unicode_compatible
 class Country(StatusModelMixin):
     """
     This model implements country functionality.
@@ -62,7 +37,7 @@ class Country(StatusModelMixin):
     country = models.CharField(
         verbose_name=_("Country"), max_length=100,
         help_text=_("The country name."))
-    country_code_2 = models.CharField(
+    code = models.CharField(
         verbose_name=_("Code"), max_length=2, db_index=True,
         unique=True, help_text=_("The two character country code."))
 
@@ -103,6 +78,7 @@ class LanguageManager(StatusModelManagerMixin, models.Manager):
         return data
 
 
+@python_2_unicode_compatible
 class Language(StatusModelMixin, ValidateOnSaveMixin):
     locale = models.CharField(
         verbose_name=_("Locale"), max_length=5, unique=True, null=True,
@@ -139,7 +115,8 @@ class TimeZoneManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-class TimeZone(StatusModelMixin, ValidateOnSaveMixin):
+@python_2_unicode_compatible
+class TimeZone(StatusModelMixin):
     zone = models.CharField(
         verbose_name=_("Timezone"), max_length=2,
         help_text=_("The timezone (zoneinfo)."))
@@ -154,9 +131,6 @@ class TimeZone(StatusModelMixin, ValidateOnSaveMixin):
         help_text=_("Zone description."))
 
     objects = TimeZoneManager()
-
-    def clean(self):
-        pass
 
     def save(self, *args, **kwargs):
         super(TimeZone, self).save(*args, **kwargs)

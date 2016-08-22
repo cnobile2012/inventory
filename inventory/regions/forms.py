@@ -2,6 +2,10 @@
 #
 # inventory/regions/forms.py
 #
+"""
+Country, Language, and Timezone region forms.
+"""
+__docformat__ = "restructuredtext en"
 
 from django import forms
 
@@ -18,7 +22,7 @@ class CountryForm(forms.ModelForm):
         Set some fields to custom values.
         """
         super(CountryForm, self).__init__(*args, **kwargs)
-        self.fields['country_code_2'].widget = forms.TextInput(
+        self.fields['code'].widget = forms.TextInput(
             attrs={'size': 2, 'maxlength': 2})
 
     class Meta:
