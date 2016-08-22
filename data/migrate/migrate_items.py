@@ -30,8 +30,8 @@ try:
 except:
     from inventory.suppliers.models import Supplier
     from inventory.items.models import Item, Cost, Condition
-    from inventory.regions.models import Country
-    from inventory.maintanence.models import Currency, LocationCode
+    from inventory.regions.models import Country, Currency
+    from inventory.locations.models import LocationCode
     from dcolumn.dcolumns.models import ColumnCollection, DynamicColumn
     from dcolumn.dcolumns.manager import dcolumn_manager
 
@@ -247,7 +247,6 @@ class MigrateItem(MigrateBase):
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             writer.writerow([
                 'value',
-                'currency',
                 'date_acquired',
                 'invoice_number',
                 'item_number',
@@ -261,7 +260,6 @@ class MigrateItem(MigrateBase):
                                  if record.date_acquired else '')
                 writer.writerow([
                     record.value,
-                    record.currency.symbol.encode('utf-8'),
                     date_acquired,
                     record.invoice_number.encode('utf-8'),
                     record.item.item_number.encode('utf-8'),
@@ -348,20 +346,20 @@ class MigrateItem(MigrateBase):
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
                 value = row[0]
-                currency = row[1]
-                date_acquired = parser.parse(row[2])
-                invoice_number = row[3]
-                item = Item.objects.get(item_number=row[4], created=row[5])
+                date_acquired = parser.parse(row[1])
+                invoice_number = row[2]
+                item = Item.objects.get(item_number=row[3], created=row[4])
 
                 if row[5]:
-                    supplier = Supplier.object.get(name=row[6])
+                    supplier = Supplier.object.get(name=row[5])
                 elif row[6]:
-                    supplier = Supplier.object.get(name=row[7])
+                    supplier = Supplier.object.get(name=row[6])
                 else:
                     supplier = ''
 
                 kwargs = {}
-                kwargs['currency'] = Currency.objects.get(symbol=currency)
+                kwargs['currency'] = Currency.objects.get(
+                    entity__code='US', alphabetic_code='USD')
                 kwargs['date_acquired'] = date_acquired
                 kwargs['item'] = item
                 kwargs['supplier'] = supplier
