@@ -16,32 +16,6 @@ from .validation import FormatValidator
 
 
 #
-# Currency
-#
-class CurrencyManager(models.Manager):
-    pass
-
-
-class Currency(TimeModelMixin, UserModelMixin):
-    """
-    This model impliments currency types.
-    """
-
-    symbol =  models.CharField(max_length=1)
-    name =  models.CharField(max_length=20, unique=True)
-
-    objects = CurrencyManager()
-
-    def __str__(self):
-        return "{} {}".format(self.symbol.encode('utf-8'), self.name)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = _("Currency")
-        verbose_name_plural = _("Currencies")
-
-
-#
 # LocationDefault
 #
 class LocationDefaultManager(models.Manager):

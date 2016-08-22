@@ -12,8 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin
 
-from .models import Country, Language, TimeZone
-from .forms import CountryForm, LanguageForm, TimeZoneForm
+from .models import Country, Language, TimeZone, Currency
+from .forms import CountryForm, LanguageForm, TimeZoneForm, CurrencyForm
 
 
 #
@@ -71,3 +71,22 @@ class TimeZoneAdmin(admin.ModelAdmin):
     list_filter = ('active',)
     search_fields = ('country__country', 'country__code', 'zone', 'desc',)
     form = TimeZoneForm
+
+
+#
+# Currency
+#
+@admin.register(Currency)
+class CurrencyAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {'fields': ('currency', 'entity', 'alphabetic_code',
+                           'numeric_code', 'minor_unit', 'symbol',)}),
+        (_('Status'), {'classes': ('collapse',),
+                       'fields': ('active',)}),
+        )
+    readonly_fields = ('currency', 'entity', 'alphabetic_code', 'numeric_code',
+                       'minor_unit', 'symbol',)
+    list_display = ('currency', 'entity', 'symbol', 'active',)
+    search_fields = ('currency', 'entity__country', 'alphabetic_code',
+                     'numeric_code',)
+    form = CurrencyForm

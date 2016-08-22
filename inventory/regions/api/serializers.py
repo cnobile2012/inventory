@@ -2,52 +2,74 @@
 #
 # inventory/regions/api/serializers.py
 #
+"""
+Regions serializers.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
 from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from ..models import Country
+
+from ..models import Country, Language, TimeZone, Currency
 
 
 log = logging.getLogger('api.regions.serializers')
 
 
 #
-# Country
+# CountrySerializer
 #
-class CountrySerializer(SerializerMixin, serializers.ModelSerializer):
-    creator = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
-    updater = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
-    uri = serializers.HyperlinkedIdentityField(
-        view_name='country-detail')
-
-    def create(self, validated_data):
-        user = self.get_user_object()
-        validated_data['creator'] = user
-        validated_data['updater'] = user
-        return Country.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.country = validated_data.get(
-            'country', instance.country)
-        instance.country_code_2 = validated_data.get(
-            'country_code_2', instance.country_code_2)
-        instance.country_code_3 = validated_data.get(
-            'country_code_3', instance.country_code_3)
-        instance.country_number_code = validated_data.get(
-            'country_number_code', instance.country_number_code)
-        instance.updater = self.get_user_object()
-        instance.active = validated_data.get('active', instance.active)
-        instance.save()
-        return instance
+class CountrySerializer(serializers.ModelSerializer):
+    uri = serializers.HyperlinkedIdentityField(view_name='country-detail')
 
     class Meta:
         model = Country
-        fields = ('id', 'country', 'country_code_2', 'country_code_3',
-                  'country_number_code', 'regions', 'active', 'creator',
-                  'created', 'updater', 'updated', 'uri',)
-        read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
+        fields = ('id', 'code', 'country', 'active', 'uri',)
+        read_only_fields = ('id', 'code', 'country', 'active',)
+
+
+#
+# LanguageSerializer
+#
+class LanguageSerializer(serializers.ModelSerializer):
+    country = serializers.HyperlinkedRelatedField(
+        view_name='country-detail', read_only=True)
+    uri = serializers.HyperlinkedIdentityField(view_name='language-detail')
+
+    class Meta:
+        model = Language
+        fields = ('id', 'locale', 'country', 'code', 'active', 'uri',)
+        read_only_fields = ('id', 'locale', 'country', 'code', 'active',)
+
+
+#
+# TimeZoneSerializer
+#
+class TimeZoneSerializer(serializers.ModelSerializer):
+    entity = serializers.HyperlinkedRelatedField(
+        view_name='country-detail', read_only=True)
+    uri = serializers.HyperlinkedIdentityField(view_name='timezone-detail')
+
+    class Meta:
+        model = TimeZone
+        fields = ('id', 'zone', 'country', 'desc', 'active', 'uri',)
+        read_only_fields = ('id', 'zone', 'country', 'desc', 'active',)
+
+
+#
+# CurrencySerializer
+#
+class CurrencySerializer(SerializerMixin, serializers.ModelSerializer):
+    country = serializers.HyperlinkedRelatedField(
+        view_name='country-detail', read_only=True)
+    uri = serializers.HyperlinkedIdentityField(view_name='currency-detail')
+
+    class Meta:
+        model = Currency
+        fields = ('id', 'entity', 'currency', 'alphabetic_code',
+                  'numeric_code', 'minor_unit', 'symbol', 'active', 'uri',)
+        read_only_fields = ('id', 'entity', 'currency', 'alphabetic_code',
+                            'numeric_code', 'minor_unit', 'symbol', 'active',)

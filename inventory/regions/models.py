@@ -143,3 +143,47 @@ class TimeZone(StatusModelMixin):
         ordering = ('zone',)
         verbose_name = _("Time Zone")
         verbose_name_plural = _("Time Zones")
+
+
+#
+# Currency
+#
+class CurrencyManager(StatusModelManagerMixin, models.Manager):
+    pass
+
+
+@python_2_unicode_compatible
+class Currency(StatusModelMixin):
+    """
+    This model impliments currency types.
+    """
+
+    entity = models.ForeignKey(
+        Country, verbose_name=_("Country"), null=True, blank=True,
+        help_text=_("Country or region name."))
+    currency = models.CharField(
+        verbose_name=_("Corrency"), max_length=50, null=True, blank=True,
+        help_text=_("Name of the currency."))
+    alphabetic_code = models.CharField(
+        verbose_name=_("Alphabetic Code"), max_length=3, null=True, blank=True,
+        help_text=_("3 digit alphabetic code for the currency."))
+    numeric_code = models.PositiveSmallIntegerField(
+        verbose_name=_("Numeric Code"), null=True, blank=True,
+        help_text=_("3 digit numeric code."))
+    minor_unit = models.PositiveSmallIntegerField(
+        verbose_name=_("Minor Unit"), null=True, blank=True,
+        help_text=_("Number of digits after the decimal separator."))
+    symbol =  models.CharField(
+        verbose_name=_("Symbol"), max_length=6, null=True, blank=True,
+        help_text=_("The symbol representing this currency."))
+
+    objects = CurrencyManager()
+
+    def __str__(self):
+        return "{} {}".format(self.currency, self.entity)
+
+    class Meta:
+        unique_together = ('entity', 'alphabetic_code',)
+        ordering = ('entity__country', 'currency',)
+        verbose_name = _("Currency")
+        verbose_name_plural = _("Currencies")

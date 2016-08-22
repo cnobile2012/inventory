@@ -140,15 +140,15 @@ INSTALLED_APPS = [
     'rest_framework',
     #'oauth2_provider',
     #'guardian',
-    'inventory.common',
+    #'inventory.common',
     'inventory.accounts',
     #'inventory.oauth2',
     'inventory.projects',
     'inventory.regions',
     'inventory.suppliers',
     'inventory.categories',
-    'inventory.maintenance',
-    #'inventory.objects',
+    'inventory.locations',
+    #'inventory.items',
     ]
 
 TEMPLATES = [

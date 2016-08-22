@@ -9,7 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from django import forms
 
-from .models import Country, Language, TimeZone
+from .models import Country, Language, TimeZone, Currency
 
 
 #
@@ -60,6 +60,21 @@ class TimeZoneForm(forms.ModelForm):
             attrs={'size': 2, 'maxlength': 2})
         self.fields['desc'].widget = forms.TextInput(
             attrs={'size': 50, 'maxlength': 100})
+
+    class Meta:
+        model = TimeZone
+        exclude = []
+
+
+#
+# Currency
+#
+class CurrencyForm(forms.ModelForm):
+    """
+    Currency form
+    """
+    def __init__(self, request=None, *args, **kwargs):
+        super(CurrencyForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = TimeZone

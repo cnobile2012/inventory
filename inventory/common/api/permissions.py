@@ -111,3 +111,18 @@ class IsReadOnly(BasePermission):
             result = True
 
         return result
+
+
+class IsUserActive(BasePermission):
+    """
+    The request is authenticated if user is active.
+    """
+
+    def has_permission(self, request, view):
+        result = False
+
+        if hasattr(request, 'user') and request.user.is_active:
+            result = True
+
+        log.debug("IsUserActive: %s", result)
+        return result

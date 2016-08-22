@@ -24,51 +24,14 @@ from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
-from ..models import (
-    Currency, LocationDefault, LocationFormat, LocationCode)
+from ..models import LocationDefault, LocationFormat, LocationCode
 
 from .serializers import (
-    CurrencySerializer, LocationDefaultSerializer, LocationFormatSerializer,
+    LocationDefaultSerializer, LocationFormatSerializer,
     LocationCodeSerializer)
 
 log = logging.getLogger('api.maintenance.views')
 User = get_user_model()
-
-
-#
-# Currency
-#
-class CurrencyList(ListCreateAPIView):
-    """
-    Currency list endpoint.
-    """
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
-    permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
-           ),
-        )
-    pagination_class = SmallResultsSetPagination
-
-currency_list = CurrencyList.as_view()
-
-
-class CurrencyDetail(RetrieveUpdateDestroyAPIView):
-    """
-    Currency detail endpoint.
-    """
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
-    permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
-           ),
-        )
-
-currency_detail = CurrencyDetail.as_view()
 
 
 #
