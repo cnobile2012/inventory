@@ -18,19 +18,19 @@ from .forms import QuestionForm, AnswerForm
 #
 class UserAdmin(UserAdmin):
     fieldsets = (
-        (None, {'fields': ('username', 'password', 'send_email',
-                           'need_password',)}),
+        (None, {'fields': ('username', 'password',)}),
         (_("Personal Info"), {'fields': ('picture', 'first_name', 'last_name',
                                          'address_01', 'address_02', 'city',
                                          'region', 'postal_code', 'country',
                                          'dob', 'email', 'answers',)}),
-        (_("Projects"), {'fields': ('role', 'project_default', 'projects',)}),
+        (_("Projects"), {'fields': ('role', 'project_default',)}),
         (_("Permissions"), {'classes': ('collapse',),
                             'fields': ('is_active', 'is_staff',
                                        'is_superuser', 'groups',
                                        'user_permissions',)}),
         (_("Status"), {'classes': ('collapse',),
-                       'fields': ('last_login', 'date_joined',)}),
+                       'fields': ('send_email', 'need_password', 'last_login',
+                                  'date_joined',)}),
         )
     readonly_fields = ('last_login', 'date_joined',)
     list_display = ('_image_thumb_producer', 'username', 'email', 'first_name',
@@ -38,12 +38,13 @@ class UserAdmin(UserAdmin):
                     '_image_url_producer',)
     list_editable = ('is_staff', 'is_active',)
     search_fields = ('username', 'last_name', 'email',)
-    filter_horizontal = ('projects', 'groups', 'user_permissions', 'answers',)
+    filter_horizontal = ('groups', 'user_permissions', 'answers',)
 
     class Media:
-        js = ('js/js.cookie-2.0.4.min.js',
-              'js/inheritance.js',
-              'js/regions.js',)
+        pass
+        #js = ('js/js.cookie-2.0.4.min.js',
+        #      'js/inheritance.js',
+        #      'js/regions.js',)
 
 
 #

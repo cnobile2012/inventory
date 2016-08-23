@@ -128,8 +128,8 @@ class User(AbstractUser, ValidateOnSaveMixin):
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER)
     answers = models.ManyToManyField(
         'Answer', verbose_name=_("Answers"), related_name='owners', blank=True)
-    projects = models.ManyToManyField(
-        Project, verbose_name=_("Projects"), related_name='owners', blank=True)
+    #projects = models.ManyToManyField(
+    #    Project, verbose_name=_("Projects"), related_name='owners', blank=True)
     picture = models.ImageField(
         verbose_name=_("Picture"), upload_to='user_photos', null=True,
         blank=True, storage=InventoryFileStorage())

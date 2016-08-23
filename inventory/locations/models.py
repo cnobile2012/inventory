@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/models.py
+# inventory/locations/models.py
 #
 
 from django.db import models
@@ -242,7 +242,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("See the LocationFormat.description for the "
                     "format used."))
     parent = models.ForeignKey(
-        "self", blank=True, null=True, default=0, related_name='children')
+        "self", blank=True, null=True, default=None, related_name='children')
     path = models.CharField(
         max_length=248, editable=False)
     level = models.SmallIntegerField(
