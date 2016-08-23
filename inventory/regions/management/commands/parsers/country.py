@@ -7,32 +7,35 @@ Country parser.
 """
 __docformat__ = "restructuredtext en"
 
+import csv
+
 
 class CountryParser(object):
-    TO_LOWER = ('OF', 'THE', 'AND', 'DA',)
+    PREPOSITIONS = ('and', 'da', 'of', 'the',)
 
     def __init__(self, filename):
         self._filename = filename
 
     def parse(self):
         """
-        Country Name;ISO 3166-1-alpha-2 code
-        AFGHANISTAN;AF
-        ÅLAND ISLANDS;AX
-        ALBANIA;AL
-        ALGERIA;DZ
-        AMERICAN SAMOA;AS
-        ANDORRA;AD
+        Name,Code
+        Afghanistan,AF
+        Åland Islands,AX
+        Albania,AL
+        Algeria,DZ
+        American Samoa,AS
+        Andorra,AD
         """
         lines = []
 
         with open(self._filename, mode='r') as f:
-            for item in f:
-                item = item.strip()
-                if not len(item) or item.startswith('Country Name'): continue
-                country, delm, abbr = item.partition(';')
-                lines.append((country, abbr.strip(),
-                              self._normalize_country(country)))
+            reader = csv.reader(f, delimiter=',', quotechar='"')
+
+            for idx, row in enumerate(reader):
+                if idx == 0: continue
+                name = row[0]
+                code = row[1]
+                lines.append((self._normalize_country(name), code))
 
         return lines
 
@@ -54,9 +57,9 @@ class CountryParser(object):
         for idx, item in enumerate(items):
             item = item.strip()
 
-            if idx == 0 and item.startswith('THE'):
+            if idx == 0 and item.lower().startswith('the'):
                 parts.append(item.capitalize())
-            elif item in self.TO_LOWER:
+            elif item.lower() in self.PREPOSITIONS:
                 parts.append(item.lower())
             elif item.startswith('('):
                 parts.append("({}".format(item[1:].capitalize()))
