@@ -13,7 +13,8 @@ from django.core.management.base import BaseCommand
 
 from inventory.regions.models import Country, Language, TimeZone, Currency
 
-from .parsers import CountryParser, LanguageParser, TimezoneParser
+from .parsers import (CountryParser, LanguageParser, TimezoneParser,
+                      CurrencyParser)
 
 log = logging.getLogger('commands.regions.populate-regions')
 
@@ -23,14 +24,6 @@ class PopulateRegions(BaseCommand):
     Management command for populating the regions database models.
     """
     help = "Populate the regions database models."
-
-    def __init__(self, stdout=None, stderr=None, no_color=False):
-        super(PopulateRegions, self).__init__(stdout=None, stderr=None,
-                                              no_color=False)
-        self._countries = []
-        self._languages = []
-        self._timezones = []
-        self._currencies = []
 
     def add_arguments(self, parser):
         parser.fromfile_prefix_chars = '@'
@@ -110,23 +103,22 @@ class PopulateRegions(BaseCommand):
     def _populate_countries(self, options):
         if options.get('country') or options.get('all'):
             cp = CountryParser(options.get('country_file'))
-            self._countries[:] = cp.parse()
+            countries = cp.parse()
 
-            for idx, (country, abbr, norm) in enumerate(self._countries,
-                                                        start=1):
+            for idx, (country, code) in enumerate(countries, start=1):
                 if not options.get('noop'):
                     kwargs = {}
-                    kwargs['country'] = norm
+                    kwargs['country'] = country
 
                     obj, created = Country.objects.get_or_create(
-                        code=abbr, defaults=kwargs)
+                        code=code, defaults=kwargs)
 
                     if not created:
-                        obj.country = norm
+                        obj.country = country
                         obj.save()
-                        log.debug("Updated %s", abbr)
+                        log.debug("Updated country %s", abbr)
                     else:
-                        log.debug("Created %s", abbr)
+                        log.debug("Created country %s", abbr)
                 else:
                     log.info("NOOP: %s--%s", Country.__name__, (abbr, norm))
 
@@ -138,10 +130,9 @@ class PopulateRegions(BaseCommand):
     def _populate_languages(self, options):
         if options.get('language') or options.get('all'):
             lp = LanguageParser(options.get('language_file'))
-            self._languages[:] = lp.parse()
+            languages = lp.parse()
 
-            for idx, (locale, country, code) in enumerate(self._languages,
-                                                          start=1):
+            for idx, (locale, country, code) in enumerate(languages, start=1):
                 try:
                     country_obj = Country.objects.get(code=country)
                 except Country.DoesNotExist:
@@ -163,9 +154,9 @@ class PopulateRegions(BaseCommand):
                         obj.code = code
                         obj.country = country_obj
                         obj.save()
-                        log.debug("Updated %s", locale)
+                        log.debug("Updated language %s", locale)
                     else:
-                        log.debug("Created %s", locale)
+                        log.debug("Created language %s", locale)
                 else:
                     log.info("NOOP: %s--%s",
                              Language.__name__, (code, country, locale))
@@ -178,10 +169,10 @@ class PopulateRegions(BaseCommand):
     def _populate_timezones(self, options):
         if options.get('timezone') or options.get('all'):
             tp = TimezoneParser(options.get('timezone_file'))
-            self._timezones[:] = tp.parse()
+            timezones = tp.parse()
 
             for idx, (zone, coordinates, country, desc) in enumerate(
-                self._timezones, start=1):
+                timezones, start=1):
                 try:
                     country_obj = Country.objects.get(code=country)
                 except Country.DoesNotExist:
@@ -203,9 +194,9 @@ class PopulateRegions(BaseCommand):
                         obj.desc = desc
                         obj.coordinates = coordinates
                         obj.save()
-                        log.debug("Updated %s", zone)
+                        log.debug("Updated timezone %s", zone)
                     else:
-                        log.debug("Created %s", zone)
+                        log.debug("Created timezone %s", zone)
                 else:
                     log.info("NOOP: %s--%s",
                              TimeZone.__name__, (zone, country, desc))
@@ -218,7 +209,7 @@ class PopulateRegions(BaseCommand):
     def _populate_currency(self, options):
         if options.get('currency') or options.get('all'):
             cp = CurrencyParser(options.get('currency_file'))
-            self._currencies[:] = cp.parse()
+            currencies = cp.parse()
 
             # Unhappily the currency data does not use the ISO standard
             # country two character code, so we must do some fancy dance
@@ -227,7 +218,7 @@ class PopulateRegions(BaseCommand):
                 obj.country.upper(): obj for obj in Country.objects.all()}
 
             for idx, (entity, currency, alphabetic_code, numeric_code,
-                      minor_unit) in enumerate(self._currencies, start=1):
+                      minor_unit) in enumerate(currencies, start=1):
                 country_obj = country_map.get(entity)
 
                 if not country_obj:
