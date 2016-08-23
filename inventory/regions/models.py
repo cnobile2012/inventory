@@ -32,7 +32,7 @@ class CountryManager(StatusModelManagerMixin, models.Manager):
 @python_2_unicode_compatible
 class Country(StatusModelMixin):
     """
-    This model implements country functionality.
+    This model implements country types.
     """
     country = models.CharField(
         verbose_name=_("Country"), max_length=100,
@@ -80,6 +80,9 @@ class LanguageManager(StatusModelManagerMixin, models.Manager):
 
 @python_2_unicode_compatible
 class Language(StatusModelMixin, ValidateOnSaveMixin):
+    """
+    This model impliments language types.
+    """
     locale = models.CharField(
         verbose_name=_("Locale"), max_length=5, unique=True, null=True,
         blank=True, help_text=_("The language and country codes."))
@@ -117,6 +120,9 @@ class TimeZoneManager(StatusModelManagerMixin, models.Manager):
 
 @python_2_unicode_compatible
 class TimeZone(StatusModelMixin):
+    """
+    This model impliments timezone types.
+    """
     zone = models.CharField(
         verbose_name=_("Timezone"), max_length=2,
         help_text=_("The timezone (zoneinfo)."))
@@ -157,7 +163,6 @@ class Currency(StatusModelMixin):
     """
     This model impliments currency types.
     """
-
     entity = models.ForeignKey(
         Country, verbose_name=_("Country"), null=True, blank=True,
         help_text=_("Country or region name."))
