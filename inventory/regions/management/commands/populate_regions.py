@@ -7,9 +7,11 @@ Populate Country, Language, and Timezone region models.
 """
 __docformat__ = "restructuredtext en"
 
+import os
+import sys
 import logging
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from inventory.regions.models import Country, Language, TimeZone, Currency
 
@@ -19,13 +21,14 @@ from .parsers import (CountryParser, LanguageParser, TimezoneParser,
 log = logging.getLogger('commands.regions.populate-regions')
 
 
-class PopulateRegions(BaseCommand):
+class Command(BaseCommand):
     """
     Management command for populating the regions database models.
     """
     help = "Populate the regions database models."
 
     def add_arguments(self, parser):
+        self._parser= parser
         parser.fromfile_prefix_chars = '@'
         parser.add_argument(
             '-a', '--all', action='store_true', default=False, dest='all',
@@ -57,33 +60,30 @@ class PopulateRegions(BaseCommand):
         parser.add_argument(
             '-M', '--currency-file', type=str, default='', dest='currency_file',
             help="Currency filename (relative or absolute path).")
-        parser.add_argument(
-            '-D', '--debug', action='store_true', default=False, dest='debug',
-            help="Run in debug mode (This just applies to logging).")
 
     def handle(self, *args, **options):
         if options.get('country') and not options.get('country_file'):
-            msg = "Must supply a country file for processing.\n"
+            msg = "Must supply a country file for processing.\n\n"
             sys.stderr.write(msg)
-            self.print_help()
+            self._parser.print_help()
             return
 
         if options.get('language') and not options.get('language_file'):
-            msg = "Must supply a language file for processing.\n"
+            msg = "Must supply a language file for processing.\n\n"
             sys.stderr.write(msg)
-            self.print_help()
+            self._parser.print_help()
             return
 
         if options.get('timezone') and not options.get('timezone_file'):
-            msg = "Must supply a timezone file for processing.\n"
+            msg = "Must supply a timezone file for processing.\n\n"
             sys.stderr.write(msg)
             self.print_help()
             return
 
         if options.get('currency') and not options.get('currency_file'):
-            msg = "Must supply a currency file for processing."
+            msg = "Must supply a currency file for processing.\n\n"
             sys.stderr.write(msg)
-            self.print_help()
+            self._parser.print_help()
             return
 
         if options.get('all') and not (options.get('country_file') and
@@ -91,14 +91,19 @@ class PopulateRegions(BaseCommand):
                                        options.get('timezone_file') and
                                        options.get('currency_file')):
             sys.stderr.write("Must supply country, language, timezone and "
-                             "currency files for processing.\n")
-            self.print_help()
+                             "currency files for processing.\n\n")
+            self._parser.print_help()
             return
 
-        self._populate_countries(options)
-        self._populate_languages(options)
-        self._populate_timezones(options)
-        self._populate_currency(options)
+        try:
+            self._populate_countries(options)
+            self._populate_languages(options)
+            self._populate_timezones(options)
+            self._populate_currency(options)
+        except Exception as e:
+            msg = "Population failed (See traceback in log file.), {}".format(e)
+            log.error(msg, exc_info=True)
+            raise CommandError(msg)
 
     def _populate_countries(self, options):
         if options.get('country') or options.get('all'):
@@ -116,9 +121,9 @@ class PopulateRegions(BaseCommand):
                     if not created:
                         obj.country = country
                         obj.save()
-                        log.debug("Updated country %s", abbr)
+                        log.debug("Updated country %s", code)
                     else:
-                        log.debug("Created country %s", abbr)
+                        log.debug("Created country %s", code)
                 else:
                     log.info("NOOP: %s--%s", Country.__name__, (abbr, norm))
 
@@ -215,45 +220,46 @@ class PopulateRegions(BaseCommand):
             # country two character code, so we must do some fancy dance
             # steps to get the greatest number of matches on the countries.
             country_map = {
-                obj.country.upper(): obj for obj in Country.objects.all()}
+                obj.country.upper().strip(): obj
+                for obj in Country.objects.all()}
 
             for idx, (entity, currency, alphabetic_code, numeric_code,
                       minor_unit) in enumerate(currencies, start=1):
                 country_obj = country_map.get(entity)
 
-                if not country_obj:
+                if country_obj:
+                    if not options.get('noop'):
+                        kwargs = {}
+                        kwargs['currency'] = currency
+                        kwargs['numeric_code'] = numeric_code
+                        kwargs['minor_unit'] = minor_unit
+
+                        obj, created = Currency.objects.get_or_create(
+                            entity=country_obj,
+                            alphabetic_code=alphabetic_code,
+                            defaults=kwargs)
+
+                        # Could be valid if we reload the DB and the country
+                        # PKs have changed.
+                        if not created:
+                            obj.currency = currency
+                            obj.numeric_code = numeric_code
+                            obj.minor_unit = minor_unit
+                            obj.save()
+                            log.debug("Updated currency %s", currency)
+                        else:
+                            log.debug("Created currency %s", currency)
+                    else:
+                        log.info("NOOP: %s--%s", Currency.__name__,
+                                 (entity, currency, alphabetic_code,
+                                  numeric_code, minor_unit))
+
+                    if not (idx % 100):
+                        sys.stdout.write("Processed {} currencies.\n".format(
+                            idx))
+                else:
                     msg = "Currency '%s' has no matching country '%s'."
                     log.warning(msg, currency, entity)
-                    continue
-
-                if not options.get('noop'):
-                    kwargs = {}
-                    kwargs['currency'] = currency
-                    kwargs['numeric_code'] = numeric_code
-                    kwargs['minor_unit'] = minor_unit
-
-                    obj, created = Currency.objects.get_or_create(
-                        entity=country_obj, alphabetic_code=alphabetic_code,
-                        defaults=kwargs)
-
-                    # Could be valid if we reload the DB and the country PKs
-                    # have changed.
-                    if not created:
-                        obj.currency = currency
-                        obj.numeric_code = numeric_code
-                        obj.minor_unit = minor_unit
-                        obj.save()
-                        log.debug("Updated currency %s", zone)
-                    else:
-                        log.debug("Created currency %s", zone)
-                else:
-                    log.info("NOOP: %s--%s",
-                             Currency.__name__,
-                             (entity, currency, alphabetic_code, numeric_code,
-                              minor_unit))
-
-                if not (idx % 100):
-                    sys.stdout.write("Processed {} currencies.\n".format(idx))
 
             sys.stdout.write("Processed a total of {} currencies.\n".format(
                 idx))

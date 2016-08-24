@@ -9,9 +9,12 @@ __docformat__ = "restructuredtext en"
 
 import csv
 
+from django.utils import six
+
 
 class CountryParser(object):
-    PREPOSITIONS = ('and', 'da', 'of', 'the',)
+    LOWER_CASE = ('and', 'da', 'of', 'the',)
+    UPPER_3RD_CHAR = ('mcd',)
 
     def __init__(self, filename):
         self._filename = filename
@@ -55,12 +58,18 @@ class CountryParser(object):
         parts = []
 
         for idx, item in enumerate(items):
-            item = item.strip()
+            if six.PY2:
+                item = item.strip().decode('utf-8')
+            else:
+                item = item.strip()
 
             if idx == 0 and item.lower().startswith('the'):
                 parts.append(item.capitalize())
-            elif item.lower() in self.PREPOSITIONS:
+            elif item.lower() in self.LOWER_CASE:
                 parts.append(item.lower())
+            elif len(item) >= 3 and item.lower()[:3] in self. UPPER_3RD_CHAR:
+                item = item[:2] + item[2].upper() + item[3:]
+                parts.append(item)
             elif item.startswith('('):
                 parts.append("({}".format(item[1:].capitalize()))
             elif '.' in item:
