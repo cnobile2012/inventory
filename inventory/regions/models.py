@@ -52,7 +52,7 @@ class Country(StatusModelMixin):
         super(Country, self).save(*args, **kwargs)
 
     def __str__(self):
-        return "{}:{}".format(self.country, self.country_code_2)
+        return "{} ({})".format(self.country, self.code)
 
 
 #
@@ -124,7 +124,7 @@ class TimeZone(StatusModelMixin):
     This model impliments timezone types.
     """
     zone = models.CharField(
-        verbose_name=_("Timezone"), max_length=2,
+        verbose_name=_("Timezone"), max_length=40,
         help_text=_("The timezone (zoneinfo)."))
     coordinates = models.CharField(
         verbose_name=_("Coordinates"), max_length=20,

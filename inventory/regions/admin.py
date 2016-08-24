@@ -27,6 +27,7 @@ class CountryAdmin(UserAdminMixin, admin.ModelAdmin):
                        'fields': ('active',)}),
         )
     list_display = ('code', 'country', 'active',)
+    readonly_fields = ('country', 'code',)
     list_editable = ('active',)
     search_fields = ('code', 'country',)
     list_filter = ('active',)
@@ -46,7 +47,7 @@ class LanguageAdmin(admin.ModelAdmin):
             'fields': ('active',)}),
         )
     ordering = ('locale',)
-    readonly_fields = ('locale',)
+    readonly_fields = ('locale', 'country', 'code',)
     list_display = ('locale', 'country', 'code', 'active',)
     list_editable = ('active',)
     list_filter = ('active',)
@@ -66,6 +67,7 @@ class TimeZoneAdmin(admin.ModelAdmin):
             'fields': ('active',)}),
         )
     ordering = ('zone',)
+    readonly_fields = ('zone', 'coordinates', 'country', 'desc',)
     list_display = ('zone', 'country', 'coordinates', 'desc', 'active',)
     list_editable = ('active',)
     list_filter = ('active',)
@@ -87,6 +89,8 @@ class CurrencyAdmin(admin.ModelAdmin):
     readonly_fields = ('currency', 'entity', 'alphabetic_code', 'numeric_code',
                        'minor_unit', 'symbol',)
     list_display = ('currency', 'entity', 'symbol', 'active',)
+    list_editable = ('active',)
+    list_filter = ('active',)
     search_fields = ('currency', 'entity__country', 'alphabetic_code',
                      'numeric_code',)
     form = CurrencyForm
