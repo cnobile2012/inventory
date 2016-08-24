@@ -12,6 +12,7 @@
 #!docs/*.pdf
 .~lock.*
 local.py
+data/migrate/*.csv
 inventory/static/*/
 inventory/media/*/
 db-snapshots/*.sql
