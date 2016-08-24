@@ -49,21 +49,23 @@ class LanguageSerializer(serializers.ModelSerializer):
 # TimeZoneSerializer
 #
 class TimeZoneSerializer(serializers.ModelSerializer):
-    entity = serializers.HyperlinkedRelatedField(
+    country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', read_only=True)
     uri = serializers.HyperlinkedIdentityField(view_name='timezone-detail')
 
     class Meta:
         model = TimeZone
-        fields = ('id', 'zone', 'country', 'desc', 'active', 'uri',)
-        read_only_fields = ('id', 'zone', 'country', 'desc', 'active',)
+        fields = ('id', 'zone', 'country', 'coordinates', 'country', 'desc',
+                  'active', 'uri',)
+        read_only_fields = ('id', 'zone', 'country', 'coordinates', 'country',
+                            'desc', 'active',)
 
 
 #
 # CurrencySerializer
 #
 class CurrencySerializer(SerializerMixin, serializers.ModelSerializer):
-    country = serializers.HyperlinkedRelatedField(
+    entity = serializers.HyperlinkedRelatedField(
         view_name='country-detail', read_only=True)
     uri = serializers.HyperlinkedIdentityField(view_name='currency-detail')
 

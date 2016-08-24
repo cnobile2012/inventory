@@ -73,25 +73,13 @@ def api_root(request, format=None):
     categories['categories'] = reverse(
         'category-list', request=request, format=format)
     # Maintenance
-    maintenance = items.setdefault('maintenance', OrderedDict())
-    maintenance['currencies'] = reverse(
-        'currency-list', request=request, format=format)
-    maintenance['location-default'] = reverse(
+    locations = items.setdefault('locations', OrderedDict())
+    locations['location-default'] = reverse(
         'location-default-list', request=request, format=format)
-    maintenance['location-format'] = reverse(
+    locations['location-format'] = reverse(
         'location-format-list', request=request, format=format)
-    maintenance['location-code'] = reverse(
+    locations['location-code'] = reverse(
         'location-code-list', request=request, format=format)
-    # Oauth2
-    oauth2 = items.setdefault('oauth2', OrderedDict())
-    oauth2['access-token'] = reverse(
-        'access-token-list', request=request, format=format)
-    oauth2['applications'] = reverse(
-        'application-list', request=request, format=format)
-    oauth2['grant'] = reverse(
-        'grant-list', request=request, format=format)
-    oauth2['refresh-token'] = reverse(
-        'refresh-token-list', request=request, format=format)
     # Projects
     projects = items.setdefault('projects', OrderedDict())
     projects['projects'] = reverse(
@@ -100,8 +88,12 @@ def api_root(request, format=None):
     regions = items.setdefault('regions', OrderedDict())
     regions['countries'] = reverse(
         'country-list', request=request, format=format)
-    regions['regions'] = reverse(
-        'region-list', request=request, format=format)
+    regions['languages'] = reverse(
+        'language-list', request=request, format=format)
+    regions['timezones'] = reverse(
+        'timezone-list', request=request, format=format)
+    regions['currencies'] = reverse(
+        'currency-list', request=request, format=format)
     # Suppliers
     suppliers = items.setdefault('suppliers', OrderedDict())
     suppliers['suppliers'] = reverse(

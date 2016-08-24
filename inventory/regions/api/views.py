@@ -15,7 +15,7 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser,
     IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
-from inventory.regions.models import Country, Currency
+from inventory.regions.models import Country, Language, TimeZone, Currency
 
 from .serializers import (CountrySerializer, LanguageSerializer,
                           TimeZoneSerializer, CurrencySerializer)
@@ -110,7 +110,6 @@ class LanguageDetail(LanguageAuthorizationMixin, RetrieveAPIView):
         )
 
 language_detail = LanguageDetail.as_view()
-
 
 
 #
