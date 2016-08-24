@@ -46,7 +46,7 @@ LOG_CMD_FILE = '{}/{}-commands.log'.format(LOG_DIR, LOG_ENV)
 
 LOGGING.get('handlers', {}).get('inventory_file', {})['filename'] = LOG_FILE
 LOGGING.get('handlers', {}).get('api_file', {})['filename'] = LOG_API_FILE
-LOGGING.get('handlers', {}).get('command_file', {})['filename'] = LOG_API_FILE
+LOGGING.get('handlers', {}).get('command_file', {})['filename'] = LOG_CMD_FILE
 
 LOGGING.get('loggers', {}).get('inventory', {})['level'] = 'INFO'
 LOGGING.get('loggers', {}).get('api', {})['level'] = 'INFO'
