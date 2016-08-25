@@ -31,7 +31,8 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin):
     name = models.CharField(
         verbose_name=_("Name"), max_length=255)
     name_lower = models.CharField(
-        verbose_name=_("Name"), max_length=255, unique=True, db_index=True)
+        verbose_name=_("Name (lowercase)"), max_length=255, unique=True,
+        db_index=True)
     address_01 = models.CharField(
         verbose_name=_("Address 1"), max_length=50, blank=True, null=True)
     address_02 = models.CharField(

@@ -88,10 +88,10 @@ class IsAnyUser(BasePermission):
     def has_permission(self, request, view):
         result = False
 
-        if (hasattr(request, 'user') and
-            (hasattr(request.user, 'role') and
-             request.user.role in (User.DEFAULT_USER, User.PROJECT_MANAGER,
-                                   User.ADMINISTRATOR,))):
+        if (hasattr(request, 'user') and (
+            hasattr(request.user, 'role') and
+            request.user.role in (User.DEFAULT_USER, User.PROJECT_MANAGER,
+                                  User.ADMINISTRATOR,))):
             result = True
 
         log.debug("IsAnyUser: %s", result)

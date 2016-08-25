@@ -12,8 +12,8 @@ from rest_condition import ConditionalPermission, C, And, Or, Not
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser,
-    IsUserActive, IsReadOnly)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive,
+    IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.regions.models import Country, Language, TimeZone, Currency
 
@@ -45,8 +45,8 @@ class CountryList(CountryAuthorizationMixin, ListAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -61,8 +61,8 @@ class CountryDetail(CountryAuthorizationMixin, RetrieveAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
 
@@ -89,8 +89,8 @@ class LanguageList(LanguageAuthorizationMixin, ListAPIView):
     """
     serializer_class = LanguageSerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -104,8 +104,8 @@ class LanguageDetail(LanguageAuthorizationMixin, RetrieveAPIView):
     """
     serializer_class = LanguageSerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
 
@@ -132,8 +132,8 @@ class TimeZoneList(TimeZoneAuthorizationMixin, ListAPIView):
     """
     serializer_class = TimeZoneSerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -147,8 +147,8 @@ class TimeZoneDetail(TimeZoneAuthorizationMixin, RetrieveAPIView):
     """
     serializer_class = TimeZoneSerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
 
@@ -165,8 +165,8 @@ class CurrencyList(ListAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -181,8 +181,8 @@ class CurrencyDetail(RetrieveAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     permission_classes = (
-        And(IsReadOnly, IsUserActive,
-            Or(IsAdminSuperUser)
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
 

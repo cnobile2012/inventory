@@ -16,10 +16,8 @@ from rest_framework import serializers
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
-from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
-
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
@@ -60,8 +58,9 @@ class CategoryList(CategoryAuthorizationMixin,
     """
     serializer_class = CategorySerializer
     permission_classes = (
-        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
-        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
         )
     pagination_class = SmallResultsSetPagination
 
@@ -76,8 +75,9 @@ class CategoryDetail(CategoryAuthorizationMixin,
     """
     queryset = Category.objects.all()
     permission_classes = (
-        Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager,),
-        And(Or(TokenHasReadWriteScope, IsAuthenticated,),),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
         )
     serializer_class = CategorySerializer
 

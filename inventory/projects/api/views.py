@@ -14,9 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
-from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
-
-from inventory.common.api.permissions import IsAnyUser
+from inventory.common.api.permissions import (
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import Project
@@ -51,8 +50,9 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = ProjectSerializer
     permission_classes = (
-        And(IsAnyUser,
-            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
         )
     pagination_class = SmallResultsSetPagination
 
@@ -65,8 +65,9 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     """
     #queryset = Project.objects.all()
     permission_classes = (
-        And(IsAnyUser,
-            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
         )
     serializer_class = ProjectSerializer
 

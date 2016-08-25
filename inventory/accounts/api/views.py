@@ -14,11 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
-from oauth2_provider.ext.rest_framework import (
-    TokenHasReadWriteScope, TokenHasScope)
-
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsAnyUser)
+    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import Question, Answer
@@ -52,9 +49,8 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = UserSerializer
     permission_classes = (
-        And(
-            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
-            Or(TokenHasReadWriteScope, IsAuthenticated)
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -65,9 +61,8 @@ user_list = UserList.as_view()
 class UserDetail(UserAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = (
-        And(
-            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
-            Or(TokenHasReadWriteScope, IsAuthenticated)
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
 
@@ -97,9 +92,8 @@ class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = GroupSerializer
     permission_classes = (
-        And(
-            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
-            Or(TokenHasScope, IsAuthenticated)
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser)
             ),
         )
     required_scopes = ('read', 'write', 'groups',)
@@ -111,9 +105,8 @@ group_list = GroupList.as_view()
 class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = GroupSerializer
     permission_classes = (
-        And(
-            Or(IsAnyUser),#IsAdminSuperUser, IsAdministrator, IsProjectManager),
-            Or(TokenHasScope, IsAuthenticated)
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser)
             ),
         )
     required_scopes = ('read', 'write', 'groups',)
@@ -145,8 +138,9 @@ class QuestionList(QuestionAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = QuestionSerializer
     permission_classes = (
-        And(IsAnyUser,
-            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
         )
     pagination_class = SmallResultsSetPagination
 
@@ -158,9 +152,10 @@ class QuestionDetail(QuestionAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     Question detail endpoint.
     """
     permission_classes = (
-        And(IsAnyUser,
-            Or(TokenHasReadWriteScope, IsAuthenticated)),
-        )
+         And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
+       )
     serializer_class = QuestionSerializer
 
 question_detail = QuestionDetail.as_view()
@@ -189,8 +184,9 @@ class AnswerList(AnswerAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = AnswerSerializer
     permission_classes = (
-        And(IsAnyUser,
-            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
         )
     pagination_class = SmallResultsSetPagination
 
@@ -202,8 +198,9 @@ class AnswerDetail(AnswerAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     Answer detail endpoint.
     """
     permission_classes = (
-        And(IsAnyUser,
-            Or(TokenHasReadWriteScope, IsAuthenticated)),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
         )
     serializer_class = AnswerSerializer
 
