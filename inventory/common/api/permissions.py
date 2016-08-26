@@ -110,6 +110,7 @@ class IsReadOnly(BasePermission):
         if request.method in self.SAFE_METHODS:
             result = True
 
+        log.debug("IsReadOnly: %s", result)
         return result
 
 
