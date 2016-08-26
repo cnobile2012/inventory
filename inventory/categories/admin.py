@@ -21,8 +21,8 @@ class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('name', '_parents_producer', 'path', 'level',
-                    '_owner_producer',)
+    list_display = ('name', 'parents_producer', 'path', 'level',
+                    'owner_producer',)
     search_fields = ('name', 'owner__username', 'owner__last_name',)
     list_filter = ('level', 'owner',)
     ordering = ('owner', 'path',)

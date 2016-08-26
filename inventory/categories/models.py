@@ -2,12 +2,19 @@
 #
 # inventory/categories/models.py
 #
+from __future__ import unicode_literals
+
+"""
+Category model.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
 from collections import OrderedDict
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.conf import settings
@@ -117,7 +124,7 @@ class CategoryManager(models.Manager):
     def get_child_tree_from_list(self, category_list, with_root=True):
         """
         Given a list of Category objects, return a list of all the Categories
-        plus all the Categories' children, plus the childrens' children, etc.
+        plus all the Categories' children, plus the children's children, etc.
         For example, if the 'Arts' and 'Color' Categories are passed in a list,
         this function will return the [['Arts', 'Arts>Music',
         'Arts>Music>Local', ...], ['Color', 'Red', 'Green', 'Blue', ...]]
@@ -163,22 +170,27 @@ class CategoryManager(models.Manager):
         return result
 
 
+@python_2_unicode_compatible
 class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     DEFAULT_SEPARATOR = '>'
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("Owner"),
         related_name="%(app_label)s_%(class)s_owner_related",
-        help_text=_("The user that ownes this record."))
+        help_text=_("The user that owns this record."))
     parent = models.ForeignKey(
         "self", verbose_name=_("Parent"), blank=True, null=True, default=None,
-        related_name='children')
+        related_name='children', help_text=_("The parent to this category if "
+                                             "any."))
     name = models.CharField(
-        verbose_name=_("Name"), max_length=248)
+        verbose_name=_("Name"), max_length=248,
+        help_text=_("The name of this category."))
     path = models.CharField(
-        verbose_name=_("Full Path"), max_length=1016, editable=False)
+        verbose_name=_("Full Path"), max_length=1016, editable=False,
+        help_text=_("The full hierarchical path of this category."))
     level = models.SmallIntegerField(
-        verbose_name=_("Level"), editable=False)
+        verbose_name=_("Level"), editable=False,
+        help_text=_("The location in the hierarchy of this category."))
 
     objects = CategoryManager()
 
@@ -233,13 +245,13 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         children = Category.objects.get_child_tree_from_list((self,))
         return children[0]
 
-    def _parents_producer(self):
+    def parents_producer(self):
         return self._get_category_path(current=False)
-    _parents_producer.short_description = _("Category Parents")
+    parents_producer.short_description = _("Category Parents")
 
-    def _owner_producer(self):
+    def owner_producer(self):
         return self.owner.get_full_name_reversed()
-    _owner_producer.short_description = _("Category Owner")
+    owner_producer.short_description = _("Category Owner")
 
     def save(self, *args, **kwargs):
         super(Category, self).save(*args, **kwargs)

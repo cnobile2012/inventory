@@ -2,12 +2,19 @@
 #
 # inventory/locations/models.py
 #
+from __future__ import unicode_literals
 
-from django.db import models
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
+"""
+LocationDefault, LocationFormat, and LocationCode models.
+"""
+__docformat__ = "restructuredtext en"
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,)
@@ -90,6 +97,7 @@ class LocationDefaultManager(models.Manager):
         return deleted_nodes
 
 
+@python_2_unicode_compatible
 class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     name = models.CharField(
@@ -98,7 +106,7 @@ class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("Owner"),
         related_name="%(app_label)s_%(class)s_owner_related",
-        help_text=_("The user that ownes this record."))
+        help_text=_("The user that owns this record."))
     description = models.CharField(
         verbose_name=_("Description"), max_length=254, null=True, blank=True,
         help_text=_("Enter what this series of location formats will be used "
@@ -113,9 +121,9 @@ class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     objects = LocationDefaultManager()
 
-    def _owner_producer(self):
+    def owner_producer(self):
         return self.owner.get_full_name_reversed()
-    _owner_producer.short_description = _("Format Owner")
+    owner_producer.short_description = _("Format Owner")
 
     def clean(self):
         # Check the length of the separator.
@@ -153,26 +161,29 @@ class LocationFormatManager(models.Manager):
         return record
 
 
+@python_2_unicode_compatible
 class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     location_default = models.ForeignKey(
-        LocationDefault, verbose_name=_("Location Default"))
+        LocationDefault, verbose_name=_("Location Default"),
+        help_text=_("The location default relative to this location format."))
     segment_length = models.PositiveIntegerField(
-        verbose_name=_("Segment Length"), editable=False, default=0)
+        verbose_name=_("Segment Length"), editable=False, default=0,
+        help_text=_("The lenth of this segment."))
     char_definition = models.CharField(
         verbose_name=_("Format"), max_length=248, db_index=True,
         help_text=_("Determine the character position definition where "
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
-                    "any hard coded charactor. ex. \\a\\d\\d\\d could be B001 "
+                    "any hard coded character. ex. \\a\\d\\d\\d could be B001 "
                     "or \\a@\d\d could be D@99."))
     segment_order =  models.PositiveIntegerField(
         verbose_name=_("Segment Order"), default=0,
         help_text=_("A number indicating the order that this segment will "
                     "appear in the location code. Numbers should start "
-                    "with 0 (Can be editied in the list view also)."))
+                    "with 0 (Can be edited in the list view also)."))
     description = models.CharField(
         verbose_name=_("Description"), max_length=1024, default='', blank=True,
-        help_text=_("Enter a description of the catageory segments."))
+        help_text=_("Enter a description of the category segments."))
 
     objects = LocationFormatManager()
 
@@ -232,6 +243,7 @@ class LocationCodeManager(models.Manager):
         return result
 
 
+@python_2_unicode_compatible
 class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     char_definition = models.ForeignKey(
@@ -242,11 +254,14 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("See the LocationFormat.description for the "
                     "format used."))
     parent = models.ForeignKey(
-        "self", blank=True, null=True, default=None, related_name='children')
+        "self", blank=True, null=True, default=None, related_name='children',
+        help_text=_("The parent to this segment."))
     path = models.CharField(
-        max_length=248, editable=False)
+        max_length=248, editable=False,
+        help_text=_("The full hierarchical path of this segment."))
     level = models.SmallIntegerField(
-        verbose_name=_("Level"), editable=False)
+        verbose_name=_("Level"), editable=False,
+        help_text=_("The location in the hierarchy of this segment."))
 
     objects = LocationCodeManager()
 
@@ -258,13 +273,13 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         if current: parents.append(self)
         return self.get_separator().join([parent.segment for parent in parents])
 
-    def _parents_producer(self):
+    def parents_producer(self):
         return self._get_category_path(current=False)
-    _parents_producer.short_description = _("Segment Parents")
+    parents_producer.short_description = _("Segment Parents")
 
-    def _char_def_producer(self):
+    def char_def_producer(self):
         return self.char_definition.char_definition
-    _char_def_producer.short_description = _("Character Definition")
+    char_def_producer.short_description = _("Character Definition")
 
     def clean(self):
         # Test that this segment follows the rules.

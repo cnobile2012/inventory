@@ -2,31 +2,39 @@
 #
 # inventory/accounts/models.py
 #
+from __future__ import unicode_literals
+
+"""
+User, Question, and Answer models.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 import hashlib
 
 from django.db import models
 from django.contrib.auth.hashers import get_hasher
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext, ugettext_lazy as _
-from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.utils.encoding import python_2_unicode_compatible
+from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils import timezone
 
-from inventory.regions.models import Country
-from inventory.projects.models import Project
-from inventory.common.storage import InventoryFileStorage
+from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
     ValidateOnSaveMixin, UserModelMixin, TimeModelMixin, StatusModelMixin,
     StatusModelManagerMixin)
+from inventory.common.storage import InventoryFileStorage
+from inventory.projects.models import Project
+from inventory.regions.models import Country
 
 log = logging.getLogger('inventory.accounts.models')
 
 
 def create_hash(value, salt, hasher='default'):
     hasher = get_hasher(hasher)
-    # Need to encript the salt
+    # Need to encrypt the salt
     return (hasher.algorithm,
             hasher.encode(value, hashlib.sha256(salt).hexdigest()))
 
@@ -101,6 +109,7 @@ class UserManager(BaseUserManager):
         return users[0]
 
 
+@python_2_unicode_compatible
 class User(AbstractUser, ValidateOnSaveMixin):
     DEFAULT_USER = 0
     PROJECT_MANAGER = 1
@@ -116,7 +125,6 @@ class User(AbstractUser, ValidateOnSaveMixin):
         (YES, _("Yes")),
         (NO, _("No")),
         )
-
     LAST_USED = 0
     NONE = 1
     P_DEFAULTS = (
@@ -124,41 +132,59 @@ class User(AbstractUser, ValidateOnSaveMixin):
         (NONE, _("Always Choose Project")),
         )
 
+    public_id = models.CharField(
+        verbose_name=_("Public User ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify a individual user."))
     role = models.SmallIntegerField(
-        verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER)
+        verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
+        help_text=_("The role of the user."))
     answers = models.ManyToManyField(
-        'Answer', verbose_name=_("Answers"), related_name='owners', blank=True)
-    #projects = models.ManyToManyField(
-    #    Project, verbose_name=_("Projects"), related_name='owners', blank=True)
+        'Answer', verbose_name=_("Answers"), related_name='owners', blank=True,
+        help_text=_("Answers to authentication questions."))
     picture = models.ImageField(
         verbose_name=_("Picture"), upload_to='user_photos', null=True,
-        blank=True, storage=InventoryFileStorage())
+        blank=True, storage=InventoryFileStorage(),
+        help_text=_("Photo of the individual."))
     send_email = models.BooleanField(
-        verbose_name=_("Send Email"), default=NO, choices=YES_NO)
+        verbose_name=_("Send Email"), default=NO, choices=YES_NO,
+        help_text=_("Set to YES if this individual need to be sent an email."))
     need_password = models.BooleanField(
-        verbose_name=_("Need Password"), default=NO, choices=YES_NO)
+        verbose_name=_("Need Password"), default=NO, choices=YES_NO,
+        help_text=_("Set to YES if this individual needs to reset their "
+                    "password."))
     dob = models.DateField(
         verbose_name=_("Date of Birth"), null=True, blank=True,
         help_text=_("The date of your birth."))
     address_01 = models.CharField(
-        verbose_name=_("Address 1"), max_length=50, null=True, blank=True,)
+        verbose_name=_("Address 1"), max_length=50, null=True, blank=True,
+        help_text=_("Address line one."))
     address_02 = models.CharField(
-        verbose_name=_("Address 2"), max_length=50, null=True, blank=True)
+        verbose_name=_("Address 2"), max_length=50, null=True, blank=True,
+        help_text=_("Address line two."))
     city = models.CharField(
-        verbose_name=_("City"), max_length=30, null=True, blank=True)
+        verbose_name=_("City"), max_length=30, null=True, blank=True,
+        help_text=_("The city this individual lives in."))
     region = models.CharField(
-        verbose_name=_("State/Province"), max_length=30, null=True, blank=True)
+        verbose_name=_("State/Province"), max_length=30, null=True, blank=True,
+        help_text=_("The state of residence."))
     postal_code = models.CharField(
-        verbose_name=_("Postal Code"), max_length=15, null=True, blank=True)
+        verbose_name=_("Postal Code"), max_length=15, null=True, blank=True,
+        help_text=_("The zip code of residence."))
     country = models.ForeignKey(
-        Country, verbose_name=_("Country"), null=True, blank=True)
+        Country, verbose_name=_("Country"), null=True, blank=True,
+        help_text=_("The country of residence."))
     project_default = models.SmallIntegerField(
         verbose_name=_("Project Default"), choices=P_DEFAULTS,
-        default=LAST_USED)
+        default=LAST_USED, help_text=_("The default project setting."))
 
     objects = UserManager()
 
     def clean(self):
+        # Populate the public_id on record creation only.
+        if self.pk is None:
+            self.public_id = generate_public_key()
+
         # Test that the role obeys the rules.
         if self.role == self.PROJECT_MANAGER and self.projects.count() <= 0:
             self.role = self.DEFAULT_USER
@@ -188,18 +214,6 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
         return result
 
-    def process_projects(self, projects):
-        if projects:
-            new_pks = [inst.pk for inst in projects]
-            old_pks = [inst.pk for inst in self.projects.all()]
-            rem_pks = list(set(old_pks) - set(new_pks))
-            # remove unwanted projects.
-            self.projects.remove(*self.projects.filter(pk__in=rem_pks))
-            # Add new projects.
-            add_pks = list(set(new_pks) - set(old_pks))
-            new_prj = Project.objects.filter(pk__in=add_pks)
-            self.projects.add(*new_prj)
-
     def process_answers(self, answers):
         if answers:
             new_pks = [inst.pk for inst in answers]
@@ -216,17 +230,17 @@ class User(AbstractUser, ValidateOnSaveMixin):
         used_pks = [answer.question.pk for answer in self.answers.all()]
         return Question.objects.get_active_questions(exclude_pks=used_pks)
 
-    def _full_name_reversed_producer(self):
+    def full_name_reversed_producer(self):
         return self.get_full_name_reversed()
-    _full_name_reversed_producer.short_description = _("User")
+    full_name_reversed_producer.short_description = _("User")
 
-    def _projects_producer(self):
+    def projects_producer(self):
         return mark_safe("<br />".join(
             [record.name for record in self.projects.all()]))
-    _projects_producer.allow_tags = True
-    _projects_producer.short_description = _("Projects")
+    projects_producer.allow_tags = True
+    projects_producer.short_description = _("Projects")
 
-    def _image_url_producer(self):
+    def image_url_producer(self):
         result = _("No Image URL")
 
         if self.picture and hasattr(self.picture, "url"):
@@ -234,10 +248,10 @@ class User(AbstractUser, ValidateOnSaveMixin):
                 self.picture.url, _("View Image"))
 
         return result
-    _image_url_producer.short_description = _("Image URL")
-    _image_url_producer.allow_tags = True
+    image_url_producer.short_description = _("Image URL")
+    image_url_producer.allow_tags = True
 
-    def _image_thumb_producer(self):
+    def image_thumb_producer(self):
         result = _("No Image")
 
         if self.picture:
@@ -245,8 +259,8 @@ class User(AbstractUser, ValidateOnSaveMixin):
                       ).format(self.picture.url, _("Cannot display image" ))
 
         return result
-    _image_thumb_producer.short_description = _("Thumb")
-    _image_thumb_producer.allow_tags = True
+    image_thumb_producer.short_description = _("Thumb")
+    image_thumb_producer.allow_tags = True
 
 
 #
@@ -258,11 +272,13 @@ class QuestionManager(StatusModelManagerMixin, models.Manager):
         return self.filter(active=True).exclude(pk__in=exclude_pks)
 
 
+@python_2_unicode_compatible
 class Question(TimeModelMixin, UserModelMixin, StatusModelMixin,
                ValidateOnSaveMixin):
 
     question = models.CharField(
-        verbose_name=_("Question"), max_length=100)
+        verbose_name=_("Question"), max_length=100,
+        help_text=_("A question for authentication."))
 
     objects = QuestionManager()
 
@@ -285,21 +301,24 @@ class AnswerManager(models.Manager):
     pass
 
 
+@python_2_unicode_compatible
 class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     ANSWER_SALT = "inventory.accounts.models.Answer.clean"
 
     answer = models.CharField(
-        verbose_name=_("Answer"), max_length=255)
+        verbose_name=_("Answer"), max_length=255,
+        help_text=_("An answer to an authentication question."))
     question = models.ForeignKey(
-        Question, verbose_name=_("Question"))
+        Question, verbose_name=_("Question"),
+        help_text=_("The question relative to this answer."))
 
     objects = AnswerManager()
 
     def clean(self):
         # Convert the ASCII text answer to a one way hash.
-        algorithum, hash_value = create_hash(self.answer, self.ANSWER_SALT)
+        algorithm, hash_value = create_hash(self.answer, self.ANSWER_SALT)
 
-        if algorithum not in self.answer:
+        if algorithm not in self.answer:
             self.answer = hash_value
 
     def save(self, *args, **kwargs):
@@ -316,7 +335,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     def process_owner(self, owners):
         self.owners.add(*owners)
 
-    def _owner_producer(self):
+    def owner_producer(self):
         owners = self.owners.all()
 
         if 0 <= len(owners) > 1:
@@ -324,4 +343,4 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
                                "owner. Found {}").format(owners))
 
         return owners[0]
-    _owner_producer.short_description = _("Owner")
+    owner_producer.short_description = _("Owner")

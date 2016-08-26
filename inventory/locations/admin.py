@@ -22,7 +22,7 @@ class LocationDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', '_owner_producer', 'separator', 'shared',
+    list_display = ('name', 'owner_producer', 'separator', 'shared',
                     'updated',)
     list_editable = ('separator', 'shared',)
     list_filter = ('owner',)
@@ -57,8 +57,8 @@ class LocationCodeAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('segment', '_parents_producer', 'path',
-                    '_char_def_producer', 'level', 'updated',)
+    list_display = ('segment', 'parents_producer', 'path',
+                    'char_def_producer', 'level', 'updated',)
     search_fields = ('segment', 'path',)
     list_filter = ('level',)
     ordering = ('path',)

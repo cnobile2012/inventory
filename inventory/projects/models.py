@@ -2,14 +2,22 @@
 #
 # inventory/projects/models.py
 #
+from __future__ import unicode_literals
+
+"""
+Project model.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
 
@@ -20,6 +28,7 @@ class ProjectManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
+@python_2_unicode_compatible
 class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
     """
     This model implements project functionality.
@@ -31,26 +40,43 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         (NO, _('No')),
         )
 
+    public_id = models.CharField(
+        verbose_name=_("Public Project ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify a individual project."))
     name = models.CharField(
-        verbose_name=_("Project Name"), max_length=256)
+        verbose_name=_("Project Name"), max_length=256,
+        help_text=_("The name of the project."))
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, verbose_name=_("Project Members"),
-        related_name='project_members', blank=True)
+        related_name='project_members', blank=True,
+        help_text=_("The members of this project."))
     managers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, verbose_name=_("Project Managers"),
-        related_name='project_managers', blank=True)
+        related_name='project_managers', blank=True,
+        help_text=_("The managers of this project."))
     public = models.BooleanField(
-        verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES)
+        verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES,
+        help_text=_("Set to YES if this project is public else set to NO "
+                    "if this project is private."))
 
     objects = ProjectManager()
+
+    def clean(self):
+        # Populate the public_id on record creation only.
+        if self.pk is None:
+            self.public_id = generate_public_key()
+
+    def save(self, *args, **kwargs):
+        super(Project, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         ordering = ('name',)
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
-
-    def __str__(self):
-        return self.name
 
     def process_members(self, members):
         """

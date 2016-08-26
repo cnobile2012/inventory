@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/accounts/admin.py
 #
+"""
+Accounts admin.
+"""
+__docformat__ = "restructuredtext en"
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
 
 from inventory.common.admin_mixins import UserAdminMixin
@@ -16,9 +20,9 @@ from .forms import QuestionForm, AnswerForm
 #
 # User
 #
-class UserAdmin(UserAdmin):
+class UserAdmin(admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('username', 'password',)}),
+        (None, {'fields': ('public_id', 'username', 'password',)}),
         (_("Personal Info"), {'fields': ('picture', 'first_name', 'last_name',
                                          'address_01', 'address_02', 'city',
                                          'region', 'postal_code', 'country',
@@ -32,12 +36,12 @@ class UserAdmin(UserAdmin):
                        'fields': ('send_email', 'need_password', 'last_login',
                                   'date_joined',)}),
         )
-    readonly_fields = ('last_login', 'date_joined',)
-    list_display = ('_image_thumb_producer', 'username', 'email', 'first_name',
-                    'last_name', 'is_staff', 'is_active',
-                    '_image_url_producer',)
+    readonly_fields = ('public_id', 'last_login', 'date_joined',)
+    list_display = ('image_thumb_producer', 'username', 'email', 'first_name',
+                    'last_name', 'public_id', 'is_staff', 'is_active',
+                    'image_url_producer',)
     list_editable = ('is_staff', 'is_active',)
-    search_fields = ('username', 'last_name', 'email',)
+    search_fields = ('username', 'last_name', 'email', 'public_id',)
     filter_horizontal = ('groups', 'user_permissions', 'answers',)
 
     class Media:
@@ -46,10 +50,13 @@ class UserAdmin(UserAdmin):
         #      'js/inheritance.js',
         #      'js/regions.js',)
 
+admin.site.register(get_user_model(), UserAdmin)
+
 
 #
 # Question
 #
+@admin.register(Question)
 class QuestionAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('question',)}),
@@ -67,6 +74,7 @@ class QuestionAdmin(UserAdminMixin, admin.ModelAdmin):
 #
 # Answer
 #
+@admin.register(Answer)
 class AnswerAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('question', 'answer',)}),
@@ -75,11 +83,6 @@ class AnswerAdmin(UserAdminMixin, admin.ModelAdmin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('question', '_owner_producer', 'answer', 'updater',
+    list_display = ('question', 'owner_producer', 'answer', 'updater',
                     'updated',)
     form = AnswerForm
-
-
-admin.site.register(get_user_model(), UserAdmin)
-admin.site.register(Question, QuestionAdmin)
-admin.site.register(Answer, AnswerAdmin)
