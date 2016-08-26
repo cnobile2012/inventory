@@ -2,7 +2,7 @@ django
 django-dcolumns
 #django-filter
 #django-guardian
-django-oauth-toolkit
+#django-oauth-toolkit
 django-redis-cache
 djangorestframework
 djangorestframework-xml
