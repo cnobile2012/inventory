@@ -138,17 +138,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dcolumn.dcolumns',
     'rest_framework',
-    #'oauth2_provider',
     #'guardian',
-    #'inventory.common',
     'inventory.accounts',
-    #'inventory.oauth2',
+    'inventory.categories',
+    'inventory.dynamic_columns',
+    #'inventory.items',
+    'inventory.locations',
     'inventory.projects',
     'inventory.regions',
     'inventory.suppliers',
-    'inventory.categories',
-    'inventory.locations',
-    #'inventory.items',
     ]
 
 TEMPLATES = [
