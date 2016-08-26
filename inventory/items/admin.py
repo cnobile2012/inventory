@@ -16,6 +16,20 @@ from .models import Item, Cost
 
 
 #
+# CostAdmin
+#
+class CostInline(admin.StackedInline):
+    fieldsets = (
+        (None, {'fields': ('value', 'currency', 'date_acquired',
+                           'invoice_number', 'supplier',)}),
+        )
+    model = Cost
+    extra = 1
+    max_num = 1
+    #form = CostAdminForm
+
+
+#
 # ItemAdmin
 #
 @admin.register(Item)
@@ -40,3 +54,15 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
     search_fields = ('sku', 'public_id', 'description', 'item_number',
                      'item_number_dst', 'item_number_mfg', 'project__name',)
     list_filter = ('active', 'project__name', 'distributor', 'manufacturer',)
+    filter_horizontal = ('categories', 'location_code',)
+    inlines = (CostInline,)
+    date_hierarchy = 'created'
+    save_as = True
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+
+        for form in formset.forms:
+            form.instance.user = request.user
+
+        formset.save()
