@@ -88,17 +88,15 @@ def api_root(request, format=None):
     regions = items.setdefault('regions', OrderedDict())
     regions['countries'] = reverse(
         'country-list', request=request, format=format)
+    regions['currencies'] = reverse(
+        'currency-list', request=request, format=format)
     regions['languages'] = reverse(
         'language-list', request=request, format=format)
     regions['timezones'] = reverse(
         'timezone-list', request=request, format=format)
-    regions['currencies'] = reverse(
-        'currency-list', request=request, format=format)
     # Suppliers
     suppliers = items.setdefault('suppliers', OrderedDict())
     suppliers['suppliers'] = reverse(
         'supplier-list', request=request, format=format)
-    # Queries
-    queries = collection.setdefault('queries', OrderedDict())
 
     return Response(buff)
