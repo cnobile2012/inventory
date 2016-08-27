@@ -9,8 +9,8 @@ DEBUG = True
 DATABASES = {
     'default': {
         # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or
-        # 'oracle'.
-        'ENGINE': 'django.db.backends.mysql',
+        # 'oracle'. Prefix all with 'django.db.backends.'.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         # Or path to database file if using sqlite3.
         'NAME': 'inventory',
         # Not used with sqlite3.
@@ -21,11 +21,6 @@ DATABASES = {
         'HOST': 'localhost',
         # Set to empty string for default. Not used with sqlite3.
         'PORT': '',
-        'OPTIONS': {
-            'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
-                             "SET default_storage_engine=INNODB;"),
-            'charset': 'utf8'
-            },
         }
     }
 

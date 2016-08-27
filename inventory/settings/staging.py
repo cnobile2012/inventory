@@ -4,15 +4,12 @@ DEBUG = False
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inventory',
         'USER': 'inventory',
         'PASSWORD': 'inventory',
-        'HOST': '',
+        'HOST': 'localhost',
         'PORT': '',
-        # Only Use when DB is created then comment.
-        #'OPTIONS': {'init_command': 'SET storage_engine=InnoDB;',
-        #            'charset': 'utf8'},
         }
     }
 
