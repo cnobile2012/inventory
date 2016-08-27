@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth import get_user_model
 
 from inventory.common.admin_mixins import UserAdminMixin
@@ -20,7 +21,7 @@ from .forms import QuestionForm, AnswerForm
 #
 # User
 #
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {'fields': ('public_id', 'username', 'password',)}),
         (_("Personal Info"), {'fields': ('picture', 'first_name', 'last_name',
