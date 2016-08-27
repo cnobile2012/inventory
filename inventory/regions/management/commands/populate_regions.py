@@ -253,13 +253,12 @@ class Command(BaseCommand):
                         log.info("NOOP: %s--%s", Currency.__name__,
                                  (entity, currency, alphabetic_code,
                                   numeric_code, minor_unit))
-
-                    if not (idx % 100):
-                        sys.stdout.write("Processed {} currencies.\n".format(
-                            idx))
                 else:
                     msg = "Currency '%s' has no matching country '%s'."
                     log.warning(msg, currency, entity)
+
+                if not (idx % 100):
+                    sys.stdout.write("Processed {} currencies.\n".format(idx))
 
             sys.stdout.write("Processed a total of {} currencies.\n".format(
                 idx))
