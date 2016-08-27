@@ -7,7 +7,7 @@
 import sys
 import os
 import csv
-from dateutil import parser
+from dateutil import parser as duparser
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -25,9 +25,8 @@ try:
     from inventory.apps.maintenance.models import (
         LocationCodeDefault, LocationCodeCategory)
 except:
-    from inventory.maintenance.models import (
+    from inventory.locations.models import (
         LocationDefault, LocationFormat, LocationCode)
-
 
 
 class MigrateLocation(MigrateBase):
@@ -83,7 +82,7 @@ class MigrateLocation(MigrateBase):
             loc_list = []
 
             for record in LocationCodeCategory.objects.all():
-                parent = record.parent.char_definition if record.parent else ''
+                parent = record.parent.segment if record.parent else ''
                 loc_list.append([record.char_definition.char_definition,
                                  parent,
                                  record.segment,
@@ -98,10 +97,15 @@ class MigrateLocation(MigrateBase):
                 writer.writerow(item)
 
     def _create_location_defaults(self):
+        user = self.get_user()
         data = [
-            {'name': 'Home Inventory Location Formats',
-             'owner': self.get_user(),
-             'description': "My DIY Inventory."},
+            {
+                'name': 'Home Inventory Location Formats',
+                'owner': user,
+                'description': "My DIY Inventory.",
+                'creator': user,
+                'updater': user
+                },
             ]
         defaults = []
 
@@ -120,7 +124,10 @@ class MigrateLocation(MigrateBase):
 
     def _create_location_format(self, defaults):
         # Only have one default at ths time.
-        default = defaults[0]
+        if len(defaults) > 0:
+            default = defaults[0]
+        else:
+            default = None
 
         with open(self._LOCATION_FORMAT, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
@@ -128,11 +135,11 @@ class MigrateLocation(MigrateBase):
                 char_definition = row[0]
                 segment_order = int(row[1])
                 description = row[2]
-                level = row[3] # Throw away, it's auto-generated.
-                user = self.get_user(username=row[4])
-                ctime = parser.parse(row[5])
-                mtime = parser.parse(row[6])
+                user = self.get_user(username=row[3])
+                ctime = duparser.parse(row[4])
+                mtime = duparser.parse(row[5])
                 kwargs = {}
+                kwargs['char_definition'] = char_definition
                 kwargs['location_default'] = default
                 kwargs['segment_order'] = segment_order
                 kwargs['description'] = description
@@ -140,14 +147,18 @@ class MigrateLocation(MigrateBase):
                 kwargs['created'] = ctime
                 kwargs['updater'] = user
                 kwargs['updated'] = mtime
-                kwargs['disable_created'] = True
-                kwargs['disable_updated'] = True
 
                 if not self._options.noop:
-                    obj, created = LocationFormat.objects.get_create(
-                        char_definition=char_definition, defaults=kwargs)
-
-                    if not created:
+                    try:
+                        obj = LocationFormat.objects.get(
+                            char_definition=char_definition)
+                    except LocationFormat.DoesNotExist:
+                        obj = LocationFormat(**kwargs)
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                        self._log.info("Created location format: %s",
+                                       char_definition)
+                    else:
                         obj.location_default = default
                         obj.segment_order = segment_order
                         obj.description = description
@@ -157,58 +168,62 @@ class MigrateLocation(MigrateBase):
                         obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                    self._log.info("Created location format: %s", name)
+                        self._log.info("Updated location format: %s",
+                                       char_definition)
                 else:
                     self._log.info("NOOP Mode: Found location format: %s",
-                                   name)
+                                   char_definition)
 
     def _create_location_code(self):
         with open(self._LOCATION_CODE, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                char_definition = row[0]
-                parent = row[1]
-                level = row[2] # Throw away, it's auto-generated.
-                segment = row[2]
-                user = self.get_user(username=row[3])
-                ctime = parser.parse(row[4])
-                mtime = parser.parse(row[5])
-                kwargs = {}
-                kwargs['char_definition'] = LocationFormat.objects.get(
-                    char_definition=char_definition)
+                char_definition = LocationFormat.objects.get(
+                    char_definition=row[0])
 
                 try:
-                    p_obj = LocationCode.object.get(segment=parent)
-                except:
-                    P_obj = None
+                    parent = LocationCode.objects.get(segment=row[1])
+                except LocationCode.DoesNotExist:
+                    parent = None
 
-                kwargs['parent'] = p_obj
+                segment = row[2]
+                level = row[3] # Throw away, it's auto-generated.
+                user = self.get_user(username=row[4])
+                ctime = duparser.parse(row[5])
+                mtime = duparser.parse(row[6])
+                kwargs = {}
+                kwargs['char_definition'] = char_definition
+                kwargs['parent'] = parent
                 kwargs['segment'] = segment
                 kwargs['creator'] = user
                 kwargs['created'] = ctime
                 kwargs['updater'] = user
                 kwargs['updated'] = mtime
-                kwargs['disable_created'] = True
-                kwargs['disable_updated'] = True
 
                 if not self._options.noop:
-                    obj, created = LocationCode.objects.get_or_create(
-                        char_definition=char_definition, defaults=kwargs)
-
-                    if not created:
-                        obj.parent = p_obj
-                        obj.segment = segment
+                    try:
+                        obj = LocationCode.objects.get(
+                            parent=parent, segment=segment)
+                    except LocationCode.DoesNotExist:
+                        obj = LocationCode(**kwargs)
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                        self._log.info("Created location code: %s "
+                                       "parent: %s", segment, parent)
+                    else:
+                        obj.parent = parent
+                        obj.char_definition = char_definition
                         obj.creator = user
                         obj.created = ctime
                         obj.updater = user
                         obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                        self._log.info("Updated location code: %s", name)
-                    else:
-                        self._log.info("Created location code: %s", name)
+                        self._log.info("Updated location code: %s "
+                                       "parent: %s", segment, parent)
                 else:
-                    self._log.info("NOOP Mode: Found location code: %s", name)
+                    self._log.info("NOOP Mode: Found location code: %s "
+                                   "parent: %s", segment, parent)
 
 
 if __name__ == '__main__':

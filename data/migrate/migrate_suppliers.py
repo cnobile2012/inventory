@@ -7,7 +7,7 @@
 import sys
 import os
 import csv
-from dateutil import parser
+from dateutil import parser as duparser
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -70,7 +70,7 @@ class MigrateSupplier(MigrateBase):
             for idx, supplier in enumerate(suppliers, start=1):
                 for record in supplier:
                     writer.writerow([
-                        record.name.encode('utf-8'),
+                        record.name.strip().encode('utf-8'),
                         record.address_01.encode('utf-8'),
                         record.address_02.encode('utf-8'),
                         record.city.encode('utf-8'),
@@ -93,22 +93,28 @@ class MigrateSupplier(MigrateBase):
         with open(self._SUPPLIER, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                name = row[0]
+                name = row[0].strip()
                 address_01 = row[1]
                 address_02 = row[2]
                 city = row[3]
                 region = row[4]
                 postal_code = row[5]
-                country = Country.objects.get(country_code_2=row[6])
+
+                try:
+                    country = Country.objects.get(code=row[6])
+                except Country.DoesNotExist:
+                    country = None
+
                 phone = row[7]
                 fax = row[8]
                 email = row[9]
                 url = row[10]
                 stype = row[11]
                 user = self.get_user(username=row[12])
-                ctime = parser.parse(row[13])
-                mtime = parser.parse(row[14])
+                ctime = duparser.parse(row[13])
+                mtime = duparser.parse(row[14])
                 kwargs = {}
+                kwargs['name'] = name
                 kwargs['address_01'] = address_01
                 kwargs['address_02'] = address_02
                 kwargs['city'] = city
@@ -117,21 +123,23 @@ class MigrateSupplier(MigrateBase):
                 kwargs['country'] = country
                 kwargs['phone'] = phone
                 kwargs['fax'] = fax
-                kwargd['email'] = email
+                kwargs['email'] = email
                 kwargs['url'] = url
                 kwargs['stype'] = stype
                 kwargs['creator'] = user
                 kwargs['created'] = ctime
                 kwargs['updater'] = user
                 kwargs['updated'] = mtime
-                kwargs['disable_created'] = True
-                kwargs['disable_updated'] = True
 
                 if not self._options.noop:
-                    obj, created = Supplier.objects.get_or_create(
-                        name=name, defaults=kwargs)
-
-                    if not created:
+                    try:
+                        obj = Supplier.objects.get(name=name)
+                    except Supplier.DoesNotExist:
+                        obj = Supplier(**kwargs)
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                        self._log.info("Created supplier: %s", name)
+                    else:
                         obj.address_01 = address_01
                         obj.address_02 = address_02
                         obj.city = city
@@ -143,15 +151,13 @@ class MigrateSupplier(MigrateBase):
                         obj.email = email
                         obj.url = url
                         obj.stype = stype
-                        obj.creator = creator
-                        obj.created = created
-                        obj.updater = updater
-                        obj.updated = updated
+                        obj.creator = user
+                        obj.created = ctime
+                        obj.updater = user
+                        obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
                         self._log.info("Updated supplier: %s", name)
-                    else:
-                        self._log.info("Created supplier: %s", name)
                 else:
                     self._log.info("NOOP Mode: Found supplier: %s", name)
 

@@ -34,8 +34,13 @@ class MigrateBase(object):
     def __init__(self, log):
         self._log = log
 
-    def get_user(self, usename=_DEFAULT_USER):
-        user = UserModel.objects.get(username=self._DEFAULT_USER,
-                                     is_active=True)
+    def get_user(self, username=_DEFAULT_USER):
+        user = UserModel.objects.filter(username=username, is_active=True)
+
+        if user.count():
+            user = user[0]
+        else:
+            user = None
+
         self._log.info("Found user: %s", user)
         return user

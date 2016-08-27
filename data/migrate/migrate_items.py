@@ -7,7 +7,7 @@
 import sys
 import os
 import csv
-from dateutil import parser
+from dateutil import parser as duparser
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -294,9 +294,10 @@ class MigrateItem(MigrateBase):
                 active = row[9]
                 purge = row[10]
                 user = self.get_user(username=row[11])
-                ctime = parser.parse(row[12])
-                mtime = parser.parse(row[13])
+                ctime = duparser.parse(row[12])
+                mtime = duparser.parse(row[13])
                 kwargs = {}
+                kwargs['item_number'] = item_number
                 kwargs['description'] = title
                 kwargs['item_number_mfg'] = item_number_mfg
                 kwargs['item_number_dst'] = item_number_dst
@@ -309,14 +310,16 @@ class MigrateItem(MigrateBase):
                 kwargs['created'] = ctime
                 kwargs['updater'] = user
                 kwargs['updated'] = mtime
-                kwargs['disable_created'] = True
-                kwargs['disable_updated'] = True
 
                 if not self._options.noop:
-                    obj, created = Item.objects.get_or_create(
-                        item_number=item_number, defaults=kwargs)
-
-                    if not created:
+                    try:
+                        obj = Item.objects.get(item_number=item_number)
+                    except Item.DoesNotExist:
+                        obj = Item(**kwargs)
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                        self._log.info("Created item: %s", name)
+                    else:
                         obj.description = title
                         obj.item_number_mfg = item_number_mfg
                         obj.item_number_dst = item_number_dst
@@ -332,9 +335,6 @@ class MigrateItem(MigrateBase):
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
                         self._log.info("Updated item: %s", name)
-                    else:
-                        self._log.info("Created item: %s", name)
-
                 else:
                     self._log.info("NOOP Mode: Found item: %s", name)
 
@@ -346,7 +346,7 @@ class MigrateItem(MigrateBase):
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
                 value = row[0]
-                date_acquired = parser.parse(row[1])
+                date_acquired = duparser.parse(row[1])
                 invoice_number = row[2]
                 item = Item.objects.get(item_number=row[3], created=row[4])
 
@@ -446,8 +446,7 @@ class MigrateItem(MigrateBase):
 
                     obj.location = location
                     obj.order = order
-                    obj.save(**{'disable_created': True,
-                                'disable_updated': True})
+                    obj.save()
                     self._log.info("Updated DynamicColumn: %s", name)
                 else:
                     self._log.info("Created DynamicColumn: %s", name)
