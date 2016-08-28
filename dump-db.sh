@@ -5,9 +5,6 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
-mysqldump -u inventory -p inventory > db-snapshots/$1-$(date +"%Y%m%d%H%M%S").sql
-
-# Don't drop anything first.
-#mysqldump --compact -u inventory -p inventory > db-snapshots/$1-$(date +"%Y%m%d%H%M%S").sql
+pg_dump --username=inventory -c --compress=9 -h localhost inventory > db-snapshots/$1-$(date +"%Y%m%d%H%M").sql.gz
 
 exit 0
