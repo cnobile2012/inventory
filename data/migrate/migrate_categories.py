@@ -71,7 +71,8 @@ class MigrateCategory(MigrateBase):
         with open(self._CATEGORY, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                parent = Category.objects.get(name=row[0]) if row[0] else None
+                p_name = row[0].strip()
+                parent = Category.objects.get(name=p_name) if p_name else None
                 name = row[1]
                 level = row[2] # Throw away, it's auto-generated.
                 user = self.get_user(username=row[3])
