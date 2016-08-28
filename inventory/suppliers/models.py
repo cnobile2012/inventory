@@ -57,13 +57,13 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin):
         help_text=_("The city this individual lives in."))
     region = models.CharField(
         verbose_name=_("State/Province"), max_length=30, blank=True, null=True,
-        help_text=_("The state of residence."))
+        help_text=_("The region in the country."))
     postal_code = models.CharField(
         verbose_name=_("Postal Code"), max_length=15, blank=True, null=True,
-        help_text=_("The zip code of residence."))
+        help_text=_("The postal code in the country."))
     country = models.ForeignKey(
         Country, verbose_name=_("Country"), blank=True, null=True,
-        help_text=_("The country of residence."))
+        help_text=_("The country."))
     phone = models.CharField(
         verbose_name=_("Phone"), max_length=20, blank=True, null=True,
         help_text=_("The phone number of the supplier."))

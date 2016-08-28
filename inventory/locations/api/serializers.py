@@ -28,7 +28,7 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
-    locationformat_set = serializers.HyperlinkedRelatedField(
+    location_formats = serializers.HyperlinkedRelatedField(
         view_name='location-format-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-default-detail')
@@ -54,7 +54,7 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = LocationDefault
         fields = ('id', 'name', 'owner', 'description', 'shared', 'separator',
-                  'locationformat_set', 'creator', 'created', 'updater',
+                  'location_formats', 'creator', 'created', 'updater',
                   'updated', 'uri',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
 
@@ -67,7 +67,7 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
-    locationcode_set = serializers.HyperlinkedRelatedField(
+    location_codes = serializers.HyperlinkedRelatedField(
         view_name='location-code-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-format-detail')
@@ -95,7 +95,7 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
         model = LocationFormat
         fields = ('id', 'location_default', 'char_definition',
                   'segment_order', 'segment_length', 'description',
-                  'locationcode_set', 'creator', 'created', 'updater',
+                  'location_codes', 'creator', 'created', 'updater',
                   'updated', 'uri',)
         read_only_fields = ('id', 'segment_length', 'creator', 'created',
                             'updater', 'updated',)

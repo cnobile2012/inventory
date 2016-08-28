@@ -164,19 +164,19 @@ class Currency(StatusModelMixin):
     This model impliments currency types.
     """
     entity = models.ForeignKey(
-        Country, verbose_name=_("Country"), null=True, blank=True,
+        Country, verbose_name=_("Country"),
         help_text=_("Country or region name."))
     currency = models.CharField(
-        verbose_name=_("Corrency"), max_length=50, null=True, blank=True,
+        verbose_name=_("Corrency"), max_length=50,
         help_text=_("Name of the currency."))
     alphabetic_code = models.CharField(
-        verbose_name=_("Alphabetic Code"), max_length=3, null=True, blank=True,
+        verbose_name=_("Alphabetic Code"), max_length=3,
         help_text=_("3 digit alphabetic code for the currency."))
     numeric_code = models.PositiveSmallIntegerField(
-        verbose_name=_("Numeric Code"), null=True, blank=True,
+        verbose_name=_("Numeric Code"),
         help_text=_("3 digit numeric code."))
     minor_unit = models.PositiveSmallIntegerField(
-        verbose_name=_("Minor Unit"), null=True, blank=True,
+        verbose_name=_("Minor Unit"),
         help_text=_("Number of digits after the decimal separator."))
     symbol =  models.CharField(
         verbose_name=_("Symbol"), max_length=6, null=True, blank=True,

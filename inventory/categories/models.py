@@ -271,6 +271,6 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     class Meta:
         unique_together = (('owner', 'parent', 'name',),)
+        ordering = ('path',)
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
-        ordering = ('path',)

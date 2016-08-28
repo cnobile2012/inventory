@@ -1,5 +1,5 @@
 #
-# inventory/maintenance/views.py
+# inventory/locations/views.py
 #
 
 import logging

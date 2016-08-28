@@ -166,6 +166,7 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     location_default = models.ForeignKey(
         LocationDefault, verbose_name=_("Location Default"),
+        related_name="location_formats",
         help_text=_("The location default relative to this location format."))
     segment_length = models.PositiveIntegerField(
         verbose_name=_("Segment Length"), editable=False, default=0,
@@ -248,6 +249,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     char_definition = models.ForeignKey(
         LocationFormat, verbose_name=_("Format"),
+        related_name="location_codes",
         help_text=_("Choose the format that this segment will be based on."))
     segment = models.CharField(
         max_length=248, db_index=True,
@@ -307,7 +309,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         # Test that the number of segments defined are equal to or less than
         # the number of formats for this location default.
         max_num_segments = (self.char_definition.location_default.
-                            locationformat_set.count())
+                            location_formats.count())
         length = len(parents) + 1 # Parents plus self.
 
         if length > max_num_segments:
@@ -334,9 +336,10 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
             pass
 
     def __str__(self):
-        return self.path
+        return self.segment
 
     class Meta:
+        unique_together = ('parent', 'segment',)
         ordering = ('path',)
         verbose_name = _("Location Code")
         verbose_name_plural = _("Location Codes")
