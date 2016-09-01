@@ -26,8 +26,9 @@ class UserAdmin(DjangoUserAdmin):
         (None, {'fields': ('public_id', 'username', 'password',)}),
         (_("Personal Info"), {'fields': ('picture', 'first_name', 'last_name',
                                          'address_01', 'address_02', 'city',
-                                         'region', 'postal_code', 'country',
-                                         'dob', 'email', 'answers',)}),
+                                         'subdivision', 'postal_code',
+                                         'country', 'dob', 'email', 'language',
+                                         'timezone', 'answers',)}),
         (_("Projects"), {'fields': ('role', 'project_default',)}),
         (_("Permissions"), {'classes': ('collapse',),
                             'fields': ('is_active', 'is_staff',
@@ -46,10 +47,9 @@ class UserAdmin(DjangoUserAdmin):
     filter_horizontal = ('groups', 'user_permissions', 'answers',)
 
     class Media:
-        pass
-        #js = ('js/js.cookie-2.0.4.min.js',
-        #      'js/inheritance.js',
-        #      'js/regions.js',)
+        js = ('js/js.cookie-2.0.4.min.js',
+              'js/inheritance.js',
+              'js/regions.js',)
 
 admin.site.register(get_user_model(), UserAdmin)
 

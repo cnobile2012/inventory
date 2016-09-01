@@ -18,9 +18,9 @@ from .models import Supplier
 class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('project', 'name', 'stype', 'address_01',
-                           'address_02', 'city',
-                           'region', 'postal_code', 'country', 'phone', 'fax',
-                           'email', 'url',)}),
+                           'address_02', 'city', 'subdivision', 'postal_code',
+                           'country', 'phone', 'fax', 'email', 'url',
+                           'language', 'timezone',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
@@ -34,7 +34,7 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     list_filter = ('stype', 'active',)
     ordering = ('name',)
 
-#    class Media:
-#        js = ('js/js.cookie-2.0.4.min.js',
-#              'js/inheritance.js',
-#              'js/regions.js',)
+    class Media:
+        js = ('js/js.cookie-2.0.4.min.js',
+              'js/inheritance.js',
+              'js/regions.js',)

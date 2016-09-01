@@ -27,7 +27,7 @@ from inventory.common.model_mixins import (
     StatusModelManagerMixin)
 from inventory.common.storage import InventoryFileStorage
 from inventory.projects.models import Project
-from inventory.regions.models import Country
+from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
 log = logging.getLogger('inventory.accounts.models')
 
@@ -165,8 +165,8 @@ class User(AbstractUser, ValidateOnSaveMixin):
     city = models.CharField(
         verbose_name=_("City"), max_length=30, null=True, blank=True,
         help_text=_("The city this individual lives in."))
-    region = models.CharField(
-        verbose_name=_("State/Province"), max_length=30, null=True, blank=True,
+    subdivision = models.ForeignKey(
+        Subdivision, verbose_name=_("State/Province"), null=True, blank=True,
         help_text=_("The state of residence."))
     postal_code = models.CharField(
         verbose_name=_("Postal Code"), max_length=15, null=True, blank=True,
@@ -174,6 +174,12 @@ class User(AbstractUser, ValidateOnSaveMixin):
     country = models.ForeignKey(
         Country, verbose_name=_("Country"), null=True, blank=True,
         help_text=_("The country of residence."))
+    language = models.ForeignKey(
+        Language, verbose_name=_("Language"), null=True, blank=True,
+        help_text=_("The language code."))
+    timezone = models.ForeignKey(
+        TimeZone, verbose_name=_("Timezone"), null=True, blank=True,
+        help_text=_("The timezone."))
     project_default = models.SmallIntegerField(
         verbose_name=_("Project Default"), choices=P_DEFAULTS,
         default=LAST_USED, help_text=_("The default project setting."))

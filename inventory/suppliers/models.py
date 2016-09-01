@@ -19,7 +19,7 @@ from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
     ValidateOnSaveMixin)
 from inventory.projects.models import Project
-from inventory.regions.models import Country, Language, TimeZone
+from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
 log = logging.getLogger('inventory.suppliers.models')
 
@@ -67,9 +67,9 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
     city = models.CharField(
         verbose_name=_("City"), max_length=30, null=True, blank=True,
         help_text=_("The city this individual lives in."))
-    region = models.CharField(
-        verbose_name=_("State/Province"), max_length=30, null=True, blank=True,
-        help_text=_("The region in the country."))
+    subdivision = models.ForeignKey(
+        Subdivision, verbose_name=_("State/Province"), null=True, blank=True,
+        help_text=_("The subdivision in the country."))
     postal_code = models.CharField(
         verbose_name=_("Postal Code"), max_length=15, null=True, blank=True,
         help_text=_("The postal code in the country."))

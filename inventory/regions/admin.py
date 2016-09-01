@@ -81,16 +81,16 @@ class TimeZoneAdmin(admin.ModelAdmin):
 @admin.register(Currency)
 class CurrencyAdmin(admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('currency', 'entity', 'alphabetic_code',
+        (None, {'fields': ('currency', 'country', 'alphabetic_code',
                            'numeric_code', 'minor_unit', 'symbol',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active',)}),
         )
-    readonly_fields = ('currency', 'entity', 'alphabetic_code', 'numeric_code',
+    readonly_fields = ('currency', 'country', 'alphabetic_code', 'numeric_code',
                        'minor_unit', 'symbol',)
-    list_display = ('currency', 'entity', 'symbol', 'active',)
+    list_display = ('currency', 'country', 'symbol', 'active',)
     list_editable = ('active',)
     list_filter = ('active',)
-    search_fields = ('currency', 'entity__country', 'alphabetic_code',
+    search_fields = ('currency', 'country__country', 'alphabetic_code',
                      'numeric_code',)
     form = CurrencyForm

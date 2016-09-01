@@ -32,7 +32,7 @@ class CountryManager(StatusModelManagerMixin, models.Manager):
 @python_2_unicode_compatible
 class Country(StatusModelMixin):
     """
-    This model implements country types.
+    This model implements country codes.
     """
     country = models.CharField(
         verbose_name=_("Country"), max_length=100,
@@ -43,16 +43,53 @@ class Country(StatusModelMixin):
 
     objects = CountryManager()
 
-    class Meta:
-        ordering = ('country',)
-        verbose_name = _("Country")
-        verbose_name_plural = _("Countries")
-
     def save(self, *args, **kwargs):
         super(Country, self).save(*args, **kwargs)
 
     def __str__(self):
         return "{} ({})".format(self.country, self.code)
+
+    class Meta:
+        ordering = ('country',)
+        verbose_name = _("Country")
+        verbose_name_plural = _("Countries")
+
+
+#
+# Subdivision
+#
+class SubdivisionManager(StatusModelManagerMixin, models.Manager):
+    pass
+
+
+@python_2_unicode_compatible
+class Subdivision(StatusModelMixin):
+    """
+    This model implements country subdivision codes.
+    """
+    subdivision_name = models.CharField(
+        verbose_name=_("State"), max_length=128,
+        help_text=_("The subdivision of the country."))
+    country = models.ForeignKey(
+        Country, on_delete=models.CASCADE, verbose_name=_("Country"),
+        related_name='subdivisions', help_text=_("The country."))
+    code = models.CharField(
+        verbose_name=_("State Code"), max_length=10,
+        help_text=_("The subdivision code."))
+
+    objects = SubdivisionManager()
+
+    def save(self, *args, **kwargs):
+        super(Subdivision, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "{} ({})".format(self.country, self.code)
+
+    class Meta:
+        unique_together = ('country', 'code',)
+        ordering = ('country', 'subdivision_name',)
+        verbose_name = _("Subdivision")
+        verbose_name_plural = _("Subdivisions")
 
 
 #
@@ -81,11 +118,11 @@ class LanguageManager(StatusModelManagerMixin, models.Manager):
 @python_2_unicode_compatible
 class Language(StatusModelMixin, ValidateOnSaveMixin):
     """
-    This model impliments language types.
+    This model implements language codes.
     """
     locale = models.CharField(
-        verbose_name=_("Locale"), max_length=5, unique=True, null=True,
-        blank=True, help_text=_("The language and country codes."))
+        verbose_name=_("Locale"), max_length=5, unique=True, blank=True,
+        help_text=_("The language and country codes."))
     country = models.ForeignKey(
         Country, on_delete=models.CASCADE, verbose_name=_("Country"),
         related_name='languages', help_text=_("The country."))
@@ -121,7 +158,7 @@ class TimeZoneManager(StatusModelManagerMixin, models.Manager):
 @python_2_unicode_compatible
 class TimeZone(StatusModelMixin):
     """
-    This model impliments timezone types.
+    This model implements timezone codes.
     """
     zone = models.CharField(
         verbose_name=_("Timezone"), max_length=40,
@@ -161,9 +198,9 @@ class CurrencyManager(StatusModelManagerMixin, models.Manager):
 @python_2_unicode_compatible
 class Currency(StatusModelMixin):
     """
-    This model impliments currency types.
+    This model implements currency codes.
     """
-    entity = models.ForeignKey(
+    country = models.ForeignKey(
         Country, verbose_name=_("Country"),
         help_text=_("Country or region name."))
     currency = models.CharField(
@@ -188,7 +225,7 @@ class Currency(StatusModelMixin):
         return "{} {}".format(self.currency, self.entity)
 
     class Meta:
-        unique_together = ('entity', 'alphabetic_code',)
-        ordering = ('entity__country', 'currency',)
+        unique_together = ('country', 'alphabetic_code',)
+        ordering = ('country__country', 'currency',)
         verbose_name = _("Currency")
         verbose_name_plural = _("Currencies")
