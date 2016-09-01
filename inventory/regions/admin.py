@@ -12,8 +12,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin
 
-from .models import Country, Language, TimeZone, Currency
-from .forms import CountryForm, LanguageForm, TimeZoneForm, CurrencyForm
+from .models import Country, Subdivision, Language, TimeZone, Currency
+from .forms import (
+    CountryForm, SubdivisionForm, LanguageForm, TimeZoneForm, CurrencyForm)
 
 
 #
@@ -36,15 +37,33 @@ class CountryAdmin(UserAdminMixin, admin.ModelAdmin):
 
 
 #
+# SubdivisionAdmin
+#
+@admin.register(Subdivision)
+class SubdivisionAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {'fields': ('subdivision_name', 'country', 'code',)}),
+        (_("Status"), {'classes': ('collapse',),
+                       'fields': ('active',)}),
+        )
+    ordering = ('country__country', 'subdivision_name',)
+    readonly_fields = ('subdivision_name', 'country', 'code',)
+    list_display = ('subdivision_name', 'country', 'code', 'active',)
+    list_editable = ('active',)
+    list_filter = ('active',)
+    search_fields = ('subdivision_name', 'country__code', 'country__country',)
+    form = SubdivisionForm
+
+
+#
 # Language
 #
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('locale', 'country', 'code',)}),
-        (_("Status"), {
-            'classes': ('collapse',),
-            'fields': ('active',)}),
+        (_("Status"), {'classes': ('collapse',),
+                       'fields': ('active',)}),
         )
     ordering = ('locale',)
     readonly_fields = ('locale', 'country', 'code',)
@@ -62,9 +81,8 @@ class LanguageAdmin(admin.ModelAdmin):
 class TimeZoneAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('zone', 'coordinates', 'country', 'desc',)}),
-        (_("Status"), {
-            'classes': ('collapse',),
-            'fields': ('active',)}),
+        (_("Status"), {'classes': ('collapse',),
+                       'fields': ('active',)}),
         )
     ordering = ('zone',)
     readonly_fields = ('zone', 'coordinates', 'country', 'desc',)

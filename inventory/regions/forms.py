@@ -9,7 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from django import forms
 
-from .models import Country, Language, TimeZone, Currency
+from .models import Country, Subdivision, Language, TimeZone, Currency
 
 
 #
@@ -22,6 +22,19 @@ class CountryForm(forms.ModelForm):
 
     class Meta:
         model = Country
+        exclude = []
+
+
+#
+# Subdivision
+#
+class SubdivisionForm(forms.ModelForm):
+    """
+    Subdivision form
+    """
+
+    class Meta:
+        model = Subdivision
         exclude = []
 
 
