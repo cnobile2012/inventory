@@ -19,7 +19,7 @@ All the arguments are in the config file, however one can execute any one or
 all of them by added the correct parameters on the command line.
 
 **WARNING**: The country data is a parent to all the other data types, so if
-the country data is updated all the other data tpes should be updated as well.
+the country data is updated all the other data types should be updated as well.
 
 **NOTE**: If using the ``populate-regions.conf`` config file you **MUST**
 enter the full absolute or relative file path to the command.
@@ -32,7 +32,7 @@ Run all three files::
 
 Run just the ``Language`` and ``TimeZone`` files::
 
-  $ ./manage.py populate_regions -cl @data/regions/populate-regions.conf
+  $ ./manage.py populate_regions -lt @data/regions/populate-regions.conf
 
 Run ``Country`` just using the command line::
 
