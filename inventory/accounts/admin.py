@@ -84,6 +84,6 @@ class AnswerAdmin(UserAdminMixin, admin.ModelAdmin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('question', 'owner_producer', 'answer', 'updater',
+    list_display = ('question', 'user_producer', 'answer', 'updater',
                     'updated',)
     form = AnswerForm

@@ -101,35 +101,19 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
             new_pks = [inst.pk for inst in managers]
             old_pks = [inst.pk for inst in self.managers.all()]
             rem_pks = list(set(old_pks) - set(new_pks))
-            User = get_user_model()
+            UserModel = get_user_model()
             # Remove unwanted managers.
             self.managers.remove(*self.managers.filter(pk__in=rem_pks))
-            self._bulk_update_role(rem_pks, User.DEFAULT_USER)
+            self._bulk_update_role(rem_pks, UserModel.DEFAULT_USER)
             # Add new managers.
             add_pks = list(set(new_pks) - set(old_pks))
-            new_man = User.objects.filter(pk__in=add_pks)
-            self._bulk_update_role(add_pks, User.PROJECT_MANAGER)
+            new_man = UserModel.objects.filter(pk__in=add_pks)
+            self._bulk_update_role(add_pks, UserModel.PROJECT_MANAGER)
             self.managers.add(*new_man)
 
-    def process_owners(self, owners):
-        """
-        Owners are essentially the same as members. This method is here for
-        completeness only and will not be reflected in the RESTful API.
-        """
-        if owners:
-            new_pks = [inst.pk for inst in owners]
-            old_pks = [inst.pk for inst in self.owners.all()]
-            rem_pks = list(set(old_pks) - set(new_pks))
-            # Remove unwanted managers.
-            self.owners.remove(*self.owners.filter(pk__in=rem_pks))
-            # Add new managers.
-            add_pks = list(set(new_pks) - set(old_pks))
-            new_own = get_user_model().objects.filter(pk__in=add_pks)
-            self.owners.add(*new_own)
-
     def _bulk_update_role(self, pks, role):
-        User = get_user_model()
+        UserModel = get_user_model()
         query = [models.Q(pk__in=pks) &
-                 ~models.Q(role__gt=User.PROJECT_MANAGER)]
-        num = User.objects.filter(*query).update(role=role)
+                 ~models.Q(role__gt=UserModel.PROJECT_MANAGER)]
+        num = UserModel.objects.filter(*query).update(role=role)
         log.debug("PKs: %s, role: %s, num affected rows: %s", pks, role, num)

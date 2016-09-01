@@ -39,7 +39,8 @@ class MigrateCategory(MigrateBase):
             self._create_category_csv()
 
         if self._options.populate:
-            self._create_category()
+            project = self._create_project()
+            self._create_category(project)
 
     def _create_category_csv(self):
         with open(self._CATEGORY, mode='w') as csvfile:
@@ -67,7 +68,7 @@ class MigrateCategory(MigrateBase):
             for item in cat_list:
                 writer.writerow(item)
 
-    def _create_category(self):
+    def _create_category(self, project):
         with open(self._CATEGORY, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
@@ -78,19 +79,19 @@ class MigrateCategory(MigrateBase):
                 user = self.get_user(username=row[3])
                 ctime = duparser.parse(row[4])
                 mtime = duparser.parse(row[5])
-                kwargs = {}
-                kwargs['name'] = name
-                kwargs['parent'] = parent
-                kwargs['creator'] = user
-                kwargs['created'] = ctime
-                kwargs['updater'] = user
-                kwargs['updated'] = mtime
-                kwargs['owner'] = user
 
                 if not self._options.noop:
                     try:
                         obj = Category.objects.get(name=name)
                     except Category.DoesNotExist:
+                        kwargs = {}
+                        kwargs['name'] = name
+                        kwargs['parent'] = parent
+                        kwargs['creator'] = user
+                        kwargs['created'] = ctime
+                        kwargs['updater'] = user
+                        kwargs['updated'] = mtime
+                        kwargs['project'] = project
                         obj = Category(**kwargs)
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
@@ -101,7 +102,7 @@ class MigrateCategory(MigrateBase):
                         obj.created = ctime
                         obj.updater = user
                         obj.updated = mtime
-                        obj.owner = user
+                        obj.project = project
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
                         self._log.info("Updated category: %s", name)

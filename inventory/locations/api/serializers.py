@@ -22,8 +22,8 @@ User = get_user_model()
 # Location
 #
 class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
-    owner = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', queryset=User.objects.all())
+    project = serializers.HyperlinkedRelatedField(
+        view_name='project-detail', queryset=User.objects.all())
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
@@ -41,7 +41,7 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-        instance.owner = validated_data.get('owner', instance.owner)
+        instance.project = validated_data.get('project', instance.project)
         instance.description = validated_data.get(
             'description', instance.description)
         instance.shared = validated_data.get('shared', instance.shared)
@@ -53,9 +53,9 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = LocationDefault
-        fields = ('id', 'name', 'owner', 'description', 'shared', 'separator',
-                  'location_formats', 'creator', 'created', 'updater',
-                  'updated', 'uri',)
+        fields = ('id', 'project', 'name', 'description', 'shared',
+                  'separator', 'location_formats', 'creator', 'created',
+                  'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
 
 

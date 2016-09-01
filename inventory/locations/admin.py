@@ -15,17 +15,16 @@ from .forms import LocationDefaultForm, LocationFormatForm, LocationCodeForm
 @admin.register(LocationDefault)
 class LocationDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('name', 'owner', 'description', 'separator',
+        (None, {'fields': ('project', 'name', 'description', 'separator',
                            'shared',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'owner_producer', 'separator', 'shared',
-                    'updated',)
+    list_display = ('name', 'project', 'separator', 'shared', 'updated',)
     list_editable = ('separator', 'shared',)
-    list_filter = ('owner',)
+    list_filter = ('project',)
     form = LocationDefaultForm
 
 

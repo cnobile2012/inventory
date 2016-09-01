@@ -11,20 +11,26 @@ from inventory.common.admin_mixins import UserAdminMixin
 from .models import Supplier
 
 
+#
+# SupplierAdmin
+#
+@admin.register(Supplier)
 class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('name', 'stype', 'address_01', 'address_02', 'city',
-                'region', 'postal_code', 'country', 'phone', 'fax', 'email',
-                'url',)}),
+        (None, {'fields': ('project', 'name', 'stype', 'address_01',
+                           'address_02', 'city',
+                           'region', 'postal_code', 'country', 'phone', 'fax',
+                           'email', 'url',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'stype', 'phone', 'email', 'url', 'active',)
+    list_display = ('name', 'project', 'stype', 'phone', 'email', 'url',
+                    'active',)
     list_editable = ('stype', 'active',)
-    search_fields = ('country__country', 'city', 'region__region',
-                     'region__region_code',)
+    search_fields = ('project__name', 'country__country', 'city',
+                     'region__region', 'region__region_code',)
     list_filter = ('stype', 'active',)
     ordering = ('name',)
 
@@ -32,5 +38,3 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
         js = ('js/js.cookie-2.0.4.min.js',
               'js/inheritance.js',
               'js/regions.js',)
-
-admin.site.register(Supplier, SupplierAdmin)

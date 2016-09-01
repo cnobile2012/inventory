@@ -22,8 +22,8 @@ User = get_user_model()
 
 class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
 
-    owner = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', queryset=User.objects.all())
+    project = serializers.HyperlinkedRelatedField(
+        view_name='project-detail', queryset=User.objects.all())
     parent = serializers.HyperlinkedRelatedField(
         view_name='category-detail', queryset=Category.objects.all(),
         default=None)
@@ -32,14 +32,16 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
 
     def validate(self, data):
         if not self.has_full_access():
-            owner = data.get('owner')
+            project = data.get('project')
             user = self.get_user_object()
+            projects = user.projects.all()
 
-            if owner.id != user.id:
-                log.info("Owner PK: %s, request user PK: %s", owner.id, user.id)
+            if project not in projects:
+                log.info("User's projects: %s, current project: %s",
+                         projects, project)
                 raise PermissionDenied(
-                    detail=_("The owner for this record must be the same as "
-                             "the user who is creating or altering the record.")
+                    detail=_("This user must be a member of the project to "
+                             "be able to create or alter the record.")
                     )
 
         return data
@@ -53,15 +55,15 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.parent = validated_data.get('parent', instance.parent)
-        instance.owner = validated_data.get('owner', instance.owner)
+        instance.project = validated_data.get('project', instance.project)
         instance.updater = self.get_user_object()
         instance.save()
         return instance
 
     class Meta:
         model = Category
-        fields = ('id', 'owner', 'name', 'parent', 'path', 'level', 'creator',
-                  'created', 'updater', 'updated', 'uri',)
+        fields = ('id', 'project', 'name', 'parent', 'path', 'level',
+                  'creator', 'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'path', 'level', 'creator', 'created',
                             'updater', 'updated',)
         extra_kwargs = {'level': {'default': 0}}

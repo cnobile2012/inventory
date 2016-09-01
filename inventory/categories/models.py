@@ -19,15 +19,17 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.conf import settings
 
+from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
-    UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,)
+    UserModelMixin, TimeModelMixin, ValidateOnSaveMixin)
+from inventory.projects.models import Project
 
 log = logging.getLogger('inventory.categories.models')
 
 
 class CategoryManager(models.Manager):
 
-    def create_category_tree(self, category_list, user, owner):
+    def create_category_tree(self, category_list, user, project):
         """
         Gets and/or creates designated category, creating parent categories
         as necessary. Returns a list of objects in category order or an empty
@@ -53,11 +55,11 @@ class CategoryManager(models.Manager):
                     parent = None
 
                 try:
-                    node = self.get(owner=owner, name=name, parent=parent,
+                    node = self.get(project=project, name=name, parent=parent,
                                     level=level)
                 except self.model.DoesNotExist:
                     kwargs = {}
-                    kwargs['owner'] = owner
+                    kwargs['project'] = project
                     kwargs['name'] = name
                     kwargs['parent'] = parent
                     kwargs['creator'] = user
@@ -69,7 +71,7 @@ class CategoryManager(models.Manager):
 
         return node_list
 
-    def delete_category_tree(self, node_list, owner):
+    def delete_category_tree(self, node_list, project):
         """
         Deletes the category tree back to the beginning, but will stop if there
         are other children on the category. The result is that it will delete
@@ -82,10 +84,10 @@ class CategoryManager(models.Manager):
         deleted_nodes = []
 
         for node in node_list:
-            if node.owner != owner:
+            if node.project.pk != project.pk:
                 msg = _("Delete category: {}, updater: {}, updated: {}, "
-                        "owner: {}, non-owner: {}").format(
-                    node, node.updater, node.updated, node.owner, owner)
+                        "project: {}, invalid project: {}").format(
+                    node, node.updater, node.updated, node.project, project)
                 log.error(ugettext(msg))
                 raise ValueError(msg)
 
@@ -96,15 +98,15 @@ class CategoryManager(models.Manager):
 
         return deleted_nodes
 
-    def get_parents(self, category, owner):
+    def get_parents(self, category, project):
         """
         Get all the parents to this category object.
         """
-        if category.owner != owner:
-            msg = _("Trying to access a category with an invalid owner, "
-                    "updater: {}, updated: {}, owner: {}, non-owner: {}"
-                    ).format(category.updater, category.updated,
-                             category.owner, owner)
+        if category.project.pk != project.pk:
+            msg = _("Trying to access a category with an invalid project, "
+                    "updater: {}, updated: {}, project: {}, invalid "
+                    "project: {}").format(category.updater, category.updated,
+                                          category.project, project)
             log.error(ugettext(msg))
             raise ValueError(msg)
 
@@ -154,18 +156,19 @@ class CategoryManager(models.Manager):
 
         return final.values()
 
-    def get_all_root_trees(self, name, owner):
+    def get_all_root_trees(self, name, project):
         """
-        Given a category 'name' and 'owner' return a list of trees where each
+        Given a category 'name' and 'project' return a list of trees where each
         each tree has the category 'name' as one of its members. ex. [[<color>,
         <color>red>, <color>green>], [<light>, <light>red>]] Red is in both
         trees.
         """
         result = []
-        records = self.filter(name=name, owner=owner)
+        records = self.filter(name=name, project=project)
 
         if len(records) > 0:
-            result[:] = [self.get_parents(record, owner) for record in records]
+            result[:] = [self.get_parents(record, project)
+                         for record in records]
 
         return result
 
@@ -174,10 +177,13 @@ class CategoryManager(models.Manager):
 class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     DEFAULT_SEPARATOR = '>'
 
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=_("Owner"),
-        related_name="%(app_label)s_%(class)s_owner_related",
-        help_text=_("The user that owns this record."))
+    public_id = models.CharField(
+        verbose_name=_("Public Category ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify a individual category."))
+    project = models.ForeignKey(
+        Project, verbose_name=_("Project"), related_name='categories',
+        help_text=_("The project that owns this record."))
     parent = models.ForeignKey(
         "self", verbose_name=_("Parent"), blank=True, null=True, default=None,
         related_name='children', help_text=_("The parent to this category if "
@@ -195,6 +201,10 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     objects = CategoryManager()
 
     def clean(self):
+        # Populate the public_id on record creation only.
+        if self.pk is None:
+            self.public_id = generate_public_key()
+
         self.path = self._get_category_path()
         self.level = self.path.count(self.DEFAULT_SEPARATOR)
         delimiter = self.DEFAULT_SEPARATOR
@@ -207,7 +217,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
         if self.parent:
             # Check that this category is not a parent.
-            parents = Category.objects.get_parents(self.parent, self.owner)
+            parents = Category.objects.get_parents(self.parent, self.project)
             parents.append(self.parent)
 
             for parent in parents:
@@ -215,16 +225,16 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
                     raise ValidationError(
                         {'name': _("A category in this tree with name [{}] "
                                    "already exists.").format(self.name)})
-        # Check that a root level name does not already exist for this owner
+        # Check that a root level name does not already exist for this project
         # on a create only.
         elif self.pk is None and Category.objects.filter(
-            name=self.name, owner=self.owner, level=0).count():
+            name=self.name, project=self.project, level=0).count():
             raise ValidationError(
                 {'name': _("A root level category name [{}] already exists."
                            ).format(self.name)})
 
     def _get_category_path(self, current=True):
-        parents = Category.objects.get_parents(self, self.owner)
+        parents = Category.objects.get_parents(self, self.project)
         if current: parents.append(self)
         return self.DEFAULT_SEPARATOR.join([parent.name for parent in parents])
 
@@ -235,7 +245,6 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         children = Category.objects.get_child_tree_from_list(
             (self,), with_root=False)
         return children[0]
-
 
     def get_children_and_root(self):
         """
@@ -248,10 +257,6 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     def parents_producer(self):
         return self._get_category_path(current=False)
     parents_producer.short_description = _("Category Parents")
-
-    def owner_producer(self):
-        return self.owner.get_full_name_reversed()
-    owner_producer.short_description = _("Category Owner")
 
     def save(self, *args, **kwargs):
         super(Category, self).save(*args, **kwargs)
@@ -270,7 +275,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         return "{}".format(self.path)
 
     class Meta:
-        unique_together = (('owner', 'parent', 'name',),)
+        unique_together = ('project', 'parent', 'name',)
         ordering = ('path',)
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")

@@ -43,7 +43,8 @@ class MigrateLocation(MigrateBase):
             self._create_location_code_csv()
 
         if self._options.populate:
-            defaults = self._create_location_defaults()
+            project = self._create_project()
+            defaults = self._create_location_defaults(project)
             self._create_location_format(defaults)
             self._create_location_code()
 
@@ -96,13 +97,13 @@ class MigrateLocation(MigrateBase):
             for item in loc_list:
                 writer.writerow(item)
 
-    def _create_location_defaults(self):
+    def _create_location_defaults(self, project):
         user = self.get_user()
         data = [
             {
-                'name': 'Home Inventory Location Formats',
-                'owner': user,
-                'description': "My DIY Inventory.",
+                'name': self._LD_NAME,
+                'project': project,
+                'description': self._LD_DESC,
                 'creator': user,
                 'updater': user
                 },

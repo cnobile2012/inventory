@@ -3,6 +3,7 @@
 #
 # migrate_suppliers.py
 #
+from __future__ import unicode_literals
 
 import sys
 import os
@@ -18,6 +19,8 @@ sys.path.append(MIGRATE_PATH)
 #print(sys.path)
 
 import django; django.setup()
+
+from django.utils.six.moves.urllib.parse import urlsplit, urlunsplit
 
 from migrate import setup_logger, MigrateBase
 
@@ -41,7 +44,8 @@ class MigrateSupplier(MigrateBase):
             self._create_supplier_csv()
 
         if self._options.populate:
-            self._create_supplier()
+            project = self._create_project()
+            self._create_supplier(project)
 
     def _create_supplier_csv(self):
         with open(self._SUPPLIER, mode='w') as csvfile:
@@ -89,7 +93,7 @@ class MigrateSupplier(MigrateBase):
                         record.mtime.isoformat()
                         ])
 
-    def _create_supplier(self):
+    def _create_supplier(self, project):
         with open(self._SUPPLIER, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
@@ -108,33 +112,35 @@ class MigrateSupplier(MigrateBase):
                 phone = row[7]
                 fax = row[8]
                 email = row[9]
-                url = row[10]
+                url = self._fix_url(row[10])
                 stype = row[11]
                 user = self.get_user(username=row[12])
                 ctime = duparser.parse(row[13])
                 mtime = duparser.parse(row[14])
-                kwargs = {}
-                kwargs['name'] = name
-                kwargs['address_01'] = address_01
-                kwargs['address_02'] = address_02
-                kwargs['city'] = city
-                kwargs['region'] = region
-                kwargs['postal_code'] = postal_code
-                kwargs['country'] = country
-                kwargs['phone'] = phone
-                kwargs['fax'] = fax
-                kwargs['email'] = email
-                kwargs['url'] = url
-                kwargs['stype'] = stype
-                kwargs['creator'] = user
-                kwargs['created'] = ctime
-                kwargs['updater'] = user
-                kwargs['updated'] = mtime
 
                 if not self._options.noop:
                     try:
-                        obj = Supplier.objects.get(name=name)
+                        obj = Supplier.objects.get(project=project,
+                                                   name_lower=name.lower())
                     except Supplier.DoesNotExist:
+                        kwargs = {}
+                        kwargs['project'] = project
+                        kwargs['name'] = name
+                        kwargs['address_01'] = address_01
+                        kwargs['address_02'] = address_02
+                        kwargs['city'] = city
+                        kwargs['region'] = region
+                        kwargs['postal_code'] = postal_code
+                        kwargs['country'] = country
+                        kwargs['phone'] = phone
+                        kwargs['fax'] = fax
+                        kwargs['email'] = email
+                        kwargs['url'] = url
+                        kwargs['stype'] = stype
+                        kwargs['creator'] = user
+                        kwargs['created'] = ctime
+                        kwargs['updater'] = user
+                        kwargs['updated'] = mtime
                         obj = Supplier(**kwargs)
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
@@ -160,6 +166,28 @@ class MigrateSupplier(MigrateBase):
                         self._log.info("Updated supplier: %s", name)
                 else:
                     self._log.info("NOOP Mode: Found supplier: %s", name)
+
+    def _fix_url(self, url):
+        result = ''
+        url_obj = urlsplit(url)
+        scheme = url_obj.scheme
+        netloc = url_obj.netloc
+        path = url_obj.path
+        query = url_obj.query
+        fragment = url_obj.fragment
+
+        if not scheme:
+            scheme = 'http'
+
+        if not netloc:
+            if path:
+                netloc = path
+                path = ''
+
+        if netloc:
+            result = urlunsplit([scheme, netloc, path, query, fragment])
+
+        return result
 
 
 if __name__ == '__main__':

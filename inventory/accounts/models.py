@@ -140,7 +140,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
         help_text=_("The role of the user."))
     answers = models.ManyToManyField(
-        'Answer', verbose_name=_("Answers"), related_name='owners', blank=True,
+        'Answer', verbose_name=_("Answers"), related_name='users', blank=True,
         help_text=_("Answers to authentication questions."))
     picture = models.ImageField(
         verbose_name=_("Picture"), upload_to='user_photos', null=True,
@@ -332,15 +332,15 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
 
-    def process_owner(self, owners):
-        self.owners.add(*owners)
+    def process_users(self, users):
+        self.users.add(*users)
 
-    def owner_producer(self):
-        owners = self.owners.all()
+    def user_producer(self):
+        users = self.users.all()
 
-        if 0 <= len(owners) > 1:
+        if 0 <= len(users) > 1:
             raise ValueError(_("There should not be more that one answer "
-                               "owner. Found {}").format(owners))
+                               "user. Found {}").format(users))
 
-        return owners[0]
-    owner_producer.short_description = _("Owner")
+        return users[0]
+    user_producer.short_description = _("User")

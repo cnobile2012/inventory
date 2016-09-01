@@ -12,9 +12,13 @@ from .forms import CategoryForm
 from .models import Category
 
 
+#
+# CategoryAdmin
+#
+@admin.register(Category)
 class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('owner', 'parent', 'name', 'path', 'level',)}),
+        (None, {'fields': ('project', 'name', 'parent', 'path', 'level',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
@@ -22,10 +26,8 @@ class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
     readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
                        'updated',)
     list_display = ('name', 'parents_producer', 'path', 'level',
-                    'owner_producer',)
-    search_fields = ('name', 'owner__username', 'owner__last_name',)
-    list_filter = ('level', 'owner',)
-    ordering = ('owner', 'path',)
+                    'project',)
+    search_fields = ('name', 'project__name',)
+    list_filter = ('level', 'project',)
+    ordering = ('project__name', 'path',)
     form = CategoryForm
-
-admin.site.register(Category, CategoryAdmin)

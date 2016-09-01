@@ -63,7 +63,7 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
         blank=True,
         help_text=_("Public ID to identify a individual item."))
     description = models.CharField(
-        verbose_name=_("Description"), max_length=248,
+        verbose_name=_("Description"), max_length=250,
         help_text=_("Item description."))
     photo = models.ImageField(
         verbose_name=_("Photo"), upload_to='item_photos', null=True,
