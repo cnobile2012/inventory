@@ -7,7 +7,7 @@
 import sys
 import os
 import csv
-from dateutil import parser
+from dateutil import parser as duparser
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -39,7 +39,8 @@ class MigrateCategory(MigrateBase):
             self._create_category_csv()
 
         if self._options.populate:
-            self._create_category()
+            project = self._create_project()
+            self._create_category(project)
 
     def _create_category_csv(self):
         with open(self._CATEGORY, mode='w') as csvfile:
@@ -67,40 +68,44 @@ class MigrateCategory(MigrateBase):
             for item in cat_list:
                 writer.writerow(item)
 
-    def _create_category(self):
+    def _create_category(self, project):
         with open(self._CATEGORY, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                parent = Category.objects.get(name=row[0]) if row[0] else None
+                p_name = row[0].strip()
+                parent = Category.objects.get(name=p_name) if p_name else None
                 name = row[1]
                 level = row[2] # Throw away, it's auto-generated.
                 user = self.get_user(username=row[3])
-                ctime = parser.parse(row[4])
-                mtime = parser.parse(row[5])
-                kwargs = {}
-                kwargs['parent'] = parent
-                kwargs['creator'] = user
-                kwargs['created'] = ctime
-                kwargs['updater'] = user
-                kwargs['updated'] = mtime
-                kwargs['disable_created'] = True
-                kwargs['disable_updated'] = True
+                ctime = duparser.parse(row[4])
+                mtime = duparser.parse(row[5])
 
                 if not self._options.noop:
-                    obj, created = Category.objects.get_or_create(
-                        name=name, defaults=kwargs)
-
-                    if not created:
+                    try:
+                        obj = Category.objects.get(name=name)
+                    except Category.DoesNotExist:
+                        kwargs = {}
+                        kwargs['name'] = name
+                        kwargs['parent'] = parent
+                        kwargs['creator'] = user
+                        kwargs['created'] = ctime
+                        kwargs['updater'] = user
+                        kwargs['updated'] = mtime
+                        kwargs['project'] = project
+                        obj = Category(**kwargs)
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                        self._log.info("Created category: %s", name)
+                    else:
                         obj.parent = parent
                         obj.creator = user
                         obj.created = ctime
                         obj.updater = user
                         obj.updated = mtime
+                        obj.project = project
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
                         self._log.info("Updated category: %s", name)
-                    else:
-                        self._log.info("Created category: %s", name)
                 else:
                     self._log.info("NOOP Mode: Found category: %s", name)
 
