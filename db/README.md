@@ -13,6 +13,14 @@ The data in these tables are from the ISO 3166-1/2 standard.
 Updated data can be downloaded from http://en.wikipedia.org/wiki/ISO_3166-1 and
 http://en.wikipedia.org/wiki/ISO_3166-2.
 
+CSV file of subdevision codes: http://www.ip2location.com/free/iso3166-2
+
+The above file has a different format than what is described below in `Fields`, it is:
+
+ * country_code
+ * subdivision_name
+ * code
+
 ## Fields
 
 The four Country fields to download are:
