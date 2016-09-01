@@ -22,7 +22,7 @@ all of them by added the correct parameters on the command line.
 the country data is updated all the other data types should be updated as well.
 
 **NOTE**: If using the ``populate-regions.conf`` config file you **MUST**
-enter the full absolute or relative file path to the command.
+enter the absolute or relative file path to the file.
 
 Some examples:
 
