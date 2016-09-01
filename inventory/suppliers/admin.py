@@ -26,15 +26,15 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'project', 'stype', 'phone', 'email', 'url',
-                    'active',)
+    list_display = ('name', 'project', 'stype', 'phone', 'email',
+                    'url_producer', 'active',)
     list_editable = ('stype', 'active',)
     search_fields = ('project__name', 'country__country', 'city',
                      'region__region', 'region__region_code',)
     list_filter = ('stype', 'active',)
     ordering = ('name',)
 
-    class Media:
-        js = ('js/js.cookie-2.0.4.min.js',
-              'js/inheritance.js',
-              'js/regions.js',)
+#    class Media:
+#        js = ('js/js.cookie-2.0.4.min.js',
+#              'js/inheritance.js',
+#              'js/regions.js',)

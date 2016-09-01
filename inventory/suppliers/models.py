@@ -109,14 +109,24 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         self.name = self.name.strip()
         self.name_lower = self.name.lower()
 
+    def save(self, *args, **kwargs):
+        super(Supplier, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
     class Meta:
         unique_together = ('project', 'name_lower',)
         ordering = ('name_lower',)
         verbose_name = _("Supplier")
         verbose_name_plural = _("Suppliers")
 
-    def __str__(self):
-        return self.name
+    def url_producer(self):
+        result = _("No URL")
 
-    def save(self, *args, **kwargs):
-        super(Supplier, self).save(*args, **kwargs)
+        if self.url:
+            result = ('<a href="{0}">{0}</a>').format(self.url)
+
+        return result
+    url_producer.short_description = _("Company URL")
+    url_producer.allow_tags = True

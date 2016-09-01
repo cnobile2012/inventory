@@ -113,6 +113,23 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
 
     objects = ItemManager()
 
+    def clean(self):
+        # Populate the public_id on record creation only.
+        if self.pk is None:
+            self.public_id = generate_public_key()
+
+    def save(self, *args, **kwargs):
+        super(Item, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.description
+
+    class Meta:
+        unique_together = ('sku', 'project')
+        ordering = ('project__name', 'sku',)
+        verbose_name = _("Item")
+        verbose_name_plural = _("Items")
+
     def category_producer(self):
         return mark_safe("<br />".join(
             [record.path for record in self.categories.all()]))
@@ -137,23 +154,6 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
 
         return result
     aquired_date_producer.short_description = _("Date(s) Aquired")
-
-    def clean(self):
-        # Populate the public_id on record creation only.
-        if self.pk is None:
-            self.public_id = generate_public_key()
-
-    def save(self, *args, **kwargs):
-        super(Item, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.description
-
-    class Meta:
-        unique_together = ('sku', 'project')
-        ordering = ('project__name', 'sku',)
-        verbose_name = _("Item")
-        verbose_name_plural = _("Items")
 
 
 #
