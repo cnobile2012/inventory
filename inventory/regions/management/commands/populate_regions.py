@@ -3,7 +3,7 @@
 # inventory/regions/management/commands/populate_regions.py
 #
 """
-Populate Country, Language, and Timezone region models.
+Populate Country, Subdevision, Language, Timezone, and Currency models.
 """
 __docformat__ = "restructuredtext en"
 
@@ -13,10 +13,11 @@ import logging
 
 from django.core.management.base import BaseCommand, CommandError
 
-from inventory.regions.models import Country, Language, TimeZone, Currency
+from inventory.regions.models import (
+    Country, Subdivision, Language, TimeZone, Currency)
 
-from .parsers import (CountryParser, LanguageParser, TimezoneParser,
-                      CurrencyParser)
+from .parsers import (CountryParser, SubdivisionParser, LanguageParser,
+                      TimezoneParser, CurrencyParser)
 
 log = logging.getLogger('commands.regions.populate-regions')
 
@@ -43,6 +44,13 @@ class Command(BaseCommand):
             '-C', '--country-file', type=str, default='', dest='country_file',
             help="Country filename (relative or absolute path).")
         parser.add_argument(
+            '-s', '--subdivision', action='store_true', default=False,
+            dest='subdivision', help="Populate Subdivision model.")
+        parser.add_argument(
+            '-S', '--subdivision-file', type=str, default='',
+            dest='subdivision_file',
+            help="Subdivision filename (relative or absolute path).")
+        parser.add_argument(
             '-l', '--language', action='store_true', default=False,
             dest='language', help="Populate Language model.")
         parser.add_argument(
@@ -68,6 +76,12 @@ class Command(BaseCommand):
             self._parser.print_help()
             return
 
+        if options.get('subdivision') and not options.get('subdivision_file'):
+            msg = "Must supply a subdivision file for processing.\n\n"
+            sys.stderr.write(msg)
+            self._parser.print_help()
+            return
+
         if options.get('language') and not options.get('language_file'):
             msg = "Must supply a language file for processing.\n\n"
             sys.stderr.write(msg)
@@ -87,16 +101,18 @@ class Command(BaseCommand):
             return
 
         if options.get('all') and not (options.get('country_file') and
+                                       options.get('subdivision_file') and
                                        options.get('language_file') and
                                        options.get('timezone_file') and
                                        options.get('currency_file')):
-            sys.stderr.write("Must supply country, language, timezone and "
-                             "currency files for processing.\n\n")
+            sys.stderr.write("Must supply country, subdivision, language, "
+                             "timezone and currency files for processing.\n\n")
             self._parser.print_help()
             return
 
         try:
             self._populate_countries(options)
+            self._populate_subdivision(options)
             self._populate_languages(options)
             self._populate_timezones(options)
             self._populate_currency(options)
@@ -131,6 +147,45 @@ class Command(BaseCommand):
                     sys.stdout.write("Processed {} countries.\n".format(idx))
 
             sys.stdout.write("Processed a total of {} countries.\n".format(idx))
+
+    def _populate_subdivision(self, options):
+        if options.get('subdivision') or options.get('all'):
+            sp = SubdivisionParser(options.get('subdivision_file'))
+            subdivisions = sp.parse()
+
+            for idx, (subdivision_name, country, code) in enumerate(
+                subdivisions, start=1):
+                try:
+                    country_obj = Country.objects.get(code=country)
+                except Country.DoesNotExist:
+                    msg = "Language '%s' has no matching country '%s'."
+                    log.warning(msg, code, country)
+                    continue
+
+                if not options.get('noop'):
+                    kwargs = {}
+                    kwargs['subdivision_name'] = subdivision_name
+
+                    obj, created = Subdivision.objects.get_or_create(
+                        country=country_obj, code=code, defaults=kwargs)
+
+                    # Could be valid if we reload the DB and the country PKs
+                    # have changed.
+                    if not created:
+                        obj.subdivision_name = subdivision_name
+                        obj.save()
+                        log.debug("Updated subdivision %s", subdivision_name)
+                    else:
+                        log.debug("Created subdivision %s", subdivision_name)
+                else:
+                    log.info("NOOP: %s--%s", Subdivision.__name__,
+                             (subdivision_name, country, code))
+
+                if not (idx % 100):
+                    sys.stdout.write("Processed {} subdivisions.\n".format(idx))
+
+            sys.stdout.write("Processed a total of {} subdivisions.\n".format(
+                idx))
 
     def _populate_languages(self, options):
         if options.get('language') or options.get('all'):
@@ -223,9 +278,9 @@ class Command(BaseCommand):
                 obj.country.upper().strip(): obj
                 for obj in Country.objects.all()}
 
-            for idx, (entity, currency, alphabetic_code, numeric_code,
+            for idx, (country, currency, alphabetic_code, numeric_code,
                       minor_unit) in enumerate(currencies, start=1):
-                country_obj = country_map.get(entity)
+                country_obj = country_map.get(country)
 
                 if country_obj:
                     if not options.get('noop'):
@@ -235,7 +290,7 @@ class Command(BaseCommand):
                         kwargs['minor_unit'] = minor_unit
 
                         obj, created = Currency.objects.get_or_create(
-                            entity=country_obj,
+                            country=country_obj,
                             alphabetic_code=alphabetic_code,
                             defaults=kwargs)
 
@@ -251,11 +306,11 @@ class Command(BaseCommand):
                             log.debug("Created currency %s", currency)
                     else:
                         log.info("NOOP: %s--%s", Currency.__name__,
-                                 (entity, currency, alphabetic_code,
+                                 (country, currency, alphabetic_code,
                                   numeric_code, minor_unit))
                 else:
                     msg = "Currency '%s' has no matching country '%s'."
-                    log.warning(msg, currency, entity)
+                    log.warning(msg, currency, country)
 
                 if not (idx % 100):
                     sys.stdout.write("Processed {} currencies.\n".format(idx))
