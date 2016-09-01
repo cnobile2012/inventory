@@ -88,6 +88,8 @@ def api_root(request, format=None):
     regions = items.setdefault('regions', OrderedDict())
     regions['countries'] = reverse(
         'country-list', request=request, format=format)
+    regions['subdivisions'] = reverse(
+        'subdivision-list', request=request, format=format)
     regions['currencies'] = reverse(
         'currency-list', request=request, format=format)
     regions['languages'] = reverse(

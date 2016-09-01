@@ -83,7 +83,7 @@ class Subdivision(StatusModelMixin):
         super(Subdivision, self).save(*args, **kwargs)
 
     def __str__(self):
-        return "{} ({})".format(self.country, self.code)
+        return self.subdivision_name
 
     class Meta:
         unique_together = ('country', 'code',)
@@ -222,7 +222,7 @@ class Currency(StatusModelMixin):
     objects = CurrencyManager()
 
     def __str__(self):
-        return "{} {}".format(self.currency, self.entity)
+        return self.currency
 
     class Meta:
         unique_together = ('country', 'alphabetic_code',)

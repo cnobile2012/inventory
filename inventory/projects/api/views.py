@@ -55,6 +55,7 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
             ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field='public_id'
 
 project_list = ProjectList.as_view()
 
@@ -63,12 +64,12 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     """
     Project detail endpoint.
     """
-    #queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
             Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
-    serializer_class = ProjectSerializer
+    lookup_field='public_id'
 
 project_detail = ProjectDetail.as_view()

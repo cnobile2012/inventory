@@ -11,7 +11,7 @@ from inventory.accounts.api import views
 urlpatterns = [
     url(r'users/$', views.user_list,
         name='user-list'),
-    url(r'user/(?P<pk>[-\d]+)/$', views.user_detail,
+    url(r'user/(?P<public_id>[-\w]+)/$', views.user_detail,
         name='user-detail'),
     url(r'groups/$', views.group_list,
         name='group-list'),

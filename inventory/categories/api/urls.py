@@ -11,6 +11,6 @@ from inventory.categories.api import views
 urlpatterns = [
     url(r'categories/$', views.category_list,
         name="category-list"),
-    url(r'category/(?P<pk>\d+)/$', views.category_detail,
+    url(r'category/(?P<public_id>\w+)/$', views.category_detail,
         name="category-detail"),
     ]

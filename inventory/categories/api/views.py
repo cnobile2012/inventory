@@ -63,6 +63,7 @@ class CategoryList(CategoryAuthorizationMixin,
             ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field='public_id'
 
 category_list = CategoryList.as_view()
 
@@ -80,5 +81,6 @@ class CategoryDetail(CategoryAuthorizationMixin,
             ),
         )
     serializer_class = CategorySerializer
+    lookup_field='public_id'
 
 category_detail = CategoryDetail.as_view()

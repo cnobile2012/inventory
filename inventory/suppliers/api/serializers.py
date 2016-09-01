@@ -2,6 +2,10 @@
 #
 # inventory/suppliers/api/serializers.py
 #
+"""
+Supplier serializers.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -10,20 +14,30 @@ from rest_framework import serializers
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.accounts.api.serializers import UserSerializer
 from inventory.suppliers.models import Supplier
-from inventory.regions.models import Country
+from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
 
 log = logging.getLogger('api.suppliers.serializers')
 
 
 class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
+    subdivision = serializers.HyperlinkedRelatedField(
+        view_name='subdivision-detail', queryset=Subdivision.objects.all(),
+        default=None)
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', queryset=Country.objects.all())
+    language = serializers.HyperlinkedRelatedField(
+        view_name='language-detail', queryset=Language.objects.all(),
+        default=None)
+    timezone = serializers.HyperlinkedRelatedField(
+        view_name='timezone-detail', queryset=TimeZone.objects.all(),
+        default=None)
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
-    uri = serializers.HyperlinkedIdentityField(view_name='supplier-detail')
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='supplier-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -50,10 +64,14 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
             'email', instance.email)
         instance.stype = validated_data.get(
             'stype', instance.stype)
+        instance.subdivision = validated_data.get(
+            'subdivision', instance.subdivision)
         instance.country = validated_data.get(
             'country', instance.country)
-        instance.region = validated_data.get(
-            'region', instance.region)
+        instance.language = validated_data.get(
+            'language', instance.language)
+        instance.timezone = validated_data.get(
+            'timezone', instance.timezone)
         instance.updater = self.get_user_object()
         instance.active = validated_data.get(
             'active', instance.active)
@@ -62,7 +80,9 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Supplier
-        fields = ('id', 'name', 'address_01', 'address_02', 'city', 'region',
-                  'postal_code', 'country', 'phone', 'fax', 'email', 'url',
-                  'stype', 'creator', 'created', 'updater', 'updated', 'uri',)
-        read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
+        fields = ('public_id', 'name', 'address_01', 'address_02', 'city',
+                  'subdivision', 'postal_code', 'country', 'language',
+                  'timezone', 'phone', 'fax', 'email', 'stype', 'creator',
+                  'created', 'updater', 'updated', 'uri',)
+        read_only_fields = ('public_id', 'creator', 'created', 'updater',
+                            'updated', 'uri',)

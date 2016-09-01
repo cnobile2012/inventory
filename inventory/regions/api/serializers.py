@@ -13,7 +13,7 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 
-from ..models import Country, Language, TimeZone, Currency
+from ..models import Country, Subdivision, Language, TimeZone, Currency
 
 
 log = logging.getLogger('api.regions.serializers')
@@ -29,6 +29,21 @@ class CountrySerializer(serializers.ModelSerializer):
         model = Country
         fields = ('id', 'code', 'country', 'active', 'uri',)
         read_only_fields = ('id', 'code', 'country', 'active',)
+
+
+#
+# SubdivisionSerializer
+#
+class SubdivisionSerializer(serializers.ModelSerializer):
+    country = serializers.HyperlinkedRelatedField(
+        view_name='country-detail', read_only=True)
+    uri = serializers.HyperlinkedIdentityField(view_name='subdivision-detail')
+
+    class Meta:
+        model = Subdivision
+        fields = ('id', 'subdivision_name', 'country', 'code', 'active', 'uri',)
+        read_only_fields = ('id', 'subdivision_name', 'country', 'code',
+                            'active',)
 
 
 #

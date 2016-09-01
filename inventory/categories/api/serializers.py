@@ -2,6 +2,10 @@
 #
 # inventory/categories/api/serializers.py
 #
+"""
+Category serializers.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -21,14 +25,14 @@ User = get_user_model()
 
 
 class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
-
     project = serializers.HyperlinkedRelatedField(
-        view_name='project-detail', queryset=User.objects.all())
+        view_name='project-detail', queryset=User.objects.all(),
+        lookup_field='public_id')
     parent = serializers.HyperlinkedRelatedField(
         view_name='category-detail', queryset=Category.objects.all(),
-        default=None)
+        default=None, lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
-        view_name='category-detail')
+        view_name='category-detail', lookup_field='public_id')
 
     def validate(self, data):
         if not self.has_full_access():
@@ -62,8 +66,8 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'project', 'name', 'parent', 'path', 'level',
+        fields = ('public_id', 'project', 'name', 'parent', 'path', 'level',
                   'creator', 'created', 'updater', 'updated', 'uri',)
-        read_only_fields = ('id', 'path', 'level', 'creator', 'created',
-                            'updater', 'updated',)
+        read_only_fields = ('public_id', 'path', 'level', 'creator', 'created',
+                            'updater', 'updated', 'uri',)
         extra_kwargs = {'level': {'default': 0}}

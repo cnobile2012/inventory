@@ -2,6 +2,10 @@
 #
 # inventory/accounts/api/serializers.py
 #
+"""
+Account serializers.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -12,7 +16,7 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.projects.models import Project
-from inventory.regions.models import Country
+from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
 from ..models import Question, Answer
 
@@ -24,13 +28,23 @@ User = get_user_model()
 # User
 #
 class UserSerializer(serializers.ModelSerializer):
+    subdivision = serializers.HyperlinkedRelatedField(
+        view_name='subdivision-detail', queryset=Subdivision.objects.all(),
+        default=None)
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', queryset=Country.objects.all(),
+        default=None)
+    language = serializers.HyperlinkedRelatedField(
+        view_name='language-detail', queryset=Language.objects.all(),
+        default=None)
+    timezone = serializers.HyperlinkedRelatedField(
+        view_name='timezone-detail', queryset=TimeZone.objects.all(),
         default=None)
     answers = serializers.HyperlinkedRelatedField(
         view_name='answer-detail', many=True, queryset=Answer.objects.all(),
         default=None)
-    uri = serializers.HyperlinkedIdentityField(view_name='user-detail')
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='user-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         username = validated_data.pop('username', '')
@@ -61,12 +75,16 @@ class UserSerializer(serializers.ModelSerializer):
             'address_02', instance.address_02)
         instance.city = validated_data.get(
             'city', instance.city)
-        instance.region = validated_data.get(
-            'region', instance.region)
+        instance.subdivision = validated_data.get(
+            'subdivision', instance.subdivision)
         instance.postal_code = validated_data.get(
             'postal_code', instance.postal_code)
         instance.country = validated_data.get(
             'country', instance.country)
+        instance.language = validated_data.get(
+            'language', instance.language)
+        instance.timezone = validated_data.get(
+            'timezone', instance.timezone)
         instance.dob = validated_data.get(
             'dob', instance.dob)
         instance.email = validated_data.get(
@@ -87,13 +105,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'send_email', 'need_password',
-                  'first_name', 'last_name', 'address_01', 'address_02',
-                  'city', 'region', 'postal_code', 'country', 'dob', 'email',
-                  'answers', 'role', 'project_default', 'is_active',
-                  'is_staff', 'is_superuser', 'last_login', 'date_joined',
-                  'uri',)
-        read_only_fields = ('id', 'last_login', 'date_joined',)
+        fields = ('public_id', 'username', 'password', 'send_email',
+                  'need_password', 'first_name', 'last_name', 'address_01',
+                  'address_02', 'city', 'subdivision', 'postal_code',
+                  'country', 'language', 'timezone', 'dob', 'email', 'answers',
+                  'role', 'project_default', 'is_active', 'is_staff',
+                  'is_superuser', 'last_login', 'date_joined', 'uri',)
+        read_only_fields = ('public_id', 'last_login', 'date_joined', 'uri',)
         extra_kwargs = {'password': {'write_only': True}}
 
 

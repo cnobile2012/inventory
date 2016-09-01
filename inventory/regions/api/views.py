@@ -15,10 +15,12 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive,
     IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
-from inventory.regions.models import Country, Language, TimeZone, Currency
+from inventory.regions.models import (
+    Country, Subdivision, Language, TimeZone, Currency)
 
-from .serializers import (CountrySerializer, LanguageSerializer,
-                          TimeZoneSerializer, CurrencySerializer)
+from .serializers import (
+    CountrySerializer, SubdivisionSerializer, LanguageSerializer,
+    TimeZoneSerializer, CurrencySerializer)
 
 
 log = logging.getLogger('api.regions.views')
@@ -27,18 +29,7 @@ log = logging.getLogger('api.regions.views')
 #
 # Country
 #
-class CountryAuthorizationMixin(object):
-
-    def get_queryset(self):
-        result = []
-
-        if self.request.user.is_superuser:
-            result = Country.objects.all()
-
-        return result
-
-
-class CountryList(CountryAuthorizationMixin, ListAPIView):
+class CountryList(ListAPIView):
     """
     Country list endpoint.
     """
@@ -54,7 +45,7 @@ class CountryList(CountryAuthorizationMixin, ListAPIView):
 country_list = CountryList.as_view()
 
 
-class CountryDetail(CountryAuthorizationMixin, RetrieveAPIView):
+class CountryDetail(RetrieveAPIView):
     """
     Country detail endpoint.
     """
@@ -70,23 +61,47 @@ country_detail = CountryDetail.as_view()
 
 
 #
+# Subdivision Views
+#
+class SubdivisionList(ListAPIView):
+    """
+    Subdivision list endpoint.
+    """
+    queryset = Subdivision.objects.all()
+    serializer_class = SubdivisionSerializer
+    permission_classes = (
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
+        )
+    pagination_class = SmallResultsSetPagination
+
+subdivision_list = SubdivisionList.as_view()
+
+
+class SubdivisionDetail(RetrieveAPIView):
+    """
+    Subdivision detail endpoint.
+    """
+    queryset = Subdivision.objects.all()
+    serializer_class = SubdivisionSerializer
+    permission_classes = (
+        And(IsReadOnly, IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
+        )
+
+subdivision_detail = SubdivisionDetail.as_view()
+
+
+#
 # Language Views
 #
-class LanguageAuthorizationMixin(object):
-
-    def get_queryset(self):
-        result = []
-
-        if self.request.user.is_superuser:
-            result = Language.objects.all()
-
-        return result
-
-
-class LanguageList(LanguageAuthorizationMixin, ListAPIView):
+class LanguageList(ListAPIView):
     """
     Language list endpoint.
     """
+    queryset = Language.objects.all()
     serializer_class = LanguageSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
@@ -98,10 +113,11 @@ class LanguageList(LanguageAuthorizationMixin, ListAPIView):
 language_list = LanguageList.as_view()
 
 
-class LanguageDetail(LanguageAuthorizationMixin, RetrieveAPIView):
+class LanguageDetail(RetrieveAPIView):
     """
     Language detail endpoint.
     """
+    queryset = Language.objects.all()
     serializer_class = LanguageSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
@@ -115,21 +131,11 @@ language_detail = LanguageDetail.as_view()
 #
 # TimeZone Views
 #
-class TimeZoneAuthorizationMixin(object):
-
-    def get_queryset(self):
-        result = []
-
-        if self.request.user.is_superuser:
-            result = TimeZone.objects.all()
-
-        return result
-
-
-class TimeZoneList(TimeZoneAuthorizationMixin, ListAPIView):
+class TimeZoneList(ListAPIView):
     """
     TimeZone list endpoint.
     """
+    queryset = TimeZone.objects.all()
     serializer_class = TimeZoneSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
@@ -141,10 +147,11 @@ class TimeZoneList(TimeZoneAuthorizationMixin, ListAPIView):
 timezone_list = TimeZoneList.as_view()
 
 
-class TimeZoneDetail(TimeZoneAuthorizationMixin, RetrieveAPIView):
+class TimeZoneDetail(RetrieveAPIView):
     """
     TimeZone detail endpoint.
     """
+    queryset = TimeZone.objects.all()
     serializer_class = TimeZoneSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,

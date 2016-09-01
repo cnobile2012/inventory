@@ -1,6 +1,10 @@
 #
 # inventory/suppliers/api/views.py
 #
+"""
+Supplier views.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -39,6 +43,7 @@ class SupplierList(ListCreateAPIView):
             ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field='public_id'
 
     def pre_save(self, obj):
         obj.creator = self.request.user
@@ -57,5 +62,6 @@ class SupplierDetail(RetrieveUpdateDestroyAPIView):
             ),
         )
     serializer_class = SupplierSerializer
+    lookup_field='public_id'
 
 supplier_detail = SupplierDetail.as_view()

@@ -54,6 +54,7 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
             ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
 
 user_list = UserList.as_view()
 
@@ -65,6 +66,7 @@ class UserDetail(UserAuthorizationMixin, RetrieveUpdateDestroyAPIView):
             Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
+    lookup_field = 'public_id'
 
 user_detail = UserDetail.as_view()
 

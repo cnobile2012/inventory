@@ -32,7 +32,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True)
     uri = serializers.HyperlinkedIdentityField(
-        view_name='project-detail')
+        view_name='project-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -57,6 +57,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('id', 'name', 'members', 'managers', 'public', 'active',
-                  'creator', 'created', 'updater', 'updated', 'uri',)
-        read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
+        fields = ('public_id', 'name', 'members', 'managers', 'public',
+                  'active', 'creator', 'created', 'updater', 'updated', 'uri',)
+        read_only_fields = ('public_id', 'creator', 'created', 'updater',
+                            'updated', 'uri',)

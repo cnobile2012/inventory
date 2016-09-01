@@ -148,7 +148,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
         help_text=_("Photo of the individual."))
     send_email = models.BooleanField(
         verbose_name=_("Send Email"), choices=YES_NO, default=NO,
-        help_text=_("Set to YES if this individual need to be sent an email."))
+        help_text=_("Set to YES if this individual needs to be sent an email."))
     need_password = models.BooleanField(
         verbose_name=_("Need Password"), choices=YES_NO, default=NO,
         help_text=_("Set to YES if this individual needs to reset their "

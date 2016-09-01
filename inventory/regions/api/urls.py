@@ -11,6 +11,9 @@ from inventory.regions.api import views
 urlpatterns = [
     url(r'countries/$', views.country_list, name='country-list'),
     url(r'country/(?P<pk>\d+)/$', views.country_detail, name='country-detail'),
+    url(r'subdivisions/$', views.subdivision_list, name='subdivision-list'),
+    url(r'subdivision/(?P<pk>\d+)/$', views.subdivision_detail,
+        name='subdivision-detail'),
     url(r'languages/$', views.language_list, name='language-list'),
     url(r'language/(?P<pk>\d+)/$', views.language_detail,
         name='language-detail'),
