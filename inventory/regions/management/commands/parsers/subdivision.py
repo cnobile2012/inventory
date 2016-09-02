@@ -33,8 +33,8 @@ class SubdivisionParser(object):
         with open(self._filename, mode='r') as f:
             reader = csv.reader(f, delimiter=',', quotechar='"')
 
-            for row in reader:
-                if len(row) <= 0: continue
+            for idx, row in enumerate(reader):
+                if idx == 0 or len(row) <= 0: continue
                 country_code = row[0].strip()
                 subdivision_name = row[1].strip()
                 code = row[2].strip()

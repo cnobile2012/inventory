@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/suppliers/models.py
 #

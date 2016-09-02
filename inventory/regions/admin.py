@@ -51,7 +51,8 @@ class SubdivisionAdmin(admin.ModelAdmin):
     list_display = ('subdivision_name', 'country', 'code', 'active',)
     list_editable = ('active',)
     list_filter = ('active',)
-    search_fields = ('subdivision_name', 'country__code', 'country__country',)
+    search_fields = ('subdivision_name', 'code', 'country__code',
+                     'country__country',)
     form = SubdivisionForm
 
 

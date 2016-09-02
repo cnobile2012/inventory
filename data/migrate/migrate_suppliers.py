@@ -29,7 +29,7 @@ try:
     from inventory.apps.regions.models import Country
 except:
     from inventory.suppliers.models import Supplier
-    from inventory.regions.models import Country
+    from inventory.regions.models import Country, Subdivision
 
 
 class MigrateSupplier(MigrateBase):
@@ -73,16 +73,27 @@ class MigrateSupplier(MigrateBase):
 
             for idx, supplier in enumerate(suppliers, start=1):
                 for record in supplier:
+                    if hasattr(record, 'country') and record.country:
+                        country_code_2 = record.country.country_code_2.encode(
+                            'utf-8')
+                    else:
+                        country_code_2 = ''
+
+                    if (country_code_2 and hasattr(record, 'state')
+                        and record.state):
+                        region_code = "{}-{}".format(
+                            country_code_2, record.state.region_code)
+                    else:
+                        region_code = ''
+
                     writer.writerow([
                         record.name.strip().encode('utf-8'),
                         record.address_01.encode('utf-8'),
                         record.address_02.encode('utf-8'),
                         record.city.encode('utf-8'),
-                        (record.state.region.encode('utf-8')
-                         if record.state else ''),
+                        region_code,
                         record.postal_code,
-                        (record.country.country_code_2.encode('utf-8')
-                         if record.country else ''),
+                        country_code_2,
                         record.phone.encode('utf-8'),
                         record.fax.encode('utf-8'),
                         record.email.encode('utf-8'),
@@ -101,13 +112,17 @@ class MigrateSupplier(MigrateBase):
                 address_01 = row[1]
                 address_02 = row[2]
                 city = row[3]
-                region = row[4]
                 postal_code = row[5]
 
                 try:
                     country = Country.objects.get(code=row[6])
                 except Country.DoesNotExist:
                     country = None
+
+                try:
+                    subdivision = Subdivision.objects.get(code=row[4])
+                except Subdivision.DoesNotExist:
+                    subdivision = None
 
                 phone = row[7]
                 fax = row[8]
@@ -129,7 +144,7 @@ class MigrateSupplier(MigrateBase):
                         kwargs['address_01'] = address_01
                         kwargs['address_02'] = address_02
                         kwargs['city'] = city
-                        kwargs['region'] = region
+                        kwargs['subdivision'] = subdivision
                         kwargs['postal_code'] = postal_code
                         kwargs['country'] = country
                         kwargs['phone'] = phone
@@ -149,7 +164,7 @@ class MigrateSupplier(MigrateBase):
                         obj.address_01 = address_01
                         obj.address_02 = address_02
                         obj.city = city
-                        obj.region = region
+                        obj.subdivision = subdivision
                         obj.postal_code = postal_code
                         obj.country = country
                         obj.phone = phone
