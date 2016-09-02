@@ -21,7 +21,7 @@ from inventory.regions.models import Country, Subdivision, Language, TimeZone
 from ..models import Question, Answer
 
 log = logging.getLogger('api.accounts.serializers')
-User = get_user_model()
+UserModel = get_user_model()
 
 
 #
@@ -51,7 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', '')
         email = validated_data.pop('email', '')
         answers = validated_data.pop('answers', [])
-        obj = User.objects.create_user(
+        obj = UserModel.objects.create_user(
             username, email=email, password=password, **validated_data)
         obj.process_answers(answers)
         return obj
@@ -104,7 +104,7 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = User
+        model = UserModel
         fields = ('public_id', 'username', 'password', 'send_email',
                   'need_password', 'first_name', 'last_name', 'address_01',
                   'address_02', 'city', 'subdivision', 'postal_code',
@@ -173,7 +173,7 @@ class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
 #
 class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
     users = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', many=True, queryset=User.objects.all())
+        view_name='user-detail', many=True, queryset=UserModel.objects.all())
     question = serializers.HyperlinkedRelatedField(
         view_name='question-detail', queryset=Question.objects.all())
     creator = serializers.HyperlinkedRelatedField(
