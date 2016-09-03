@@ -35,7 +35,8 @@ class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
     list_display = ('name', 'public', 'active', 'updater', 'updated',)
-    search_fields = ('name',)
+    list_editable = ('active',)
+    search_fields = ('name', 'memberships__user__username',)
     list_filter = ('public', 'active', 'memberships__role',)
     inlines = (MembershipInline,)
     form = ProjectForm
