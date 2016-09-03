@@ -16,15 +16,14 @@ from django.db import models
 from django.contrib.auth.hashers import get_hasher
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.encoding import python_2_unicode_compatible
-from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils import timezone
 
 from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
-    ValidateOnSaveMixin, UserModelMixin, TimeModelMixin, StatusModelMixin,
-    StatusModelManagerMixin)
+    UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
+    ValidateOnSaveMixin)
 from inventory.common.storage import InventoryFileStorage
 from inventory.projects.models import Project
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
@@ -52,7 +51,7 @@ class UserManager(BaseUserManager):
             raise ValueError(_("The given username must be set."))
 
         email = self.normalize_email(email)
-        role = extra_fields.get('role')
+        role = extra_fields.pop('role', None)
 
         if not password:
             if email:
@@ -66,7 +65,7 @@ class UserManager(BaseUserManager):
             extra_fields['need_password'] = False
 
         if role is None:
-            extra_fields['role'] = self.model.DEFAULT_USER
+            extra_fields['_role'] = self.model.DEFAULT_USER
 
         user = self.model(username=username, email=email, is_staff=is_staff,
                           is_active=True, is_superuser=is_superuser,
@@ -112,11 +111,9 @@ class UserManager(BaseUserManager):
 @python_2_unicode_compatible
 class User(AbstractUser, ValidateOnSaveMixin):
     DEFAULT_USER = 0
-    PROJECT_MANAGER = 1
-    ADMINISTRATOR = 2
+    ADMINISTRATOR = 1
     ROLE = (
         (DEFAULT_USER, _("Default User")),
-        (PROJECT_MANAGER, _("Project Manager")),
         (ADMINISTRATOR, _("Administrator")),
         )
     YES = True
@@ -136,7 +133,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
         verbose_name=_("Public User ID"), max_length=30, unique=True,
         blank=True,
         help_text=_("Public ID to identify a individual user."))
-    role = models.SmallIntegerField(
+    _role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
         help_text=_("The role of the user."))
     answers = models.ManyToManyField(
@@ -190,13 +187,12 @@ class User(AbstractUser, ValidateOnSaveMixin):
         # Populate the public_id on record creation only.
         if self.pk is None:
             self.public_id = generate_public_key()
-
-        # Test that the role obeys the rules.
-        if self.role == self.PROJECT_MANAGER and self.projects.count() <= 0:
-            self.role = self.DEFAULT_USER
-            msg = _("Found user '{}' set to 'Project Manager' when they had no "
-                    "projects assigned.").format(self.get_full_name_reversed())
-            log.error(ugettext(msg))
+            self._role = self.ADMINISTRATOR
+        elif self._role not in (self.DEFAULT_USER,
+                                self.ADMINISTRATOR):
+            msg = _("Invalid role, must be one of DEFAULT_USER, or "
+                    "ADMINISTRATOR.")
+            log.error(msg)
             raise ValidationError(msg)
 
     def save(self, *args, **kwargs):
@@ -209,6 +205,14 @@ class User(AbstractUser, ValidateOnSaveMixin):
         ordering = ('last_name', 'username',)
         verbose_name = _("User")
         verbose_name_plural = _("Users")
+
+    @property
+    def role(self):
+        return self._role
+
+    @role.setter
+    def set_role(self, value):
+        self._role = value
 
     def get_full_name_reversed(self):
         result = None
