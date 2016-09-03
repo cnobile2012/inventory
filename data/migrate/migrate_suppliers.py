@@ -118,11 +118,13 @@ class MigrateSupplier(MigrateBase):
                     country = Country.objects.get(code=row[6])
                 except Country.DoesNotExist:
                     country = None
-
-                try:
-                    subdivision = Subdivision.objects.get(code=row[4])
-                except Subdivision.DoesNotExist:
                     subdivision = None
+                else:
+                    try:
+                        subdivision = Subdivision.objects.get(
+                            country=country, code=row[4])
+                    except Subdivision.DoesNotExist:
+                        subdivision = None
 
                 phone = row[7]
                 fax = row[8]
