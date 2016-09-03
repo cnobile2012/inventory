@@ -29,7 +29,7 @@ class UserAdmin(DjangoUserAdmin):
                                          'subdivision', 'postal_code',
                                          'country', 'dob', 'email', 'language',
                                          'timezone', 'answers',)}),
-        (_("Projects"), {'fields': ('role', 'project_default',)}),
+        (_("Projects"), {'fields': ('_role', 'project_default',)}),
         (_("Permissions"), {'classes': ('collapse',),
                             'fields': ('is_active', 'is_staff',
                                        'is_superuser', 'groups',

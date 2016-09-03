@@ -187,7 +187,9 @@ class User(AbstractUser, ValidateOnSaveMixin):
         # Populate the public_id on record creation only.
         if self.pk is None:
             self.public_id = generate_public_key()
-            self._role = self.ADMINISTRATOR
+
+            if self.is_superuser:
+                self._role = self.ADMINISTRATOR
         elif self._role not in (self.DEFAULT_USER,
                                 self.ADMINISTRATOR):
             msg = _("Invalid role, must be one of DEFAULT_USER, or "
