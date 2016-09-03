@@ -98,19 +98,19 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
 
     def process_members(self, members):
         """
-        This method adds or removes members to the project.
+        This method adds and removes members to the project.
         """
         if members:
             UserModel = get_user_model()
-            new_pks = [inst.pk for inst in members]
+            wanted_pks = [inst.pk for inst in members]
             old_pks = [inst.pk for inst in self.members.all()]
-            rem_pks = list(set(old_pks) - set(new_pks))
-            rem_users = UserModel.objects.filter(pk__in=rem_pks)
             # Remove unwanted members.
+            rem_pks = list(set(old_pks) - set(wanted_pks))
+            rem_users = UserModel.objects.filter(pk__in=rem_pks)
             Membership.objects.filter(
                 project=self, user__in=rem_users).delete()
             # Add new members.
-            add_pks = list(set(new_pks) - set(old_pks))
+            add_pks = list(set(wanted_pks) - set(old_pks))
 
             for user in UserModel.objects.filter(pk__in=add_pks):
                 Membership.objects.create(project=self, user=user)
@@ -137,9 +137,12 @@ class Membership(ValidateOnSaveMixin):
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
         help_text=_("The role of the user."))
     project = models.ForeignKey(
-        Project, on_delete=models.CASCADE)
+        Project, verbose_name=_("Project"), on_delete=models.CASCADE,
+        related_name='memberships', help_text=_("The project."))
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, verbose_name=_("User"),
+        on_delete=models.CASCADE, related_name='memberships',
+        help_text=_("The user."))
 
     objects = MembershipManager()
 
