@@ -16,6 +16,7 @@ from .forms import ProjectForm
 # Membership
 #
 class MembershipInline(admin.TabularInline):
+    fields = ('user', 'role',)
     extra = 0
     can_delete = False
     model = Membership

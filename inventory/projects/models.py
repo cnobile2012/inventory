@@ -101,16 +101,19 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         This method adds or removes members to the project.
         """
         if members:
+            UserModel = get_user_model()
             new_pks = [inst.pk for inst in members]
             old_pks = [inst.pk for inst in self.members.all()]
             rem_pks = list(set(old_pks) - set(new_pks))
+            rem_users = UserModel.objects.filter(pk__in=rem_pks)
             # Remove unwanted members.
-            self.members.remove(*self.members.filter(pk__in=rem_pks))
+            Membership.objects.filter(
+                project=self, user__in=rem_users).delete()
             # Add new members.
-            UserModel = get_user_model()
             add_pks = list(set(new_pks) - set(old_pks))
-            new_mem = UserModel.objects.filter(pk__in=add_pks)
-            self.members.add(*new_mem)
+
+            for user in UserModel.objects.filter(pk__in=add_pks):
+                Membership.objects.create(project=self, user=user)
 
 
 #
