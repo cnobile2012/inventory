@@ -8,7 +8,7 @@ import logging
 from django.contrib.auth import get_user_model
 
 try:
-    from inventory.projects.models import Project
+    from inventory.projects.models import Project, Membership
 except:
     pass
 
@@ -62,5 +62,4 @@ class MigrateBase(object):
         project, created = Project.objects.get_or_create(name=name,
                                                          defaults=kwargs)
         project.process_members([user])
-        project.process_managers([user])
         return project
