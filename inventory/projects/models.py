@@ -13,17 +13,22 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
-    UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin)
+    UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
+    ValidateOnSaveMixin)
 
 log = logging.getLogger('inventory.projects.models')
 
 
+#
+# Project
+#
 class ProjectManager(StatusModelManagerMixin, models.Manager):
     pass
 
@@ -49,12 +54,8 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         help_text=_("The name of the project."))
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, verbose_name=_("Project Members"),
-        related_name='project_members', blank=True,
+        through='Membership', related_name='project_members', blank=True,
         help_text=_("The members of this project."))
-    managers = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, verbose_name=_("Project Managers"),
-        related_name='project_managers', blank=True,
-        help_text=_("The managers of this project."))
     public = models.BooleanField(
         verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES,
         help_text=_("Set to YES if this project is public else set to NO "
@@ -78,6 +79,23 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
 
+    def get_role(self, user):
+        try:
+            obj = Membership.objects.get(user=user, project=self)
+        except Membership.DoesNotExist:
+            msg = _("Invalid user {}").format(user)
+            log.error(ugettext(msg))
+            raise Membership.DoesNotExist(msg)
+
+        return obj.role
+
+    def set_role(self, user, value):
+        if Membership.objects.filter(
+            user=user, project=self).update(role=role) != 1:
+            msg = _("Invalid user {}").format(user)
+            log.error(ugettext(msg))
+            raise Membership.DoesNotExist(msg)
+
     def process_members(self, members):
         """
         This method adds or removes members to the project.
@@ -89,31 +107,57 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
             # Remove unwanted members.
             self.members.remove(*self.members.filter(pk__in=rem_pks))
             # Add new members.
+            UserModel = get_user_model()
             add_pks = list(set(new_pks) - set(old_pks))
-            new_mem = get_user_model().objects.filter(pk__in=add_pks)
+            new_mem = UserModel.objects.filter(pk__in=add_pks)
             self.members.add(*new_mem)
 
-    def process_managers(self, managers):
-        """
-        This method adds or removes managers to the project.
-        """
-        if managers:
-            new_pks = [inst.pk for inst in managers]
-            old_pks = [inst.pk for inst in self.managers.all()]
-            rem_pks = list(set(old_pks) - set(new_pks))
-            UserModel = get_user_model()
-            # Remove unwanted managers.
-            self.managers.remove(*self.managers.filter(pk__in=rem_pks))
-            self._bulk_update_role(rem_pks, UserModel.DEFAULT_USER)
-            # Add new managers.
-            add_pks = list(set(new_pks) - set(old_pks))
-            new_man = UserModel.objects.filter(pk__in=add_pks)
-            self._bulk_update_role(add_pks, UserModel.PROJECT_MANAGER)
-            self.managers.add(*new_man)
 
-    def _bulk_update_role(self, pks, role):
-        UserModel = get_user_model()
-        query = [models.Q(pk__in=pks) &
-                 ~models.Q(role__gt=UserModel.PROJECT_MANAGER)]
-        num = UserModel.objects.filter(*query).update(role=role)
-        log.debug("PKs: %s, role: %s, num affected rows: %s", pks, role, num)
+#
+# Membership
+#
+class MembershipManager(models.Manager):
+    pass
+
+
+class Membership(ValidateOnSaveMixin):
+    DEFAULT_USER = 0
+    OWNER = 1
+    PROJECT_MANAGER = 2
+    ROLE = (
+        (DEFAULT_USER, _("Default User")),
+        (OWNER, _("Owner")),
+        (PROJECT_MANAGER, _("Project Manager")),
+        )
+
+    role = models.SmallIntegerField(
+        verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
+        help_text=_("The role of the user."))
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    objects = MembershipManager()
+
+    def clean(self):
+        if self.pk is None:
+            self.role = self.OWNER
+        elif self.role not in (self.DEFAULT_USER,
+                               self.OWNER,
+                               self.PROJECT_MANAGER):
+            msg = _("Invalid role, must be one of DEFAULT_USER, OWNER, or "
+                    "PROJECT_MANAGER.")
+            log.error(msg)
+            raise ValidationError(msg)
+
+    def save(self, *args, **kwargs):
+        super(Membership, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "{} ({})".format(self.user.get_full_name_reversed(),
+                                self.project.name)
+
+    class Meta:
+        verbose_name = _("Membership")
+        verbose_name_plural = _("Memberships")

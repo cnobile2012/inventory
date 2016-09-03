@@ -112,7 +112,7 @@ class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("Enter a name for this series of formats."))
     project = models.ForeignKey(
         Project, verbose_name=_("Project"),
-        related_name="projects",
+        related_name="projects", db_index=False,
         help_text=_("The user that owns this record."))
     description = models.CharField(
         verbose_name=_("Description"), max_length=254, null=True, blank=True,

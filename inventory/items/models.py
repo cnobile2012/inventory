@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from dcolumn.common.model_mixins import BaseChoiceModelManager
 from dcolumn.dcolumns.models import CollectionBase, CollectionBaseManagerBase
 
-from inventory.common import generate_public_key
+from inventory.common import generate_public_key, generate_sku_fragment
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
     ValidateOnSaveMixin,)
@@ -62,6 +62,9 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
         verbose_name=_("Public Item ID"), max_length=30, unique=True,
         blank=True,
         help_text=_("Public ID to identify a individual item."))
+    project = models.ForeignKey(
+        Project, verbose_name=_("Project"), related_name='items',
+        db_index=False, help_text=_("The project the item is part of."))
     description = models.CharField(
         verbose_name=_("Description"), max_length=250,
         help_text=_("Item description."))
@@ -70,8 +73,8 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
         blank=True, storage=InventoryFileStorage(),
         help_text=_("Picture of item."))
     sku = models.CharField(
-        verbose_name=_("Stock Keeping Unit (SKU)"), max_length=50,
-        db_index=True, help_text=_("Inernal part number."))
+        verbose_name=_("Stock Keeping Unit (SKU)"), max_length=20,
+        help_text=_("Inernal part number."))
     item_number = models.CharField(
         verbose_name=_("Canonical Identifier"), max_length=50,
         help_text=_("Common item number."))
@@ -103,9 +106,6 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
     purge = models.BooleanField(
         verbose_name=_("Purge"), choices=YES_NO, default=NO,
         help_text=_("If the item will be purged from thw system."))
-    project = models.ForeignKey(
-        Project, verbose_name=_("Project"), db_index=True,
-        related_name='items', help_text=_("The project the item is in."))
     datasheet = models.ImageField(
         verbose_name=_("Datasheet"), upload_to='item_datasheets', null=True,
         blank=True, storage=InventoryFileStorage(),
@@ -114,9 +114,11 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
     objects = ItemManager()
 
     def clean(self):
-        # Populate the public_id on record creation only.
         if self.pk is None:
+            # Populate the public_id on record creation only.
             self.public_id = generate_public_key()
+            # Generate SKU
+            self.sku = generate_sku_fragment()
 
     def save(self, *args, **kwargs):
         super(Item, self).save(*args, **kwargs)

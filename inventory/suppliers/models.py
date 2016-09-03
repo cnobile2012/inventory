@@ -51,7 +51,7 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         help_text=_("Public ID to identify a individual supplier."))
     project = models.ForeignKey(
         Project, verbose_name=_("Project"), related_name='suppliers',
-        help_text=_("The project that owns this record."))
+        db_index=False, help_text=_("The project that owns this record."))
     name = models.CharField(
         verbose_name=_("Name"), max_length=250,
         help_text=_("The name of the supplier."))

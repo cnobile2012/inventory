@@ -183,7 +183,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("Public ID to identify a individual category."))
     project = models.ForeignKey(
         Project, verbose_name=_("Project"), related_name='categories',
-        help_text=_("The project that owns this record."))
+        db_index=False, help_text=_("The project that owns this record."))
     parent = models.ForeignKey(
         "self", verbose_name=_("Parent"), blank=True, null=True, default=None,
         related_name='children', help_text=_("The parent to this category if "

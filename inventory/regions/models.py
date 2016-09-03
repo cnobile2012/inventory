@@ -72,9 +72,10 @@ class Subdivision(StatusModelMixin):
         help_text=_("The subdivision of the country."))
     country = models.ForeignKey(
         Country, on_delete=models.CASCADE, verbose_name=_("Country"),
-        related_name='subdivisions', help_text=_("The country."))
+        db_index=False, related_name='subdivisions',
+        help_text=_("The country."))
     code = models.CharField(
-        verbose_name=_("State Code"), max_length=10, unique=True,
+        verbose_name=_("State Code"), max_length=10,
         help_text=_("The subdivision code."))
 
     objects = SubdivisionManager()
@@ -86,6 +87,7 @@ class Subdivision(StatusModelMixin):
         return self.subdivision_name
 
     class Meta:
+        unique_together = ('country', 'code')
         ordering = ('country', 'subdivision_name',)
         verbose_name = _("Subdivision")
         verbose_name_plural = _("Subdivisions")
