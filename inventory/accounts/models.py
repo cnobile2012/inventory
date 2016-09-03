@@ -211,7 +211,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
         return self._role
 
     @role.setter
-    def set_role(self, value):
+    def role(self, value):
         self._role = value
 
     def get_full_name_reversed(self):
