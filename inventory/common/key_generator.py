@@ -4,7 +4,7 @@
 #
 
 """
-
+Generates keys used throughout the system.
 """
 __docformat__ = "restructuredtext en"
 
@@ -49,7 +49,7 @@ class KeyGenerator(object):
 
         return rand
 
-    def generate(self, length=0, regen=False):
+    def generate(self, length=0, regen=False, domain=_KEY_DOMAIN):
         """
         Generates a key of the given length using the default domain and
         random number generator.
@@ -70,7 +70,7 @@ class KeyGenerator(object):
                 log.error(ugettext(msg))
                 raise ValueError(msg)
 
-            self.__key = ''.join(self._generator.choice(self._KEY_DOMAIN)
+            self.__key = ''.join(self._generator.choice(domain)
                                  for i in range(length))
 
         return self.__key
