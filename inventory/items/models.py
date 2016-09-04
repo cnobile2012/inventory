@@ -87,21 +87,22 @@ class Item(CollectionBase, TimeModelMixin, UserModelMixin, StatusModelMixin,
     quantity = models.PositiveIntegerField(
         verbose_name=_("Quantity"), default=0, help_text=_("Number of items."))
     categories = models.ManyToManyField(
-        Category, verbose_name=_("Categories"), help_text=_("Item categories."))
+        Category, verbose_name=_("Categories"), related_name='items',
+        help_text=_("Item categories."))
     location_codes = models.ManyToManyField(
-        LocationCode, verbose_name=_("Location Codes"),
+        LocationCode, verbose_name=_("Location Codes"), related_name='items',
         help_text=_("Code for the phyisical location of the item."))
     distributor = models.ForeignKey(
         Supplier, verbose_name=_("Distributor"), db_index=True,
         limit_choices_to={'stype__in': [Supplier.DISTRIBUTOR,
                                         Supplier.BOTH_MFG_DIS]},
-        related_name='distributors', null=True, blank=True,
+        related_name='distributor_items', null=True, blank=True,
         help_text=_("The distributer that sourced the item."))
     manufacturer = models.ForeignKey(
         Supplier, verbose_name=_("Manufacturer"), db_index=True,
         limit_choices_to={'stype__in': [Supplier.MANUFACTURER,
                                         Supplier.BOTH_MFG_DIS]},
-        related_name='manufacturers', null=True, blank=True,
+        related_name='manufacturers_items', null=True, blank=True,
         help_text=_("The manufacturer that produced the item."))
     purge = models.BooleanField(
         verbose_name=_("Purge"), choices=YES_NO, default=NO,

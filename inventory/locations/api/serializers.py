@@ -23,11 +23,12 @@ User = get_user_model()
 #
 class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
-        view_name='project-detail', queryset=User.objects.all())
+        view_name='project-detail', queryset=User.objects.all(),
+        lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     location_formats = serializers.HyperlinkedRelatedField(
         view_name='location-format-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
@@ -64,9 +65,9 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='location-default-detail',
         queryset=LocationDefault.objects.all())
     creator = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     location_codes = serializers.HyperlinkedRelatedField(
         view_name='location-code-detail', many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
@@ -109,11 +110,12 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='location-code-detail', default=None,
         queryset=LocationCode.objects.all())
     creator = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
-    #item_set = serializers.HyperlinkedRelatedField(
-    #    view_name='item-detail', many=True, read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
+    #items = serializers.HyperlinkedRelatedField(
+    #    view_name='item-detail', many=True, read_only=True,
+    #    lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-code-detail')
 
