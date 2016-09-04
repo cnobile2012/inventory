@@ -2,6 +2,10 @@
 #
 # inventory/suppliers/api/urls.py
 #
+"""
+Supplier URLs.
+"""
+__docformat__ = "restructuredtext en"
 
 from django.conf.urls import include, url
 

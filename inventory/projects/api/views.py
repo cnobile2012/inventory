@@ -55,7 +55,7 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
             ),
         )
     pagination_class = SmallResultsSetPagination
-    lookup_field='public_id'
+    lookup_field = 'public_id'
 
 project_list = ProjectList.as_view()
 
@@ -70,6 +70,6 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
             Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
             ),
         )
-    lookup_field='public_id'
+    lookup_field = 'public_id'
 
 project_detail = ProjectDetail.as_view()

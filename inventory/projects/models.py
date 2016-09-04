@@ -34,7 +34,8 @@ class ProjectManager(StatusModelManagerMixin, models.Manager):
 
 
 @python_2_unicode_compatible
-class Project(TimeModelMixin, UserModelMixin, StatusModelMixin):
+class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
+              ValidateOnSaveMixin):
     """
     This model implements project functionality.
     """

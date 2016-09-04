@@ -33,9 +33,9 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='timezone-detail', queryset=TimeZone.objects.all(),
         default=None)
     creator = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
         view_name='supplier-detail', lookup_field='public_id')
 

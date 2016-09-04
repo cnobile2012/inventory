@@ -28,12 +28,13 @@ class MembershipInline(admin.TabularInline):
 @admin.register(Project)
 class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('name', 'public',)}),
+        (None, {'fields': ('public_id', 'name', 'public',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
+    readonly_fields = ('public_id', 'creator', 'created', 'updater',
+                       'updated',)
     list_display = ('name', 'public', 'active', 'updater', 'updated',)
     list_editable = ('active',)
     search_fields = ('name', 'memberships__user__username',)
