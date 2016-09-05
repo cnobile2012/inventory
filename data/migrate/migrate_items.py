@@ -247,12 +247,16 @@ class MigrateItem(MigrateBase):
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             writer.writerow([
                 'value',
+                'currency',
                 'date_acquired',
                 'invoice_number',
                 'item_number',
-                'item_created',
+                'item_ctime',
                 'distributor',
                 'manufacturer',
+                'user',
+                'ctime',
+                'mtime',
                 ])
 
             for record in Cost.objects.all():
@@ -260,12 +264,16 @@ class MigrateItem(MigrateBase):
                                  if record.date_acquired else '')
                 writer.writerow([
                     record.value,
+                    record.currency.currency if record.currency else '',
                     date_acquired,
                     record.invoice_number.encode('utf-8'),
                     record.item.item_number.encode('utf-8'),
                     record.item.ctime.isoformat(),
                     record.distributor.name if record.distributor else '',
                     record.manufacturer.name if record.manufacturer else '',
+                    record.user.username if record.user else '',
+                    record.ctime.isoformat(),
+                    record.mtime.isoformat(),
                     ])
 
     def _create_item(self):
@@ -346,14 +354,24 @@ class MigrateItem(MigrateBase):
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
                 value = row[0]
-                date_acquired = duparser.parse(row[1])
-                invoice_number = row[2]
-                item = Item.objects.get(item_number=row[3], created=row[4])
+                currency = row[1] # Not used
+                date_acquired = duparser.parse(row[2])
+                invoice_number = row[3]
+                item_number = row[4]
+                item_ctime = duparser.parse(row[5])
+                distributor = row[6]
+                manufacturer = row[7]
+                user = self.get_user(username=row[8]) # Not used
+                ctime = duparser.parse(row[9]) # Not used
+                mtime = duparser.parse(row[10]) # Not used
 
-                if row[5]:
-                    supplier = Supplier.object.get(name=row[5])
-                elif row[6]:
-                    supplier = Supplier.object.get(name=row[6])
+                item = Item.objects.get(
+                    item_number=item_number, created=item_ctime)
+
+                if distributor:
+                    supplier = Supplier.object.get(name=distributor)
+                elif manufacturer:
+                    supplier = Supplier.object.get(name=manufacturer)
                 else:
                     supplier = ''
 
