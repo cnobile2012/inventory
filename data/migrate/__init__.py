@@ -8,7 +8,7 @@ import logging
 from django.contrib.auth import get_user_model
 
 try:
-    from inventory.projects.models import Project, Membership
+    from inventory.projects.models import Project, Membership, InventoryType
 except:
     pass
 
@@ -35,6 +35,7 @@ def setup_logger(name='root', fullpath=None, fmt=None, level=logging.INFO):
 
 class MigrateBase(object):
     _DEFAULT_USER = 'cnobile'
+    _INVENTORY_NAME = "Electronics"
     _PROJECT_NAME = "Carl's Electronics Inventory"
     _LD_NAME = "Home Inventory Location Formats"
     _LD_DESC = "My DIY Inventory."
@@ -53,13 +54,26 @@ class MigrateBase(object):
         self._log.info("Found user: %s", user)
         return user
 
+    def _create_inventory_type(self):
+        user = self.get_user()
+        name = self._INVENTORY_NAME
+        kwargs = {}
+        kwargs['description'] = ("Inventory for electronic parts and "
+                                 "related items.")
+        kwargs['creator'] = user
+        kwargs['updater'] = user
+        in_type, created = InventoryType.objects.get_or_create(
+            name=name, defaults=kwargs)
+        return in_type
+
     def _create_project(self):
         user = self.get_user()
         name = self._PROJECT_NAME
         kwargs = {}
+        kwargs['inventory_type'] = self._create_inventory_type()
         kwargs['creator'] = user
         kwargs['updater'] = user
-        project, created = Project.objects.get_or_create(name=name,
-                                                         defaults=kwargs)
+        project, created = Project.objects.get_or_create(
+            name=name, defaults=kwargs)
         project.process_members([user])
         return project

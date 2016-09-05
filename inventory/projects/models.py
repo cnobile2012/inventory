@@ -27,6 +27,36 @@ log = logging.getLogger('inventory.projects.models')
 
 
 #
+# InventoryType
+#
+class InventoryTypeManager(models.Manager):
+    pass
+
+
+@python_2_unicode_compatible
+class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+    name = models.CharField(
+        verbose_name=_("Inventory Type"), max_length=250,
+        help_text=_("The name of the inventory type."))
+    description = models.CharField(
+        verbose_name=_("Description"), max_length=250, null=True,
+        blank=True, help_text=_("Define what the codes derived from this "
+                                "format are used for."))
+
+    objects = InventoryTypeManager()
+
+    def save(self, *args, **kwargs):
+        super(InventoryType, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("InventoryType")
+        verbose_name_plural = _("InventoryTypes")
+
+
+#
 # Project
 #
 class ProjectManager(StatusModelManagerMixin, models.Manager):
@@ -51,16 +81,19 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         blank=True,
         help_text=_("Public ID to identify a individual project."))
     name = models.CharField(
-        verbose_name=_("Project Name"), max_length=256,
+        verbose_name=_("Project Name"), max_length=250,
         help_text=_("The name of the project."))
+    inventory_type = models.ForeignKey(
+        InventoryType, on_delete=models.CASCADE,
+        verbose_name=_("Inventory Type"), related_name='projects',
+        help_text=_("The inventory type."))
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, verbose_name=_("Project Members"),
         through='Membership', related_name='project_members', blank=True,
         help_text=_("The members of this project."))
     public = models.BooleanField(
         verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES,
-        help_text=_("Set to YES if this project is public else set to NO "
-                    "if private."))
+        help_text=_("Set to YES if this project is public else set to NO."))
 
     objects = ProjectManager()
 
@@ -124,6 +157,7 @@ class MembershipManager(models.Manager):
     pass
 
 
+@python_2_unicode_compatible
 class Membership(ValidateOnSaveMixin):
     DEFAULT_USER = 0
     OWNER = 1
@@ -138,7 +172,7 @@ class Membership(ValidateOnSaveMixin):
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
         help_text=_("The role of the user."))
     project = models.ForeignKey(
-        Project, verbose_name=_("Project"), on_delete=models.CASCADE,
+        Project, on_delete=models.CASCADE, verbose_name=_("Project"),
         related_name='memberships', help_text=_("The project."))
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("User"),

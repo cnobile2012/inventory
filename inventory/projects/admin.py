@@ -8,8 +8,24 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin
 
-from .models import Project, Membership
+from .models import InventoryType, Project, Membership
 from .forms import ProjectForm
+
+
+#
+# InventoryType
+#
+@admin.register(InventoryType)
+class InventoryTypeAdmin(UserAdminMixin, admin.ModelAdmin):
+    fieldsets = (
+        (None, {'fields': ('name', 'description',)}),
+        (_('Status'), {'classes': ('collapse',),
+                       'fields': ('creator', 'created', 'updater',
+                                  'updated',)}),
+        )
+    readonly_fields = ('creator', 'created', 'updater', 'updated',)
+    list_display = ('name', 'updater', 'updated',)
+    search_fields = ('name', 'description', 'projects__name',)
 
 
 #
@@ -28,7 +44,7 @@ class MembershipInline(admin.TabularInline):
 @admin.register(Project)
 class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('public_id', 'name', 'public',)}),
+        (None, {'fields': ('public_id', 'inventory_type', 'name', 'public',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
