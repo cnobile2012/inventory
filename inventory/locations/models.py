@@ -111,11 +111,11 @@ class LocationDefault(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         verbose_name=_("Name"), max_length=100,
         help_text=_("Enter a name for this series of formats."))
     project = models.ForeignKey(
-        Project, verbose_name=_("Project"),
+        Project, on_delete=models.CASCADE, verbose_name=_("Project"),
         related_name="projects", db_index=False,
-        help_text=_("The user that owns this record."))
+        help_text=_("The project that owns this record."))
     description = models.CharField(
-        verbose_name=_("Description"), max_length=254, null=True, blank=True,
+        verbose_name=_("Description"), max_length=1000, null=True, blank=True,
         help_text=_("Define what the codes derived from this format are used "
                     "for."))
     shared = models.BooleanField(
@@ -168,8 +168,8 @@ class LocationFormatManager(models.Manager):
 class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     location_default = models.ForeignKey(
-        LocationDefault, verbose_name=_("Location Default"),
-        related_name="location_formats",
+        LocationDefault, on_delete=models.CASCADE,
+        verbose_name=_("Location Default"), related_name="location_formats",
         help_text=_("The location default relative to this location format."))
     segment_length = models.PositiveIntegerField(
         verbose_name=_("Segment Length"), editable=False, default=0,
@@ -251,18 +251,19 @@ class LocationCodeManager(models.Manager):
 class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
     char_definition = models.ForeignKey(
-        LocationFormat, verbose_name=_("Format"),
+        LocationFormat, on_delete=models.CASCADE, verbose_name=_("Format"),
         related_name="location_codes",
         help_text=_("Choose the format that this segment will be based on."))
     segment = models.CharField(
-        max_length=250, db_index=True,
+        verbose_name=_("Segment"), max_length=250,
         help_text=_("See the LocationFormat.description for the "
                     "format used."))
     parent = models.ForeignKey(
-        "self", blank=True, null=True, default=None, related_name='children',
-        help_text=_("The parent to this segment."))
+        "self", on_delete=models.CASCADE, verbose_name=_("Parent"),
+        db_index=False, blank=True, null=True, default=None,
+        related_name='children', help_text=_("The parent of this segment."))
     path = models.CharField(
-        max_length=1000, editable=False,
+        verbose_name=_("Path"), max_length=1000, editable=False,
         help_text=_("The full hierarchical path of this segment."))
     level = models.SmallIntegerField(
         verbose_name=_("Level"), editable=False,

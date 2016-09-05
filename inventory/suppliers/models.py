@@ -50,14 +50,14 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         blank=True,
         help_text=_("Public ID to identify a individual supplier."))
     project = models.ForeignKey(
-        Project, verbose_name=_("Project"), related_name='suppliers',
-        db_index=False, help_text=_("The project that owns this record."))
+        Project, on_delete=models.CASCADE, verbose_name=_("Project"),
+        related_name='suppliers', db_index=False,
+        help_text=_("The project that owns this record."))
     name = models.CharField(
         verbose_name=_("Name"), max_length=250,
         help_text=_("The name of the supplier."))
     name_lower = models.CharField(
-        verbose_name=_("Name (lowercase)"), max_length=250, unique=True,
-        db_index=True, blank=True,
+        verbose_name=_("Name (lowercase)"), max_length=250, blank=True,
         help_text=_("The name of the supplier in lowercase."))
     address_01 = models.CharField(
         verbose_name=_("Address 1"), max_length=50, null=True, blank=True,

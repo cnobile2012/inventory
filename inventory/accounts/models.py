@@ -318,7 +318,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     ANSWER_SALT = "inventory.accounts.models.Answer.clean"
 
     answer = models.CharField(
-        verbose_name=_("Answer"), max_length=255,
+        verbose_name=_("Answer"), max_length=250,
         help_text=_("An answer to an authentication question."))
     question = models.ForeignKey(
         Question, verbose_name=_("Question"),

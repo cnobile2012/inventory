@@ -68,7 +68,7 @@ class Subdivision(StatusModelMixin):
     This model implements country subdivision codes.
     """
     subdivision_name = models.CharField(
-        verbose_name=_("State"), max_length=128,
+        verbose_name=_("State"), max_length=130,
         help_text=_("The subdivision of the country."))
     country = models.ForeignKey(
         Country, on_delete=models.CASCADE, verbose_name=_("Country"),
@@ -169,7 +169,7 @@ class TimeZone(StatusModelMixin):
         help_text=_("Latitude & Longitude."))
     country = models.ForeignKey(
         Country, on_delete=models.CASCADE, verbose_name=_("Country"),
-        related_name='timezones', help_text=_("The country."))
+        db_index=False, related_name='timezones', help_text=_("The country."))
     desc = models.TextField(
         verbose_name=_("Description"), null=True, blank=True,
         help_text=_("Zone description."))
@@ -202,8 +202,8 @@ class Currency(StatusModelMixin):
     This model implements currency codes.
     """
     country = models.ForeignKey(
-        Country, verbose_name=_("Country"),
-        help_text=_("Country or region name."))
+        Country, on_delete=models.CASCADE, verbose_name=_("Country"),
+        db_index=False, help_text=_("Country or region name."))
     currency = models.CharField(
         verbose_name=_("Corrency"), max_length=50,
         help_text=_("Name of the currency."))

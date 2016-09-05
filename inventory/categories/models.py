@@ -182,17 +182,18 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         blank=True,
         help_text=_("Public ID to identify a individual category."))
     project = models.ForeignKey(
-        Project, verbose_name=_("Project"), related_name='categories',
-        db_index=False, help_text=_("The project that owns this record."))
+        Project, on_delete=models.CASCADE, verbose_name=_("Project"),
+        related_name='categories', db_index=False,
+        help_text=_("The project that owns this record."))
     parent = models.ForeignKey(
-        "self", verbose_name=_("Parent"), blank=True, null=True, default=None,
-        related_name='children', help_text=_("The parent to this category if "
-                                             "any."))
+        "self", on_delete=models.CASCADE, verbose_name=_("Parent"),
+        blank=True, null=True, default=None, related_name='children',
+        help_text=_("The parent to this category if any."))
     name = models.CharField(
-        verbose_name=_("Name"), max_length=248,
+        verbose_name=_("Name"), max_length=250,
         help_text=_("The name of this category."))
     path = models.CharField(
-        verbose_name=_("Full Path"), max_length=1016, editable=False,
+        verbose_name=_("Full Path"), max_length=1000, editable=False,
         help_text=_("The full hierarchical path of this category."))
     level = models.SmallIntegerField(
         verbose_name=_("Level"), editable=False,
