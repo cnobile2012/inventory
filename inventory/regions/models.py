@@ -223,7 +223,8 @@ class Currency(StatusModelMixin):
     objects = CurrencyManager()
 
     def __str__(self):
-        return self.currency
+        # TODO -- This needs to be cached.
+        return "{} ({})".format(self.country.country, self.currency)
 
     class Meta:
         unique_together = ('country', 'alphabetic_code',)
