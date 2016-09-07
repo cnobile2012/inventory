@@ -15,8 +15,6 @@ from rest_framework import serializers
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
-from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
-
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager, IsDefaultUser,
     IsReadOnly)
@@ -63,7 +61,7 @@ class LocationDefaultList(LocationDefaultAuthorizationMixin,
     permission_classes = (
         Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
            And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
+           And(IsAuthenticated),
            ),
         )
     pagination_class = SmallResultsSetPagination
@@ -82,7 +80,7 @@ class LocationDefaultDetail(LocationDefaultAuthorizationMixin,
     permission_classes = (
         Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
            And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
+           And(IsAuthenticated),
            ),
         )
 
@@ -119,7 +117,7 @@ class LocationFormatList(LocationFormatAuthorizationMixin,
     permission_classes = (
         Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
            And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
+           And(IsAuthenticated),
            ),
         )
     pagination_class = SmallResultsSetPagination
@@ -138,7 +136,7 @@ class LocationFormatDetail(LocationFormatAuthorizationMixin,
     permission_classes = (
         Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
            And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
+           And(IsAuthenticated),
            ),
         )
 
@@ -176,7 +174,7 @@ class LocationCodeList(LocationCodeAuthorizationMixin,
     permission_classes = (
         Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
            And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
+           And(IsAuthenticated),
            ),
         )
     pagination_class = SmallResultsSetPagination
@@ -195,7 +193,7 @@ class LocationCodeDetail(LocationCodeAuthorizationMixin,
     permission_classes = (
         Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
            And(IsDefaultUser, IsReadOnly),
-           And(TokenHasReadWriteScope, IsAuthenticated),
+           And(IsAuthenticated),
            ),
         )
 
