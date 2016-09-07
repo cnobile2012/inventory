@@ -8,6 +8,8 @@
 import os
 import sys
 
+from dcolumn.dcolumns.manager import dcolumn_manager
+
 DEBUG = False
 
 ADMINS = (
@@ -142,7 +144,7 @@ INSTALLED_APPS = [
     'inventory.accounts',
     'inventory.categories',
     'inventory.dynamic_columns',
-    #'inventory.items',
+    'inventory.invoices',
     'inventory.locations',
     'inventory.projects',
     'inventory.regions',
@@ -195,15 +197,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     ]
 
-## OAUTH2_PROVIDER = {
-##     # This is the list of available scopes.
-##     'SCOPES': {
-##         'read': 'Read scope',
-##         'write': 'Write scope',
-##         'groups': 'Access to your groups'
-##         }
-##     }
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -230,6 +223,15 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.TemplateHTMLRenderer'
         )
     }
+
+# Change the URL below to your login path.
+LOGIN_URL = "/admin/"
+
+dcolumn_manager.register_css_containers(
+       (('top', 'top-container'),
+        ('center', 'center-container'),
+        ('bottom', 'bottom-container')
+        ))
 
 # A sample logging configuration. The only tangible logging performed by this
 # configuration is to send an email to the site admins on every HTTP 500 error
