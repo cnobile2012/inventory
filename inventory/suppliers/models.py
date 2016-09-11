@@ -67,7 +67,7 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         help_text=_("Address line two."))
     city = models.CharField(
         verbose_name=_("City"), max_length=30, null=True, blank=True,
-        help_text=_("The city this individual lives in."))
+        help_text=_("The city of the supplier."))
     subdivision = models.ForeignKey(
         Subdivision, verbose_name=_("State/Province"), null=True, blank=True,
         help_text=_("The subdivision in the country."))

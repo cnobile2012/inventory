@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from inventory.common.admin_mixins import UserAdminMixin
 
 from .models import Item, Invoice, InvoiceItem
+from .forms import ItemForm, InvoiceItemForm
 
 
 #
@@ -24,6 +25,7 @@ class InvoiceItemInvoiceInline(admin.StackedInline):
                            'unit_price', 'process',)}),
         )
     model = InvoiceItem
+    form = InvoiceItemForm
     extra = 1
 
 
@@ -37,6 +39,7 @@ class InvoiceItemItemInline(admin.StackedInline):
         )
     readonly_fields = ('invoice',)
     model = InvoiceItem
+    form = InvoiceItemForm
     extra = 1
 
 
@@ -46,15 +49,16 @@ class InvoiceItemItemInline(admin.StackedInline):
 @admin.register(Invoice)
 class InvoiceAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('currency', 'supplier', 'invoice_number',
-                           'invoice_date', 'credit', 'shipping', 'other',
-                           'tax',)}),
+        (None, {'fields': ('public_id', 'project', 'currency', 'supplier',
+                           'invoice_number', 'invoice_date', 'credit',
+                           'shipping', 'other', 'tax', 'notes',)}),
         (_("Status"), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('invoice_number', 'supplier', 'invoice_date',
+    readonly_fields = ('public_id', 'creator', 'created', 'updater',
+                       'updated',)
+    list_display = ('invoice_number', 'public_id', 'supplier', 'invoice_date',
                     'updated',)
     inlines = (InvoiceItemInvoiceInline,)
     search_fields = ('invoice_number', 'supplier__name',)
@@ -69,26 +73,28 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('public_id', 'project', 'sku', 'photo',
                            'item_number', 'item_number_mfg',
-                           'manufacturer',)}),
+                           'manufacturer', 'description', 'quantity',)}),
         (_("Category & Location"), {'fields': ('categories',
                                                'location_codes',)}),
         (_("Status"), {'classes': ('collapse',),
-                       'fields': ('purge', 'active', 'creator', 'created',
-                                  'updater', 'updated',)}),
+                       'fields': ('shared_projects', 'purge', 'active',
+                                  'creator', 'created', 'updater',
+                                  'updated',)}),
         )
     readonly_fields = ('public_id', 'sku', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('sku', 'project', 'public_id', 'item_number',
-                    'category_producer', 'location_code_producer',
-                    'aquired_date_producer', 'active',)
+    list_display = ('sku', 'public_id', 'project', 'item_number',
+                    'category_producer', 'location_code_producer', 'active',)
     list_editable = ('active',)
-    search_fields = ('sku', 'public_id', 'item_number',
-                     'item_number_mfg', 'project__name',)
+    search_fields = ('sku', 'public_id', 'item_number', 'item_number_mfg',
+                     'project__name', 'description', 'categories__path',
+                     'manufacturer__name',)
     list_filter = ('active', 'project__name', 'manufacturer',)
-    filter_horizontal = ('categories', 'location_codes',)
+    filter_horizontal = ('categories', 'location_codes', 'shared_projects',)
     inlines = (InvoiceItemItemInline,)
     date_hierarchy = 'created'
     save_as = True
+    form = ItemForm
 
     ## def save_formset(self, request, form, formset, change):
     ##     instances = formset.save(commit=False)

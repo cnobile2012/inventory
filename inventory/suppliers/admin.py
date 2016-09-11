@@ -17,16 +17,17 @@ from .models import Supplier
 @admin.register(Supplier)
 class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('project', 'name', 'stype', 'address_01',
-                           'address_02', 'city', 'subdivision', 'postal_code',
-                           'country', 'phone', 'fax', 'email', 'url',
-                           'language', 'timezone',)}),
+        (None, {'fields': ('public_id', 'project', 'name', 'stype',
+                           'address_01', 'address_02', 'city', 'subdivision',
+                           'postal_code', 'country', 'phone', 'fax', 'email',
+                           'url', 'language', 'timezone',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'project', 'stype', 'phone', 'email',
+    readonly_fields = ('public_id', 'creator', 'created', 'updater',
+                       'updated',)
+    list_display = ('name', 'public_id', 'project', 'stype', 'phone', 'email',
                     'url_producer', 'active',)
     list_editable = ('stype', 'active',)
     search_fields = ('project__name', 'country__country', 'city',

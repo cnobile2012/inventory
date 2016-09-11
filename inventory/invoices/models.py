@@ -13,12 +13,16 @@ import logging
 
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 
-from dcolumn.dcolumns.models import CollectionBase, CollectionBaseManager
+from dcolumn.common.choice_mixins import BaseChoice, BaseChoiceManager
+from dcolumn.dcolumns.models import (
+    CollectionBase, CollectionBaseManager, ColumnCollection)
 from dcolumn.dcolumns.manager import dcolumn_manager
 
 from inventory.common import generate_public_key, generate_sku_fragment
@@ -32,6 +36,51 @@ from inventory.projects.models import Project
 from inventory.regions.models import Currency
 from inventory.suppliers.models import Supplier
 
+log = logging.getLogger('inventory.invoices.models')
+
+
+#
+# Condition
+#
+class ConditionManager(BaseChoiceManager):
+    VALUES = (_("Unknown"),
+              _("New"),
+              _("Excellent"),
+              _("Good"),
+              _("Fair"),
+              _("Poor"),
+              )
+    FIELD_LIST = ('pk', 'name',)
+
+    def __init__(self):
+        super(ConditionManager, self).__init__()
+
+    def get_choices(self, field, comment=True, sort=True):
+        choices = [(obj.pk, ugettext(getattr(obj, field)))
+                   for obj in self.model_objects()]
+
+        if sort:
+            choices.sort(key=lambda x: x[1])
+
+        if comment:
+            choices.insert(
+                0, (0, _("Please choose a {}").format(self.model.__name__)))
+
+        return choices
+
+
+@python_2_unicode_compatible
+class Condition(BaseChoice):
+    pk = 0
+    name = ''
+
+    objects = ConditionManager()
+
+    def __str__(self):
+        return self.name
+
+dcolumn_manager.register_choice(Condition, 1, 'name')
+
 
 #
 # Item
@@ -42,14 +91,6 @@ class ItemManager(CollectionBaseManager, StatusModelManagerMixin):
 
 @python_2_unicode_compatible
 class Item(CollectionBase, ValidateOnSaveMixin):
-    CONDITION_TYPES = (
-        (0, 'Unknown'),
-        (1, 'New'),
-        (2, 'Excellent'),
-        (3, 'Good'),
-        (4, 'Fair'),
-        (5, 'Poor'),
-        )
     YES = True
     NO = False
     YES_NO = (
@@ -83,6 +124,12 @@ class Item(CollectionBase, ValidateOnSaveMixin):
                                         Supplier.BOTH_MFG_DIS]},
         related_name='manufacturers_items', null=True, blank=True,
         help_text=_("The manufacturer that produced the item."))
+    description = models.TextField(
+        verbose_name=_("Description"), max_length=1000, null=True, blank=True,
+        help_text=_("Item description."))
+    quantity = models.PositiveIntegerField(
+        verbose_name=_("Quantity"), default=0,
+        help_text=_("Number of items remaining."))
     categories = models.ManyToManyField(
         Category, verbose_name=_("Categories"), blank=True,
         related_name='items', help_text=_("Item categories."))
@@ -93,6 +140,10 @@ class Item(CollectionBase, ValidateOnSaveMixin):
     purge = models.BooleanField(
         verbose_name=_("Purge"), choices=YES_NO, default=NO,
         help_text=_("If the item will be purged from the system."))
+    shared_projects = models.ManyToManyField(
+        Project, verbose_name=_("Shared with Project"), blank=False,
+        related_name='shared_items',
+        help_text=_("Project(s) this item is shared with."))
 
     objects = ItemManager()
 
@@ -107,7 +158,7 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         super(Item, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.description
+        return "{} ({})".format(self.sku, self.project.name)
 
     class Meta:
         unique_together = ('sku', 'project')
@@ -123,24 +174,46 @@ class Item(CollectionBase, ValidateOnSaveMixin):
 
     def location_code_producer(self):
         return mark_safe("<br />".join(
-            [record.path for record in self.location_code.all()]))
+            [record.path for record in self.location_codes.all()]))
     location_code_producer.allow_tags = True
     location_code_producer.short_description = _("Location Code")
 
-    def aquired_date_producer(self):
-        result = "Unknown"
-        objs = self.cost.all()
+    def process_location_codes(self, location_codes):
+        """
+        Add and remove location_codes.
+        """
+        if location_codes:
+            wanted_pks = [inst.pk for inst in location_codes]
+            old_pks = [inst.pk for inst in self.location_codes.all()]
+            # Remove unwanted location_codes.
+            rem_pks = list(set(old_pks) - set(wanted_pks))
+            unwanted = self.location_codes.filter(pk__in=rem_pks)
+            self.location_codes.remove(*unwanted)
+            # Add new location_codes.
+            add_pks = list(set(wanted_pks) - set(old_pks))
+            wanted = LocationCode.objects.filter(pk__in=add_pks)
+            self.location_codes.add(*wanted)
 
-        if objs.count() > 0:
-            dates = ', '.join([obj.date_acquired for obj in objs])
+    def process_categories(self, categories):
+        """
+        Add and remove categories.
+        """
+        if categories:
+            wanted_pks = [inst.pk for inst in categories]
+            old_pks = [inst.pk for inst in self.categories.all()]
+            # Remove unwanted categories.
+            rem_pks = list(set(old_pks) - set(wanted_pks))
+            unwanted = self.categories.filter(pk__in=rem_pks)
+            self.categories.remove(*unwanted)
+            # Add new categories.
+            add_pks = list(set(wanted_pks) - set(old_pks))
+            wanted = Category.objects.filter(pk__in=add_pks)
+            self.categories.add(*wanted)
 
-            if dates:
-                result = dates
 
-        return result
-    aquired_date_producer.short_description = _("Date(s) Aquired")
 
-dcolumn_manager.register_choice(Item, 1, 'sku')
+
+dcolumn_manager.register_choice(Item, 2, 'sku')
 
 
 #
@@ -152,6 +225,13 @@ class InvoiceManager(models.Manager):
 
 @python_2_unicode_compatible
 class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
+    public_id = models.CharField(
+        verbose_name=_("Public Invoice ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify a individual invoice."))
+    project = models.ForeignKey(
+        Project, verbose_name=_("Project"), related_name='invoices',
+        help_text=_("The project the invoice is part of."))
     currency = models.ForeignKey(
         Currency, on_delete=models.CASCADE, verbose_name=_("Currency"),
         related_name='invoices', help_text=_("Unit of currency."))
@@ -177,11 +257,16 @@ class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
     tax = models.DecimalField(
         verbose_name=_("Credit"), max_digits=10, decimal_places=4, null=True,
         blank=True, help_text=_("Tax amount."))
+    notes = models.TextField(
+        verbose_name=_("Notes"), max_length=200, null=True, blank=True,
+        help_text=_("Inventory notes."))
 
     objects = InvoiceManager()
 
     def clean(self):
-        pass
+        if self.pk is None:
+            # Populate the public_id on record creation only.
+            self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
         super(Invoice, self).save(*args, **kwargs)
@@ -190,9 +275,26 @@ class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
         return "{} ({})".format(self.supplier.name, self.invoice_number)
 
     class Meta:
+        unique_together = ('supplier', 'invoice_number',)
         ordering = ('invoice_number',)
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
+
+    def process_invoice_items(self, items):
+        """
+        This method adds and removes invoice items on the invoice.
+        """
+        if items:
+            wanted_pks = [inst.pk for inst in items]
+            old_pks = [inst.pk for inst in self.invoice_items.all()]
+            # Remove unwanted invoice items.
+            rem_pks = list(set(old_pks) - set(wanted_pks))
+            unwanted = self.invoice_items.filter(pk__in=rem_pks)
+            self.invoice_items.remove(*unwanted)
+            # Add new invoice items.
+            add_pks = list(set(wanted_pks) - set(old_pks))
+            wanted = InvoiceItem.objects.filter(pk__in=add_pks)
+            self.invoice_items.add(*wanted)
 
 
 #
@@ -217,8 +319,8 @@ class InvoiceItem(models.Model):
     item_number = models.CharField(
         verbose_name=_("Invoice Item Number"), max_length=50,
         help_text=_("Identifying number of the Supplier."))
-    description = models.CharField(
-        verbose_name=_("Description"), max_length=1000, null=True, blank=True,
+    description = models.TextField(
+        verbose_name=_("Description"), max_length=200, null=True, blank=True,
         help_text=_("Item description."))
     quantity = models.PositiveIntegerField(
         verbose_name=_("Quantity"), default=0, help_text=_("Number of items."))
@@ -229,8 +331,9 @@ class InvoiceItem(models.Model):
         verbose_name=_("Create Item"), choices=YES_NO, default=YES,
         help_text=_("If 'Yes' an item is created from the invoice."))
     item = models.ForeignKey(
-        Item, on_delete=models.CASCADE, verbose_name=_("Item"),
-        related_name='invoice_items', help_text=_("The inventory item."))
+        Item, on_delete=models.SET_NULL, verbose_name=_("Item"), null=True,
+        blank=True, related_name='invoice_items',
+        help_text=_("The inventory item."))
 
     objects = InvoiceItemManager()
 
@@ -238,12 +341,52 @@ class InvoiceItem(models.Model):
         pass
 
     def save(self, *args, **kwargs):
-        super(Invoice, self).save(*args, **kwargs)
+        super(InvoiceItem, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.invoice_number
+        return "{} ({})".format(self.item_number, self.invoice.invoice_number)
 
     class Meta:
         ordering = ('item_number',)
         verbose_name = _("InvoiceItem")
         verbose_name_plural = _("Invoice Items")
+
+
+#
+# post_save Items
+#
+@receiver(post_save, sender=InvoiceItem)
+def create_item_post_save(sender, **kwargs):
+    """
+    Create the inventory item that relate to this invoice item.
+    """
+    instance = kwargs.get('instance')
+
+    if instance:
+        if instance.process == InvoiceItem.YES:
+            if hasattr(instance, 'item') and instance.item:
+                instance.item.project = instance.invoice.project
+                instance.item.save()
+            else:
+                try:
+                    name = dcolumn_manager.get_collection_name('item')
+                    cc = ColumnCollection.objects.get(related_model=name)
+                except ColumnCollection.DoesNotExist as e:
+                    msg = _("ColumnCollection objects does not exist for "
+                            "'item'")
+                    log.critical(ugettext(msg))
+                    raise e
+                else:
+                    kwargs = {}
+                    kwargs['column_collection'] = cc
+                    kwargs['project'] = instance.invoice.project
+                    kwargs['item_number'] = instance.item_number
+                    kwargs['description'] = instance.description
+                    kwargs['quantity'] = instance.quantity
+                    kwargs['creator'] = instance.invoice.creator
+                    kwargs['updater'] = instance.invoice.updater
+                    item = Item.objects.create(**kwargs)
+                    instance.item = item
+                    instance.save()
+        else:
+            instance.item.delete()
