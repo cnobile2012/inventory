@@ -228,9 +228,16 @@ REST_FRAMEWORK = {
 LOGIN_URL = "/admin/"
 
 dcolumn_manager.register_css_containers(
-       (('top', 'top-container'),
-        ('center', 'center-container'),
-        ('bottom', 'bottom-container')
+       (('location_1', 'location-1'),
+        ('location_2', 'location-2'),
+        ('location_3', 'location-3'),
+        ('location_4', 'location-4'),
+        ('location_5', 'location-5'),
+        ('location_6', 'location-6'),
+        ('location_7', 'location-7'),
+        ('location_8', 'location-8'),
+        ('location_9', 'location-9'),
+        ('location_10', 'location-10'),
         ))
 
 # A sample logging configuration. The only tangible logging performed by this
