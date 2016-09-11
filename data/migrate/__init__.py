@@ -67,13 +67,16 @@ class MigrateBase(object):
         return in_type
 
     def _create_project(self):
-        user = self.get_user()
-        name = self._PROJECT_NAME
-        kwargs = {}
-        kwargs['inventory_type'] = self._create_inventory_type()
-        kwargs['creator'] = user
-        kwargs['updater'] = user
-        project, created = Project.objects.get_or_create(
-            name=name, defaults=kwargs)
-        project.process_members([user])
+        if not self._options.noop:
+            user = self.get_user()
+            name = self._PROJECT_NAME
+            kwargs = {}
+            kwargs['inventory_type'] = self._create_inventory_type()
+            kwargs['creator'] = user
+            kwargs['updater'] = user
+            project, created = Project.objects.get_or_create(
+                name=name, defaults=kwargs)
+            project.process_members([user])
+
+
         return project
