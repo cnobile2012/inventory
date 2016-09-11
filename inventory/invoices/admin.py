@@ -10,7 +10,8 @@ __docformat__ = "restructuredtext en"
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from inventory.common.admin_mixins import UserAdminMixin
+from dcolumn.common.admin_mixins import UserAdminMixin
+from dcolumn.dcolumns.admin import KeyValueInline
 
 from .models import Item, Invoice, InvoiceItem
 from .forms import ItemForm, InvoiceItemForm
@@ -77,23 +78,25 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
         (_("Category & Location"), {'fields': ('categories',
                                                'location_codes',)}),
         (_("Status"), {'classes': ('collapse',),
-                       'fields': ('shared_projects', 'purge', 'active',
-                                  'creator', 'created', 'updater',
-                                  'updated',)}),
+                       'fields': ('column_collection', 'shared_projects',
+                                  'purge', 'active', 'creator', 'created',
+                                  'updater', 'updated',)}),
         )
     readonly_fields = ('public_id', 'sku', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('sku', 'public_id', 'project', 'item_number',
-                    'category_producer', 'location_code_producer', 'active',)
+    list_display = ('sku', 'public_id', 'item_number', 'category_producer',
+                    'location_code_producer', 'project', 'column_collection',
+                    'active',)
     list_editable = ('active',)
     search_fields = ('sku', 'public_id', 'item_number', 'item_number_mfg',
                      'project__name', 'description', 'categories__path',
                      'manufacturer__name',)
     list_filter = ('active', 'project__name', 'manufacturer',)
     filter_horizontal = ('categories', 'location_codes', 'shared_projects',)
-    inlines = (InvoiceItemItemInline,)
+    inlines = (InvoiceItemItemInline, KeyValueInline,)
     date_hierarchy = 'created'
     save_as = True
+    ordering = ('categories__path',)
     form = ItemForm
 
     ## def save_formset(self, request, form, formset, change):

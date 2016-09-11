@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 from django import forms
 
+from dcolumn.dcolumns.forms import CollectionBaseFormMixin
+
 from inventory.projects.models import Project
 
 from .models import InvoiceItem, Invoice, Item
@@ -17,7 +19,7 @@ from .models import InvoiceItem, Invoice, Item
 #
 # ItemForm
 #
-class ItemForm(forms.ModelForm):
+class ItemForm(CollectionBaseFormMixin):
     """
     Inventory item form
     """

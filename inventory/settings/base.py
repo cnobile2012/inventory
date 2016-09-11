@@ -227,6 +227,12 @@ REST_FRAMEWORK = {
 # Change the URL below to your login path.
 LOGIN_URL = "/admin/"
 
+# DCOLUMN config
+DYNAMIC_COLUMNS = {
+    # To allow anybody to access the API set to True.
+    'INACTIVATE_API_AUTH': False,
+    }
+
 dcolumn_manager.register_css_containers(
        (('location_1', 'location-1'),
         ('location_2', 'location-2'),

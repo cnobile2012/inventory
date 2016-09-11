@@ -24,6 +24,7 @@ urlpatterns = [
 
     # New API Site
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^dcolumns/', include('dcolumn.dcolumns.urls')),
     url(r'^api/', include('inventory.common.api.urls')),
     url(r'^api/accounts/', include('inventory.accounts.api.urls')),
     url(r'^api/categories/', include('inventory.categories.api.urls')),
