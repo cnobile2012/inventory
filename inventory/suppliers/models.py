@@ -56,9 +56,6 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
     name = models.CharField(
         verbose_name=_("Name"), max_length=250,
         help_text=_("The name of the supplier."))
-    name_lower = models.CharField(
-        verbose_name=_("Name (lowercase)"), max_length=250, blank=True,
-        help_text=_("The name of the supplier in lowercase."))
     address_01 = models.CharField(
         verbose_name=_("Address 1"), max_length=50, null=True, blank=True,
         help_text=_("Address line one."))
@@ -108,7 +105,6 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
 
         # Populate the name_lower field.
         self.name = self.name.strip()
-        self.name_lower = self.name.lower()
 
     def save(self, *args, **kwargs):
         super(Supplier, self).save(*args, **kwargs)
@@ -117,8 +113,8 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         return self.name
 
     class Meta:
-        unique_together = ('project', 'name_lower',)
-        ordering = ('name_lower',)
+        unique_together = ('project', 'name',)
+        ordering = ('name',)
         verbose_name = _("Supplier")
         verbose_name_plural = _("Suppliers")
 
