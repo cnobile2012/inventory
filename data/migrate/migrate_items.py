@@ -7,7 +7,9 @@
 import sys
 import os
 import csv
+import datetime
 from dateutil import parser as duparser
+from collections import Counter
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -28,8 +30,9 @@ try:
         Distributor, Manufacturer, Item, Cost, Specification)
     from inventory.apps.regions.models import Country
 except:
+    from inventory.categories.models import Category
     from inventory.suppliers.models import Supplier
-    from inventory.items.models import Item, Cost, Condition
+    from inventory.invoices.models import Item, Invoice, InvoiceItem, Condition
     from inventory.regions.models import Country, Currency
     from inventory.locations.models import LocationCode
     from dcolumn.dcolumns.models import ColumnCollection, DynamicColumn
@@ -40,17 +43,18 @@ class MigrateItem(MigrateBase):
     _ITEM = 'item.csv'
     _COST = 'cost.csv'
     _DYNAMIC_COLUMN = 'dynamic_column.csv'
+    _COLLECTION_NAME = "Inventory Items"
 
-    COLLECTION_1 = "Battery (Electric)"
-    COLLECTION_2 = "Capacitor (Electric)"
-    COLLECTION_3 = "Fan (Electric)"
-    COLLECTION_4 = "General (Electric)"
-    COLLECTION_5 = "Hardware (Electric)"
-    COLLECTION_6 = "Inductor (Electric)"
-    COLLECTION_7 = "Motor (Electric)"
-    COLLECTION_8 = "Resistor (Electric)"
-    COLLECTION_9 = "Switch/Relay (Electric)"
-    COLLECTION_10 = "Wire (Electric)"
+    LOCATION_1 = "location_1"
+    LOCATION_2 = "location_2"
+    LOCATION_3 = "location_3"
+    LOCATION_4 = "location_4"
+    LOCATION_5 = "location_5"
+    LOCATION_6 = "location_6"
+    LOCATION_7 = "location_7"
+    LOCATION_8 = "location_8"
+    LOCATION_9 = "location_9"
+    LOCATION_10 = "location_10"
     ORDER_1 = 1
     ORDER_2 = 2
     ORDER_3 = 3
@@ -79,42 +83,42 @@ class MigrateItem(MigrateBase):
     ORDER_26 = 26
 
     SPECS = {
-        'AWG': [COLLECTION_10, ORDER_1, ''],
-        'Amp Hours': [COLLECTION_1, ORDER_1, ''],
-        'CFM': [COLLECTION_3, ORDER_1, ''],
-        'Capacitance': [COLLECTION_2, ORDER_1, ''],
-        'Color': [COLLECTION_4, ORDER_1, ''],
-        'condition': [COLLECTION_4, ORDER_2, ''],
-        'Configuration': [COLLECTION_4, ORDER_3, ''],
-        'Contacts': [COLLECTION_4, ORDER_4, ''],
-        'Current': [COLLECTION_4, ORDER_5, ''],
-        'Depth': [COLLECTION_4, ORDER_6, ''],
-        'Diameter': [COLLECTION_4, ORDER_7, ''],
-        'Dimensions': [COLLECTION_4, ORDER_8, ''],
-        'Height': [COLLECTION_4, ORDER_9, ''],
-        'Lead Spacing': [COLLECTION_4, ORDER_10, ''],
-        'Length': [COLLECTION_4, ORDER_11, ''],
-        'Material': [COLLECTION_4, ORDER_12, ''],
-        'Mount': [COLLECTION_4, ORDER_13, ''],
-        'notes': [COLLECTION_4, ORDER_14, ''],
-        'obsolete': [COLLECTION_4, ORDER_15, ''],
-        'Orientation': [COLLECTION_4, ORDER_16, ''],
-        'package': [COLLECTION_4, ORDER_17, ''],
-        'Pins': [COLLECTION_4, ORDER_18, ''],
-        'Polarity': [COLLECTION_4, ORDER_19, ''],
-        'Positions': [COLLECTION_9, ORDER_1, ''],
-        'Power': [COLLECTION_4, ORDER_20, ''],
-        'Resistance': [COLLECTION_8, ORDER_1, ''],
-        'Shaft': [COLLECTION_7, ORDER_1, ''],
-        'Step Angle': [COLLECTION_7, ORDER_2, ''],
-        'Temperature': [COLLECTION_4, ORDER_21, ''],
-        'Thread': [COLLECTION_5, ORDER_1, ''],
-        'Tolerance': [COLLECTION_4, ORDER_22, ''],
-        'Turns': [COLLECTION_6, ORDER_1, ''],
-        'Type': [COLLECTION_4, ORDER_23, ''],
-        'Voltage': [COLLECTION_4, ORDER_24, ''],
-        'Weight': [COLLECTION_4, ORDER_25, ''],
-        'Width': [COLLECTION_4, ORDER_26, ''],
+        'AWG': [LOCATION_10, ORDER_1],
+        'Amp Hours': [LOCATION_1, ORDER_1],
+        'CFM': [LOCATION_3, ORDER_1],
+        'Capacitance': [LOCATION_2, ORDER_1],
+        'Color': [LOCATION_4, ORDER_1],
+        'Condition': [LOCATION_4, ORDER_2],
+        'Configuration': [LOCATION_4, ORDER_3],
+        'Contacts': [LOCATION_4, ORDER_4],
+        'Current': [LOCATION_4, ORDER_5],
+        'Depth': [LOCATION_4, ORDER_6],
+        'Diameter': [LOCATION_4, ORDER_7],
+        'Dimensions': [LOCATION_4, ORDER_8],
+        'Height': [LOCATION_4, ORDER_9],
+        'Lead Spacing': [LOCATION_4, ORDER_10],
+        'Length': [LOCATION_4, ORDER_11],
+        'Material': [LOCATION_4, ORDER_12],
+        'Mount': [LOCATION_4, ORDER_13],
+        'Notes': [LOCATION_4, ORDER_14],
+        'Obsolete': [LOCATION_4, ORDER_15],
+        'Orientation': [LOCATION_4, ORDER_16],
+        'Package': [LOCATION_4, ORDER_17],
+        'Pins': [LOCATION_4, ORDER_18],
+        'Polarity': [LOCATION_4, ORDER_19],
+        'Positions': [LOCATION_9, ORDER_1],
+        'Power': [LOCATION_4, ORDER_20],
+        'Resistance': [LOCATION_8, ORDER_1],
+        'Shaft': [LOCATION_7, ORDER_1],
+        'Step Angle': [LOCATION_7, ORDER_2],
+        'Temperature': [LOCATION_4, ORDER_21],
+        'Thread': [LOCATION_5, ORDER_1],
+        'Tolerance': [LOCATION_4, ORDER_22],
+        'Turns': [LOCATION_6, ORDER_1],
+        'Type': [LOCATION_4, ORDER_23],
+        'Voltage': [LOCATION_4, ORDER_24],
+        'Weight': [LOCATION_4, ORDER_25],
+        'Width': [LOCATION_4, ORDER_26],
         }
 
     def __init__(self, log, options):
@@ -127,10 +131,11 @@ class MigrateItem(MigrateBase):
             self._create_cost_csv()
 
         if self._options.populate:
-            self._create_item()
-            self._create_cost()
-            slug_map, dc_map = self._create_dynamic_column()
-            self._create_collection(dc_map)
+            slug_map, dcolumns = self._create_dynamic_column()
+            self._create_collection(dcolumns)
+            project = self._create_project()
+            self._create_invoice(project)
+            self._create_item(project)
             self._create_key_value(slug_map)
 
     def _create_item_csv(self):
@@ -180,30 +185,48 @@ class MigrateItem(MigrateBase):
                     record.mtime.isoformat()
                     ])
 
+                # Get the dynamic columns from the item recored itself.
                 dc = {
-                    'condition': record.condition,
+                    'Condition': record.condition,
                     'item_number': record.item_number.encode('utf-8'),
-                    'notes': record.notes.encode('utf-8'),
-                    'obsolete': record.obsolete,
-                    'package': record.package.encode('utf-8'),
+                    'Notes': record.notes.encode('utf-8'),
+                    'Obsolete': record.obsolete,
+                    'Package': record.package.encode('utf-8'),
                     }
 
+                # Add the dynamic columns from the specifications.
                 for spec in record.specification_set.all():
                     dc[spec.name] = spec.value
 
                 specifications.append(dc)
 
-        keys = self._get_dynamic_column_keys(specifications)
-        dcs = self._create_dynamic_columns(keys, specifications)
+        keys = self.__get_dynamic_column_keys(specifications)
 
         with open(self._DYNAMIC_COLUMN, mode='w') as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             writer.writerow(keys)
 
-            for dc in dcs:
-                writer.writerow(dc)
+            for idx, spec in enumerate(specifications, start=1):
+                dcs = []
 
-    def _get_dynamic_column_keys(self, specifications):
+                for key in keys:
+                    value = spec.get(key)
+
+                    if isinstance(value, six.string_types):
+                        value = value.encode('utf-8')
+
+                    dcs.append(value)
+
+                if not (idx % 100):
+                    sys.stdout.write("Processed {} dynamic "
+                                     "columns.\n".format(idx))
+
+                writer.writerow(dcs)
+
+            sys.stdout.write("Processed a total of {} dynamic "
+                             "columns.\n".format(idx))
+
+    def __get_dynamic_column_keys(self, specifications):
         specs = {}
 
         for dc in specifications:
@@ -222,26 +245,6 @@ class MigrateItem(MigrateBase):
         #print(len(keys))
         return keys
 
-    def _create_dynamic_columns(self, keys, specifications):
-        dynamic_columns = []
-        #header = []
-
-        for spec in specifications:
-            dc = []
-
-            for key in keys:
-                value = spec.get(key, '')
-
-                if isinstance(value, six.string_types):
-                    value = value.encode('utf-8')
-
-                dc.append(value)
-
-            dynamic_columns.append(dc)
-
-        #print(dynamic_columns, len(dynamic_columns))
-        return dynamic_columns
-
     def _create_cost_csv(self):
         with open(self._COST, mode='w') as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
@@ -251,7 +254,6 @@ class MigrateItem(MigrateBase):
                 'date_acquired',
                 'invoice_number',
                 'item_number',
-                'item_ctime',
                 'distributor',
                 'manufacturer',
                 'user',
@@ -268,7 +270,6 @@ class MigrateItem(MigrateBase):
                     date_acquired,
                     record.invoice_number.encode('utf-8'),
                     record.item.item_number.encode('utf-8'),
-                    record.item.ctime.isoformat(),
                     record.distributor.name if record.distributor else '',
                     record.manufacturer.name if record.manufacturer else '',
                     record.user.username if record.user else '',
@@ -276,63 +277,158 @@ class MigrateItem(MigrateBase):
                     record.mtime.isoformat(),
                     ])
 
-    def _create_item(self):
+    def _create_invoice(self, project):
+        with open(self._COST, mode='r') as csvfile:
+            for idx, row in enumerate(csv.reader(csvfile)):
+                if idx == 0: continue # Skip the header
+                value = row[0]
+                #currency = row[1] # Not used
+                currency = Currency.objects.get(
+                    country__code='US', alphabetic_code='USD')
+
+                try:
+                    dt = duparser.parse(row[2])
+                except ValueError:
+                    date_acquired = ''
+                else:
+                    date_acquired = datetime.date(year=dt.year, month=dt.month,
+                                                  day=dt.day)
+
+                invoice_number = row[3]
+                item_number = row[4]
+                distributor = row[5]
+                manufacturer = row[6]
+                user = self.get_user(username=row[7])
+                ctime = duparser.parse(row[8])
+                mtime = duparser.parse(row[9])
+
+                if not self._options.noop:
+                    if distributor:
+                        supplier = Supplier.objects.get(name=distributor)
+                    elif manufacturer:
+                        supplier = Supplier.objects.get(name=manufacturer)
+                    else:
+                        supplier = None
+
+                    #print("supplier: {}, item_number: {}, "
+                    #      "invoice_date: {}".format(supplier, item_number,
+                    #                                date_acquired))
+
+                    try:
+                        obj = Invoice.objects.get(
+                            supplier=supplier, invoice_number=invoice_number)
+                    except Invoice.DoesNotExist:
+                        kwargs = {}
+                        kwargs['supplier'] = supplier
+                        kwargs['invoice_number'] = invoice_number
+                        kwargs['project'] = project
+                        kwargs['currency'] = currency
+                        kwargs['invoice_date'] = date_acquired
+                        kwargs['creator'] = user
+                        kwargs['created'] = ctime
+                        kwargs['updater'] = user
+                        kwargs['updated'] = mtime
+                        obj = Invoice(**kwargs)
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                        self._log.info("Created invoice: %s", invoice_number)
+                        self.__create_invoice_item(obj, item_number, value)
+                    else:
+                        obj.project = project
+                        obj.currency = currency
+                        obj.invoice_date = date_acquired
+                        obj.creator = user
+                        obj.created = ctime
+                        obj.updater = user
+                        obj.updated = mtime
+                        obj.save(**{'disable_created': True,
+                                    'disable_updated': True})
+                        self._log.info("Updated invoice: %s", invoice_number)
+
+                        try:
+                            invoive_item = obj.invoice_items.get(
+                                item_number=item_number)
+                        except InvoiceItem.DoesNotExist:
+                            self.__create_invoice_item(obj, item_number, value)
+                        else:
+                            invoive_item.unit_price = value
+                            invoive_item.save()
+                            self._log.info("Updated invoive item: %s",
+                                           item_number)
+                else:
+                    self._log.info("NOOP Mode: Found invoice: %s",
+                                   invoice_number)
+
+    def __create_invoice_item(self, invoice, item_number, unit_price):
+        invoice_item = InvoiceItem(invoice=invoice, item_number=item_number,
+                                   unit_price=unit_price)
+        invoice_item.save()
+        invoice.invoice_items.add(invoice_item)
+        self._log.info("Created invoive item: %s", item_number)
+
+    def _create_item(self, project):
+        all_items = []
+
         with open(self._ITEM, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                title = row[0]
-                item_number = row[1]
-                item_number_mfg = row[2]
-                item_number_dst = row[3]
-                quantity = row[4]
-                location_codes = LocationCode.objects.filter(
-                    sequence__in=row[5])
-                categories = Category.objects.filter(name__in=row[6])
+                title = row[0].decode('utf-8').strip()
+                item_number = row[1].decode('utf-8').strip()
+                item_number_mfg = row[2].decode('utf-8').strip()
+                #item_number_dst = row[3] # Not used
+                quantity = self._fix_numeric(row[4])
+                loc = row[5].decode('utf-8').strip()
+                location_codes = LocationCode.objects.filter(segment=loc)
+                cat = row[6].decode('utf-8').strip()
+                categories = Category.objects.filter(name=cat)
+                #distributor = Supplier.objects.get(name=row[7]) # Not used
+                #print("Supplier: {}".format(row[8]))
+                mfg = row[8].decode('utf-8').strip()
 
-                if row[7]:
-                    manufacturer = None
-                    distributor = Supplier.objects.get(name=row[7])
-                elif row[8]:
-                    distributor = None
-                    manufacturer = Supplier.objects.get(name=row[8])
+                if mfg:
+                    manufacturer = Supplier.objects.get(name=mfg)
                 else:
-                    distributor = None
                     manufacturer = None
 
-                active = row[9]
-                purge = row[10]
+                active = self._fix_boolean(row[9])
+                purge = self._fix_boolean(row[10])
                 user = self.get_user(username=row[11])
                 ctime = duparser.parse(row[12])
                 mtime = duparser.parse(row[13])
-                kwargs = {}
-                kwargs['item_number'] = item_number
-                kwargs['description'] = title
-                kwargs['item_number_mfg'] = item_number_mfg
-                kwargs['item_number_dst'] = item_number_dst
-                kwargs['quantity'] = quantity
-                kwargs['distributor'] = distributor
-                kwargs['manufacturer'] = manufacturer
-                kwargs['active'] = active
-                kwargs['purge'] = purge
-                kwargs['creator'] = user
-                kwargs['created'] = ctime
-                kwargs['updater'] = user
-                kwargs['updated'] = mtime
 
                 if not self._options.noop:
+                    all_items.append(item_number)
+
                     try:
                         obj = Item.objects.get(item_number=item_number)
                     except Item.DoesNotExist:
+                        name = dcolumn_manager.get_collection_name('item')
+                        cc = ColumnCollection.objects.get(related_model=name)
+                        kwargs = {}
+                        kwargs['column_collection'] = cc
+                        kwargs['project'] = project
+                        kwargs['item_number'] = item_number
+                        kwargs['description'] = title
+                        kwargs['item_number_mfg'] = item_number_mfg
+                        kwargs['quantity'] = quantity
+                        kwargs['manufacturer'] = manufacturer
+                        kwargs['active'] = active
+                        kwargs['purge'] = purge
+                        kwargs['creator'] = user
+                        kwargs['created'] = ctime
+                        kwargs['updater'] = user
+                        kwargs['updated'] = mtime
                         obj = Item(**kwargs)
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                        self._log.info("Created item: %s", name)
+                        self._log.info("Created item: %s", item_number)
+                    except Item.MultipleObjectsReturned:
+                        print("item_number: {}".format(item_number))
+                        continue
                     else:
                         obj.description = title
                         obj.item_number_mfg = item_number_mfg
-                        obj.item_number_dst = item_number_dst
                         obj.quantity = quantity
-                        obj.distributor = distributor
                         obj.manufacturer = manufacturer
                         obj.active = active
                         obj.purge = purge
@@ -342,118 +438,66 @@ class MigrateItem(MigrateBase):
                         obj.updated = mtime
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
-                        self._log.info("Updated item: %s", name)
+                        self._log.info("Updated item: %s", item_number)
+
+                    obj.process_location_codes(location_codes)
+                    obj.process_categories(categories)
                 else:
-                    self._log.info("NOOP Mode: Found item: %s", name)
+                    self._log.info("NOOP Mode: Found item: %s", item_number)
 
-                obj.process_location_codes(location_codes)
-                obj.process_categories(categories)
-
-    def _create_cost(self):
-        with open(self._COST, mode='r') as csvfile:
-            for idx, row in enumerate(csv.reader(csvfile)):
-                if idx == 0: continue # Skip the header
-                value = row[0]
-                currency = row[1] # Not used
-                date_acquired = duparser.parse(row[2])
-                invoice_number = row[3]
-                item_number = row[4]
-                item_ctime = duparser.parse(row[5])
-                distributor = row[6]
-                manufacturer = row[7]
-                user = self.get_user(username=row[8]) # Not used
-                ctime = duparser.parse(row[9]) # Not used
-                mtime = duparser.parse(row[10]) # Not used
-
-                item = Item.objects.get(
-                    item_number=item_number, created=item_ctime)
-
-                if distributor:
-                    supplier = Supplier.object.get(name=distributor)
-                elif manufacturer:
-                    supplier = Supplier.object.get(name=manufacturer)
-                else:
-                    supplier = ''
-
-                kwargs = {}
-                kwargs['currency'] = Currency.objects.get(
-                    entity__code='US', alphabetic_code='USD')
-                kwargs['date_acquired'] = date_acquired
-                kwargs['item'] = item
-                kwargs['supplier'] = supplier
-
-                if not self._options.noop:
-                    obj, created = Cost.objects.get_or_create(
-                        value=value, invoice_number=invoice_number,
-                        defaults=kwargs)
-
-                    if not created:
-                        obj.currency = currency
-                        obj.date_acquired = date_acquired
-                        obj.item = item
-                        obj.supplier = supplier
-                        obj.save()
-                        self._log.info("Updated cost: %s", name)
-                    else:
-                        self._log.info("Created cost: %s", name)
-                else:
-                    self._log.info("NOOP Mode: Found cost: %s", name)
+        all_items.sort()
+        #print([k for k, v in Counter(all_items).items() if v > 1])
 
     def _create_dynamic_column(self):
         slug_map = {}
-        dc_map = {}
-        choice2index = dict(
-            [(v, k) for k, v in dcolumn_manager.choice_relations])
+        dcolumns = set()
+        choice2index = {v: k for k, v in dcolumn_manager.choice_relations}
+        user = self.get_user()
 
         with open(self._DYNAMIC_COLUMN, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0:
-                    slug_map.update(self._remap_key_names(row))
+                    slug_map.update(self.__remap_key_names(row))
                     break
 
         for key in slug_map:
-            name = key
-            preferred_slug, collection_name, order, location = slug_map.get(
-                key, ('', '', 0, ''))
-            user = self.get_user()
+            preferred_slug, location, order = slug_map.get(key, ('', '', 0))
+            kwargs = {}
 
-            if preferred_slug and name and order and location:
-                kwargs = {}
-
+            if preferred_slug and location and order:
                 if preferred_slug == 'notes':
                     value_type = DynamicColumn.TEXT_BLOCK
                 elif preferred_slug == 'obsolete':
                     value_type = DynamicColumn.BOOLEAN
                     required = DynamicColumn.YES
-                elif preferred_slug == 'positions':
-                    value_type = DynamicColumn.NUMBER
                 elif preferred_slug == 'condition':
                     value_type = DynamicColumn.CHOICE
                     relation = choice2index.get('Condition')
-                    required = DynamicColumn.YES
+                    required = DynamicColumn.NO
                     kwargs['relation'] = relation
                     kwargs['required'] = required
                 else:
                     value_type = DynamicColumn.TEXT
             else:
-                msg = ("Invalid preferred_slug: {}, or name: {}, or order: {} "
-                       "objects for {}.").format(
-                    preferred_slug, name, order, key)
+                msg = ("Invalid preferred_slug: {}, or location: {}, "
+                       "or order: {} objects for {}.").format(
+                    preferred_slug, order, location, key)
                 self._log.critical(msg)
                 raise ValueError(msg)
 
-            kwargs['value_type'] = value_type
-            kwargs['order'] = order
-            kwargs['location'] = location
-            kwargs['creator'] = user
-            kwargs['updater'] = user
-
             if not self._options.noop:
+                kwargs['name'] = key
+                kwargs['value_type'] = value_type
+                kwargs['order'] = order
+                kwargs['location'] = location
+                kwargs['creator'] = user
+                kwargs['updater'] = user
+
                 obj, created = DynamicColumn.objects.get_or_create(
                     slug=preferred_slug, defaults=kwargs)
 
                 if not created:
-                    obj.name = name
+                    obj.name = key
                     obj.value_type = value_type
 
                     if kwargs.get('relation'):
@@ -465,26 +509,50 @@ class MigrateItem(MigrateBase):
                     obj.location = location
                     obj.order = order
                     obj.save()
-                    self._log.info("Updated DynamicColumn: %s", name)
+                    self._log.info("Updated DynamicColumn: %s", key)
                 else:
-                    self._log.info("Created DynamicColumn: %s", name)
+                    self._log.info("Created DynamicColumn: %s", key)
 
-                collection = dc_map.setdefault(collection_name, set())
-                collection.add(obj)
+                dcolumns.add(obj)
             else:
-                self._log.info("NOOP Mode: Found DynamicColumn: %s", name)
+                self._log.info("NOOP Mode: Found DynamicColumn: %s", key)
 
-        return slug_map, dc_map
+        return slug_map, dcolumns
 
-    def _create_collection(self, dc_map):
-        for key, value in dc_map.items():
-            if not self._options.noop:
-                obj, created = ColumnCollection.objects.get_or_create(
-                    name=key, related_model=Item.__name__)
-                obj.process_dynamic_columns(value)
-                self._log.info("Created/Updated ColumnCollection: %s", key)
-            else:
-                self._log.info("NOOP Mode: Found ColumnCollection: %s", key)
+    def __remap_key_names(self, keys):
+        slug_map = {key: [slugify(key)] for key in keys}
+        # This is the natural key not a category.
+        slug_map.pop('item_number', '')
+
+        for key, value in self.SPECS.items():
+            key_list = slug_map.get(key, [])
+            key_list += value
+
+        #print(slug_map)
+        return slug_map
+
+    def _create_collection(self, dcolumns):
+        if not self._options.noop:
+            name = self._COLLECTION_NAME
+            user = self.get_user()
+            kwargs = {}
+            kwargs['related_model'] = Item.__name__.lower()
+            kwargs['creator'] = user
+            kwargs['updater'] = user
+
+            obj, created = ColumnCollection.objects.get_or_create(
+                name=name, defaults=kwargs)
+
+            if not created:
+                obj.related_model = kwargs['related_model']
+                obj.creator = kwargs['creator']
+                obj.updater = kwargs['updater']
+                obj.save()
+
+            obj.process_dynamic_columns(dcolumns)
+            self._log.info("Created/Updated ColumnCollection: %s", name)
+        else:
+            self._log.info("NOOP Mode: Found ColumnCollection: %s", name)
 
     def _create_key_value(self, slug_map):
         with open(self._DYNAMIC_COLUMN, mode='r') as csvfile:
@@ -495,27 +563,27 @@ class MigrateItem(MigrateBase):
                     headers[:] = row
                     continue
 
-                item_number = row[33]
+                item_number = row[36].decode('utf-8').strip()
                 item_obj = Item.objects.get(item_number=item_number)
                 # Get only the columns used with this item.
-                values = [col for col in row if col not in ("", 'item_number')]
+                values = [col for col in row if col != ""]
 
-                for value in values:
+                for value in values[:-1]: # Don't want the item_number.
                     header = headers[row.index(value)]
-                    slug, collection_name, order, location = slug_map.get(
-                        header, ('', '', 0, ''))
+                    value = value.decode('utf-8').strip()
+
+                    if header == 'Condition':
+                        if value.isdigit():
+                            # Adjust for new Condition object
+                            value = int(value) + 1
+                        elif value == '':
+                            value = 1
+
+                    if header == 'Obsolete':
+                        value = self._yes_no(value)
+
+                    slug, location, order = slug_map.get(header, ('', '', 0))
                     item_obj.set_key_value(slug, value)
-
-    def _remap_key_names(self, keys):
-        slug_map = {key: [slugify(key)] for key in keys}
-        slug_map.pop('item_number') # This is the natural key not a category.
-
-        for key, value in self.SPECS.items():
-            key_list = slug_map.get(key, [])
-            key_list += value
-
-        #print(slug_map)
-        return slug_map
 
 
 if __name__ == '__main__':
@@ -524,7 +592,6 @@ if __name__ == '__main__':
     import logging
     import traceback
     import argparse
-    from datetime import datetime
 
     parser = argparse.ArgumentParser(
         description=("Item processing..."))
@@ -556,13 +623,13 @@ if __name__ == '__main__':
     LOG_FILE = os.path.join(BASE_PATH, 'logs', 'item.log')
     log = setup_logger(name='populate-tables', fullpath=LOG_FILE, level=level)
     log.info("Options: %s", options)
-    startTime = datetime.now()
+    startTime = datetime.datetime.now()
 
     try:
         log.info("Item: Starting at %s", startTime)
         mi = MigrateItem(log, options)
         mi.start()
-        endTime = datetime.now()
+        endTime = datetime.datetime.now()
         log.info("Item: Finished at %s elapsed time %s",
                  endTime, endTime - startTime)
     except Exception as e:

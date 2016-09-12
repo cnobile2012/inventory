@@ -34,6 +34,10 @@ except:
 
 class MigrateSupplier(MigrateBase):
     _SUPPLIER = 'supplier.csv'
+    _BOTH_SUPPLIERS = ('Adafruit Industries',
+                       'Pololu Corporation',
+                       'SparkFun',
+                       'General Electric',)
 
     def __init__(self, log, options):
         super(MigrateSupplier, self).__init__(log)
@@ -73,6 +77,8 @@ class MigrateSupplier(MigrateBase):
 
             for idx, supplier in enumerate(suppliers, start=1):
                 for record in supplier:
+                    name = record.name.strip().encode('utf-8')
+
                     if hasattr(record, 'country') and record.country:
                         country_code_2 = record.country.country_code_2.encode(
                             'utf-8')
@@ -86,20 +92,25 @@ class MigrateSupplier(MigrateBase):
                     else:
                         region_code = ''
 
+                    if name in self._BOTH_SUPPLIERS:
+                        stype = 0 # Supplier.BOTH_MFG_DIS
+                    else:
+                        stype = idx
+
                     writer.writerow([
-                        record.name.strip().encode('utf-8'),
-                        record.address_01.encode('utf-8'),
-                        record.address_02.encode('utf-8'),
-                        record.city.encode('utf-8'),
+                        name,
+                        record.address_01.strip().encode('utf-8'),
+                        record.address_02.strip().encode('utf-8'),
+                        record.city.strip().encode('utf-8'),
                         region_code,
-                        record.postal_code,
+                        record.postal_code.strip(),
                         country_code_2,
-                        record.phone.encode('utf-8'),
-                        record.fax.encode('utf-8'),
-                        record.email.encode('utf-8'),
-                        record.url.encode('utf-8'),
-                        idx,
-                        record.user.username,
+                        record.phone.strip().encode('utf-8'),
+                        record.fax.strip().encode('utf-8'),
+                        record.email.strip().encode('utf-8'),
+                        record.url.strip().encode('utf-8'),
+                        stype,
+                        record.user.username.strip(),
                         record.ctime.isoformat(),
                         record.mtime.isoformat()
                         ])
@@ -138,7 +149,7 @@ class MigrateSupplier(MigrateBase):
                 if not self._options.noop:
                     try:
                         obj = Supplier.objects.get(project=project,
-                                                   name_lower=name.lower())
+                                                   name__iexact=name)
                     except Supplier.DoesNotExist:
                         kwargs = {}
                         kwargs['project'] = project

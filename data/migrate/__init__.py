@@ -67,13 +67,48 @@ class MigrateBase(object):
         return in_type
 
     def _create_project(self):
-        user = self.get_user()
-        name = self._PROJECT_NAME
-        kwargs = {}
-        kwargs['inventory_type'] = self._create_inventory_type()
-        kwargs['creator'] = user
-        kwargs['updater'] = user
-        project, created = Project.objects.get_or_create(
-            name=name, defaults=kwargs)
-        project.process_members([user])
+        if not self._options.noop:
+            user = self.get_user()
+            name = self._PROJECT_NAME
+            kwargs = {}
+            kwargs['inventory_type'] = self._create_inventory_type()
+            kwargs['creator'] = user
+            kwargs['updater'] = user
+            project, created = Project.objects.get_or_create(
+                name=name, defaults=kwargs)
+            project.process_members([user])
+
+
         return project
+
+    def _fix_boolean(self, value):
+        value = value.decode('utf-8').strip()
+        result = value
+
+        if value.lower() == 'true':
+            result = True
+        elif value.lower() == 'false':
+            result = False
+
+        return result
+
+    def _fix_numeric(self, value):
+        value = value.decode('utf-8').strip()
+        result = ''
+
+        if value.isdigit():
+            result = int(value)
+
+        return result
+
+    def _yes_no(self, value):
+        value = value.decode('utf-8').strip().lower()
+
+        if value == 'false':
+            value = 0
+        elif value == 'true':
+            value = 1
+        else:
+            value = 0
+
+        return value
