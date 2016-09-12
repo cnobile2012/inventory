@@ -80,3 +80,35 @@ class MigrateBase(object):
 
 
         return project
+
+    def _fix_boolean(self, value):
+        value = value.decode('utf-8').strip()
+        result = value
+
+        if value.lower() == 'true':
+            result = True
+        elif value.lower() == 'false':
+            result = False
+
+        return result
+
+    def _fix_numeric(self, value):
+        value = value.decode('utf-8').strip()
+        result = ''
+
+        if value.isdigit():
+            result = int(value)
+
+        return result
+
+    def _yes_no(self, value):
+        value = value.decode('utf-8').strip().lower()
+        
+        if value == 'false':
+            value = 0
+        elif value == 'true':
+            value = 1
+        else:
+            value = 0
+
+        return value

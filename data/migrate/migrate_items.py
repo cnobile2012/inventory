@@ -9,6 +9,7 @@ import os
 import csv
 import datetime
 from dateutil import parser as duparser
+from collections import Counter
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -184,6 +185,7 @@ class MigrateItem(MigrateBase):
                     record.mtime.isoformat()
                     ])
 
+                # Get the dynamic columns from the item recored itself.
                 dc = {
                     'Condition': record.condition,
                     'item_number': record.item_number.encode('utf-8'),
@@ -192,20 +194,37 @@ class MigrateItem(MigrateBase):
                     'Package': record.package.encode('utf-8'),
                     }
 
+                # Add the dynamic columns from the specifications.
                 for spec in record.specification_set.all():
                     dc[spec.name] = spec.value
 
                 specifications.append(dc)
 
         keys = self.__get_dynamic_column_keys(specifications)
-        dcs = self.__create_dynamic_columns(keys, specifications)
 
         with open(self._DYNAMIC_COLUMN, mode='w') as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             writer.writerow(keys)
 
-            for dc in dcs:
-                writer.writerow(dc)
+            for idx, spec in enumerate(specifications, start=1):
+                dcs = []
+
+                for key in keys:
+                    value = spec.get(key)
+
+                    if isinstance(value, six.string_types):
+                        value = value.encode('utf-8')
+
+                    dcs.append(value)
+
+                if not (idx % 100):
+                    sys.stdout.write("Processed {} dynamic "
+                                     "columns.\n".format(idx))
+
+                writer.writerow(dcs)
+
+            sys.stdout.write("Processed a total of {} dynamic "
+                             "columns.\n".format(idx))
 
     def __get_dynamic_column_keys(self, specifications):
         specs = {}
@@ -225,26 +244,6 @@ class MigrateItem(MigrateBase):
 
         #print(len(keys))
         return keys
-
-    def __create_dynamic_columns(self, keys, specifications):
-        dynamic_columns = []
-        #header = []
-
-        for spec in specifications:
-            dc = []
-
-            for key in keys:
-                value = spec.get(key, '')
-
-                if isinstance(value, six.string_types):
-                    value = value.encode('utf-8')
-
-                dc.append(value)
-
-            dynamic_columns.append(dc)
-
-        #print(dynamic_columns, len(dynamic_columns))
-        return dynamic_columns
 
     def _create_cost_csv(self):
         with open(self._COST, mode='w') as csvfile:
@@ -368,33 +367,40 @@ class MigrateItem(MigrateBase):
         self._log.info("Created invoive item: %s", item_number)
 
     def _create_item(self, project):
+        all_items = []
+
         with open(self._ITEM, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                title = row[0]
-                item_number = row[1]
-                item_number_mfg = row[2]
+                title = row[0].decode('utf-8').strip()
+                item_number = row[1].decode('utf-8').strip()
+                item_number_mfg = row[2].decode('utf-8').strip()
                 #item_number_dst = row[3] # Not used
-                quantity = row[4]
-                location_codes = LocationCode.objects.filter(segment=row[5])
-                categories = Category.objects.filter(name=row[6])
+                quantity = self._fix_numeric(row[4])
+                loc = row[5].decode('utf-8').strip()
+                location_codes = LocationCode.objects.filter(segment=loc)
+                cat = row[6].decode('utf-8').strip()
+                categories = Category.objects.filter(name=cat)
                 #distributor = Supplier.objects.get(name=row[7]) # Not used
+                #print("Supplier: {}".format(row[8]))
+                mfg = row[8].decode('utf-8').strip()
 
-                if row[8]:
-                    manufacturer = Supplier.objects.get(name=row[8])
+                if mfg:
+                    manufacturer = Supplier.objects.get(name=mfg)
                 else:
                     manufacturer = None
 
-                active = row[9]
-                purge = row[10]
+                active = self._fix_boolean(row[9])
+                purge = self._fix_boolean(row[10])
                 user = self.get_user(username=row[11])
                 ctime = duparser.parse(row[12])
                 mtime = duparser.parse(row[13])
 
                 if not self._options.noop:
+                    all_items.append(item_number)
+
                     try:
-                        obj = Item.objects.get(
-                            item_number=item_number, created=ctime)
+                        obj = Item.objects.get(item_number=item_number)
                     except Item.DoesNotExist:
                         name = dcolumn_manager.get_collection_name('item')
                         cc = ColumnCollection.objects.get(related_model=name)
@@ -416,6 +422,9 @@ class MigrateItem(MigrateBase):
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
                         self._log.info("Created item: %s", item_number)
+                    except Item.MultipleObjectsReturned:
+                        print("item_number: {}".format(item_number))
+                        continue
                     else:
                         obj.description = title
                         obj.item_number_mfg = item_number_mfg
@@ -436,6 +445,9 @@ class MigrateItem(MigrateBase):
                 else:
                     self._log.info("NOOP Mode: Found item: %s", item_number)
 
+        all_items.sort()
+        #print([k for k, v in Counter(all_items).items() if v > 1])
+
     def _create_dynamic_column(self):
         slug_map = {}
         dcolumns = set()
@@ -445,7 +457,7 @@ class MigrateItem(MigrateBase):
         with open(self._DYNAMIC_COLUMN, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0:
-                    slug_map.update(self._remap_key_names(row))
+                    slug_map.update(self.__remap_key_names(row))
                     break
 
         for key in slug_map:
@@ -458,12 +470,10 @@ class MigrateItem(MigrateBase):
                 elif preferred_slug == 'obsolete':
                     value_type = DynamicColumn.BOOLEAN
                     required = DynamicColumn.YES
-                elif preferred_slug == 'positions':
-                    value_type = DynamicColumn.NUMBER
                 elif preferred_slug == 'condition':
                     value_type = DynamicColumn.CHOICE
                     relation = choice2index.get('Condition')
-                    required = DynamicColumn.YES
+                    required = DynamicColumn.NO
                     kwargs['relation'] = relation
                     kwargs['required'] = required
                 else:
@@ -509,6 +519,18 @@ class MigrateItem(MigrateBase):
 
         return slug_map, dcolumns
 
+    def __remap_key_names(self, keys):
+        slug_map = {key: [slugify(key)] for key in keys}
+        # This is the natural key not a category.
+        slug_map.pop('item_number', '')
+
+        for key, value in self.SPECS.items():
+            key_list = slug_map.get(key, [])
+            key_list += value
+
+        #print(slug_map)
+        return slug_map
+
     def _create_collection(self, dcolumns):
         if not self._options.noop:
             name = self._COLLECTION_NAME
@@ -541,28 +563,27 @@ class MigrateItem(MigrateBase):
                     headers[:] = row
                     continue
 
-                item_number = row[33]
+                item_number = row[36].decode('utf-8').strip()
                 item_obj = Item.objects.get(item_number=item_number)
                 # Get only the columns used with this item.
-                values = [col for col in row if col not in ("", 'item_number')]
+                values = [col for col in row if col != ""]
 
-                for value in values:
+                for value in values[:-1]: # Don't want the item_number.
                     header = headers[row.index(value)]
-                    slug, collection_name, order, location = slug_map.get(
-                        header, ('', '', 0, ''))
+                    value = value.decode('utf-8').strip()
+
+                    if header == 'Condition':
+                        if value.isdigit():
+                            # Adjust for new Condition object
+                            value = int(value) + 1
+                        elif value == '':
+                            value = 1
+
+                    if header == 'Obsolete':
+                        value = self._yes_no(value)
+
+                    slug, location, order = slug_map.get(header, ('', '', 0))
                     item_obj.set_key_value(slug, value)
-
-    def _remap_key_names(self, keys):
-        slug_map = {key: [slugify(key)] for key in keys}
-        # This is the natural key not a category.
-        slug_map.pop('item_number', '')
-
-        for key, value in self.SPECS.items():
-            key_list = slug_map.get(key, [])
-            key_list += value
-
-        #print(slug_map)
-        return slug_map
 
 
 if __name__ == '__main__':
