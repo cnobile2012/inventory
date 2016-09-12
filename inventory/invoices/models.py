@@ -55,19 +55,6 @@ class ConditionManager(BaseChoiceManager):
     def __init__(self):
         super(ConditionManager, self).__init__()
 
-    def get_choices(self, field, comment=True, sort=True):
-        choices = [(obj.pk, ugettext(getattr(obj, field)))
-                   for obj in self.model_objects()]
-
-        if sort:
-            choices.sort(key=lambda x: x[1])
-
-        if comment:
-            choices.insert(
-                0, (0, _("Please choose a {}").format(self.model.__name__)))
-
-        return choices
-
 
 @python_2_unicode_compatible
 class Condition(BaseChoice):
@@ -161,7 +148,7 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         return "{} ({})".format(self.sku, self.project.name)
 
     class Meta:
-        unique_together = ('sku', 'project')
+        unique_together = ('project', 'sku')
         ordering = ('project__name', 'sku',)
         verbose_name = _("Item")
         verbose_name_plural = _("Items")
@@ -348,7 +335,7 @@ class InvoiceItem(models.Model):
 
     class Meta:
         ordering = ('item_number',)
-        verbose_name = _("InvoiceItem")
+        verbose_name = _("Invoice Item")
         verbose_name_plural = _("Invoice Items")
 
 
@@ -387,6 +374,11 @@ def create_item_post_save(sender, **kwargs):
                     kwargs['updater'] = instance.invoice.updater
                     item = Item.objects.create(**kwargs)
                     instance.item = item
-                    instance.save()
+
+                    try:
+                        instance.save()
+                    except Exception as e:
+                        log.error("Unknown error: %s, %s", kwargs, e)
+                        raise e
         else:
             instance.item.delete()
