@@ -22,12 +22,15 @@ from .forms import ItemForm, InvoiceItemForm
 #
 class InvoiceItemInvoiceInline(admin.StackedInline):
     fieldsets = (
-        (None, {'fields': ('item', 'item_number', 'description', 'quantity',
-                           'unit_price', 'process',)}),
+        (None, {'fields': ('item_number', 'description', 'quantity',
+                           'unit_price',)}),
+        (_("Status"), {'classes': ('collapse',),
+                       'fields': ('item', 'process',)}),
         )
+    readonly_fields = ('item',)
     model = InvoiceItem
     form = InvoiceItemForm
-    extra = 1
+    extra = 0
 
 
 #
@@ -41,7 +44,7 @@ class InvoiceItemItemInline(admin.StackedInline):
     readonly_fields = ('invoice',)
     model = InvoiceItem
     form = InvoiceItemForm
-    extra = 1
+    extra = 0
 
 
 #
