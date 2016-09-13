@@ -103,7 +103,7 @@ class MigrateBase(object):
 
     def _yes_no(self, value):
         value = value.decode('utf-8').strip().lower()
-        
+
         if value == 'false':
             value = 0
         elif value == 'true':

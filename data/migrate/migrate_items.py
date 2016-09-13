@@ -45,16 +45,17 @@ class MigrateItem(MigrateBase):
     _DYNAMIC_COLUMN = 'dynamic_column.csv'
     _COLLECTION_NAME = "Inventory Items"
 
-    LOCATION_1 = "location_1"
-    LOCATION_2 = "location_2"
-    LOCATION_3 = "location_3"
-    LOCATION_4 = "location_4"
-    LOCATION_5 = "location_5"
-    LOCATION_6 = "location_6"
-    LOCATION_7 = "location_7"
-    LOCATION_8 = "location_8"
-    LOCATION_9 = "location_9"
-    LOCATION_10 = "location_10"
+    LOCATION_1 = "location_1"   # Item Related
+    LOCATION_2 = "location_2"   # Battery
+    LOCATION_3 = "location_3"   # Capacitor
+    LOCATION_4 = "location_4"   # Fan
+    LOCATION_5 = "location_5"   # General
+    LOCATION_6 = "location_6"   # Hardware
+    LOCATION_7 = "location_7"   # Inductor
+    LOCATION_8 = "location_8"   # Motor
+    LOCATION_9 = "location_9"   # Resistor
+    LOCATION_10 = "location_10" # Switch/Relay
+    LOCATION_11 = "location_11" # Wire
     ORDER_1 = 1
     ORDER_2 = 2
     ORDER_3 = 3
@@ -78,47 +79,44 @@ class MigrateItem(MigrateBase):
     ORDER_21 = 21
     ORDER_22 = 22
     ORDER_23 = 23
-    ORDER_24 = 24
-    ORDER_25 = 25
-    ORDER_26 = 26
 
     SPECS = {
-        'AWG': [LOCATION_10, ORDER_1],
-        'Amp Hours': [LOCATION_1, ORDER_1],
-        'CFM': [LOCATION_3, ORDER_1],
-        'Capacitance': [LOCATION_2, ORDER_1],
-        'Color': [LOCATION_4, ORDER_1],
-        'Condition': [LOCATION_4, ORDER_2],
-        'Configuration': [LOCATION_4, ORDER_3],
-        'Contacts': [LOCATION_4, ORDER_4],
-        'Current': [LOCATION_4, ORDER_5],
-        'Depth': [LOCATION_4, ORDER_6],
-        'Diameter': [LOCATION_4, ORDER_7],
-        'Dimensions': [LOCATION_4, ORDER_8],
-        'Height': [LOCATION_4, ORDER_9],
-        'Lead Spacing': [LOCATION_4, ORDER_10],
-        'Length': [LOCATION_4, ORDER_11],
-        'Material': [LOCATION_4, ORDER_12],
-        'Mount': [LOCATION_4, ORDER_13],
-        'Notes': [LOCATION_4, ORDER_14],
-        'Obsolete': [LOCATION_4, ORDER_15],
-        'Orientation': [LOCATION_4, ORDER_16],
-        'Package': [LOCATION_4, ORDER_17],
-        'Pins': [LOCATION_4, ORDER_18],
-        'Polarity': [LOCATION_4, ORDER_19],
-        'Positions': [LOCATION_9, ORDER_1],
-        'Power': [LOCATION_4, ORDER_20],
-        'Resistance': [LOCATION_8, ORDER_1],
-        'Shaft': [LOCATION_7, ORDER_1],
-        'Step Angle': [LOCATION_7, ORDER_2],
-        'Temperature': [LOCATION_4, ORDER_21],
-        'Thread': [LOCATION_5, ORDER_1],
-        'Tolerance': [LOCATION_4, ORDER_22],
-        'Turns': [LOCATION_6, ORDER_1],
-        'Type': [LOCATION_4, ORDER_23],
-        'Voltage': [LOCATION_4, ORDER_24],
-        'Weight': [LOCATION_4, ORDER_25],
-        'Width': [LOCATION_4, ORDER_26],
+        'AWG': [LOCATION_11, ORDER_1],
+        'Amp Hours': [LOCATION_2, ORDER_1],
+        'CFM': [LOCATION_4, ORDER_1],
+        'Capacitance': [LOCATION_3, ORDER_1],
+        'Color': [LOCATION_5, ORDER_1],
+        'Condition': [LOCATION_1, ORDER_2],
+        'Configuration': [LOCATION_5, ORDER_2],
+        'Contacts': [LOCATION_5, ORDER_3],
+        'Current': [LOCATION_5, ORDER_4],
+        'Depth': [LOCATION_5, ORDER_5],
+        'Diameter': [LOCATION_5, ORDER_6],
+        'Dimensions': [LOCATION_5, ORDER_7],
+        'Height': [LOCATION_5, ORDER_8],
+        'Lead Spacing': [LOCATION_5, ORDER_9],
+        'Length': [LOCATION_5, ORDER_10],
+        'Material': [LOCATION_5, ORDER_11],
+        'Mount': [LOCATION_5, ORDER_12],
+        'Notes': [LOCATION_1, ORDER_1],
+        'Obsolete': [LOCATION_1, ORDER_3],
+        'Orientation': [LOCATION_5, ORDER_13],
+        'Package': [LOCATION_5, ORDER_14],
+        'Pins': [LOCATION_5, ORDER_15],
+        'Polarity': [LOCATION_5, ORDER_16],
+        'Positions': [LOCATION_10, ORDER_1],
+        'Power': [LOCATION_5, ORDER_17],
+        'Resistance': [LOCATION_9, ORDER_1],
+        'Shaft': [LOCATION_8, ORDER_1],
+        'Step Angle': [LOCATION_8, ORDER_2],
+        'Temperature': [LOCATION_5, ORDER_18],
+        'Thread': [LOCATION_6, ORDER_1],
+        'Tolerance': [LOCATION_5, ORDER_19],
+        'Turns': [LOCATION_7, ORDER_1],
+        'Type': [LOCATION_5, ORDER_20],
+        'Voltage': [LOCATION_5, ORDER_21],
+        'Weight': [LOCATION_5, ORDER_22],
+        'Width': [LOCATION_5, ORDER_23],
         }
 
     def __init__(self, log, options):

@@ -238,6 +238,7 @@ dcolumn_manager.register_css_containers(
         ('location_8', 'location-8'),
         ('location_9', 'location-9'),
         ('location_10', 'location-10'),
+        ('location_11', 'location-11'),
         ))
 
 # A sample logging configuration. The only tangible logging performed by this
