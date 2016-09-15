@@ -20,15 +20,15 @@ urlpatterns = [
     # Django Admin
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
-    # New Web Site
+    # Web Site
 
-    # New API Site
+    # API Site
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^dcolumns/', include('dcolumn.dcolumns.urls')),
     url(r'^api/', include('inventory.common.api.urls')),
     url(r'^api/accounts/', include('inventory.accounts.api.urls')),
     url(r'^api/categories/', include('inventory.categories.api.urls')),
-    #url(r'^api/items/', include('inventory.items.api.urls')),
+    url(r'^api/invoices/', include('inventory.invoices.api.urls')),
     url(r'^api/locations/', include('inventory.locations.api.urls')),
     url(r'^api/projects/', include('inventory.projects.api.urls')),
     url(r'^api/regions/', include('inventory.regions.api.urls')),

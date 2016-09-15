@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from inventory.accounts.models import User
 from inventory.accounts.api.serializers import UserSerializer
 
 from ..models import Project
@@ -44,9 +43,9 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         instance.name = validated_data.get('name', instance.name)
         instance.public = validated_data.get('public', instance.public)
         instance.active = validated_data.get('active', instance.active)
-        instance.process_members(validated_data.get('members', []))
         instance.updater = self.get_user_object()
         instance.save()
+        instance.process_members(validated_data.get('members', []))
         return instance
 
     class Meta:

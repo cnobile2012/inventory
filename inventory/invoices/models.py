@@ -197,8 +197,21 @@ class Item(CollectionBase, ValidateOnSaveMixin):
             wanted = Category.objects.filter(pk__in=add_pks)
             self.categories.add(*wanted)
 
-
-
+    def process_shared_projects(self, shared_projects):
+        """
+        Add and remove shared projects.
+        """
+        if shared_projects:
+            wanted_pks = [inst.pk for inst in shared_projects]
+            old_pks = [inst.pk for inst in self.shared_projects.all()]
+            # Remove unwanted shared projects.
+            rem_pks = list(set(old_pks) - set(wanted_pks))
+            unwanted = self.shared_projects.filter(pk__in=rem_pks)
+            self.shared_projects.remove(*unwanted)
+            # Add new shared projects.
+            add_pks = list(set(wanted_pks) - set(old_pks))
+            wanted = Project.objects.filter(pk__in=add_pks)
+            self.shared_projects.add(*wanted)
 
 dcolumn_manager.register_choice(Item, 2, 'sku')
 

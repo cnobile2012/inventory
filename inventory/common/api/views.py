@@ -72,6 +72,14 @@ def api_root(request, format=None):
     categories = items.setdefault('categories', OrderedDict())
     categories['categories'] = reverse(
         'category-list', request=request, format=format)
+    # Invoices
+    invoices = items.setdefault('invoices', OrderedDict())
+    invoices['conditions'] = reverse(
+        'condition-list', request=request, format=format)
+    invoices['items'] = reverse(
+        'item-list', request=request, format=format)
+    invoices['invoices'] = reverse(
+        'invoice-list', request=request, format=format)
     # Maintenance
     locations = items.setdefault('locations', OrderedDict())
     locations['location-default'] = reverse(
