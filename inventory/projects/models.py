@@ -123,12 +123,28 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
 
         return obj.role
 
-    def set_role(self, user, value):
-        if Membership.objects.filter(
-            user=user, project=self).update(role=role) != 1:
+    def set_role(self, user, role):
+        """
+        Set the role for the given user. There should only be one user
+        affected.
+        """
+        objs = Membership.objects.filter(user=user, project=self)
+
+        if not objs:
             msg = _("Invalid user {}").format(user)
             log.error(ugettext(msg))
             raise Membership.DoesNotExist(msg)
+
+        if objs.count() > 1:
+            msg = _("Multiple instances of user '{}' was found "
+                    "for project '{}'").format(user, self)
+            log.critical(msg)
+            raise Membership.MultipleObjectsReturned(msg)
+
+        # objs.update(role=role) does not work since it does not call save
+        # skipping all validation on the model.
+        objs[0].role = role
+        objs[0].save()
 
     def process_members(self, members):
         """
@@ -167,6 +183,7 @@ class Membership(ValidateOnSaveMixin):
         (OWNER, _("Owner")),
         (PROJECT_MANAGER, _("Project Manager")),
         )
+    ROLE_MAP = {k: v for k, v in ROLE}
 
     role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
@@ -184,9 +201,7 @@ class Membership(ValidateOnSaveMixin):
     def clean(self):
         if self.pk is None:
             self.role = self.OWNER
-        elif self.role not in (self.DEFAULT_USER,
-                               self.OWNER,
-                               self.PROJECT_MANAGER):
+        elif self.role not in self.ROLE_MAP:
             msg = _("Invalid role, must be one of DEFAULT_USER, OWNER, or "
                     "PROJECT_MANAGER.")
             log.error(msg)
