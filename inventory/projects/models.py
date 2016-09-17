@@ -89,7 +89,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         help_text=_("The inventory type."))
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, verbose_name=_("Project Members"),
-        through='Membership', related_name='project_members', blank=True,
+        through='Membership', related_name='projects', blank=True,
         help_text=_("The members of this project."))
     public = models.BooleanField(
         verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES,
