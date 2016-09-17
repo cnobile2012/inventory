@@ -12,6 +12,7 @@ __docformat__ = "restructuredtext en"
 import logging
 import hashlib
 
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.hashers import get_hasher
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -25,7 +26,7 @@ from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
     ValidateOnSaveMixin)
 from inventory.common.storage import InventoryFileStorage
-from inventory.projects.models import Project
+from inventory.projects.models import Project, Membership
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
 log = logging.getLogger('inventory.accounts.models')
@@ -104,6 +105,7 @@ class UserManager(BaseUserManager):
              raise ValueError(_("Please supply both the username and email "
                                 "to narrow down the search."))
 
+        self.model.role = extra_fields.pop('role', self.model.DEFAULT_USER)
         users.update(**extra_fields)
         return users[0]
 
@@ -116,6 +118,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
         (DEFAULT_USER, _("Default User")),
         (ADMINISTRATOR, _("Administrator")),
         )
+    ROLE_MAP = {k: v for k, v in ROLE}
     YES = True
     NO = False
     YES_NO = (
@@ -136,9 +139,6 @@ class User(AbstractUser, ValidateOnSaveMixin):
     _role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
         help_text=_("The role of the user."))
-    answers = models.ManyToManyField(
-        'Answer', verbose_name=_("Answers"), related_name='users', blank=True,
-        help_text=_("Answers to authentication questions."))
     picture = models.ImageField(
         verbose_name=_("Picture"), upload_to='user_photos', null=True,
         blank=True, storage=InventoryFileStorage(),
@@ -190,8 +190,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
             if self.is_superuser:
                 self._role = self.ADMINISTRATOR
-        elif self._role not in (self.DEFAULT_USER,
-                                self.ADMINISTRATOR):
+        elif self._role not in self.ROLE_MAP:
             msg = _("Invalid role, must be one of DEFAULT_USER, or "
                     "ADMINISTRATOR.")
             log.error(msg)
@@ -226,17 +225,23 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
         return result
 
-    def process_answers(self, answers):
-        if answers:
-            new_pks = [inst.pk for inst in answers]
-            old_pks = [inst.pk for inst in self.answers.all()]
-            rem_pks = list(set(old_pks) - set(new_pks))
-            # remove unwanted answers.
-            self.answers.remove(*self.answers.filter(pk__in=rem_pks))
-            # Add new answers.
-            add_pks = list(set(new_pks) - set(old_pks))
-            new_ans = Answer.objects.filter(pk__in=add_pks)
-            self.answers.add(*new_ans)
+    def process_projects(self, projects):
+        """
+        This method adds and removes projects to a member.
+        """
+        if projects:
+            wanted_pks = [inst.pk for inst in projects]
+            old_pks = [inst.pk for inst in self.projects.all()]
+            # Remove unwanted projects.
+            rem_pks = list(set(old_pks) - set(wanted_pks))
+            rem_prod = Project.objects.filter(pk__in=rem_pks)
+            Membership.objects.filter(
+                user=self, project__in=rem_prod).delete()
+            # Add new members.
+            add_pks = list(set(wanted_pks) - set(old_pks))
+
+            for project in Project.objects.filter(pk__in=add_pks):
+                Membership.objects.create(user=self, project=project)
 
     def get_unused_questions(self):
         used_pks = [answer.question.pk for answer in self.answers.all()]
@@ -323,6 +328,10 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     question = models.ForeignKey(
         Question, verbose_name=_("Question"),
         help_text=_("The question relative to this answer."))
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=_("User"),
+        related_name='answers', blank=True,
+        help_text=_("User to which this answer applies."))
 
     objects = AnswerManager()
 
@@ -343,16 +352,3 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         ordering = ('question__question',)
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
-
-    def process_users(self, users):
-        self.users.add(*users)
-
-    def user_producer(self):
-        users = self.users.all()
-
-        if 0 <= len(users) > 1:
-            raise ValueError(_("There should not be more that one answer "
-                               "user. Found {}").format(users))
-
-        return users[0]
-    user_producer.short_description = _("User")

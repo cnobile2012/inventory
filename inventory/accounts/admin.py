@@ -28,7 +28,7 @@ class UserAdmin(DjangoUserAdmin):
                                          'address_01', 'address_02', 'city',
                                          'subdivision', 'postal_code',
                                          'country', 'dob', 'email', 'language',
-                                         'timezone', 'answers',)}),
+                                         'timezone',)}),
         (_("Projects"), {'fields': ('_role', 'project_default',)}),
         (_("Permissions"), {'classes': ('collapse',),
                             'fields': ('is_active', 'is_staff',
@@ -44,7 +44,7 @@ class UserAdmin(DjangoUserAdmin):
                     'image_url_producer',)
     list_editable = ('is_staff', 'is_active',)
     search_fields = ('username', 'last_name', 'email', 'public_id',)
-    filter_horizontal = ('groups', 'user_permissions', 'answers',)
+    filter_horizontal = ('groups', 'user_permissions',)
 
     class Media:
         js = ('js/js.cookie-2.0.4.min.js',
@@ -78,12 +78,11 @@ class QuestionAdmin(UserAdminMixin, admin.ModelAdmin):
 @admin.register(Answer)
 class AnswerAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('question', 'answer',)}),
+        (None, {'fields': ('user', 'question', 'answer',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('question', 'user_producer', 'answer', 'updater',
-                    'updated',)
+    list_display = ('question', 'user', 'answer', 'updater', 'updated',)
     form = AnswerForm

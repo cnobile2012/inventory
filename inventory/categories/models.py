@@ -29,7 +29,7 @@ log = logging.getLogger('inventory.categories.models')
 
 class CategoryManager(models.Manager):
 
-    def create_category_tree(self, category_list, user, project):
+    def create_category_tree(self, project, category_list, user):
         """
         Gets and/or creates designated category, creating parent categories
         as necessary. Returns a list of objects in category order or an empty
@@ -71,7 +71,7 @@ class CategoryManager(models.Manager):
 
         return node_list
 
-    def delete_category_tree(self, node_list, project):
+    def delete_category_tree(self, project, node_list):
         """
         Deletes the category tree back to the beginning, but will stop if there
         are other children on the category. The result is that it will delete
@@ -98,7 +98,7 @@ class CategoryManager(models.Manager):
 
         return deleted_nodes
 
-    def get_parents(self, category, project):
+    def get_parents(self, project, category):
         """
         Get all the parents to this category object.
         """
@@ -156,7 +156,7 @@ class CategoryManager(models.Manager):
 
         return final.values()
 
-    def get_all_root_trees(self, name, project):
+    def get_all_root_trees(self, project, name):
         """
         Given a category 'name' and 'project' return a list of trees where each
         each tree has the category 'name' as one of its members. ex. [[<color>,
@@ -167,7 +167,7 @@ class CategoryManager(models.Manager):
         records = self.filter(name=name, project=project)
 
         if len(records) > 0:
-            result[:] = [self.get_parents(record, project)
+            result[:] = [self.get_parents(project, record)
                          for record in records]
 
         return result
@@ -218,7 +218,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
         if self.parent:
             # Check that this category is not a parent.
-            parents = Category.objects.get_parents(self.parent, self.project)
+            parents = Category.objects.get_parents(self.project, self.parent)
             parents.append(self.parent)
 
             for parent in parents:
@@ -235,7 +235,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
                            ).format(self.name)})
 
     def _get_category_path(self, current=True):
-        parents = Category.objects.get_parents(self, self.project)
+        parents = Category.objects.get_parents(self.project, self)
         if current: parents.append(self)
         return self.DEFAULT_SEPARATOR.join([parent.name for parent in parents])
 
