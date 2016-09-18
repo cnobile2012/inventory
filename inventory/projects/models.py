@@ -125,26 +125,24 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
 
     def set_role(self, user, role):
         """
-        Set the role for the given user. There should only be one user
-        affected.
+        Set the role for the given user.
         """
-        objs = Membership.objects.filter(user=user, project=self)
-
-        if not objs:
+        try:
+            obj = Membership.objects.get(user=user, project=self)
+        except Membership.DoesNotExist as e:
             msg = _("Invalid user {}").format(user)
             log.error(ugettext(msg))
             raise Membership.DoesNotExist(msg)
-
-        if objs.count() > 1:
-            msg = _("Multiple instances of user '{}' was found "
+        except Membership.MultipleObjectsReturned as e:
+            msg = _("Multiple instances of user '{}' were found "
                     "for project '{}'").format(user, self)
             log.critical(msg)
             raise Membership.MultipleObjectsReturned(msg)
 
         # objs.update(role=role) does not work since it does not call save
         # skipping all validation on the model.
-        objs[0].role = role
-        objs[0].save()
+        obj.role = role
+        obj.save()
 
     def process_members(self, members):
         """
@@ -164,6 +162,20 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
 
             for user in UserModel.objects.filter(pk__in=add_pks):
                 Membership.objects.create(project=self, user=user)
+
+    def has_authority(self, user):
+        """
+        Test if the provided user has athority to add, change, or delete
+        records.
+        """
+        try:
+            obj = self.members.get(pk=user.pk)
+        except get_user_model().DoesNotExist:
+            result = False
+        else:
+            result = True
+
+        return result
 
 
 #

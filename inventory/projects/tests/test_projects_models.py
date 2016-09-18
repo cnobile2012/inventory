@@ -58,6 +58,7 @@ class TestProjectModels(BaseTest):
         """
         Test that the role is set properly on the Membership object.
         """
+        #self.skipTest("Temporarily skipped")
         # Test that the user is not a member.
         with self.assertRaises(Membership.DoesNotExist) as cm:
             self.project.get_role(self.user)
@@ -80,3 +81,21 @@ class TestProjectModels(BaseTest):
         # Test the clean for role on the Membership model.
         with self.assertRaises(ValidationError) as cm:
             self.project.set_role(self.user, 100)
+
+    def test_has_authority(self):
+        """
+        Test that the user has authority to change objects in this project.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a user
+        username = "TestUser_02"
+        user = self._create_user(username=username, password="123456789")
+        # Test user with project.
+        msg = "User {} should not have permission to access project {}".format(
+            user, self.project)
+        self.assertFalse(self.project.has_authority(user), msg)
+        # Test that user has authority.
+        self.project.process_members([user])
+        msg = "User {} should have permission to access project {}".format(
+            user, self.project)
+        self.assertTrue(self.project.has_authority(user), msg)
