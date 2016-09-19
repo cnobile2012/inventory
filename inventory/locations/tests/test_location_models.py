@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/tests/test_location_model.py
+# inventory/maintenance/tests/test_location_models.py
 #
 # Run ./manage.py test -k # Keep the DB, don't rebuild.
 #
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
 from django.core.exceptions import ValidationError
+
+from inventory.common.tests.base_tests import BaseTest
 
 from ..models import LocationDefault, LocationFormat, LocationCode
 
 User = get_user_model()
 
 
-class BaseLocation(TestCase):
+class BaseLocation(BaseTest):
     _TEST_USERNAME = 'TestUser'
     _TEST_PASSWORD = 'TestPassword_007'
 
@@ -23,33 +24,35 @@ class BaseLocation(TestCase):
         self.user = None
 
     def setUp(self):
-        self.user = self._create_user()
+        super(BaseLocation, self).setUp()
+        self.inventory_type = self._create_inventory_type()
+        self.project = self._create_project(self.inventory_type)
 
-    def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
-                     is_superuser=True):
-        user = User.objects.create_user(username=username, password=password)
-        user.is_active = True
-        user.is_staff = True
-        user.is_superuser = is_superuser
-        user.save()
-        return user
-
-    def _create_location_default_record(self, name, description, owner=None,
-                                        separator=None):
-        if not owner:
-            owner = self.user
-
+    def _create_location_default_record(self, project, name, description,
+                                        separator=None,
+                                        shared=LocationDefault.YES):
         kwargs = {}
-        kwargs['owner'] = owner
-        kwargs['name'] = name
         kwargs['description'] = description
+        kwargs['shared'] = shared
 
         if separator:
             kwargs['separator'] = separator
 
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        return LocationDefault.objects.create(**kwargs)
+        obj, created = LocationDefault.objects.get_or_create(
+            project=project, name=name, defaults=kwargs)
+
+        if not created:
+            obj.description = description
+            obj.shared = shared
+
+            if separator:
+                obj.separator = separator
+
+            obj.save()
+
+        return obj
 
     def _create_location_format_record(self, char_definition, segment_order,
                                        description, location_default):
@@ -83,22 +86,16 @@ class TestLocationDefaultModel(BaseLocation):
         # Create a location default.
         name = "Test Location Default"
         desc = "Test description."
-        obj = self._create_location_default_record(name, desc)
+        obj = self._create_location_default_record(self.project, name, desc)
         msg = "{} should be {} and {} should be {}".format(
             obj.name, name, obj.description, desc)
         self.assertEqual(obj.name, name, msg)
         self.assertEqual(obj.description, desc, msg)
 
-    def test_clone_default_tree(self):
-        #self.skipTest("Temporarily skipped")
-        # Create a new user
-        owner = self._create_user(username='Test_Non-Super',
-                                  password='0123456789',
-                                  is_superuser=False)
+    def setup_default_tree(self, name, desc, shared):
         # Create a location default.
-        name = "Test Location Default"
-        desc = "Test description."
-        loc_def = self._create_location_default_record(name, desc)
+        loc_def = self._create_location_default_record(
+            self.project, name, desc, shared=shared)
         msg = "{} should be {} and {} should be {}".format(
             loc_def.name, name, loc_def.description, desc)
          # Create a location format object 0.
@@ -119,40 +116,59 @@ class TestLocationDefaultModel(BaseLocation):
         description = "Test character definition."
         fmt_obj_2 = self._create_location_format_record(
             char_definition, segment_order, description, loc_def)
+        return loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2
+
+    def test_clone_default_tree_ERRORS(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a new project
+        project = self._create_project(self.inventory_type,
+                                       name="2nd Test Project")
+        # Setup test
+        name = "Test Location Default"
+        desc = "Test description."
+        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_default_tree(
+            name, desc, LocationDefault.NO)
+        # The location_default is not shared and user is not in project
+        # (should fail).
+        with self.assertRaises(ValueError) as cm:
+            tree = LocationDefault.objects.clone_default_tree(
+                project, loc_def, self.user)
+        # The location_default is shared but user is not in project
+        # (should fail).
+        loc_def = self._create_location_default_record(
+            self.project, name, desc, shared=LocationDefault.YES)
+        with self.assertRaises(ValueError) as cm:
+            tree = LocationDefault.objects.clone_default_tree(
+                project, loc_def, self.user)
+
+    def test_clone_default_tree(self):
+        #self.skipTest("Temporarily skipped")
+        # Create a new project
+        project = self._create_project(
+            self.inventory_type, name="3rd Test Project", members=[self.user])
+        # Setup test
+        name = "Test Location Default Number 2"
+        desc = "Test description."
+        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_default_tree(
+            name, desc, LocationDefault.YES)
+        project.process_members([self.user])
         # Make copy of location default and it's format objects.
         tree = LocationDefault.objects.clone_default_tree(
-            loc_def, owner, owner)
-        msg = ("Loc Default: {}, Loc Format: {}, Loc Format: {}, "
-               "Loc Format: {}").format(
-            loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2)
+                project, loc_def, self.user)
+        msg = ("tree: '{}', total in tree: '{}'.").format(tree, len(tree))
         self.assertEqual(len(tree), 4, msg)
+        # Try a duplicate record (should fail)
+        with self.assertRaises(ValueError) as cm:
+            tree = LocationDefault.objects.clone_default_tree(
+                project, loc_def, self.user)
 
     def test_delete_default_tree(self):
         #self.skipTest("Temporarily skipped")
-        # Create a location default.
+        # Create a location default and tree.
         name = "Test Location Default"
         desc = "Test description."
-        loc_def = self._create_location_default_record(name, desc)
-        msg = "{} should be {} and {} should be {}".format(
-            loc_def.name, name, loc_def.description, desc)
-         # Create a location format object 0.
-        char_definition = 'T\\d\\d'
-        segment_order = 0
-        description = "Test character definition."
-        fmt_obj_0 = self._create_location_format_record(
-            char_definition, segment_order, description, loc_def)
-        # Create a location format object 1.
-        char_definition = 'X\\d\\d'
-        segment_order = 1
-        description = "Test character definition."
-        fmt_obj_1 = self._create_location_format_record(
-            char_definition, segment_order, description, loc_def)
-        # Create a location format object 2.
-        char_definition = 'B\\d\\dC\\d\\dR\\d\\d'
-        segment_order = 2
-        description = "Test character definition."
-        fmt_obj_2 = self._create_location_format_record(
-            char_definition, segment_order, description, loc_def)
+        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_default_tree(
+            name, desc, LocationDefault.YES)
         # Create location code objects .
         code_0 = self._create_location_code_record("T01", fmt_obj_0)
         code_1 = self._create_location_code_record("X01", fmt_obj_1,
@@ -173,7 +189,7 @@ class TestLocationDefaultModel(BaseLocation):
         self.assertEqual(LocationCode.objects.count(), 5, msg)
         # Test delete_default_tree
         nodes = LocationDefault.objects.delete_default_tree(
-            loc_def, self.user, self.user)
+            self.project, loc_def, self.user)
         #print nodes
         # Test for correct number of objects.
         msg = "Location Default: {}".format(loc_def)
@@ -193,7 +209,8 @@ class TestLocationDefaultModel(BaseLocation):
         # Create a location default object.
         with self.assertRaises(ValidationError) as cm:
             obj = self._create_location_default_record(
-                "Another Default", "Test Description 2", separator='--->')
+                self.project, "Another Default", "Test Description 2",
+                separator='--->')
             msg = "Created Object: {}".format(obj)
             self.assertFalse(obj, msg)
 
@@ -213,7 +230,8 @@ class TestLocationFormatModel(BaseLocation):
         # Create a valid location default object.
         self.name = "Test Location Default"
         desc = "Test description."
-        self.loc_def = self._create_location_default_record(self.name, desc)
+        self.loc_def = self._create_location_default_record(
+            self.project, self.name, desc)
 
     def test_create_location_format_record(self):
         #self.skipTest("Temporarily skipped")
@@ -239,7 +257,7 @@ class TestLocationFormatModel(BaseLocation):
             char_definition, segment_order, description, self.loc_def)
         # Get format object.
         fmt_obj = LocationFormat.objects.get_char_definition(
-            self.user, self.name, char_definition)
+            self.project, self.name, char_definition)
         msg = "Created object: {}, queried object: {}".format(obj, fmt_obj)
         self.assertEqual(obj, fmt_obj, msg)
 
@@ -276,7 +294,8 @@ class TestLocationCodeModel(BaseLocation):
         # Create a valid location default object.
         self.name = "Test Location Default"
         desc = "Test description."
-        self.loc_def = self._create_location_default_record(self.name, desc)
+        self.loc_def = self._create_location_default_record(
+            self.project, self.name, desc)
         # Create a location format object.
         char_definition = 'T\\d\\d'
         segment_order = 0
@@ -457,7 +476,7 @@ class TestLocationCodeModel(BaseLocation):
             obj_1.char_definition.location_default.name, self.name)
         self.assertEqual(obj_1.segment, segment, msg)
         # get_all_root_trees
-        trees = LocationCode.objects.get_all_root_trees(segment, self.user)
+        trees = LocationCode.objects.get_all_root_trees(self.project, segment)
         msg = "Root trees: {}".format(trees)
         self.assertEqual(len(trees), 2, msg)
 
@@ -505,7 +524,7 @@ class TestLocationCodeModel(BaseLocation):
         #self.skipTest("Temporarily skipped")
         # Create a location default object.
         loc_def1 = self._create_location_default_record(
-            "Another Default", "Test Description 2")
+            self.project, "Another Default", "Test Description 2")
         # Create a location format object with loc_def1.
         char_definition = 'C\\d\\dR\\d\\d'
         segment_order = 1

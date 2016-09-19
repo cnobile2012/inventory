@@ -9,6 +9,8 @@ LocationDefault, LocationFormat, and LocationCode models.
 """
 __docformat__ = "restructuredtext en"
 
+import logging
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -22,47 +24,65 @@ from inventory.projects.models import Project
 
 from .validation import FormatValidator
 
+log = logging.getLogger('inventory.locations.models')
+
 
 #
 # LocationDefault
 #
 class LocationDefaultManager(models.Manager):
 
-    def clone_default_tree(self, default_obj, project, user):
+    def clone_default_tree(self, project, loc_def_obj, user):
         """
         Gets and/or creates designated location default with a new project,
         from the location default provided, then creates all location formats
         as necessary. Returns a list of objects or an empty list if the new
         location default already existed.
         """
-        kwargs = {}
-        kwargs['description'] = default_obj.description
-        kwargs['shared'] = default_obj.shared
-        kwargs['separator'] = default_obj.separator
-        kwargs['creator'] = user
-        kwargs['updater'] = user
-        obj, created = self.get_or_create(
-            name=default_obj.name, project=project, defaults=kwargs)
         node_list = []
 
-        if created and obj:
-            node_list.append(obj)
-            from .models import LocationFormat
+        if loc_def_obj.shared and project.has_authority(user):
+            try:
+                obj = self.get(project=project, name=loc_def_obj.name)
+            except self.model.DoesNotExist:
+                from .models import LocationFormat
 
-            for fmt_obj in default_obj.locationformat_set.all():
                 kwargs = {}
-                kwargs['location_default'] = obj
-                kwargs['char_definition'] = fmt_obj.char_definition
-                kwargs['segment_order'] = fmt_obj.segment_order
-                kwargs['description'] = fmt_obj.description
+                kwargs['project'] = project
+                kwargs['name'] = loc_def_obj.name
+                kwargs['description'] = loc_def_obj.description
+                kwargs['shared'] = loc_def_obj.shared
+                kwargs['separator'] = loc_def_obj.separator
                 kwargs['creator'] = user
                 kwargs['updater'] = user
-                node = LocationFormat.objects.create(**kwargs)
-                node_list.append(node)
+                obj = self.create(**kwargs)
+                node_list.append(obj)
+
+                for fmt_obj in loc_def_obj.location_formats.all():
+                    kwargs = {}
+                    kwargs['location_default'] = obj
+                    kwargs['char_definition'] = fmt_obj.char_definition
+                    kwargs['segment_order'] = fmt_obj.segment_order
+                    kwargs['description'] = fmt_obj.description
+                    kwargs['creator'] = user
+                    kwargs['updater'] = user
+                    node = LocationFormat.objects.create(**kwargs)
+                    node_list.append(node)
+            else:
+                msg = _("The '{}' record already exists, cannot clone."
+                        ).format(obj)
+                log.error(msg)
+                raise ValueError(msg)
+        else:
+            msg = _("To clone the '{}' location objects they must be shared "
+                    "and the user must have authority."
+                    ).format(loc_def_obj.name)
+            log.error(msg)
+            raise ValueError(msg)
 
         return node_list
 
-    def delete_default_tree(self, default_obj, project, user):
+    def delete_default_tree(self, project, loc_def_obj, user):
         """
         Deletes the default tree starting with any location code objects,
         continuing with location format objects, then deleting the location
@@ -71,18 +91,18 @@ class LocationDefaultManager(models.Manager):
         """
         deleted_nodes = []
 
-        for fmt in default_obj.locationformat_set.all():
+        for fmt in loc_def_obj.location_formats.all():
             child_nodes = []
 
-            for code in fmt.locationcode_set.all():
+            for code in fmt.location_codes.all():
                 child_nodes += self._recurse_children(code)
 
             fmt_obj = [fmt.char_definition, child_nodes]
             fmt.delete()
             deleted_nodes.append(fmt_obj)
 
-        deleted_nodes.insert(0, default_obj.name)
-        default_obj.delete()
+        deleted_nodes.insert(0, loc_def_obj.name)
+        loc_def_obj.delete()
         return deleted_nodes
 
     def _recurse_children(self, child):
@@ -236,7 +256,7 @@ class LocationCodeManager(models.Manager):
 
         return parents
 
-    def get_all_root_trees(self, segment, project):
+    def get_all_root_trees(self, project, segment):
         result = []
         records = self.filter(
             segment=segment, char_definition__location_default__project=project)
@@ -288,7 +308,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     char_def_producer.short_description = _("Character Definition")
 
     def clean(self):
-        # Test that this segment follows the rules.
+        # Test max length, is not None, and format validity of segment.
         separator = self.char_definition.location_default.separator
 
         self.segment = FormatValidator(
