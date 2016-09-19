@@ -97,23 +97,7 @@ class Subdivision(StatusModelMixin):
 # Language
 #
 class LanguageManager(StatusModelManagerMixin, models.Manager):
-
-    def get_tags_and_langs(self):
-        key = make_cache_key(app='regions', module='models',
-                             func=self.get_tags_and_langs.__name__)
-        data = cache.get(key)
-
-        if not data:
-            tuples = [(r.locale, r.code) for r in self.all()]
-            data = ([t for t, l in tuples], [l for t, l in tuples])
-
-            if not cache.set(key, data, timeout=settings.CACHE_TIMEOUT):
-                log.warn("cache.set failed data object size: %s",
-                         sys.getsizeof(data))
-        else:
-            log.debug("Cache key: %s, data: %s", key, data)
-
-        return data
+    pass
 
 
 @python_2_unicode_compatible
