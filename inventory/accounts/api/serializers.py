@@ -11,10 +11,12 @@ import logging
 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
+from inventory.projects.api.serializers import ProjectSerializer
 from inventory.projects.models import Project
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
@@ -30,30 +32,34 @@ UserModel = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     subdivision = serializers.HyperlinkedRelatedField(
         view_name='subdivision-detail', queryset=Subdivision.objects.all(),
-        default=None)
+        default=None, label=_("State"))
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', queryset=Country.objects.all(),
-        default=None)
+        default=None, label=_("Country"))
     language = serializers.HyperlinkedRelatedField(
         view_name='language-detail', queryset=Language.objects.all(),
-        default=None)
+        default=None, label=_("Language"))
     timezone = serializers.HyperlinkedRelatedField(
         view_name='timezone-detail', queryset=TimeZone.objects.all(),
-        default=None)
+        default=None, label=_("Timezone"))
     answers = serializers.HyperlinkedRelatedField(
         view_name='answer-detail', many=True, queryset=Answer.objects.all(),
-        default=None)
+        default=None, label=_("Security answers"))
+    projects = ProjectSerializer(many=True)
     uri = serializers.HyperlinkedIdentityField(
-        view_name='user-detail', lookup_field='public_id')
+        view_name='user-detail', lookup_field='public_id',
+        label=_("Identity URI"))
 
     def create(self, validated_data):
         username = validated_data.pop('username', '')
         password = validated_data.pop('password', '')
         email = validated_data.pop('email', '')
         answers = validated_data.pop('answers', [])
+        projects = validated_data.pop('projects', [])
         obj = UserModel.objects.create_user(
             username, email=email, password=password, **validated_data)
         obj.process_answers(answers)
+        obj.process_projects(projects)
         return obj
 
     def update(self, instance, validated_data):
@@ -101,6 +107,7 @@ class UserSerializer(serializers.ModelSerializer):
             'is_superuser', instance.is_superuser)
         instance.save()
         instance.process_answers(validated_data.get('answers', []))
+        instance.process_projects(validated_data.get('projects', []))
         return instance
 
     class Meta:
@@ -109,8 +116,9 @@ class UserSerializer(serializers.ModelSerializer):
                   'need_password', 'first_name', 'last_name', 'address_01',
                   'address_02', 'city', 'subdivision', 'postal_code',
                   'country', 'language', 'timezone', 'dob', 'email', 'answers',
-                  'role', 'project_default', 'is_active', 'is_staff',
-                  'is_superuser', 'last_login', 'date_joined', 'uri',)
+                  'role', 'projects', 'project_default', 'is_active',
+                  'is_staff', 'is_superuser', 'last_login', 'date_joined',
+                  'uri',)
         read_only_fields = ('public_id', 'last_login', 'date_joined', 'uri',)
         extra_kwargs = {'password': {'write_only': True}}
 
