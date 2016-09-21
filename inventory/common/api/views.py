@@ -90,6 +90,8 @@ def api_root(request, format=None):
         'location-code-list', request=request, format=format)
     # Projects
     projects = items.setdefault('projects', OrderedDict())
+    projects['inventory-type-list'] = reverse(
+        'inventory-type-list', request=request, format=format)
     projects['projects'] = reverse(
         'project-list', request=request, format=format)
     # Regions

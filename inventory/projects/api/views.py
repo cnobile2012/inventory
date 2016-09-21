@@ -18,13 +18,94 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
-from ..models import Project
+from ..models import InventoryType, Project, Membership
 
-from .serializers import ProjectSerializer
-
+from .serializers import (
+    InventoryTypeSerializer, MembershipSerializer, ProjectSerializer)
 
 log = logging.getLogger('api.projects.views')
-User = get_user_model()
+UserModel = get_user_model()
+
+
+#
+# InventoryType
+#
+class InventoryTypeList(ListCreateAPIView):
+    """
+    InventoryType list endpoint.
+    """
+    queryset = InventoryType.objects.all()
+    serializer_class = InventoryTypeSerializer
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
+        )
+    pagination_class = SmallResultsSetPagination
+
+inventory_type_list = InventoryTypeList.as_view()
+
+
+class InventoryTypeDetail(RetrieveUpdateDestroyAPIView):
+    """
+    InventoryType detail endpoint.
+    """
+    queryset = InventoryType.objects.all()
+    serializer_class = InventoryTypeSerializer
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
+        )
+
+inventory_type_detail = InventoryTypeDetail.as_view()
+
+
+#
+# Membership
+#
+class MembershipAuthorizationMixin(object):
+
+    def get_queryset(self):
+        result = []
+
+        if (self.request.user.is_superuser or
+            self.request.user.role == UserModel.ADMINISTRATOR):
+            result = Membership.objects.all()
+        else:
+            result = self.request.user.memberships.all()
+
+        return result
+
+
+## class MembershipList(MembershipAuthorizationMixin, ListCreateAPIView):
+##     """
+##     Membership list endpoint.
+##     """
+##     serializer_class = MembershipSerializer
+##     permission_classes = (
+##         And(IsUserActive, #IsAuthenticated,
+##             Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+##             ),
+##         )
+##     pagination_class = SmallResultsSetPagination
+
+## membership_list = MembershipList.as_view()
+
+
+class MembershipDetail(MembershipAuthorizationMixin,
+                       RetrieveUpdateDestroyAPIView):
+    """
+    Membership detail endpoint.
+    """
+    serializer_class = MembershipSerializer
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            ),
+        )
+
+membership_detail = MembershipDetail.as_view()
 
 
 #
@@ -36,7 +117,7 @@ class ProjectAuthorizationMixin(object):
         result = []
 
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = Project.objects.all()
         else:
             result = self.request.user.projects.all()
