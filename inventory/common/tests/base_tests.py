@@ -68,10 +68,6 @@ class BaseTest(TestCase):
         kwargs['updater'] = self.user
         return Category.objects.create(**kwargs)
 
-
-
-
-
     def _has_error(self, response):
         result = False
 
