@@ -6,7 +6,7 @@ Use `sudo apt-get install` or `sudo aptitude install`.
 
 ubuntu-dev-tools python-setuptools
 
-mariadb-client mariadb-server libmariadbclient-dev libmariadbd-dev
+postgresql, postgresql-client, postgresql-contrib, postgresql-server-dev-all
 
 redis-server redis-tools
 
