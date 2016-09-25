@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 
-from inventory.common.api.fields import MultiObjectDictField
 from inventory.common.api.serializer_mixin import SerializerMixin
 
 from ..models import InventoryType, Project, Membership

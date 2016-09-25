@@ -8,15 +8,16 @@ import logging
 from django.contrib.auth import get_user_model
 
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView,
+    RetrieveAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 from rest_framework.permissions import IsAuthenticated
 
 from rest_condition import C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectOwner, IsProjectManager,
-    IsUserActive)
+    IsAdminSuperUser, IsAdministrator, IsAnyUser, IsProjectOwner,
+    IsProjectManager, IsAnyProjectUser, IsReadOnly, IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import InventoryType, Project, Membership
@@ -41,8 +42,8 @@ class InventoryTypeList(ListCreateAPIView):
         And(IsUserActive, #IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
-               IsProjectOwner,
-               IsProjectManager)
+               And(IsReadOnly, IsAnyProjectUser)
+               )
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -60,8 +61,8 @@ class InventoryTypeDetail(RetrieveUpdateAPIView):
         And(IsUserActive, #IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
-               IsProjectOwner,
-               IsProjectManager)
+               And(IsReadOnly, IsAnyProjectUser)
+               )
             ),
         )
 
@@ -95,7 +96,8 @@ class MembershipAuthorizationMixin(object):
 ##             Or(IsAdminSuperUser,
 ##                IsAdministrator,
 ##                IsProjectOwner,
-##                IsProjectManager)
+##                IsProjectManager
+##                )
 ##             ),
 ##         )
 ##     pagination_class = SmallResultsSetPagination
@@ -103,21 +105,22 @@ class MembershipAuthorizationMixin(object):
 ## membership_list = MembershipList.as_view()
 
 
-class MembershipDetail(MembershipAuthorizationMixin, RetrieveUpdateAPIView):
-    """
-    Membership detail endpoint.
-    """
-    serializer_class = MembershipSerializer
-    permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser,
-               IsAdministrator,
-               IsProjectOwner,
-               IsProjectManager)
-            ),
-        )
+## class MembershipDetail(MembershipAuthorizationMixin, RetrieveAPIView):
+##     """
+##     Membership detail endpoint.
+##     """
+##     serializer_class = MembershipSerializer
+##     permission_classes = (
+##         And(IsUserActive, #IsAuthenticated,
+##             Or(IsAdminSuperUser,
+##                IsAdministrator,
+##                IsProjectOwner,
+##                IsProjectManager
+##                )
+##             ),
+##         )
 
-membership_detail = MembershipDetail.as_view()
+## membership_detail = MembershipDetail.as_view()
 
 
 #
@@ -143,12 +146,7 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = ProjectSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser,
-               IsAdministrator,
-               IsProjectOwner,
-               IsProjectManager)
-            ),
+        And(IsUserActive, IsAnyUser), #IsAuthenticated,
         )
     pagination_class = SmallResultsSetPagination
     lookup_field = 'public_id'
@@ -166,7 +164,8 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
-               IsProjectManager)
+               IsProjectManager
+               )
             ),
         )
     lookup_field = 'public_id'
