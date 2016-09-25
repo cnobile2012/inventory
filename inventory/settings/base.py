@@ -143,7 +143,7 @@ INSTALLED_APPS = [
     #'guardian',
     'inventory.accounts',
     'inventory.categories',
-    'inventory.dynamic_columns',
+    #'inventory.dynamic_columns',
     'inventory.invoices',
     'inventory.locations',
     'inventory.projects',
