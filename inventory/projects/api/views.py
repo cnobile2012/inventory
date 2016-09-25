@@ -8,14 +8,15 @@ import logging
 from django.contrib.auth import get_user_model
 
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 from rest_framework.permissions import IsAuthenticated
 
-from rest_condition import ConditionalPermission, C, And, Or, Not
+from rest_condition import C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
+    IsAdminSuperUser, IsAdministrator, IsProjectOwner, IsProjectManager,
+    IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import InventoryType, Project, Membership
@@ -38,7 +39,10 @@ class InventoryTypeList(ListCreateAPIView):
     serializer_class = InventoryTypeSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -46,7 +50,7 @@ class InventoryTypeList(ListCreateAPIView):
 inventory_type_list = InventoryTypeList.as_view()
 
 
-class InventoryTypeDetail(RetrieveUpdateDestroyAPIView):
+class InventoryTypeDetail(RetrieveUpdateAPIView):
     """
     InventoryType detail endpoint.
     """
@@ -54,7 +58,10 @@ class InventoryTypeDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = InventoryTypeSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager)
             ),
         )
 
@@ -85,7 +92,10 @@ class MembershipAuthorizationMixin(object):
 ##     serializer_class = MembershipSerializer
 ##     permission_classes = (
 ##         And(IsUserActive, #IsAuthenticated,
-##             Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+##             Or(IsAdminSuperUser,
+##                IsAdministrator,
+##                IsProjectOwner,
+##                IsProjectManager)
 ##             ),
 ##         )
 ##     pagination_class = SmallResultsSetPagination
@@ -93,15 +103,17 @@ class MembershipAuthorizationMixin(object):
 ## membership_list = MembershipList.as_view()
 
 
-class MembershipDetail(MembershipAuthorizationMixin,
-                       RetrieveUpdateDestroyAPIView):
+class MembershipDetail(MembershipAuthorizationMixin, RetrieveUpdateAPIView):
     """
     Membership detail endpoint.
     """
     serializer_class = MembershipSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager)
             ),
         )
 
@@ -132,7 +144,10 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -148,7 +163,10 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager)
             ),
         )
     lookup_field = 'public_id'

@@ -79,7 +79,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
     public_id = models.CharField(
         verbose_name=_("Public Project ID"), max_length=30, unique=True,
         blank=True,
-        help_text=_("Public ID to identify a individual project."))
+        help_text=_("Public ID to identify an individual project."))
     name = models.CharField(
         verbose_name=_("Project Name"), max_length=250,
         help_text=_("The name of the project."))
