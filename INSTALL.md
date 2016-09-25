@@ -4,9 +4,9 @@
 
 Use `sudo apt-get install` or `sudo aptitude install`.
 
-ubuntu-dev-tools python-setuptools
+ubuntu-dev-tools python-setuptools python3-dev OR python-dev
 
-postgresql, postgresql-client, postgresql-contrib, postgresql-server-dev-all
+postgresql postgresql-client postgresql-contrib postgresql-server-dev-all
 
 redis-server redis-tools
 
