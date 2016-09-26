@@ -14,6 +14,7 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -354,7 +355,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 
         try:
             while True:
-                child = iterator.next()
+                child = six.next(iterator)
                 child.save()
         except StopIteration:
             pass
