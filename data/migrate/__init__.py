@@ -6,7 +6,6 @@
 import logging
 
 from django.contrib.auth import get_user_model
-from django.utils import six
 
 try:
     from inventory.projects.models import Project, Membership, InventoryType
@@ -83,7 +82,7 @@ class MigrateBase(object):
         return project
 
     def _fix_boolean(self, value):
-        value = six.u(value).strip()
+        value = value.strip()
         result = value
 
         if value.lower() == 'true':
@@ -94,7 +93,7 @@ class MigrateBase(object):
         return result
 
     def _fix_numeric(self, value):
-        value = six.u(value).strip()
+        value = value.strip()
         result = ''
 
         if value.isdigit():
@@ -103,7 +102,7 @@ class MigrateBase(object):
         return result
 
     def _yes_no(self, value):
-        value = six.u(value).strip().lower()
+        value = value.strip().lower()
 
         if value == 'false':
             value = 0
