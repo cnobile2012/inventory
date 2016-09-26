@@ -14,10 +14,12 @@ from django.utils.translation import ugettext
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
 
+from inventory.common.tests.record_creation import RecordCreation
+
 UserModel = get_user_model()
 
 
-class BaseTest(APITestCase):
+class BaseTest(RecordCreation, APITestCase):
     _TEST_USERNAME = 'TestUser'
     _TEST_PASSWORD = 'TestPassword_007'
 

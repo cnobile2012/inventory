@@ -9,8 +9,10 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 
 from django.contrib.auth import get_user_model
 
-from inventory.common.api.tests.base_test import BaseTest
 from inventory.accounts.api.views import user_list
+from inventory.common.api.tests.base_test import BaseTest
+from inventory.projects.api.views import project_list
+from inventory.projects.models import Membership
 
 from ..permissions import (
     IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser,
@@ -124,11 +126,18 @@ class TestPermissions(BaseTest):
         Test that a project owner has access.
         """
         #self.skipTest("Temporarily skipped")
-        # Test that a project owner has access.
+        # Create an InventoryType and a Project
+        in_type = self._create_inventory_type()
+        project = self._create_project(in_type)
+        # Test that a non-project user does not have access.
         factory = APIRequestFactory()
-        request = factory.get('user-list')
+        request = factory.get('project-list')
         request.user = self.user
         force_authenticate(request, user=self.user)
-        auth = IsAnyUser()
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
-        self.assertTrue(auth.has_permission(request, user_list), msg)
+        auth = IsProjectOwner()
+        members = self.user.memberships.filter(project=project,
+                                               role=Membership.OWNER)
+        role = members[0].role if members else None
+        msg = "User '{}', role: {}".format(request.user, role)
+        self.assertFalse(auth.has_object_permission(
+            request, project_list, project), msg)

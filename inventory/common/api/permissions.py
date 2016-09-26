@@ -109,7 +109,7 @@ class BaseProjectPermission(permissions.BasePermission):
         project = None
         user = get_user(request)
 
-        if isinstance(Project, obj):
+        if isinstance(obj, Project):
             project = obj
         elif hasattr(obj, 'project'):
             project = obj.project
