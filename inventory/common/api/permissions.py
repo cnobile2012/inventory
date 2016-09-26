@@ -87,8 +87,8 @@ class IsAnyUser(permissions.BasePermission):
         user = get_user(request)
 
         # This permission is broken
-        if user and user.role in (UserModel.DEFAULT_USER,
-                                  UserModel.ADMINISTRATOR):
+        if user and (user.is_superuser or user.role in (
+            UserModel.DEFAULT_USER, UserModel.ADMINISTRATOR)):
             result = True
 
         log.debug("IsAnyUser: %s", result)
