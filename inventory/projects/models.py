@@ -214,8 +214,8 @@ class Membership(ValidateOnSaveMixin):
         if self.pk is None:
             self.role = self.OWNER
         elif self.role not in self.ROLE_MAP:
-            msg = _("Invalid role, must be one of DEFAULT_USER, OWNER, or "
-                    "PROJECT_MANAGER.")
+            msg = _("Invalid role, must be one of {}.").format(
+                ROLE_MAP.values())
             log.error(msg)
             raise ValidationError(msg)
 

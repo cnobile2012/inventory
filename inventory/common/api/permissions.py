@@ -117,10 +117,13 @@ class BaseProjectPermission(permissions.BasePermission):
         if not isinstance(level, (list, tuple)):
             level = (level,)
 
-        if user and project and user.memberships.filter(
-            project=project, role__in=level):
+        queryset = user.memberships.filter(project=project, role__in=level)
+
+        if user and project and queryset.count():
             result = True
 
+        #print("user: {}, project: {}, level: {}, queryset: {}".format(
+        #    user, project, level, queryset))
         return result
 
 
@@ -141,8 +144,8 @@ class IsProjectManager(BaseProjectPermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        result = self.has_project_permission(request, obj,
-                                             Membership.PROJECT_MANAGER)
+        result = self.has_project_permission(
+            request, obj, Membership.PROJECT_MANAGER)
         log.debug("IsProjectManager: %s", result)
         return result
 
@@ -153,8 +156,8 @@ class IsProjectDefaultUser(BaseProjectPermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        result = self.has_project_permission(request, obj,
-                                             Membership.DEFAULT_USER)
+        result = self.has_project_permission(
+            request, obj, Membership.DEFAULT_USER)
         log.debug("IsProjectDefaultUser: %s", result)
         return result
 
@@ -166,9 +169,7 @@ class IsAnyProjectUser(BaseProjectPermission):
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_permission(
-            request, obj, (UserModel.DEFAULT_USER,
-                           UserModel.PROJECT_MANAGER,
-                           UserModel.ADMINISTRATOR))
+            request, obj, list(Membership.ROLE_MAP))
         log.debug("IsAnyProjectUser: %s", result)
         return result
 
