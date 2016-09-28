@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive,
+    IsAdminSuperUser, IsAdministrator, IsAnyProjectUser, IsUserActive,
     IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.regions.models import (
@@ -35,7 +35,9 @@ class CountryList(ListAPIView):
     serializer_class = CountrySerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -51,7 +53,9 @@ class CountryDetail(RetrieveAPIView):
     serializer_class = CountrySerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
 
@@ -69,7 +73,9 @@ class SubdivisionList(ListAPIView):
     serializer_class = SubdivisionSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -85,7 +91,9 @@ class SubdivisionDetail(RetrieveAPIView):
     serializer_class = SubdivisionSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
 
@@ -103,7 +111,9 @@ class LanguageList(ListAPIView):
     serializer_class = LanguageSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -119,7 +129,9 @@ class LanguageDetail(RetrieveAPIView):
     serializer_class = LanguageSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
 
@@ -137,7 +149,9 @@ class TimeZoneList(ListAPIView):
     serializer_class = TimeZoneSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -153,7 +167,9 @@ class TimeZoneDetail(RetrieveAPIView):
     serializer_class = TimeZoneSerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
 
@@ -171,7 +187,9 @@ class CurrencyList(ListAPIView):
     serializer_class = CurrencySerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -187,7 +205,9 @@ class CurrencyDetail(RetrieveAPIView):
     serializer_class = CurrencySerializer
     permission_classes = (
         And(IsReadOnly, IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser)
             ),
         )
 

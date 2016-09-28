@@ -10,6 +10,7 @@ from collections import OrderedDict
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext
+from django.utils import six
 
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
@@ -41,7 +42,7 @@ class BaseTest(RecordCreation, APITestCase):
                      **kwargs):
         kwargs['password'] = password
         role = kwargs.pop('role', UserModel.DEFAULT_USER)
-        login = kwargs.get('login', True)
+        login = kwargs.pop('login', True)
         user, created = UserModel.objects.get_or_create(
             username=username, defaults=kwargs)
 
@@ -59,11 +60,10 @@ class BaseTest(RecordCreation, APITestCase):
                 user.save()
 
         client = APIClient()
-
+        print(login)
         if login:
             client.login(username=username, password=password)
 
-        #print("{}".format(user.is_superuser))
         return user, client
 
     def _clean_data(self, data):
@@ -82,7 +82,7 @@ class BaseTest(RecordCreation, APITestCase):
         elif isinstance(value, (dict, OrderedDict,)):
             for key in value:
                 value[key] = self.__clean_value(value.get(key))
-        elif (isinstance(value, (int, long, bool, types.TypeType,)) or
+        elif (isinstance(value, (six.integer_types, bool, type,)) or
               value is None):
             pass
         else:
