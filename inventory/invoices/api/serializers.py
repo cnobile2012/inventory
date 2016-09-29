@@ -32,7 +32,7 @@ class ConditionSerializer(DynamicFieldsSerializer):
     pk = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
     uri = HyperlinkedCustomIdentityField(
-        view_name='condition-detail', lookup_field='pk',
+        view_name='condition-detail',
         queryset=Condition.objects.model_objects())
 
     def __init__(self, *args, **kwargs):
@@ -41,8 +41,8 @@ class ConditionSerializer(DynamicFieldsSerializer):
             *args, fields=fields, **kwargs)
 
     class Meta:
-        model = Condition
         fields = ('pk', 'name', 'uri',)
+        read_only_fields = ('uri',)
 
 
 #

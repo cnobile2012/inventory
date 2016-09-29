@@ -3,11 +3,12 @@
 # inventory/categories/api/tests/test_category_api.py
 #
 
-from rest_framework.reverse import reverse
 from rest_framework import status
+from rest_framework.reverse import reverse
 
 from inventory.categories.models import Category
 from inventory.common.api.tests.base_test import BaseTest
+from inventory.projects.models import Membership
 
 
 class TestCategoryAPI(BaseTest):
@@ -17,43 +18,26 @@ class TestCategoryAPI(BaseTest):
 
     def setUp(self):
         super(TestCategoryAPI, self).setUp()
-        self.user_uri = reverse(
-            'user-detail', kwargs={'public_id': self.user.public_id})
-
-    def test_create_post_category(self):
-        """
-        Test that a category can be POSTed by it's owner.
-        """
-        #self.skipTest("Temporarily skipped")
-        uri = reverse('category-list')
-        new_data = {'name': 'Test Category-0', 'owner': self.user_uri,}
-        #'parent': None} This should be permitted
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Read record with GET.
-        pk = data.get('id')
-        uri = reverse('category-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
+        # Create an InventoryType, a Project, and a user.
+        self.in_type = self._create_inventory_type()
+        self.project = self._create_project(self.in_type, members=[self.user])
+        self.project.process_members([self.user])
+        self.project.set_role(self.user, Membership.OWNER)
+        self.project_url = None
 
     def test_get_category_with_no_permissions(self):
         """
         Test the category_list endpoint with no permissions. We don't use the
         self.client created in the setUp method from the base class.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
+        # Seup user and client
         username = 'Normal_User'
         password = '123456'
-        user, client = self._create_normal_user(username, password, login=False)
-        category = self._create_category(user)
+        kwargs = {}
+        kwargs['login'] = False
+        user, client = self._create_user(username, password, **kwargs)
+        category = self._create_category(self.project, "Test Root Category")
         # Use API to get user list with unauthenticated user.
         uri = reverse('category-list')
         response = client.get(uri, format='json')
@@ -65,31 +49,40 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue('detail' in data, msg)
 
-    def test_create_category_post_token(self):
+
+
+
+
+
+
+    def test_post_category_with_no_permissions(self):
         """
-        Test category with API with token. We don't use the self.client
-        created in the setUp method from the base class.
+        Test that a category can be POSTed.
         """
         self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
+        # Seup user and client
         username = 'Normal_User'
         password = '123456'
-        user, client = self._create_normal_user(
-            username, password, email='test@example.com')
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Use API to create a category.
+        kwargs = {}
+        kwargs['login'] = False
+        user, client = self._create_user(username, password, **kwargs)
+        # Send the request
         uri = reverse('category-list')
-        user_uri = reverse('user-detail', kwargs={'pk': user.id})
-        new_data = {'name': 'TestCategory-01', 'owner': user_uri}
-        response = client.post(uri, new_data, format='json')
+        response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Read record with GET.
+        public_id = data.get('public_id')
+        uri = reverse('category-detail', kwargs={'public_id': puplic_id})
+        response = self.client.post(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEqual(data.get('name'), new_data.get('name'), msg)
 
     def test_invalid_owner_post(self):
         """
@@ -113,30 +106,6 @@ class TestCategoryAPI(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN,
             self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
-
-    def test_invalid_owner_post_token(self):
-        """
-        Test category with API with token. We don't use the self.client
-        created in the setUp method from the base class.
-        """
-        self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(
-            username, password, email='test@example.com')
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Use API to create a category.
-        uri = reverse('category-list')
-        new_data = {'name': 'TestCategory-03', 'owner': self.user_uri}
-        response = client.post(uri, new_data, format='json')
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_403_FORBIDDEN,
-            self._clean_data(response.data))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
 
     def test_update_put_category(self):
@@ -470,11 +439,3 @@ class TestCategoryAPI(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue("A root level category name " in data.get('name')[0],
                         msg)
-
-    def _create_category(self, user, name=None, parent=None):
-        if not name:
-            name = 'TestCategory-00'
-
-        new_data = {'name': name, 'parent': parent, 'owner': user,
-                    'updater': self.user, 'creator': self.user}
-        return Category.objects.create(**new_data)
