@@ -94,17 +94,22 @@ class BaseTest(RecordCreation, APITestCase):
         pass
 
 
-    def _has_error(self, response):
+    def _has_error(self, response, error_key='detail'):
         result = False
 
-        if hasattr(response, 'context_data'):
+        if (hasattr(response, 'context_data') and
+            hasattr(response.context_data, 'form')):
             if response.context_data.get('form').errors:
+                result = True
+        elif hasattr(response, 'data'):
+            if response.data.get(error_key):
                 result = True
 
         return result
 
     def _test_errors(self, response, tests={}, exclude_keys=[]):
-        if hasattr(response, 'context_data'):
+        if (hasattr(response, 'context_data') and
+            hasattr(response.context_data, 'form')):
             errors = dict(response.context_data.get('form').errors)
 
             for key, value in tests.items():
@@ -115,6 +120,19 @@ class BaseTest(RecordCreation, APITestCase):
                 err_msg = errors.pop(key, None)
                 self.assertTrue(err_msg, "Could not find key: {}".format(key))
                 err_msg = err_msg.as_text()
+                msg = "For key '{}' value '{}' not found in '{}'".format(
+                    key, value, err_msg)
+                self.assertTrue(value in err_msg, msg)
+        elif hasattr(response, 'data'):
+            errors = response.data
+
+            for key, value in tests.items():
+                if key in exclude_keys:
+                    errors.pop(key, None)
+                    continue
+
+                err_msg = errors.pop(key, None)
+                self.assertTrue(err_msg, "Could not find key: {}".format(key))
                 msg = "For key '{}' value '{}' not found in '{}'".format(
                     key, value, err_msg)
                 self.assertTrue(value in err_msg, msg)

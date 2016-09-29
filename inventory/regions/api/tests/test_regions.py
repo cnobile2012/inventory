@@ -20,7 +20,7 @@ class TestCountry(BaseTest):
     def __init__(self, name):
         super(TestCountry, self).__init__(name)
 
-    def test_get_country_with_no_permissions(self):
+    def test_get_country_list_with_no_permissions(self):
         """
         Test the country_list endpoint with no permissions. We don't use the
         self.client created in the setUp method from the base class.
@@ -31,9 +31,9 @@ class TestCountry(BaseTest):
         password = '123456'
         kwargs = {}
         kwargs['login'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = UserModel.ADMINISTRATOR
         user, client = self._create_user(username, password, **kwargs)
-        # Use API to get list with unauthenticated user.
+        # Test that an unauthenticated ADMINISTRATOR has no permiccions.
         uri = reverse('country-list')
         response = client.get(uri, format='json')
         data = response.data
@@ -42,10 +42,26 @@ class TestCountry(BaseTest):
             self._clean_data(data))
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
-#        self.assertTrue(self.has_errors())
-        self.assertTrue('detail' in data, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': u'Authentication credentials were not provided.',
+            })
+        # Test that a DEFAULT_USER has no permissions.
+        kwargs['login'] = True
+        user, client = self._create_user(username, password, **kwargs)
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': u'Authentication credentials were not provided.',
+            })
 
-    def test_get_country_with_permissions(self):
+    def test_get_country_list_with_permissions(self):
         """
         Test the country_list endpoint with proper permissions.
         """
@@ -57,8 +73,9 @@ class TestCountry(BaseTest):
         kwargs['login'] = True
         kwargs['is_superuser'] = True
         user, client = self._create_user(username, password, **kwargs)
-        print(client.credentials())
-        # Use API to get list with unauthenticated user.
+        print("role: {}, is_superuser: {}, is_active: {}".format(
+            user.role, user.is_superuser, user.is_active))
+        # .
         uri = reverse('country-list')
         response = client.get(uri, format='json')
         data = response.data
