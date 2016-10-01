@@ -99,7 +99,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
 
     def clean(self):
         # Populate the public_id on record creation only.
-        if self.pk is None:
+        if self.pk is None and not self.public_id:
             self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
@@ -215,7 +215,7 @@ class Membership(ValidateOnSaveMixin):
             self.role = self.OWNER
         elif self.role not in self.ROLE_MAP:
             msg = _("Invalid role, must be one of {}.").format(
-                ROLE_MAP.values())
+                self.ROLE_MAP.values())
             log.error(msg)
             raise ValidationError(msg)
 

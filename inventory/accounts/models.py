@@ -185,7 +185,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
     def clean(self):
         # Populate the public_id on record creation only.
-        if self.pk is None:
+        if self.pk is None and not self.public_id:
             self.public_id = generate_public_key()
 
             if self.is_superuser:

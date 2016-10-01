@@ -135,7 +135,7 @@ class Item(CollectionBase, ValidateOnSaveMixin):
     objects = ItemManager()
 
     def clean(self):
-        if self.pk is None:
+        if self.pk is None and not self.public_id:
             # Populate the public_id on record creation only.
             self.public_id = generate_public_key()
             # Generate SKU
@@ -264,7 +264,7 @@ class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
     objects = InvoiceManager()
 
     def clean(self):
-        if self.pk is None:
+        if self.pk is None and not self.public_id:
             # Populate the public_id on record creation only.
             self.public_id = generate_public_key()
 
