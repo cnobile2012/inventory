@@ -33,7 +33,7 @@ class TestCountry(BaseTest):
         kwargs['login'] = False
         kwargs['role'] = UserModel.ADMINISTRATOR
         user, client = self._create_user(username, password, **kwargs)
-        # Test that an unauthenticated ADMINISTRATOR has no permiccions.
+        # Test that an unauthenticated ADMINISTRATOR has no permissions.
         uri = reverse('country-list')
         response = client.get(uri, format='json')
         data = response.data
@@ -48,6 +48,7 @@ class TestCountry(BaseTest):
             })
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(username, password, **kwargs)
         response = client.get(uri, format='json')
         data = response.data
