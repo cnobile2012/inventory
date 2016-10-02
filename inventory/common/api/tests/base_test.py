@@ -62,7 +62,8 @@ class BaseTest(RecordCreation, APITestCase):
         client = APIClient()
 
         if login:
-            client.login(username=username, password=password)
+            client.force_authenticate(user=user)
+            #client.login(username=username, password=password)
 
         return user, client
 
