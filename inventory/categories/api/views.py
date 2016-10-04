@@ -29,7 +29,7 @@ from .serializers import CategorySerializer
 
 
 log = logging.getLogger('api.categories.views')
-User = get_user_model()
+UserModel = get_user_model()
 
 
 #
@@ -39,7 +39,7 @@ class CategoryAuthorizationMixin(object):
 
     def has_full_access(self):
         return (self.request.user.is_superuser or
-                self.request.user.role == User.ADMINISTRATOR)
+                self.request.user.role == UserModel.ADMINISTRATOR)
 
     def get_queryset(self):
         result = []
@@ -47,7 +47,10 @@ class CategoryAuthorizationMixin(object):
         if self.has_full_access():
             result = Category.objects.all()
         else:
-            result = self.request.user.categories_category_owner_related.all()
+            user = self.request.user
+
+            for project in user.projects.prefetch_related('categories'):
+                result += list(project.categories.all())
 
         return result
 
