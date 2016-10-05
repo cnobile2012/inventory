@@ -3,12 +3,16 @@
 # inventory/categories/api/tests/test_category_api.py
 #
 
+from django.contrib.auth import get_user_model
+
 from rest_framework import status
 from rest_framework.reverse import reverse
 
 from inventory.categories.models import Category
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.projects.models import Membership
+
+UserModel = get_user_model()
 
 
 class TestCategoryAPI(BaseTest):
@@ -25,7 +29,7 @@ class TestCategoryAPI(BaseTest):
         self.project.set_role(self.user, Membership.OWNER)
         self.project_url = None
 
-    def test_get_category_with_no_permissions(self):
+    def test_GET_category_with_no_permissions(self):
         """
         Test the category_list endpoint with no permissions. We don't use the
         self.client created in the setUp method from the base class.
@@ -36,9 +40,10 @@ class TestCategoryAPI(BaseTest):
         password = '123456'
         kwargs = {}
         kwargs['login'] = False
+        kwargs['role'] = UserModel.ADMINISTRATOR
         user, client = self._create_user(username, password, **kwargs)
         category = self._create_category(self.project, "Test Root Category")
-        # Use API to get user list with unauthenticated user.
+        #  Test that an unauthenticated ADMINISTRATOR has no permissions.
         uri = reverse('category-list')
         response = client.get(uri, format='json')
         data = response.data
@@ -47,15 +52,38 @@ class TestCategoryAPI(BaseTest):
             self._clean_data(data))
         self.assertEqual(
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
-        self.assertTrue('detail' in data, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': u'Authentication credentials were not provided.',
+            })
+        # Test that a DEFAULT_USER has no permissions.
+        kwargs['login'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(username, password, **kwargs)
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': u'You do not have permission to perform this action.',
+            })
+
+    def test_GET_category_with_permissions(self):
+        """
+        Test the category_list endpoint with various permissions.
+        """
+        pass
 
 
 
 
 
 
-
-    def test_post_category_with_no_permissions(self):
+    def test_POST_category_with_no_permissions(self):
         """
         Test that a category can be POSTed.
         """

@@ -51,6 +51,7 @@ class CategoryAuthorizationMixin(object):
 
             for project in user.projects.prefetch_related('categories'):
                 result += list(project.categories.all())
+                # Maybe sort here
 
         return result
 

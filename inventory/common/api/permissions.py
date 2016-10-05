@@ -104,26 +104,38 @@ class BaseProjectPermission(permissions.BasePermission):
     Handles project level permissions.
     """
 
-    def has_project_permission(self, request, obj, level):
+    def has_project_permission(self, request, level):
+        result = False
+        user = get_user(request)
+
+        if user:
+            if not isinstance(level, (list, tuple)):
+                level = (level,)
+
+            if user.memberships.filter(role__in=level).count():
+                result = True
+
+        return result
+
+    def has_project_object_permission(self, request, obj, level):
         result = False
         project = None
         user = get_user(request)
 
-        if isinstance(obj, Project):
-            project = obj
-        elif hasattr(obj, 'project'):
-            project = obj.project
+        if user:
+            if isinstance(obj, Project):
+                project = obj
+            elif hasattr(obj, 'project'):
+                project = obj.project
 
-        if not isinstance(level, (list, tuple)):
-            level = (level,)
+            if project:
+                if not isinstance(level, (list, tuple)):
+                    level = (level,)
 
-        queryset = user.memberships.filter(project=project, role__in=level)
+                if user.memberships.filter(project=project,
+                                           role__in=level).count():
+                    result = True
 
-        if user and project and queryset.count():
-            result = True
-
-        #print("user: {}, project: {}, level: {}, queryset: {}".format(
-        #    user, project, level, queryset))
         return result
 
 
@@ -132,9 +144,15 @@ class IsProjectOwner(BaseProjectPermission):
     Allows access only to the project owner.
     """
 
-    def has_object_permission(self, request, view, obj):
-        result = self.has_project_permission(request, obj, Membership.OWNER)
+    def has_permission(self, request, view):
+        result = self.has_project_permission(request, Membership.OWNER)
         log.debug("IsProjectOwner: %s", result)
+        return result
+
+    def has_object_permission(self, request, view, obj):
+        result = self.has_project_object_permission(
+            request, obj, Membership.OWNER)
+        log.debug("IsProjectOwner (object): %s", result)
         return result
 
 
@@ -143,10 +161,16 @@ class IsProjectManager(BaseProjectPermission):
     Allows access only to the project managers.
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         result = self.has_project_permission(
-            request, obj, Membership.PROJECT_MANAGER)
+            request, Membership.PROJECT_MANAGER)
         log.debug("IsProjectManager: %s", result)
+        return result
+
+    def has_object_permission(self, request, view, obj):
+        result = self.has_project_object_permission(
+            request, obj, Membership.PROJECT_MANAGER)
+        log.debug("IsProjectManager (object): %s", result)
         return result
 
 
@@ -155,10 +179,16 @@ class IsProjectDefaultUser(BaseProjectPermission):
     Allows access only to a logged in user with a profile.
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         result = self.has_project_permission(
-            request, obj, Membership.DEFAULT_USER)
+            request, Membership.DEFAULT_USER)
         log.debug("IsProjectDefaultUser: %s", result)
+        return result
+
+    def has_object_permission(self, request, view, obj):
+        result = self.has_project_object_permission(
+            request, obj, Membership.DEFAULT_USER)
+        log.debug("IsProjectDefaultUser (object): %s", result)
         return result
 
 
@@ -167,10 +197,16 @@ class IsAnyProjectUser(BaseProjectPermission):
     Allows any registered user.
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         result = self.has_project_permission(
-            request, obj, list(Membership.ROLE_MAP))
+            request, list(Membership.ROLE_MAP))
         log.debug("IsAnyProjectUser: %s", result)
+        return result
+
+    def has_object_permission(self, request, view, obj):
+        result = self.has_project_object_permission(
+            request, obj, list(Membership.ROLE_MAP))
+        log.debug("IsAnyProjectUser (object): %s", result)
         return result
 
 
