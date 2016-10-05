@@ -78,13 +78,17 @@ class TestCountry(BaseTest):
         kwargs['login'] = True
         kwargs['is_superuser'] = True
         user, client = self._create_user(username, password, **kwargs)
-        # Test that a GET returns data.
+        # Test that a GET returns data with superuser role.
         uri = reverse('country-list')
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        # Test that a GET returns data with ADMINISTRATOR role.
+
+
+        # Test that a GET returns data with any project user role.
 
 
 
