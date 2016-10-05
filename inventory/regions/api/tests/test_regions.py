@@ -56,20 +56,20 @@ class TestCountry(BaseTest):
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            response.status_code, status.HTTP_403_FORBIDDEN,
             self._clean_data(data))
         self.assertEqual(
-            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+            response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': u'You do not have permission to perform this action.',
             })
 
     def test_GET_country_list_with_permissions(self):
         """
         Test the country_list endpoint with proper permissions.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         # Setup the country, user, and client.
         country = self._create_country()
         username = 'Normal_User'
@@ -78,8 +78,6 @@ class TestCountry(BaseTest):
         kwargs['login'] = True
         kwargs['is_superuser'] = True
         user, client = self._create_user(username, password, **kwargs)
-        #print("role: {}, is_superuser: {}, is_active: {}".format(
-        #    user.role, user.is_superuser, user.is_active))
         # Test that a GET returns data.
         uri = reverse('country-list')
         response = client.get(uri, format='json')
