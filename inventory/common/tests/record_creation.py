@@ -5,6 +5,7 @@
 
 from inventory.categories.models import Category
 from inventory.projects.models import InventoryType, Project
+from inventory.regions.models import Country
 
 
 class RecordCreation(object):
@@ -38,3 +39,8 @@ class RecordCreation(object):
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
         return Category.objects.create(**kwargs)
+
+    def _create_country(self):
+        new_data = {'country': 'United States',
+                    'code': 'US',}
+        return Country.objects.create(**new_data)

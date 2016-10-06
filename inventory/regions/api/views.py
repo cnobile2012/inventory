@@ -10,8 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsAnyProjectUser, IsUserActive,
-    IsReadOnly)
+    IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyProjectUser,
+    IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.regions.models import (
     Country, Subdivision, Language, TimeZone, Currency)

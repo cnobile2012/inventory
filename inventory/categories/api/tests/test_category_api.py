@@ -25,7 +25,6 @@ class TestCategoryAPI(BaseTest):
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
-        self.project.process_members([self.user])
         kwargs = {'public_id': self.project.public_id}
         self.project_uri = self._resolve('project-detail', **kwargs)
 
@@ -886,7 +885,7 @@ class TestCategoryAPI(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-         response = client.get(uri, format='json')
+        response = client.get(uri, format='json')
         data = response.data
 
 
