@@ -47,11 +47,8 @@ class CategoryAuthorizationMixin(object):
         if self.has_full_access():
             result = Category.objects.all()
         else:
-            user = self.request.user
-
-            for project in user.projects.prefetch_related('categories'):
-                result += list(project.categories.all())
-                # Maybe sort here
+            projects = self.request.user.projects.all()
+            result = Category.objects.filter(project__in=projects)
 
         return result
 
