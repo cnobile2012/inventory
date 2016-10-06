@@ -51,8 +51,6 @@ class TestCountry(BaseTest):
         kwargs['login'] = True
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(username, password, **kwargs)
-        print("role: {}, is_superuser: {}, is_active: {}".format(
-            user.role, user.is_superuser, user.is_active))
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
