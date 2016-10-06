@@ -11,6 +11,7 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.accounts.models import User
+from inventory.projects.models import project
 
 from ..models import LocationDefault, LocationFormat, LocationCode
 
@@ -23,7 +24,7 @@ User = get_user_model()
 #
 class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
-        view_name='project-detail', queryset=User.objects.all(),
+        view_name='project-detail', queryset=Project.objects.all(),
         lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')

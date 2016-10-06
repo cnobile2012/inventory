@@ -17,6 +17,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from inventory.common.api.serializer_mixin import SerializerMixin
+from inventory.projects.models import Project
 
 from ..models import Category
 
@@ -26,7 +27,7 @@ User = get_user_model()
 
 class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
-        view_name='project-detail', queryset=User.objects.all(),
+        view_name='project-detail', queryset=Project.objects.all(),
         lookup_field='public_id')
     parent = serializers.HyperlinkedRelatedField(
         view_name='category-detail', queryset=Category.objects.all(),
