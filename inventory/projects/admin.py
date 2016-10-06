@@ -18,13 +18,14 @@ from .forms import ProjectForm
 @admin.register(InventoryType)
 class InventoryTypeAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('name', 'description',)}),
+        (None, {'fields': ('public_id', 'name', 'description',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'updater', 'updated',)
+    readonly_fields = ('public_id', 'creator', 'created', 'updater',
+                       'updated',)
+    list_display = ('name', 'public_id', 'updater', 'updated',)
     search_fields = ('name', 'description', 'projects__name',)
 
 
