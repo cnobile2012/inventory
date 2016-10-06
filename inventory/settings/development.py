@@ -24,6 +24,8 @@ DATABASES = {
         }
     }
 
+SITE_URL = 'http://localhost:8000'
+
 #KEY_PREFIX = 'dev'
 #KEY_FUNCTION = 'inventory.common.caching.make_key'
 
