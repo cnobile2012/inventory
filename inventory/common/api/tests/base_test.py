@@ -8,6 +8,7 @@ import json
 import types
 from collections import OrderedDict
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext
 from django.utils import six
@@ -91,9 +92,16 @@ class BaseTest(RecordCreation, APITestCase):
 
         return value
 
-    def _resolve(self, name, request=None):
-        pass
+    def _resolve(self, name, field='', **kwargs):
+        uri = ''
+        request = kwargs.pop('request', None)
 
+        if request:
+            uri = reverse(name, request=request)
+        elif hasattr(settings, 'SITE_URL'):
+            uri = settings.SITE_URL + reverse(name, kwargs=kwargs)
+
+        return uri
 
     def _has_error(self, response, error_key='detail'):
         result = False
