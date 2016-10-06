@@ -130,12 +130,12 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         try:
             obj = Membership.objects.get(user=user, project=self)
         except Membership.DoesNotExist as e:
-            msg = _("Invalid user {}").format(user)
+            msg = _("Invalid user '{}'.").format(user)
             log.error(ugettext(msg))
             raise Membership.DoesNotExist(msg)
         except Membership.MultipleObjectsReturned as e:
             msg = _("Multiple instances of user '{}' were found "
-                    "for project '{}'").format(user, self)
+                    "for project '{}'.").format(user, self)
             log.critical(msg)
             raise Membership.MultipleObjectsReturned(msg)
 
