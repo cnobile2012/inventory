@@ -47,6 +47,7 @@ class InventoryTypeList(ListCreateAPIView):
             ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
 
 inventory_type_list = InventoryTypeList.as_view()
 
@@ -65,6 +66,7 @@ class InventoryTypeDetail(RetrieveUpdateAPIView):
                )
             ),
         )
+    lookup_field = 'public_id'
 
 inventory_type_detail = InventoryTypeDetail.as_view()
 

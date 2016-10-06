@@ -35,6 +35,10 @@ class InventoryTypeManager(models.Manager):
 
 @python_2_unicode_compatible
 class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+    public_id = models.CharField(
+        verbose_name=_("Public Inventory Type ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify an individual inventory type."))
     name = models.CharField(
         verbose_name=_("Inventory Type"), max_length=250,
         help_text=_("The name of the inventory type."))
@@ -44,6 +48,11 @@ class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
                                 "format are used for."))
 
     objects = InventoryTypeManager()
+
+    def clean(self):
+        # Populate the public_id on record creation only.
+        if self.pk is None and not self.public_id:
+            self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
         super(InventoryType, self).save(*args, **kwargs)

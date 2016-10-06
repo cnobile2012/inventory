@@ -11,7 +11,7 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.accounts.models import User
-from inventory.projects.models import project
+from inventory.projects.models import Project
 
 from ..models import LocationDefault, LocationFormat, LocationCode
 

@@ -27,12 +27,12 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
-        view_name='inventory-type-detail')
+        view_name='inventory-type-detail', lookup_field='public_id')
 
     class Meta:
         model = InventoryType
-        fields = ('name', 'description', 'creator', 'created', 'updater',
-                  'updated', 'uri',)
+        fields = ('public_id', 'name', 'description', 'creator', 'created',
+                  'updater', 'updated', 'uri',)
         read_only_fields = ('creator', 'created', 'updater', 'updated', 'uri',)
 
 
@@ -54,7 +54,7 @@ class MembershipSerializer(SerializerMixin, serializers.ModelSerializer):
 class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     inventory_type = serializers.HyperlinkedRelatedField(
         view_name='inventory-type-detail', queryset=InventoryType.objects.all(),
-        default=None)
+        default=None, lookup_field='public_id')
     members = serializers.HyperlinkedRelatedField(
         view_name='user-detail', many=True, queryset=UserModel.objects.all(),
         default=None, lookup_field='public_id')
