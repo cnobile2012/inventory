@@ -5,7 +5,8 @@
 
 from inventory.categories.models import Category
 from inventory.projects.models import InventoryType, Project
-from inventory.regions.models import Country
+from inventory.regions.models import (
+    Country, Subdivision, Language, TimeZone, Currency)
 
 
 class RecordCreation(object):
@@ -40,7 +41,31 @@ class RecordCreation(object):
         kwargs['updater'] = self.user
         return Category.objects.create(**kwargs)
 
-    def _create_country(self):
-        new_data = {'country': 'United States',
-                    'code': 'US',}
-        return Country.objects.create(**new_data)
+    def _create_country(self, country='United States', code='US'):
+        kwargs = {'country': country,
+                  'code': code,}
+        return Country.objects.create(**kwargs)
+
+    def _create_subdivision(self, subdivision_name, code, country):
+        kwargs = {'subdivision_name': subdivision_name,
+                  'code': code,
+                  'country': country}
+        return Subdivision.objects.create(**kwargs)
+
+    def _create_language(self, locale, code, country):
+        kwargs = {'locale': locale,
+                  'code': code,
+                  'country': country}
+        return Language.objects.create(**kwargs)
+
+    def _create_timezone(self, zone, code, country):
+        kwargs = {'zone': zone,
+                  'code': code,
+                  'country': country}
+        return TimeZone.objects.create(**kwargs)
+
+    def _create_currency(self, currency, alphabetic_code, country, **kwargs):
+        kwargs['currency'] = currency
+        kwargs['code'] = code
+        kwargs['country'] = country
+        return Currency.objects.create(**kwargs)

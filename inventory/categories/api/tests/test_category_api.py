@@ -48,8 +48,8 @@ class TestCategoryAPI(BaseTest):
         kwargs['role'] = UserModel.ADMINISTRATOR
         user, client = self._create_user(username, password, **kwargs)
         category = self._create_category(self.project, "Test Root Category")
-        #  Test that an unauthenticated ADMINISTRATOR has no permissions.
         uri = reverse('category-list')
+        #  Test that an unauthenticated ADMINISTRATOR has no permissions.
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -59,7 +59,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = True
@@ -74,7 +74,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
 
     def test_GET_category_list_with_valid_permissions(self):
@@ -90,13 +90,12 @@ class TestCategoryAPI(BaseTest):
         kwargs['is_superuser'] = True
         user, client = self._create_user(username, password, **kwargs)
         category = self._create_category(self.project, "Test Root Category")
-        # Test that a superuser has access.
         uri = reverse('category-list')
+        # Test that a superuser has access.
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Test that an ADMINISTRATOR has access
         kwargs['login'] = True
@@ -106,8 +105,7 @@ class TestCategoryAPI(BaseTest):
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Test that a project OWNER has access
         kwargs['login'] = True
@@ -119,8 +117,7 @@ class TestCategoryAPI(BaseTest):
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Test that a PROJECT_MANAGER has access
         kwargs['login'] = True
@@ -131,8 +128,7 @@ class TestCategoryAPI(BaseTest):
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Test that a project DEFAULT_USER has access.
         kwargs['login'] = True
@@ -143,8 +139,7 @@ class TestCategoryAPI(BaseTest):
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
 
     def test_POST_category_list_with_invalid_permissions(self):
@@ -159,8 +154,8 @@ class TestCategoryAPI(BaseTest):
         kwargs['login'] = False
         kwargs['is_superuser'] = True
         user, client = self._create_user(username, password, **kwargs)
-        # Test that the superuser cannot POST a category.
         uri = reverse('category-list')
+        # Test that the superuser cannot POST a category.
         new_data = {'name': 'TestCategory-01', 'project': self.project_uri}
         response = client.post(uri, new_data, format='json')
         data = response.data
@@ -171,7 +166,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that an unauthenticated ADMINISTRATOR has no permissions.
         kwargs['login'] = False
@@ -187,7 +182,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = True
@@ -202,7 +197,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
         # Test that a project OWNER has no permissions.
         kwargs['login'] = False
@@ -220,7 +215,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a PROJECT_MANAGER has no permissions.
         kwargs['login'] = False
@@ -237,7 +232,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a project DEFAULT_USER has no access.
         kwargs['login'] = True
@@ -254,7 +249,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
 
     def test_POST_category_list_with_valid_permissions(self):
@@ -269,8 +264,8 @@ class TestCategoryAPI(BaseTest):
         kwargs['login'] = True
         kwargs['is_superuser'] = True
         user, client = self._create_user(username, password, **kwargs)
-        # Test that the superuser can create a category.
         uri = reverse('category-list')
+        # Test that the superuser can create a category.
         new_data = {'name': 'TestCategory-01', 'project': self.project_uri}
         response = client.post(uri, new_data, format='json')
         data = response.data
@@ -332,9 +327,9 @@ class TestCategoryAPI(BaseTest):
         user, client = self._create_user(username, password, **kwargs)
         name = 'TestCategory-01'
         category = self._create_category(self.project, name)
-        # Test that the superuser cannot GET on a category.
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
+        # Test that the superuser cannot GET on a category.
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -344,7 +339,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that an unauthenticated ADMINISTRATOR has no permissions.
         kwargs['login'] = False
@@ -360,7 +355,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = True
@@ -375,7 +370,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
         # Test that a project OWNER has no permissions.
         kwargs['login'] = False
@@ -393,7 +388,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a PROJECT_MANAGER has no permissions.
         kwargs['login'] = False
@@ -410,7 +405,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a project DEFAULT_USER has no access.
         kwargs['login'] = False
@@ -427,7 +422,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
 
     def test_GET_category_detail_with_valid_permissions(self):
@@ -444,9 +439,9 @@ class TestCategoryAPI(BaseTest):
         user, client = self._create_user(username, password, **kwargs)
         name = 'TestCategory-01'
         category = self._create_category(self.project, name)
-        # Test that the superuser can GET a category.
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
+        # Test that the superuser can GET a category.
         response = client.get(uri, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
@@ -511,9 +506,9 @@ class TestCategoryAPI(BaseTest):
         user, client = self._create_user(username, password, **kwargs)
         name = 'TestCategory-01'
         category = self._create_category(self.project, name)
-        # Test that the superuser cannot PUT to a category.
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
+        # Test that the superuser cannot PUT to a category.
         new_data = {'name': name, 'project': self.project_uri}
         response = client.put(uri, new_data, format='json')
         data = response.data
@@ -524,7 +519,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that an unauthenticated ADMINISTRATOR has no permissions.
         kwargs['login'] = False
@@ -540,7 +535,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = True
@@ -555,7 +550,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
         # Test that a project OWNER has no permissions.
         kwargs['login'] = False
@@ -573,7 +568,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a PROJECT_MANAGER has no permissions.
         kwargs['login'] = False
@@ -590,7 +585,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a project DEFAULT_USER has no access.
         kwargs['login'] = True
@@ -607,7 +602,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
 
     def test_PUT_category_detail_with_valid_permissions(self):
@@ -624,15 +619,14 @@ class TestCategoryAPI(BaseTest):
         user, client = self._create_user(username, password, **kwargs)
         name = 'TestCategory-01'
         category = self._create_category(self.project, name)
-        # Test that the superuser can update a category.
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
+        # Test that the superuser can update a category.
         new_data = {'name': name, 'project': self.project_uri}
         response = client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Test that an ADMINISTRATOR can update a category.
         kwargs['login'] = True
@@ -643,8 +637,7 @@ class TestCategoryAPI(BaseTest):
         response = client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Test that a project OWNER can update a category.
         kwargs['login'] = True
@@ -657,8 +650,7 @@ class TestCategoryAPI(BaseTest):
         response = client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Test that a PROJECT_MANAGER can update a category.
         kwargs['login'] = True
@@ -670,8 +662,7 @@ class TestCategoryAPI(BaseTest):
         response = client.put(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
 
     def test_PATCH_category_detail_with_invalid_permissions(self):
@@ -688,9 +679,9 @@ class TestCategoryAPI(BaseTest):
         user, client = self._create_user(username, password, **kwargs)
         name = 'TestCategory-01'
         category = self._create_category(self.project, name)
-        # Test that the superuser cannot PATCH to a category.
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
+        # Test that the superuser cannot PATCH to a category.
         new_data = {'name': name}
         response = client.patch(uri, new_data, format='json')
         data = response.data
@@ -701,7 +692,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that an unauthenticated ADMINISTRATOR has no permissions.
         kwargs['login'] = False
@@ -717,7 +708,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = True
@@ -732,7 +723,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
         # Test that a project OWNER has no permissions.
         kwargs['login'] = False
@@ -750,7 +741,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a PROJECT_MANAGER has no permissions.
         kwargs['login'] = False
@@ -767,7 +758,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a project DEFAULT_USER has no access.
         kwargs['login'] = True
@@ -784,7 +775,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
 
     def test_PATCH_category_detail_with_valid_permissions(self):
@@ -801,15 +792,14 @@ class TestCategoryAPI(BaseTest):
         user, client = self._create_user(username, password, **kwargs)
         name = 'TestCategory-01'
         category = self._create_category(self.project, name)
-        # Test that the superuser can update a category.
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
+        # Test that the superuser can update a category.
         new_data = {'name': 'TestCategory-02'}
         response = client.patch(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         value = self.get_category_field(uri, 'name')
         msg = "Old value '{}', new value: '{}'".format(name, value)
@@ -823,8 +813,7 @@ class TestCategoryAPI(BaseTest):
         response = client.patch(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         value = self.get_category_field(uri, 'name')
         msg = "Old value '{}', new value: '{}'".format(name, value)
@@ -840,8 +829,7 @@ class TestCategoryAPI(BaseTest):
         response = client.patch(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         value = self.get_category_field(uri, 'name')
         msg = "Old value '{}', new value: '{}'".format(name, value)
@@ -856,12 +844,123 @@ class TestCategoryAPI(BaseTest):
         response = client.patch(uri, new_data, format='json')
         data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK,
-            self._clean_data(data))
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         value = self.get_category_field(uri, 'name')
         msg = "Old value '{}', new value: '{}'".format(name, value)
         self.assertFalse(name == value, msg)
+
+    def test_DELETE_category_detail_with_invalid_permissions(self):
+        """
+        Test that a DELETE to category_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a user and client
+        username = 'Normal_User'
+        password = '123456'
+        kwargs = {}
+        kwargs['login'] = False
+        kwargs['is_superuser'] = True
+        user, client = self._create_user(username, password, **kwargs)
+        name = 'TestCategory-01'
+        category = self._create_category(self.project, name)
+        uri = reverse('category-detail',
+                      kwargs={'public_id': category.public_id})
+        # Test that the superuser cannot DELETE a category.
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that an unauthenticated ADMINISTRATOR has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.ADMINISTRATOR
+        user, client = self._create_user(username, password, **kwargs)
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that a DEFAULT_USER has no permissions.
+        kwargs['login'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(username, password, **kwargs)
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['permission'],
+            })
+        # Test that a project OWNER has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(username, password, **kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.OWNER)
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that a PROJECT_MANAGER has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(username, password, **kwargs)
+        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_401_UNAUTHORIZED,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that a project DEFAULT_USER has no access.
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(username, password, **kwargs)
+        self.project.set_role(user, Membership.DEFAULT_USER)
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN,
+            self._clean_data(data))
+        self.assertEqual(
+            response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['permission'],
+            })
 
     def test_DELETE_category_detail_with_valid_permissions(self):
         """
@@ -876,8 +975,8 @@ class TestCategoryAPI(BaseTest):
         kwargs['is_superuser'] = True
         user, client = self._create_user(username, password, **kwargs)
         name = 'TestCategory-01'
-        category = self._create_category(self.project, name)
         # Test that the superuser can DELETE a category.
+        category = self._create_category(self.project, name)
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         response = client.delete(uri, format='json')
@@ -887,91 +986,86 @@ class TestCategoryAPI(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         response = client.get(uri, format='json')
         data = response.data
-
-
-        ## # Test that an unauthenticated ADMINISTRATOR has no permissions.
-        ## kwargs['login'] = False
-        ## kwargs['is_superuser'] = False
-        ## kwargs['role'] = UserModel.ADMINISTRATOR
-        ## user, client = self._create_user(username, password, **kwargs)
-        ## response = client.delete(uri, format='json')
-        ## data = response.data
-        ## msg = "Response: {} should be {}, content: {}".format(
-        ##     response.status_code, status.HTTP_401_UNAUTHORIZED,
-        ##     self._clean_data(data))
-        ## self.assertEqual(
-        ##     response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
-        ## self.assertTrue(self._has_error(response), msg)
-        ## self._test_errors(response, tests={
-        ##     'detail': u'Authentication credentials were not provided.',
-        ##     })
-        ## # Test that a DEFAULT_USER has no permissions.
-        ## kwargs['login'] = True
-        ## kwargs['role'] = UserModel.DEFAULT_USER
-        ## user, client = self._create_user(username, password, **kwargs)
-        ## response = client.delete(uri, format='json')
-        ## data = response.data
-        ## msg = "Response: {} should be {}, content: {}".format(
-        ##     response.status_code, status.HTTP_403_FORBIDDEN,
-        ##     self._clean_data(data))
-        ## self.assertEqual(
-        ##     response.status_code, status.HTTP_403_FORBIDDEN, msg)
-        ## self.assertTrue(self._has_error(response), msg)
-        ## self._test_errors(response, tests={
-        ##     'detail': u'You do not have permission to perform this action.',
-        ##     })
-        ## # Test that a project OWNER has no permissions.
-        ## kwargs['login'] = False
-        ## kwargs['is_superuser'] = False
-        ## kwargs['role'] = UserModel.DEFAULT_USER
-        ## user, client = self._create_user(username, password, **kwargs)
-        ## self.project.process_members([self.user, user])
-        ## self.project.set_role(user, Membership.OWNER)
-        ## response = client.delete(uri, format='json')
-        ## data = response.data
-        ## msg = "Response: {} should be {}, content: {}".format(
-        ##     response.status_code, status.HTTP_401_UNAUTHORIZED,
-        ##     self._clean_data(data))
-        ## self.assertEqual(
-        ##     response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
-        ## self.assertTrue(self._has_error(response), msg)
-        ## self._test_errors(response, tests={
-        ##     'detail': u'Authentication credentials were not provided.',
-        ##     })
-        ## # Test that a PROJECT_MANAGER has no permissions.
-        ## kwargs['login'] = False
-        ## kwargs['is_superuser'] = False
-        ## kwargs['role'] = UserModel.DEFAULT_USER
-        ## user, client = self._create_user(username, password, **kwargs)
-        ## self.project.set_role(user, Membership.PROJECT_MANAGER)
-        ## response = client.delete(uri, format='json')
-        ## data = response.data
-        ## msg = "Response: {} should be {}, content: {}".format(
-        ##     response.status_code, status.HTTP_401_UNAUTHORIZED,
-        ##     self._clean_data(data))
-        ## self.assertEqual(
-        ##     response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
-        ## self.assertTrue(self._has_error(response), msg)
-        ## self._test_errors(response, tests={
-        ##     'detail': u'Authentication credentials were not provided.',
-        ##     })
-        ## # Test that a project DEFAULT_USER has no access.
-        ## kwargs['login'] = True
-        ## kwargs['is_superuser'] = False
-        ## kwargs['role'] = UserModel.DEFAULT_USER
-        ## user, client = self._create_user(username, password, **kwargs)
-        ## self.project.set_role(user, Membership.DEFAULT_USER)
-        ## response = client.delete(uri, format='json')
-        ## data = response.data
-        ## msg = "Response: {} should be {}, content: {}".format(
-        ##     response.status_code, status.HTTP_403_FORBIDDEN,
-        ##     self._clean_data(data))
-        ## self.assertEqual(
-        ##     response.status_code, status.HTTP_403_FORBIDDEN, msg)
-        ## self.assertTrue(self._has_error(response), msg)
-        ## self._test_errors(response, tests={
-        ##     'detail': u'You do not have permission to perform this action.',
-        ##     })
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['not_found'],
+            })
+        # Test that an ADMINISTRATOR can update a category.
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.ADMINISTRATOR
+        user, client = self._create_user(username, password, **kwargs)
+        category = self._create_category(self.project, name)
+        uri = reverse('category-detail',
+                      kwargs={'public_id': category.public_id})
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['not_found'],
+            })
+        # Test that a project OWNER can update a category.
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(username, password, **kwargs)
+        category = self._create_category(self.project, name)
+        uri = reverse('category-detail',
+                      kwargs={'public_id': category.public_id})
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.OWNER)
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['not_found'],
+            })
+        # Test that a PROJECT_MANAGER can update a category.
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(username, password, **kwargs)
+        category = self._create_category(self.project, name)
+        uri = reverse('category-detail',
+                      kwargs={'public_id': category.public_id})
+        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        response = client.delete(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        response = client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['not_found'],
+            })
 
     def test_DELETE_category_detail_with_invalid_permissions(self):
         """
@@ -999,7 +1093,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that an unauthenticated ADMINISTRATOR has no permissions.
         kwargs['login'] = False
@@ -1015,7 +1109,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = True
@@ -1030,7 +1124,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
         # Test that a project OWNER has no permissions.
         kwargs['login'] = False
@@ -1048,7 +1142,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a PROJECT_MANAGER has no permissions.
         kwargs['login'] = False
@@ -1065,7 +1159,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'Authentication credentials were not provided.',
+            'detail': self._ERROR_MESSAGES['credentials'],
             })
         # Test that a project DEFAULT_USER has no access.
         kwargs['login'] = True
@@ -1082,7 +1176,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': u'You do not have permission to perform this action.',
+            'detail': self._ERROR_MESSAGES['permission'],
             })
 
 

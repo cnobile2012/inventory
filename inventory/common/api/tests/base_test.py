@@ -24,6 +24,11 @@ UserModel = get_user_model()
 class BaseTest(RecordCreation, APITestCase):
     _TEST_USERNAME = 'TestUser'
     _TEST_PASSWORD = 'TestPassword_007'
+    _ERROR_MESSAGES = {
+        'credentials': u'Authentication credentials were not provided.',
+        'permission': u'You do not have permission to perform this action.',
+        'not_found': u'Not found.',
+        }
 
     def __init__(self, name):
         super(BaseTest, self).__init__(name)
@@ -131,7 +136,7 @@ class BaseTest(RecordCreation, APITestCase):
                 err_msg = err_msg.as_text()
                 msg = "For key '{}' value '{}' not found in '{}'".format(
                     key, value, err_msg)
-                self.assertTrue(value in err_msg, msg)
+                self.assertTrue(value and value in err_msg, msg)
         elif hasattr(response, 'data'):
             errors = response.data
 
@@ -144,7 +149,7 @@ class BaseTest(RecordCreation, APITestCase):
                 self.assertTrue(err_msg, "Could not find key: {}".format(key))
                 msg = "For key '{}' value '{}' not found in '{}'".format(
                     key, value, err_msg)
-                self.assertTrue(value in err_msg, msg)
+                self.assertTrue(value and value in err_msg, msg)
         elif hasattr(response, 'content'):
             errors = json.loads(response.content.decode('utf-8'))
 
@@ -161,7 +166,7 @@ class BaseTest(RecordCreation, APITestCase):
                 if isinstance(err_msg, (list, tuple)):
                     err_msg = err_msg[0]
 
-                self.assertTrue(value in err_msg, msg)
+                self.assertTrue(value and value in err_msg, msg)
         else:
             msg = "No context_data"
             self.assertTrue(False, msg)
