@@ -13,10 +13,15 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext
 from django.utils import six
 
+from rest_framework import permissions
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.reverse import reverse
+from rest_framework.status import (
+    HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED,
+    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND)
 
 from inventory.common.tests.record_creation import RecordCreation
+from inventory.projects.models import Membership
 
 UserModel = get_user_model()
 
@@ -42,6 +47,274 @@ class BaseTest(RecordCreation, APITestCase):
 
     def tearDown(self):
         self.client.logout()
+
+    def __setup_user_credentials(self):
+        """
+        Setup a test user credentials.
+        """
+        username = 'Normal_User'
+        password = '123456'
+        kwargs = {}
+        kwargs['username'] = username
+        kwargs['password'] = password
+        return kwargs
+
+    def __get_request_data(self, key, request_data):
+        return request_data.get(key) if request_data else None
+
+    def _test_user_with_invalid_permissions(self, uri, method,
+                                            default_user=True,
+                                            request_data=None):
+        kwargs = self.__setup_user_credentials()
+        # Test that an unauthenticated superuser has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        data = self.__get_request_data('SU', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, HTTP_401_UNAUTHORIZED, self._clean_data(data))
+        self.assertEqual(response.status_code, HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that an unauthenticated ADMINISTRATOR has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.ADMINISTRATOR
+        user, client = self._create_user(**kwargs)
+        data = self.__get_request_data('AD', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, HTTP_401_UNAUTHORIZED, self._clean_data(data))
+        self.assertEqual(response.status_code, HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        kwargs['login'] = False
+        kwargs['is_superuser'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        response = getattr(client, method)(uri, data=data, format='json')
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+
+        # Test that a DEFAULT_USER has no permissions.
+        if default_user:
+            kwargs['login'] = True
+            kwargs['is_superuser'] = False
+            kwargs['role'] = UserModel.DEFAULT_USER
+            user, client = self._create_user(**kwargs)
+
+            if user.projects.all().count() == 0:
+                data = self.__get_request_data('DU', request_data)
+                response = getattr(client, method)(uri, data=data,
+                                                   format='json')
+                data = response.data
+                msg = "Response: {} should be {}, content: {}".format(
+                    response.status_code, HTTP_403_FORBIDDEN,
+                    self._clean_data(data))
+                self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
+                self.assertTrue(self._has_error(response), msg)
+                self._test_errors(response, tests={
+                    'detail': self._ERROR_MESSAGES['permission'],
+                    })
+
+    def _test_project_user_with_invalid_permissions(self, uri, method,
+                                                    request_data=None):
+        kwargs = self.__setup_user_credentials()
+        # Test that a project OWNER has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.OWNER)
+        data = self.__get_request_data('POW', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, HTTP_401_UNAUTHORIZED, self._clean_data(data))
+        self.assertEqual(response.status_code, HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that a PROJECT_MANAGER has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        data = self.__get_request_data('PMA', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, HTTP_401_UNAUTHORIZED, self._clean_data(data))
+        self.assertEqual(response.status_code, HTTP_401_UNAUTHORIZED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+
+        # Test that a project DEFAULT_USER has no access.
+        if method.upper() not in permissions.SAFE_METHODS:
+            kwargs['login'] = True
+            kwargs['is_superuser'] = False
+            kwargs['role'] = UserModel.DEFAULT_USER
+            user, client = self._create_user(**kwargs)
+            self.project.set_role(user, Membership.DEFAULT_USER)
+            data = self.__get_request_data('PDF', request_data)
+            response = getattr(client, method)(uri, data=data, format='json')
+            data = response.data
+            msg = "Response: {} should be {}, content: {}".format(
+                response.status_code, HTTP_403_FORBIDDEN,
+                self._clean_data(data))
+            self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
+            self.assertTrue(self._has_error(response), msg)
+            self._test_errors(response, tests={
+                'detail': self._ERROR_MESSAGES['permission'],
+                })
+
+    def _test_user_with_valid_permissions(self, uri, method, default_user=True,
+                                          request_data=None):
+        self._test_superuser_with_valid_permissions(
+            uri, method, request_data=request_data)
+        self._test_administrator_with_valid_permissions(
+            uri, method, request_data=request_data)
+
+        if default_user:
+            self._test_default_user_with_valid_permissions(
+                uri, method, request_data=request_data)
+
+    def _test_superuser_with_valid_permissions(self, uri, method,
+                                               request_data=None):
+        # Test a valid return with a superuser role.
+        kwargs = self.__setup_user_credentials()
+        status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
+        kwargs['login'] = True
+        kwargs['is_superuser'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        data = self.__get_request_data('SU', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status_code, self._clean_data(data))
+        self.assertEqual(response.status_code, status_code, msg)
+
+    def _test_administrator_with_valid_permissions(self, uri, method,
+                                                   request_data=None):
+        # Test a valid return with an ADMINISTRATOR role.
+        kwargs = self.__setup_user_credentials()
+        status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.ADMINISTRATOR
+        user, client = self._create_user(**kwargs)
+        data = self.__get_request_data('AD', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status_code, self._clean_data(data))
+        self.assertEqual(response.status_code, status_code, msg)
+
+    def _test_default_user_with_valid_permissions(self, uri, method,
+                                                  request_data=None):
+        # Test a valid return with a DEFAULT_USER role.
+        kwargs = self.__setup_user_credentials()
+        status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+
+        if user.projects.all().count() > 0:
+            data = self.__get_request_data('DU', request_data)
+            response = getattr(client, method)(uri, data=data, format='json')
+            data = response.data
+            msg = "Response: {} should be {}, content: {}".format(
+                response.status_code, status_code, self._clean_data(data))
+            self.assertEqual(response.status_code, status_code, msg)
+
+    def _test_project_user_with_valid_permissions(self, uri, method,
+                                                  default_user=True,
+                                                  request_data=None):
+        self._test_project_owner_with_valid_permissions(
+            uri, method, request_data=request_data)
+        self._test_project_manager_with_valid_permissions(
+            uri, method, request_data=request_data)
+
+        if default_user:
+            self._test_project_default_user_with_valid_permissions(
+                uri, method, request_data=request_data)
+
+    def _test_project_owner_with_valid_permissions(self, uri, method,
+                                                   request_data=None):
+        # Test a valid return with a project OWNER user role.
+        kwargs = self.__setup_user_credentials()
+        status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.OWNER)
+        data = self.__get_request_data('POW', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status_code, self._clean_data(data))
+        self.assertEqual(response.status_code, status_code, msg)
+
+    def _test_project_manager_with_valid_permissions(self, uri, method,
+                                                     request_data=None):
+        # Test a valid return with a PROJECT_MANAGER role.
+        kwargs = self.__setup_user_credentials()
+        status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        data = self.__get_request_data('PMA', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status_code, self._clean_data(data))
+        self.assertEqual(response.status_code, status_code, msg)
+
+    def _test_project_default_user_with_valid_permissions(self, uri, method,
+                                                          request_data=None):
+        # Test a valid return with a project DEFAULT_USER role.
+        kwargs = self.__setup_user_credentials()
+        status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.set_role(user, Membership.DEFAULT_USER)
+        data = self.__get_request_data('PDU', request_data)
+        response = getattr(client, method)(uri, data=data, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status_code, self._clean_data(data))
+        self.assertEqual(response.status_code, status_code, msg)
+
+    def _test_valid_GET_with_errors(self, uri, method):
+        response = self.client.get(uri, format='json')
+        data = response.data
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, HTTP_404_NOT_FOUND,
+            self._clean_data(data))
+        self.assertEqual(response.status_code, HTTP_404_NOT_FOUND, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['not_found'],
+            })
 
     # Setup user
     def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,

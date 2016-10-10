@@ -32,6 +32,10 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     parent = serializers.HyperlinkedRelatedField(
         view_name='category-detail', queryset=Category.objects.all(),
         default=None, lookup_field='public_id')
+    creator = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True, lookup_field='public_id')
+    updater = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
         view_name='category-detail', lookup_field='public_id')
 
