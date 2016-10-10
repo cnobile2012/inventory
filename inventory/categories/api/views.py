@@ -27,7 +27,6 @@ from ..models import Category
 
 from .serializers import CategorySerializer
 
-
 log = logging.getLogger('api.categories.views')
 UserModel = get_user_model()
 
@@ -65,7 +64,8 @@ class CategoryList(CategoryAuthorizationMixin,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly))
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -87,7 +87,8 @@ class CategoryDetail(CategoryAuthorizationMixin,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly))
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     serializer_class = CategorySerializer
