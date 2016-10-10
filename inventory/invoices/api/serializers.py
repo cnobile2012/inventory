@@ -67,6 +67,10 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
     shared_projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', many=True, queryset=Project.objects.all(),
         default=None, lookup_field='public_id')
+    creator = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True, lookup_field='public_id')
+    updater = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
         view_name='item-detail', read_only=True, lookup_field='public_id')
 
