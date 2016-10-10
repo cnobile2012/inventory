@@ -17,7 +17,8 @@ from rest_condition import C, And, Or, Not
 
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsAnyUser, IsProjectOwner,
-    IsProjectManager, IsAnyProjectUser, IsReadOnly, IsUserActive)
+    IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser, IsReadOnly,
+    IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import InventoryType, Project, Membership
@@ -148,7 +149,13 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
     """
     serializer_class = ProjectSerializer
     permission_classes = (
-        And(IsUserActive, IsAnyUser), #IsAuthenticated,
+        And(IsUserActive, IsAnyUser, #IsAuthenticated,
+            Or(IsAnyUser,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
         )
     pagination_class = SmallResultsSetPagination
     lookup_field = 'public_id'
@@ -166,8 +173,9 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
-               IsProjectManager
-               )
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     lookup_field = 'public_id'
