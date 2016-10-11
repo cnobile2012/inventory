@@ -183,7 +183,7 @@ class MigrateItem(MigrateBase):
                     record.mtime.isoformat()
                     ])
 
-                # Get the dynamic columns from the item recored itself.
+                # Get the dynamic columns from the item record itself.
                 dc = {
                     'Condition': record.condition,
                     'item_number': record.item_number.encode('utf-8'),
