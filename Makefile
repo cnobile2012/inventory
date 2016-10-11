@@ -11,6 +11,9 @@ PACKAGE_DIR	= $(shell echo $${PWD\#\#*/})
 APACHE_DIR	= $(PREFIX)/apache
 DOCS_DIR	= $(PREFIX)/docs
 LOGS_DIR	= $(PREFIX)/logs
+RM_REGEX	= '(^.*.pyc$$)|(^.*.wsgic$$)|(^.*~$$)|(.*\#$$)|(^.*,cover$$)'
+RM_CMD		= find $(PREFIX) -regextype posix-egrep -regex $(RM_REGEX) \
+                  -exec rm {} \;
 PIP_ARGS	=
 
 #----------------------------------------------------------------------
@@ -19,7 +22,7 @@ all	: tar
 #----------------------------------------------------------------------
 tar	: clean
 	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz --exclude=".git" \
-          $(PACKAGE_DIR))
+          --exclude="example_site/static" $(PACKAGE_DIR))
 
 .PHONY	: coverage
 coverage: clean
@@ -47,9 +50,10 @@ install-stg:
 
 #----------------------------------------------------------------------
 clean	:
-	cleanDirs.sh clean
+	$(shell $(RM_CMD))
 	@(cd ${DOCS_DIR}; make clean)
 
 clobber	: clean
 	@(cd $(DOCS_DIR); make clobber)
+	@rm -rf $(DOCS_DIR)/htmlcov
 	@rm -f $(LOGS_DIR)/*.log*
