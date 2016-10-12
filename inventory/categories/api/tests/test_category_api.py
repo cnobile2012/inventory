@@ -50,7 +50,7 @@ class TestCategoryAPI(BaseTest):
 
     def test_GET_category_list_with_valid_permissions(self):
         """
-        Test the category_list endpoint with various permissions.
+        Test the category_list endpoint with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -83,7 +83,7 @@ class TestCategoryAPI(BaseTest):
 
     def test_POST_category_list_with_valid_permissions(self):
         """
-        Test that a POST to category_list passes with invalid permissions.
+        Test that a POST to category_list passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
@@ -143,7 +143,7 @@ class TestCategoryAPI(BaseTest):
 
     def test_GET_category_detail_with_valid_permissions(self):
         """
-        Test that a GET to category_detail passes with invalid permissions.
+        Test that a GET to category_detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         category = self._create_category(self.project, "Test Root Category")
@@ -178,7 +178,7 @@ class TestCategoryAPI(BaseTest):
 
     def test_PUT_category_detail_with_valid_permissions(self):
         """
-        Test that a PUT to category_detail passes with invalid permissions.
+        Test that a PUT to category_detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         category = self._create_category(self.project, "Test Root Category")
@@ -229,7 +229,7 @@ class TestCategoryAPI(BaseTest):
 
     def test_PATCH_category_detail_with_valid_permissions(self):
         """
-        Test that a PATCH to category_detail passes with invalid permissions.
+        Test that a PATCH to category_detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         category = self._create_category(self.project, "Test Root Category")

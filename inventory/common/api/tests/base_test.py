@@ -48,7 +48,7 @@ class BaseTest(RecordCreation, APITestCase):
     def tearDown(self):
         self.client.logout()
 
-    def __setup_user_credentials(self):
+    def _setup_user_credentials(self):
         """
         Setup a test user credentials.
         """
@@ -65,7 +65,7 @@ class BaseTest(RecordCreation, APITestCase):
     def _test_user_with_invalid_permissions(self, uri, method,
                                             default_user=True,
                                             request_data=None):
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         # Test that an unauthenticated superuser has no permissions.
         kwargs['login'] = False
         kwargs['is_superuser'] = True
@@ -124,8 +124,9 @@ class BaseTest(RecordCreation, APITestCase):
                     })
 
     def _test_project_user_with_invalid_permissions(self, uri, method,
+                                                    default_user=True,
                                                     request_data=None):
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         # Test that a project OWNER has no permissions.
         kwargs['login'] = False
         kwargs['is_superuser'] = False
@@ -161,13 +162,13 @@ class BaseTest(RecordCreation, APITestCase):
             })
 
         # Test that a project DEFAULT_USER has no access.
-        if method.upper() not in permissions.SAFE_METHODS:
+        if method.upper() not in permissions.SAFE_METHODS and default_user:
             kwargs['login'] = True
             kwargs['is_superuser'] = False
             kwargs['role'] = UserModel.DEFAULT_USER
             user, client = self._create_user(**kwargs)
             self.project.set_role(user, Membership.DEFAULT_USER)
-            data = self.__get_request_data('PDF', request_data)
+            data = self.__get_request_data('PDU', request_data)
             response = getattr(client, method)(uri, data=data, format='json')
             data = response.data
             msg = "Response: {} should be {}, content: {}".format(
@@ -193,7 +194,7 @@ class BaseTest(RecordCreation, APITestCase):
     def _test_superuser_with_valid_permissions(self, uri, method,
                                                request_data=None):
         # Test a valid return with a superuser role.
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
         kwargs['login'] = True
         kwargs['is_superuser'] = True
@@ -209,7 +210,7 @@ class BaseTest(RecordCreation, APITestCase):
     def _test_administrator_with_valid_permissions(self, uri, method,
                                                    request_data=None):
         # Test a valid return with an ADMINISTRATOR role.
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
         kwargs['login'] = True
         kwargs['is_superuser'] = False
@@ -225,7 +226,7 @@ class BaseTest(RecordCreation, APITestCase):
     def _test_default_user_with_valid_permissions(self, uri, method,
                                                   request_data=None):
         # Test a valid return with a DEFAULT_USER role.
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
         kwargs['login'] = True
         kwargs['is_superuser'] = False
@@ -255,7 +256,7 @@ class BaseTest(RecordCreation, APITestCase):
     def _test_project_owner_with_valid_permissions(self, uri, method,
                                                    request_data=None):
         # Test a valid return with a project OWNER user role.
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
         kwargs['login'] = True
         kwargs['is_superuser'] = False
@@ -273,7 +274,7 @@ class BaseTest(RecordCreation, APITestCase):
     def _test_project_manager_with_valid_permissions(self, uri, method,
                                                      request_data=None):
         # Test a valid return with a PROJECT_MANAGER role.
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
         kwargs['login'] = True
         kwargs['is_superuser'] = False
@@ -290,7 +291,7 @@ class BaseTest(RecordCreation, APITestCase):
     def _test_project_default_user_with_valid_permissions(self, uri, method,
                                                           request_data=None):
         # Test a valid return with a project DEFAULT_USER role.
-        kwargs = self.__setup_user_credentials()
+        kwargs = self._setup_user_credentials()
         status_code = HTTP_201_CREATED if method == 'post' else HTTP_200_OK
         kwargs['login'] = True
         kwargs['is_superuser'] = False

@@ -7,6 +7,7 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
+from django.utils import six
 
 from rest_framework import serializers
 
@@ -92,8 +93,9 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
             raise serializers.ValidationError(
                 _("The username '{}' is not a valid user.").format(username))
 
-        if role and role.isdigit():
-            role = int(role)
+        if role not in ['', None]:
+            if isinstance(role, six.string_types) and role.isdigit():
+                role = int(role)
 
             if role not in Membership.ROLE_MAP:
                 raise serializers.ValidationError(
@@ -111,11 +113,11 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         validated_data['creator'] = user
         validated_data['updater'] = user
         members = validated_data.pop('members', [])
-        user = validated_data.pop('user', None)
+        role_user = validated_data.pop('user', None)
         role = validated_data.pop('role', {})
         obj = Project.objects.create(**validated_data)
         obj.process_members(members)
-        obj.set_role(user, role)
+        obj.set_role(role_user, role)
         return obj
 
     def update(self, instance, validated_data):
