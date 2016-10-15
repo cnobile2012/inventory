@@ -241,5 +241,21 @@ class IsUserActive(permissions.BasePermission):
         if user and user.is_active:
             result = True
 
-        log.debug("IsUserActive: %s", result)
+        #if request.method != 'GET': raise Exception('test')
+        log.debug("IsUserActive: %s, method: %s", result, request.method)
+        return result
+
+
+class CannotDelete(permissions.BasePermission):
+    """
+    Disallows deletion of records.
+    """
+
+    def has_permission(self, request, view):
+        result = False
+
+        if request.method != 'DELETE':
+            result = True
+
+        log.debug("CannotDelete: %s", result)
         return result
