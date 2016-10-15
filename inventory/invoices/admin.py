@@ -88,8 +88,8 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
     readonly_fields = ('public_id', 'sku', 'creator', 'created', 'updater',
                        'updated',)
     list_display = ('sku', 'public_id', 'item_number', 'quantity',
-                    'category_producer', 'location_code_producer', 'project',
-                    'active',)
+                    'description', 'category_producer',
+                    'location_code_producer', 'project', 'active',)
     list_editable = ('item_number', 'quantity', 'active',)
     search_fields = ('sku', 'public_id', 'item_number', 'item_number_mfg',
                      'project__name', 'description', 'categories__path',
