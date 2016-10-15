@@ -16,9 +16,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_condition import C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsAnyUser, IsProjectOwner,
-    IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser, IsReadOnly,
-    IsUserActive)
+    IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser,
+    IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
+    IsReadOnly, IsUserActive, CannotDelete)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import InventoryType, Project, Membership
@@ -73,67 +73,11 @@ inventory_type_detail = InventoryTypeDetail.as_view()
 
 
 #
-# Membership
-#
-class MembershipAuthorizationMixin(object):
-
-    def get_queryset(self):
-        result = []
-
-        if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
-            result = Membership.objects.all()
-        else:
-            result = self.request.user.memberships.all()
-
-        return result
-
-
-## class MembershipList(MembershipAuthorizationMixin, ListCreateAPIView):
-##     """
-##     Membership list endpoint.
-##     """
-##     serializer_class = MembershipSerializer
-##     permission_classes = (
-##         And(IsUserActive, #IsAuthenticated,
-##             Or(IsAdminSuperUser,
-##                IsAdministrator,
-##                IsProjectOwner,
-##                IsProjectManager
-##                )
-##             ),
-##         )
-##     pagination_class = SmallResultsSetPagination
-
-## membership_list = MembershipList.as_view()
-
-
-## class MembershipDetail(MembershipAuthorizationMixin, RetrieveAPIView):
-##     """
-##     Membership detail endpoint.
-##     """
-##     serializer_class = MembershipSerializer
-##     permission_classes = (
-##         And(IsUserActive, #IsAuthenticated,
-##             Or(IsAdminSuperUser,
-##                IsAdministrator,
-##                IsProjectOwner,
-##                IsProjectManager
-##                )
-##             ),
-##         )
-
-## membership_detail = MembershipDetail.as_view()
-
-
-#
 # Project
 #
 class ProjectAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
             self.request.user.role == UserModel.ADMINISTRATOR):
             result = Project.objects.all()
@@ -150,7 +94,9 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (
         And(IsUserActive, IsAnyUser, #IsAuthenticated,
-            Or(IsAnyUser,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               And(IsDefaultUser, Not(IsReadOnly)),
                IsProjectOwner,
                IsProjectManager,
                And(IsProjectDefaultUser, IsReadOnly)
@@ -173,7 +119,7 @@ class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
-               IsProjectManager,
+               And(IsProjectManager, CannotDelete),
                And(IsProjectDefaultUser, IsReadOnly)
                ),
             ),

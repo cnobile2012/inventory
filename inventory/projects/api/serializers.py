@@ -60,7 +60,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', many=True, queryset=UserModel.objects.all(),
         default=None, lookup_field='public_id')
     role = serializers.DictField(
-        label=_("Role"), write_only=True,
+        label=_("Role"), write_only=True, required=False,
         help_text=_("Set the role of the user in this project."))
     memberships = MembershipSerializer(many=True, read_only=True)
     #public = serializers.BooleanField(
@@ -80,32 +80,31 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         """
         role_data = data.pop('role', {})
 
-        if role_data and ('user' not in role_data or 'role' not in role_data):
-            raise serializers.ValidationError(
-                _("A user and role must both exist."))
+        if role_data and ('user' in role_data and 'role' in role_data):
+            username = role_data.get('user')
+            role = role_data.get('role')
 
-        username = role_data.get('user')
-        role = role_data.get('role')
-
-        try:
-            user = UserModel.objects.get(username=username)
-        except UserModel.DoesNotExist:
-            raise serializers.ValidationError(
-                _("The username '{}' is not a valid user.").format(username))
-
-        if role not in ['', None]:
-            if isinstance(role, six.string_types) and role.isdigit():
-                role = int(role)
-
-            if role not in Membership.ROLE_MAP:
+            try:
+                user = UserModel.objects.get(username=username)
+            except UserModel.DoesNotExist:
                 raise serializers.ValidationError(
-                    _("The role '{}' is not a valid.").format(role))
-        else:
-            raise serializers.ValidationError(
-                _("The role '{}' is not a valid.").format(role))
+                    _("The username '{}' is not a valid user for setting "
+                      "a role.").format(username))
 
-        data['user'] = user
-        data['role'] = role
+            if role not in ['', None]:
+                if isinstance(role, six.string_types) and role.isdigit():
+                    role = int(role)
+
+                if role not in Membership.ROLE_MAP:
+                    raise serializers.ValidationError(
+                        _("The role '{}' is not a valid.").format(role))
+            else:
+                raise serializers.ValidationError(
+                    _("The user project role '{}' is not valid.").format(role))
+
+            data['user'] = user
+            data['role'] = role
+
         return data
 
     def create(self, validated_data):
