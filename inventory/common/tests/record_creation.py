@@ -58,14 +58,17 @@ class RecordCreation(object):
                   'country': country}
         return Language.objects.create(**kwargs)
 
-    def _create_timezone(self, zone, code, country):
+    def _create_timezone(self, zone, coordinates, country):
         kwargs = {'zone': zone,
-                  'code': code,
+                  'coordinates': coordinates,
                   'country': country}
         return TimeZone.objects.create(**kwargs)
 
-    def _create_currency(self, currency, alphabetic_code, country, **kwargs):
+    def _create_currency(self, currency, alphabetic_code, numeric_code,
+                         minor_unit, country, **kwargs):
         kwargs['currency'] = currency
-        kwargs['code'] = code
+        kwargs['alphabetic_code'] = alphabetic_code
+        kwargs['numeric_code'] = numeric_code
+        kwargs['minor_unit'] = minor_unit
         kwargs['country'] = country
         return Currency.objects.create(**kwargs)

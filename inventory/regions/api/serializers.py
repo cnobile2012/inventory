@@ -80,13 +80,13 @@ class TimeZoneSerializer(serializers.ModelSerializer):
 # CurrencySerializer
 #
 class CurrencySerializer(SerializerMixin, serializers.ModelSerializer):
-    entity = serializers.HyperlinkedRelatedField(
+    country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', read_only=True)
     uri = serializers.HyperlinkedIdentityField(view_name='currency-detail')
 
     class Meta:
         model = Currency
-        fields = ('id', 'entity', 'currency', 'alphabetic_code',
+        fields = ('id', 'country', 'currency', 'alphabetic_code',
                   'numeric_code', 'minor_unit', 'symbol', 'active', 'uri',)
-        read_only_fields = ('id', 'entity', 'currency', 'alphabetic_code',
+        read_only_fields = ('id', 'country', 'currency', 'alphabetic_code',
                             'numeric_code', 'minor_unit', 'symbol', 'active',)

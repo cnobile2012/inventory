@@ -128,7 +128,7 @@ class TestSubdivision(BaseRegion):
 
     def test_GET_subdivision_list_with_no_permissions(self):
         """
-        Test GET on the region_list endpoint with no permissions.
+        Test GET on the subdivision_list endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
@@ -141,7 +141,7 @@ class TestSubdivision(BaseRegion):
 
     def test_GET_subdivision_list_with_permissions(self):
         """
-        Test GET on the region_list endpoint with permissions.
+        Test GET on the subdivision_list endpoint with permissions.
         """
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
@@ -154,7 +154,7 @@ class TestSubdivision(BaseRegion):
 
     def test_OPTIONS_subdivision_list_with_no_permissions(self):
         """
-        Test OPTIONS on the region_list endpoint with no permissions.
+        Test OPTIONS on the subdivision_list endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
@@ -167,7 +167,7 @@ class TestSubdivision(BaseRegion):
 
     def test_OPTIONS_subdivision_list_with_permissions(self):
         """
-        Test OPTIONS on the region_list endpoint with permissions.
+        Test OPTIONS on the subdivision_list endpoint with permissions.
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
@@ -180,7 +180,7 @@ class TestSubdivision(BaseRegion):
 
     def test_GET_subdivision_detail_with_no_permissions(self):
         """
-        Test GET on the region_list endpoint with no permissions.
+        Test GET on the subdivision_detail endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
@@ -193,7 +193,7 @@ class TestSubdivision(BaseRegion):
 
     def test_GET_subdivision_detail_with_permissions(self):
         """
-        Test GET on the region_list endpoint with permissions.
+        Test GET on the subdivision_detail endpoint with permissions.
         """
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
@@ -206,7 +206,7 @@ class TestSubdivision(BaseRegion):
 
     def test_OPTIONS_subdivision_detail_with_no_permissions(self):
         """
-        Test OPTIONS on the region_list endpoint with no permissions.
+        Test OPTIONS on the subdivision_detail endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
@@ -219,7 +219,7 @@ class TestSubdivision(BaseRegion):
 
     def test_OPTIONS_subdivision_detail_with_permissions(self):
         """
-        Test OPTIONS on the region_list endpoint with permissions.
+        Test OPTIONS on the subdivision_detail endpoint with permissions.
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
@@ -227,5 +227,351 @@ class TestSubdivision(BaseRegion):
         method = 'options'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
         # Setup the country, subdivision, method, and uri.
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+
+class TestLanguage(BaseRegion):
+
+    def __init__(self, name):
+        super(TestLanguage, self).__init__(name)
+
+    def test_GET_language_list_with_no_permissions(self):
+        """
+        Test GET on the language_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, language, method, and uri.
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'get'
+        uri = reverse('language-list')
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_GET_language_list_with_permissions(self):
+        """
+        Test GET on the language_list endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, language, method, and uri.
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'get'
+        uri = reverse('language-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_OPTIONS_language_list_with_no_permissions(self):
+        """
+        Test OPTIONS on the language_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'options'
+        # Setup the country, language, method, and uri.
+        uri = reverse('country-list')
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_language_list_with_permissions(self):
+        """
+        Test OPTIONS on the language_list endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'options'
+        # Setup the country, language, method, and uri.
+        uri = reverse('country-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_GET_language_detail_with_no_permissions(self):
+        """
+        Test GET on the language_detail endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, language, method, and uri.
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'get'
+        uri = reverse('language-detail', kwargs={'pk': language.pk})
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_GET_language_detail_with_permissions(self):
+        """
+        Test GET on the language_detail endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, language, method, and uri.
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'get'
+        uri = reverse('language-detail', kwargs={'pk': language.pk})
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_OPTIONS_language_detail_with_no_permissions(self):
+        """
+        Test OPTIONS on the language_detail endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'options'
+        uri = reverse('language-detail', kwargs={'pk': language.pk})
+        # Setup the country, language, method, and uri.
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_language_detail_with_permissions(self):
+        """
+        Test OPTIONS on the language_detail endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        language = self._create_language('en-US', 'en', country)
+        method = 'options'
+        uri = reverse('language-detail', kwargs={'pk': language.pk})
+        # Setup the country, language, method, and uri.
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+
+class TestTimezone(BaseRegion):
+
+    def __init__(self, name):
+        super(TestTimezone, self).__init__(name)
+
+    def test_GET_timezone_list_with_no_permissions(self):
+        """
+        Test GET on the timezone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, timezone, method, and uri.
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'get'
+        uri = reverse('timezone-list')
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_GET_timezone_list_with_permissions(self):
+        """
+        Test GET on the timezone_list endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, timezone, method, and uri.
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'get'
+        uri = reverse('timezone-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_OPTIONS_timezone_list_with_no_permissions(self):
+        """
+        Test OPTIONS on the timezone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'options'
+        # Setup the country, timezone, method, and uri.
+        uri = reverse('country-list')
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_timezone_list_with_permissions(self):
+        """
+        Test OPTIONS on the timezone_list endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'options'
+        # Setup the country, timezone, method, and uri.
+        uri = reverse('country-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_GET_timezone_detail_with_no_permissions(self):
+        """
+        Test GET on the timezone_detail endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, timezone, method, and uri.
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'get'
+        uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_GET_timezone_detail_with_permissions(self):
+        """
+        Test GET on the timezone_detail endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, timezone, method, and uri.
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'get'
+        uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_OPTIONS_timezone_detail_with_no_permissions(self):
+        """
+        Test OPTIONS on the timezone_detail endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'options'
+        uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
+        # Setup the country, timezone, method, and uri.
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_timezone_detail_with_permissions(self):
+        """
+        Test OPTIONS on the timezone_detail endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        timezone = self._create_timezone(
+            'America/New_York', '+404251-0740023', country)
+        method = 'options'
+        uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
+        # Setup the country, timezone, method, and uri.
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+
+class TestCurrency(BaseRegion):
+
+    def __init__(self, name):
+        super(TestCurrency, self).__init__(name)
+
+    def test_GET_currency_list_with_no_permissions(self):
+        """
+        Test GET on the currency_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, currency, method, and uri.
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'get'
+        uri = reverse('currency-list')
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_GET_currency_list_with_permissions(self):
+        """
+        Test GET on the currency_list endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, currency, method, and uri.
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'get'
+        uri = reverse('currency-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_OPTIONS_currency_list_with_no_permissions(self):
+        """
+        Test OPTIONS on the currency_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'options'
+        # Setup the country, currency, method, and uri.
+        uri = reverse('country-list')
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_currency_list_with_permissions(self):
+        """
+        Test OPTIONS on the currency_list endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'options'
+        # Setup the country, currency, method, and uri.
+        uri = reverse('country-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_GET_currency_detail_with_no_permissions(self):
+        """
+        Test GET on the currency_detail endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, currency, method, and uri.
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'get'
+        uri = reverse('currency-detail', kwargs={'pk': currency.pk})
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_GET_currency_detail_with_permissions(self):
+        """
+        Test GET on the currency_detail endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup the country, currency, method, and uri.
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'get'
+        uri = reverse('currency-detail', kwargs={'pk': currency.pk})
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_OPTIONS_currency_detail_with_no_permissions(self):
+        """
+        Test OPTIONS on the currency_detail endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'options'
+        uri = reverse('currency-detail', kwargs={'pk': currency.pk})
+        # Setup the country, currency, method, and uri.
+        self._test_user_with_invalid_permissions(uri, method)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_currency_detail_with_permissions(self):
+        """
+        Test OPTIONS on the currency_detail endpoint with permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        country = self._create_country()
+        currency = self._create_currency(
+            'US Dollar', 'USD', '840', '2', country)
+        method = 'options'
+        uri = reverse('currency-detail', kwargs={'pk': currency.pk})
+        # Setup the country, currency, method, and uri.
         self._test_user_with_valid_permissions(uri, method)
         self._test_project_user_with_valid_permissions(uri, method)
