@@ -27,14 +27,32 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
+    projects = serializers.HyperlinkedRelatedField(
+        view_name='project-detail', read_only=True, many=True,
+        lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
         view_name='inventory-type-detail', lookup_field='public_id')
 
+    def create(self, validated_data):
+        user = self.get_user_object()
+        validated_data['creator'] = user
+        validated_data['updater'] = user
+        return InventoryType.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('desctiption',
+                                                  instance.description)
+        instance.updater = self.get_user_object()
+        instance.save()
+        return instance
+
     class Meta:
         model = InventoryType
-        fields = ('public_id', 'name', 'description', 'creator', 'created',
-                  'updater', 'updated', 'uri',)
-        read_only_fields = ('creator', 'created', 'updater', 'updated', 'uri',)
+        fields = ('public_id', 'name', 'description', 'projects', 'creator',
+                  'created', 'updater', 'updated', 'uri',)
+        read_only_fields = ('projects', 'creator', 'created', 'updater',
+                            'updated', 'uri',)
 
 
 #

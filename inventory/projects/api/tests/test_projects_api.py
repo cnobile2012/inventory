@@ -7,12 +7,338 @@
 
 import random
 
+from django.contrib.auth import get_user_model
+
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.projects.models import Project, Membership
+
+UserModel = get_user_model()
+
+
+class TestInventoryType(BaseTest):
+
+    def __init__(self, name):
+        super(TestInventoryType, self).__init__(name)
+
+    def setUp(self):
+        super(TestInventoryType, self).setUp()
+        # Create an InventoryType and a Project.
+        self.in_type = self._create_inventory_type()
+        kwargs = {'public_id': self.in_type.public_id}
+        self.in_type_uri = self._resolve('inventory-type-detail', **kwargs)
+        self.project = self._create_project(self.in_type, members=[self.user])
+        #kwargs = {'public_id': self.project.public_id}
+        #self.project_uri = self._resolve('project-detail', **kwargs)
+
+    def test_GET_inventory_type_list_with_invalid_permissions(self):
+        """
+        Test the inventory-type-list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        # Test that an unauthenticated superuser has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that an unauthenticated ADMINISTRATOR has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.ADMINISTRATOR
+        user, client = self._create_user(**kwargs)
+        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that a DEFAULT_USER has no permissions.
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['permission'],
+            })
+        # Test that a project OWNER has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.OWNER)
+        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that a PROJECT_MANAGER has no permissions.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+        # Test that a project DEFAULT_USER has no access.
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.set_role(user, Membership.DEFAULT_USER)
+        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['credentials'],
+            })
+
+    def test_GET_inventory_type_list_with_valid_permissions(self):
+        """
+        Test the inventory-type-list endpoint with various permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        uri = reverse('inventory-type-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_POST_inventory_type_list_with_invalid_permissions(self):
+        """
+        Test that a POST to inventory-type-list fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        method = 'post'
+        uri = reverse('inventory-type-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'My Test Inventory Type'
+        su['description'] = 'Test inventory type description.'
+        ad = data.setdefault('AD', su.copy())
+        du = data.setdefault('DU', su.copy())
+        self._test_user_with_invalid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pma = data.setdefault('PMA', su.copy())
+        pdu = data.setdefault('PDU', su.copy())
+        self._test_project_user_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_POST_inventory_type_list_with_valid_permissions(self):
+        """
+        Test that a POST to inventory-type-list passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        method = 'post'
+        uri = reverse('inventory-type-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'My Test Inventory Type 1'
+        su['description'] = 'Test inventory type description.'
+        ad = data.setdefault('AD', su.copy())
+        ad['name'] = 'My Test Inventory Type 2'
+        du = data.setdefault('DU', su.copy())
+        du['name'] = 'My Test Inventory Type 3'
+        self._test_user_with_valid_permissions(
+            uri, method, request_data=data)
+        # All project users will fails as tested in the previous test.
+
+    def test_OPTIONS_inventory_type_list_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        uri = reverse('inventory-type-list')
+        self._test_user_with_invalid_permissions(
+            uri, method, default_user=False)
+        self._test_project_user_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_inventory_type_list_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        uri = reverse('inventory-type-list')
+        self._test_user_with_valid_permissions(uri, method)
+        self._test_project_user_with_valid_permissions(uri, method)
+
+    def test_GET_inventory_type_detail_with_invalid_permissions(self):
+        """
+        Test that a GET on the inventory-type-detail fails with invalid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        self._test_user_with_invalid_permissions(self.in_type_uri, method)
+        self._test_project_user_with_invalid_permissions(
+            self.in_type_uri, method)
+
+    def test_GET_inventory_type_detail_with_valid_permissions(self):
+        """
+        Test that a GET to inventory-type-detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        self._test_user_with_valid_permissions(self.in_type_uri, method)
+        self._test_project_user_with_valid_permissions(self.in_type_uri, method)
+
+    def test_PUT_inventory_type_detail_with_invalid_permissions(self):
+        """
+        Test that a PUT to inventory-type-detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'My Test Inventory Type'
+        su['description'] = 'Test inventory type description.'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_user_with_invalid_permissions(
+            self.in_type_uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_user_with_invalid_permissions(
+            self.in_type_uri, method, request_data=data)
+
+    def test_PUT_inventory_type_detail_with_valid_permissions(self):
+        """
+        Test that a PUT to inventory-type-detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'My Test Inventory Type 01'
+        ad = data.setdefault('AD', su.copy())
+        ad['name'] = 'My Test Inventory Type 02'
+        du = data.setdefault('DU', su.copy())
+        du['name'] = 'My Test Inventory Type 03'
+        self._test_user_with_valid_permissions(
+            self.in_type_uri, method, request_data=data)
+        # All project users will fails as tested in the previous test.
+
+    def test_PATCH_inventory_type_detail_with_invalid_permissions(self):
+        """
+        Test that a PATCH to inventory-type-detail fails with invalid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'My Test Inventory Type'
+        su['description'] = 'Test inventory type description.'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_user_with_invalid_permissions(
+            self.in_type_uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_user_with_invalid_permissions(
+            self.in_type_uri, method, request_data=data)
+
+    def test_PATCH_inventory_type_detail_with_valid_permissions(self):
+        """
+        Test that a PATCH to inventory-type-detail passes with valid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['description'] = 'Test inventory type description.'
+        su['name'] = 'My Test Inventory Type 01'
+        ad = data.setdefault('AD', {})
+        ad['name'] = 'My Test Inventory Type 02'
+        du = data.setdefault('DU', {})
+        du['name'] = 'My Test Inventory Type 03'
+        self._test_user_with_valid_permissions(
+            self.in_type_uri, method, request_data=data)
+        # All project users will fails as tested in the previous test.
+
+    def test_DELETE_inventory_type_detail_with_invalid_permissions(self):
+        """
+        Test that a DELETE to inventory-type-detail fails with invalid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        self._test_user_with_invalid_permissions(self.in_type_uri, method)
+        self._test_project_user_with_invalid_permissions(
+            self.in_type_uri, method)
+
+    def test_DELETE_inventory_type_detail_with_valid_permissions(self):
+        """
+        Test that a DELETE to inventory-type-detail pass' with valid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        # All users will fail as tested in the previous test.
+
+    def test_OPTIONS_project_detail_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        self._test_user_with_invalid_permissions(self.in_type_uri, method)
+        self._test_project_user_with_invalid_permissions(
+            self.in_type_uri, method)
+
+    def test_OPTIONS_project_detail_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        self._test_user_with_valid_permissions(self.in_type_uri, method)
+        self._test_project_user_with_valid_permissions(self.in_type_uri, method)
 
 
 class TestProject(BaseTest):
@@ -32,9 +358,6 @@ class TestProject(BaseTest):
 
     def test_GET_condition_errors(self):
         self.skipTest("Temporarily skipped")
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-
         username = 'Normal_User'
         password = '123456'
         kwargs = {}
@@ -42,7 +365,7 @@ class TestProject(BaseTest):
         kwargs['password'] = password
         kwargs['is_superuser'] = True
         kwargs['is_active'] = True
-        user = User.objects.create(**kwargs)
+        user = UserModel.objects.create(**kwargs)
         client = APIClient()
         client.force_authenticate(user=user)
         response = client.get(
@@ -54,7 +377,7 @@ class TestProject(BaseTest):
 
     def test_GET_project_list_with_invalid_permissions(self):
         """
-        Test the project_list endpoint with no permissions. This is the
+        Test the project-list endpoint with no permissions. This is the
         one endpoint where a DEFAULT_USER can create an object, so it will
         not fail, therefore we skip it.
         """
@@ -67,7 +390,7 @@ class TestProject(BaseTest):
 
     def test_GET_project_list_with_valid_permissions(self):
         """
-        Test the project_list endpoint with various permissions.
+        Test the project-list endpoint with various permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -77,7 +400,7 @@ class TestProject(BaseTest):
 
     def test_POST_project_list_with_invalid_permissions(self):
         """
-        Test that a POST to project_list fails with invalid permissions.
+        Test that a POST to project-list fails with invalid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -103,7 +426,7 @@ class TestProject(BaseTest):
 
     def test_POST_project_list_with_valid_permissions(self):
         """
-        Test that a POST to project_list passes with valid permissions.
+        Test that a POST to project-list passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -156,7 +479,7 @@ class TestProject(BaseTest):
 
     def test_GET_project_detail_with_invalid_permissions(self):
         """
-        Test that a GET on the project_detail fails with invalid permissions.
+        Test that a GET on the project-detail fails with invalid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -166,7 +489,7 @@ class TestProject(BaseTest):
 
     def test_GET_project_detail_with_valid_permissions(self):
         """
-        Test that a GET to project_detail passes with valid permissions.
+        Test that a GET to project-detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -175,7 +498,7 @@ class TestProject(BaseTest):
 
     def test_PUT_project_detail_with_invalid_permissions(self):
         """
-        Test that a PUT to project_detail fails with invalid permissions.
+        Test that a PUT to project-detail fails with invalid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -198,9 +521,9 @@ class TestProject(BaseTest):
         self._test_project_user_with_invalid_permissions(
             self.project_uri, method, request_data=data)
 
-    def test_PUT_category_detail_with_valid_permissions(self):
+    def test_PUT_project_detail_with_valid_permissions(self):
         """
-        Test that a PUT to category_detail passes with valid permissions.
+        Test that a PUT to project-detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -231,7 +554,7 @@ class TestProject(BaseTest):
 
     def test_PATCH_project_detail_with_invalid_permissions(self):
         """
-        Test that a PATCH to project_detail fails with invalid permissions.
+        Test that a PATCH to project-detail fails with invalid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -256,7 +579,7 @@ class TestProject(BaseTest):
 
     def test_PATCH_project_detail_with_valid_permissions(self):
         """
-        Test that a PATCH to project_detail passes with valid permissions.
+        Test that a PATCH to project-detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -283,7 +606,7 @@ class TestProject(BaseTest):
 
     def test_DELETE_project_detail_with_invalid_permissions(self):
         """
-        Test that a DELETE to project_detail fails with invalid permissions.
+        Test that a DELETE to project-detail fails with invalid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -293,7 +616,7 @@ class TestProject(BaseTest):
 
     def test_DELETE_project_detail_with_valid_permissions(self):
         """
-        Test that a DELETE to project_detail pass' with valid permissions.
+        Test that a DELETE to project-detail pass' with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
