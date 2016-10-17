@@ -114,7 +114,6 @@ class TestCategoryAPI(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         method = 'options'
-        category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
         self._test_users_with_invalid_permissions(uri, method)
         self._test_project_users_with_invalid_permissions(uri, method)
@@ -124,7 +123,6 @@ class TestCategoryAPI(BaseTest):
         Test that the method OPTIONS brings back the correct data.
         """
         method = 'options'
-        category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
         self._test_users_with_valid_permissions(uri, method)
         self._test_project_users_with_valid_permissions(uri, method)
