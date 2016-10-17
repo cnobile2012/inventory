@@ -191,8 +191,8 @@ class User(AbstractUser, ValidateOnSaveMixin):
             if self.is_superuser:
                 self._role = self.ADMINISTRATOR
         elif self._role not in self.ROLE_MAP:
-            msg = _("Invalid role, must be one of DEFAULT_USER, or "
-                    "ADMINISTRATOR.")
+            msg = _("Invalid role, must be one of ()").format(
+                self.ROLE_MAP.values())
             log.error(msg)
             raise ValidationError(msg)
 
@@ -326,7 +326,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         verbose_name=_("Answer"), max_length=250,
         help_text=_("An answer to an authentication question."))
     question = models.ForeignKey(
-        Question, verbose_name=_("Question"),
+        Question, verbose_name=_("Question"), related_name='answers',
         help_text=_("The question relative to this answer."))
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("User"),

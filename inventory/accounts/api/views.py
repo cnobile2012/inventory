@@ -9,13 +9,15 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
+    IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser, IsReadOnly,
+    IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
+    IsUserActive, IsPostOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import Question, Answer
@@ -23,7 +25,7 @@ from .serializers import (
     UserSerializer, GroupSerializer, QuestionSerializer, AnswerSerializer)
 
 log = logging.getLogger('api.accounts.views')
-User = get_user_model()
+UserModel = get_user_model()
 
 
 #
@@ -32,13 +34,11 @@ User = get_user_model()
 class UserAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
-            result = User.objects.all()
+            self.request.user.role == UserModel.ADMINISTRATOR):
+            result = UserModel.objects.all()
         else:
-            result[:] = [self.request.user]
+            result = UserModel.objects.filter(pk=self.request.user.pk)
 
         return result
 
@@ -50,7 +50,12 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
     serializer_class = UserSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               And(IsDefaultUser, IsPostOnly), # Not sure this is what I want.
+               IsProjectOwner,
+               IsProjectManager
+               )
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -59,11 +64,13 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
 user_list = UserList.as_view()
 
 
-class UserDetail(UserAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+class UserDetail(UserAuthorizationMixin, RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAnyUser,
+               IsAnyProjectUser
+               )
             ),
         )
     lookup_field = 'public_id'
@@ -77,10 +84,8 @@ user_detail = UserDetail.as_view()
 class GroupAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = Group.objects.all()
         else:
             result = self.request.user.groups.all()
@@ -95,7 +100,8 @@ class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
     serializer_class = GroupSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser)
+            Or(IsAdminSuperUser,
+               IsAdministrator)
             ),
         )
     required_scopes = ('read', 'write', 'groups',)
@@ -104,11 +110,12 @@ class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
 group_list = GroupList.as_view()
 
 
-class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateAPIView):
     serializer_class = GroupSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser)
+            Or(IsAdminSuperUser,
+               IsAdministrator)
             ),
         )
     required_scopes = ('read', 'write', 'groups',)
@@ -119,29 +126,20 @@ group_detail = GroupDetail.as_view()
 #
 # Question
 #
-class QuestionAuthorizationMixin(object):
-
-    def get_queryset(self):
-        result = []
-
-        if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
-            result = Question.objects.all()
-        else:
-            result = [answer.question
-                      for answer in self.request.user.answers.all()]
-
-        return result
-
-
-class QuestionList(QuestionAuthorizationMixin, ListCreateAPIView):
+class QuestionList(ListCreateAPIView):
     """
     Question list endpoint.
     """
+    queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               And(IsReadOnly, Or(IsDefaultUser,
+                                  IsAnyProjectUser)
+                   )
+               )
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -149,15 +147,21 @@ class QuestionList(QuestionAuthorizationMixin, ListCreateAPIView):
 question_list = QuestionList.as_view()
 
 
-class QuestionDetail(QuestionAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+class QuestionDetail(RetrieveUpdateAPIView):
     """
     Question detail endpoint.
     """
+    queryset = Question.objects.all()
     permission_classes = (
          And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               And(IsReadOnly, Or(IsDefaultUser,
+                                  IsAnyProjectUser)
+                   )
+               )
             ),
-       )
+        )
     serializer_class = QuestionSerializer
 
 question_detail = QuestionDetail.as_view()
@@ -169,10 +173,8 @@ question_detail = QuestionDetail.as_view()
 class AnswerAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = Answer.objects.all()
         else:
             result = self.request.user.answers.all()
@@ -187,7 +189,8 @@ class AnswerList(AnswerAuthorizationMixin, ListCreateAPIView):
     serializer_class = AnswerSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAnyUser,
+               IsAnyProjectUser)
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -201,7 +204,8 @@ class AnswerDetail(AnswerAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     """
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAnyUser,
+               IsAnyProjectUser)
             ),
         )
     serializer_class = AnswerSerializer
