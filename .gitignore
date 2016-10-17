@@ -19,6 +19,7 @@ db-snapshots/*.sql
 db-snapshots/*.sql.gz
 logs/*.log*
 old
+docs/htmlcov
 
 # C extensions
 *.so
