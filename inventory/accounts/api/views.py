@@ -52,9 +52,10 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
         And(IsUserActive, #IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
-               And(IsDefaultUser, IsPostOnly), # Not sure this is what I want.
-               IsProjectOwner,
-               IsProjectManager
+               And(IsReadOnly,
+                   Or(IsDefaultUser,
+                      IsAnyProjectUser)
+                   )
                )
             ),
         )

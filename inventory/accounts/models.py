@@ -243,6 +243,22 @@ class User(AbstractUser, ValidateOnSaveMixin):
             for project in Project.objects.filter(pk__in=add_pks):
                 Membership.objects.create(user=self, project=project)
 
+    def process_answers(self, answers):
+        """
+        This method adds and removes answers to a member.
+        """
+        if answers:
+            wanted_pks = [inst.pk for inst in answers]
+            old_pks = [inst.pk for inst in self.answers.all()]
+            # Remove unwanted answers.
+            unwanted_pks = list(set(old_pks) - set(wanted_pks))
+            rem_prod = Answer.objects.filter(pk__in=unwanted_pks)
+            self.answers.remove(*rem_prod)
+            # Add new answers.
+            add_pks = list(set(wanted_pks) - set(unwanted_pks))
+            new_objs = Answer.objects.filter(pk__in=add_pks)
+            self.answers.add(*new_objs)
+
     def get_unused_questions(self):
         used_pks = [answer.question.pk for answer in self.answers.all()]
         return Question.objects.get_active_questions(exclude_pks=used_pks)

@@ -45,7 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
     answers = serializers.HyperlinkedRelatedField(
         view_name='answer-detail', many=True, queryset=Answer.objects.all(),
         default=None, label=_("Security answers"))
-    projects = ProjectSerializer(many=True)
+    projects = ProjectSerializer(many=True, required=False)
     uri = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))

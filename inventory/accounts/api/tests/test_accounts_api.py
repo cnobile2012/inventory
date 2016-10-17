@@ -3,17 +3,29 @@
 # inventory/accounts/api/tests/test_accounts_api.py
 #
 
+from django.contrib.auth import get_user_model
+
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
 
+UserModel = get_user_model()
 
-class TestUser(BaseTest):
+
+class TestUserAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestUser, self).__init__(name)
+        super(TestUserAPI, self).__init__(name)
+
+    def setUp(self):
+        super(TestUserAPI, self).setUp()
+        # Create an InventoryType and Project.
+        self.in_type = self._create_inventory_type()
+        self.project = self._create_project(self.in_type, members=[self.user])
+#        kwargs = {'public_id': self.project.public_id}
+#        self.project_uri = self._resolve('project-detail', **kwargs)
 
     def test_GET_user_list_with_invalid_permissions(self):
         """
@@ -22,8 +34,9 @@ class TestUser(BaseTest):
         #self.skipTest("Temporarily skipped")
         method = 'get'
         uri = reverse('user-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_user_list_with_valid_permissions(self):
         """
@@ -32,212 +45,290 @@ class TestUser(BaseTest):
         #self.skipTest("Temporarily skipped")
         method = 'get'
         uri = reverse('user-list')
-        self._test_user_with_valid_permissions(uri, method) #, default_user=False)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False)
 
-
-
-
-
-
-
-    def test_create_user_post(self):
+    def test_POST_user_list_with_invalid_permissions(self):
         """
-        Ensure we can create a new account.
+        Test that a POST to user_list fails with invalid permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Use API to create a test user.
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        kwargs = {}
+        kwargs['username'] = 'POST_User'
+        kwargs['password'] = '9876543210'
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        user, client = self._create_user(**kwargs)
         uri = reverse('user-list')
-        new_data = {'username': 'NewUser', 'password': 'NewUserPassword'}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        msg = "Response Data: {}".format(data)
-        self.assertEqual(data.get('username'), new_data.get('username'), msg)
-        # Get the same record through the API.
-        pk = data.get('id')
-        uri = reverse('user-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('username'), new_data.get('username'), msg)
+        data = {}
+        su = data.setdefault('SU', {})
+        su['username'] = 'Test_Username_01'
+        su['password'] = '8765432109'
+        ad = data.setdefault('AD', su.copy())
+        du = data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pma = data.setdefault('PMA', su.copy())
+        pdu = data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
 
-    def test_get_user_no_permissions(self):
+    def test_POST_user_list_with_valid_permissions(self):
         """
-        Test the user_list endpoint with no permissions. We don't use the
-        self.client created in the setUp method from the base class.
+        Test that a POST to user_list passes with valid permissions.
         """
-        self.skipTest("Temporarily skipped")
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(username, password, login=False)
-        # Use API to get user list with unauthenticated user.
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        kwargs = {}
+        kwargs['username'] = 'POST_User'
+        kwargs['password'] = '9876543210'
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        user, client = self._create_user(**kwargs)
         uri = reverse('user-list')
-        response = client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_401_UNAUTHORIZED,
-            self._clean_data(data))
-        self.assertEqual(
-            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
-        self.assertTrue('detail' in data, msg)
+        data = {}
+        su = data.setdefault('SU', {})
+        su['username'] = 'Test_Username_01'
+        su['password'] = '8765432109'
+        ad = data.setdefault('AD', su.copy())
+        ad['username'] = 'Test_Username_02'
+        du = data.setdefault('DU', su.copy())
+        du['username'] = 'Test_Username_03'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        # None of the project users can POST to this endpoint.
 
-    def test_create_user_post_token(self):
+    def test_OPTIONS_user_list_with_invalid_permissions(self):
         """
-        Test user of API with token. We don't use the self.client created in
-        the setUp method from the base class.
+        Test that the method OPTIONS fails with invald permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(username, password,
-                                                email='test@example.com')
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Use API to create a test user.
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
         uri = reverse('user-list')
-        new_data = {'username': 'NewUser_01', 'password': 'NewUserPassword'}
-        response = client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_update_put_user(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a test user.
+    def test_OPTIONS_user_list_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
         uri = reverse('user-list')
-        new_data = {'username': 'NewUser_03', 'password': 'NewUserPassword'}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        self.assertFalse(data.get('is_staff'), msg)
-        # Update record with PUT.
-        pk = data.get('id')
-        uri = reverse('user-detail', kwargs={'pk': pk})
-        new_data['is_staff'] = True
-        response = self.client.put(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertTrue(data.get('is_staff'), msg)
-        # Read record with GET.
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('username'), new_data.get('username'), msg)
-        self.assertTrue(data.get('is_staff'), msg)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_update_patch_user(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a test user.
-        uri = reverse('user-list')
-        new_data = {'username': 'NewUser_05', 'password': 'NewUserPassword'}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        self.assertFalse(data.get('is_staff'), msg)
-        # Update record with PATCH.
-        pk = data.get('id')
-        uri = reverse('user-detail', kwargs={'pk': pk})
-        update_data = {'is_staff': True}
-        response = self.client.patch(uri, update_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertTrue(data.get('is_staff'), msg)
-        # Read record with GET.
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('username'), new_data.get('username'), msg)
-        self.assertTrue(data.get('is_staff'), msg)
+    def test_GET_user_detail_with_invalid_permissions(self):
+        """
+        Test that a GET on the user_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        method = 'get'
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_delete_user(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a test user.
-        uri = reverse('user-list')
-        new_data = {'username': 'NewUser_07', 'password': 'NewUserPassword'}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Delete the User.
-        pk = data.get('id')
-        uri = reverse('user-detail', kwargs={'pk': pk})
-        response = self.client.delete(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertTrue(data is None, msg)
-        # Get the same record through the API.
-        response = self.client.get(uri, format='json')
-        code = response.status_code
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_404_NOT_FOUND,
-            self._clean_data(data))
-        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+    def test_GET_category_detail_with_valid_permissions(self):
+        """
+        Test that a GET to category_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        method = 'get'
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_options_user(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a test user.
-        uri = reverse('user-list')
-        new_data = {'username': 'NewUser_07', 'password': 'NewUserPassword'}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        pk = data.get('id')
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Get the API list OPTIONS.
-        response = self.client.options(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'User List', msg)
-        # Get the API detail OPTIONS.
-        uri = reverse('user-detail', kwargs={'pk': pk})
-        response = self.client.options(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'User Detail', msg)
+    def test_PUT_user_detail_with_invalid_permissions(self):
+        """
+        Test that a PUT to user_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['username'] = user.username
+        su['password'] = '8765432109'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data, default_user=False)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data, project_user=False)
+
+    def test_PUT_user_detail_with_valid_permissions(self):
+        """
+        Test that a PUT to user_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['username'] = user.username
+        su['password'] = '8765432109'
+        ad = data.setdefault('AD', su.copy())
+        ad['password'] = '7654321098'
+        du = data.setdefault('DU', su.copy())
+        du['password'] = '6543210987'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pow['password'] = '5432109876'
+        pma = data.setdefault('PMA', su.copy())
+        pma['password'] = '4321098765'
+        pdu = data.setdefault('PDU', su.copy())
+        pdu['password'] = '3210987654'
+        self._test_project_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_PATCH_user_detail_with_invalid_permissions(self):
+        """
+        Test that a PATCH to user_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['username'] = user.username
+        su['password'] = '8765432109'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data, default_user=False)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data, project_user=False)
+
+    def test_PATCH_user_detail_with_valid_permissions(self):
+        """
+        Test that a PATCH to user_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['password'] = '8765432109'
+        ad = data.setdefault('AD', {})
+        ad['password'] = '8765432109'
+        du = data.setdefault('DU', {})
+        du['password'] = '8765432109'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', {})
+        pow['password'] = '8765432109'
+        pma = data.setdefault('PMA', {})
+        pma['password'] = '8765432109'
+        pdu = data.setdefault('PDU', {})
+        pdu['password'] = '8765432109'
+        self._test_project_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_DELETE_user_detail_with_invalid_permissions(self):
+        """
+        Test that a DELETE to user_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_user_detail_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_user_detail_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
 
-class TestQuestion(BaseTest):
+class TestGroupAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestQuestion, self).__init__(name)
+        super(TestGroupAPI, self).__init__(name)
 
 
 
-class TestAnswer(BaseTest):
+
+class TestQuestionAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestAnswer, self).__init__(name)
+        super(TestQuestionAPI, self).__init__(name)
+
+
+
+
+class TestAnswerAPI(BaseTest):
+
+    def __init__(self, name):
+        super(TestAnswerAPI, self).__init__(name)
 
