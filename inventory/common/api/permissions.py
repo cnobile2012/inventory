@@ -2,6 +2,10 @@
 #
 # inventory/common/api/permissions.py
 #
+"""
+Authorization permissions.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -145,13 +149,13 @@ class IsProjectOwner(BaseProjectPermission):
     """
 
     def has_permission(self, request, view):
-        result = self.has_project_permission(request, Membership.OWNER)
+        result = self.has_project_permission(request, Membership.PROJECT_OWNER)
         log.debug("IsProjectOwner: %s", result)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
-            request, obj, Membership.OWNER)
+            request, obj, Membership.PROJECT_OWNER)
         log.debug("IsProjectOwner (object): %s", result)
         return result
 
@@ -181,13 +185,13 @@ class IsProjectDefaultUser(BaseProjectPermission):
 
     def has_permission(self, request, view):
         result = self.has_project_permission(
-            request, Membership.DEFAULT_USER)
+            request, Membership.PROJECT_USER)
         log.debug("IsProjectDefaultUser: %s", result)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
-            request, obj, Membership.DEFAULT_USER)
+            request, obj, Membership.PROJECT_USER)
         log.debug("IsProjectDefaultUser (object): %s", result)
         return result
 
@@ -258,4 +262,19 @@ class CannotDelete(permissions.BasePermission):
             result = True
 
         log.debug("CannotDelete: %s", result)
+        return result
+
+
+class IsPostOnly(permissions.BasePermission):
+    """
+    The request is authenticated as a user, or is a read-only request.
+    """
+
+    def has_permission(self, request, view):
+        result = False
+
+        if request.method == 'POST':
+            result = True
+
+        log.debug("IsPostOnly: %s", result)
         return result
