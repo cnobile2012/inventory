@@ -39,8 +39,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'get'
         uri = reverse('country-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_country_list_with_permissions(self):
         """
@@ -51,8 +51,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'get'
         uri = reverse('country-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_country_list_with_no_permissions(self):
         #self.skipTest("Temporarily skipped")
@@ -60,8 +60,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'options'
         uri = reverse('country-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_country_list_with_permissions(self):
         """
@@ -72,8 +72,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'options'
         uri = reverse('country-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_GET_country_detail_with_no_permissions(self):
         """
@@ -84,8 +84,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'get'
         uri = reverse('country-detail', kwargs={'pk': country.pk})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_country_detail_with_permissions(self):
         """
@@ -96,8 +96,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'get'
         uri = reverse('country-detail', kwargs={'pk': country.pk})
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_country_detail_with_no_permissions(self):
         #self.skipTest("Temporarily skipped")
@@ -105,8 +105,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'options'
         uri = reverse('country-detail', kwargs={'pk': country.pk})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_country_detail_with_permissions(self):
         """
@@ -117,8 +117,8 @@ class TestCountry(BaseRegion):
         country = self._create_country()
         method = 'options'
         uri = reverse('country-detail', kwargs={'pk': country.pk})
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
 
 class TestSubdivision(BaseRegion):
@@ -136,8 +136,8 @@ class TestSubdivision(BaseRegion):
         subdivision = self._create_subdivision('New York', 'US-NY', country)
         method = 'get'
         uri = reverse('subdivision-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_subdivision_list_with_permissions(self):
         """
@@ -149,8 +149,8 @@ class TestSubdivision(BaseRegion):
         subdivision = self._create_subdivision('New York', 'US-NY', country)
         method = 'get'
         uri = reverse('subdivision-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_subdivision_list_with_no_permissions(self):
         """
@@ -162,8 +162,8 @@ class TestSubdivision(BaseRegion):
         method = 'options'
         # Setup the country, subdivision, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_subdivision_list_with_permissions(self):
         """
@@ -175,8 +175,8 @@ class TestSubdivision(BaseRegion):
         method = 'options'
         # Setup the country, subdivision, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_GET_subdivision_detail_with_no_permissions(self):
         """
@@ -188,8 +188,8 @@ class TestSubdivision(BaseRegion):
         subdivision = self._create_subdivision('New York', 'US-NY', country)
         method = 'get'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_subdivision_detail_with_permissions(self):
         """
@@ -201,8 +201,8 @@ class TestSubdivision(BaseRegion):
         subdivision = self._create_subdivision('New York', 'US-NY', country)
         method = 'get'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_subdivision_detail_with_no_permissions(self):
         """
@@ -214,8 +214,8 @@ class TestSubdivision(BaseRegion):
         method = 'options'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
         # Setup the country, subdivision, method, and uri.
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_subdivision_detail_with_permissions(self):
         """
@@ -227,8 +227,8 @@ class TestSubdivision(BaseRegion):
         method = 'options'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
         # Setup the country, subdivision, method, and uri.
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
 
 class TestLanguage(BaseRegion):
@@ -246,8 +246,8 @@ class TestLanguage(BaseRegion):
         language = self._create_language('en-US', 'en', country)
         method = 'get'
         uri = reverse('language-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_language_list_with_permissions(self):
         """
@@ -259,8 +259,8 @@ class TestLanguage(BaseRegion):
         language = self._create_language('en-US', 'en', country)
         method = 'get'
         uri = reverse('language-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_language_list_with_no_permissions(self):
         """
@@ -272,8 +272,8 @@ class TestLanguage(BaseRegion):
         method = 'options'
         # Setup the country, language, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_language_list_with_permissions(self):
         """
@@ -285,8 +285,8 @@ class TestLanguage(BaseRegion):
         method = 'options'
         # Setup the country, language, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_GET_language_detail_with_no_permissions(self):
         """
@@ -298,8 +298,8 @@ class TestLanguage(BaseRegion):
         language = self._create_language('en-US', 'en', country)
         method = 'get'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_language_detail_with_permissions(self):
         """
@@ -311,8 +311,8 @@ class TestLanguage(BaseRegion):
         language = self._create_language('en-US', 'en', country)
         method = 'get'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_language_detail_with_no_permissions(self):
         """
@@ -324,8 +324,8 @@ class TestLanguage(BaseRegion):
         method = 'options'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
         # Setup the country, language, method, and uri.
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_language_detail_with_permissions(self):
         """
@@ -337,8 +337,8 @@ class TestLanguage(BaseRegion):
         method = 'options'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
         # Setup the country, language, method, and uri.
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
 
 class TestTimezone(BaseRegion):
@@ -357,8 +357,8 @@ class TestTimezone(BaseRegion):
             'America/New_York', '+404251-0740023', country)
         method = 'get'
         uri = reverse('timezone-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_timezone_list_with_permissions(self):
         """
@@ -371,8 +371,8 @@ class TestTimezone(BaseRegion):
             'America/New_York', '+404251-0740023', country)
         method = 'get'
         uri = reverse('timezone-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_timezone_list_with_no_permissions(self):
         """
@@ -385,8 +385,8 @@ class TestTimezone(BaseRegion):
         method = 'options'
         # Setup the country, timezone, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_timezone_list_with_permissions(self):
         """
@@ -399,8 +399,8 @@ class TestTimezone(BaseRegion):
         method = 'options'
         # Setup the country, timezone, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_GET_timezone_detail_with_no_permissions(self):
         """
@@ -413,8 +413,8 @@ class TestTimezone(BaseRegion):
             'America/New_York', '+404251-0740023', country)
         method = 'get'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_timezone_detail_with_permissions(self):
         """
@@ -427,8 +427,8 @@ class TestTimezone(BaseRegion):
             'America/New_York', '+404251-0740023', country)
         method = 'get'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_timezone_detail_with_no_permissions(self):
         """
@@ -441,8 +441,8 @@ class TestTimezone(BaseRegion):
         method = 'options'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
         # Setup the country, timezone, method, and uri.
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_timezone_detail_with_permissions(self):
         """
@@ -455,8 +455,8 @@ class TestTimezone(BaseRegion):
         method = 'options'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
         # Setup the country, timezone, method, and uri.
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
 
 class TestCurrency(BaseRegion):
@@ -475,8 +475,8 @@ class TestCurrency(BaseRegion):
             'US Dollar', 'USD', '840', '2', country)
         method = 'get'
         uri = reverse('currency-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_currency_list_with_permissions(self):
         """
@@ -489,8 +489,8 @@ class TestCurrency(BaseRegion):
             'US Dollar', 'USD', '840', '2', country)
         method = 'get'
         uri = reverse('currency-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_currency_list_with_no_permissions(self):
         """
@@ -503,8 +503,8 @@ class TestCurrency(BaseRegion):
         method = 'options'
         # Setup the country, currency, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_currency_list_with_permissions(self):
         """
@@ -517,8 +517,8 @@ class TestCurrency(BaseRegion):
         method = 'options'
         # Setup the country, currency, method, and uri.
         uri = reverse('country-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_GET_currency_detail_with_no_permissions(self):
         """
@@ -531,8 +531,8 @@ class TestCurrency(BaseRegion):
             'US Dollar', 'USD', '840', '2', country)
         method = 'get'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_currency_detail_with_permissions(self):
         """
@@ -545,8 +545,8 @@ class TestCurrency(BaseRegion):
             'US Dollar', 'USD', '840', '2', country)
         method = 'get'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_OPTIONS_currency_detail_with_no_permissions(self):
         """
@@ -559,8 +559,8 @@ class TestCurrency(BaseRegion):
         method = 'options'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
         # Setup the country, currency, method, and uri.
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_currency_detail_with_permissions(self):
         """
@@ -573,5 +573,5 @@ class TestCurrency(BaseRegion):
         method = 'options'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
         # Setup the country, currency, method, and uri.
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)

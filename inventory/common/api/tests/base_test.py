@@ -73,9 +73,9 @@ class BaseTest(RecordCreation, APITestCase):
 
         return code
 
-    def _test_user_with_invalid_permissions(self, uri, method,
-                                            default_user=True,
-                                            request_data=None):
+    def _test_users_with_invalid_permissions(self, uri, method,
+                                             default_user=True,
+                                             request_data=None):
         kwargs = self._setup_user_credentials()
         # Test that an unauthenticated superuser has no permissions.
         kwargs['login'] = False
@@ -127,17 +127,17 @@ class BaseTest(RecordCreation, APITestCase):
                     'detail': self._ERROR_MESSAGES['permission'],
                     })
 
-    def _test_project_user_with_invalid_permissions(self, uri, method,
-                                                    default_user=True,
-                                                    request_data=None):
+    def _test_project_users_with_invalid_permissions(self, uri, method,
+                                                     project_user=True,
+                                                     request_data=None):
         kwargs = self._setup_user_credentials()
-        # Test that a project OWNER has no permissions.
+        # Test that a PROJECT_OWNER has no permissions.
         kwargs['login'] = False
         kwargs['is_superuser'] = False
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.OWNER)
+        self.project.set_role(user, Membership.PROJECT_OWNER)
         data = self.__get_request_data('POW', request_data)
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
@@ -165,13 +165,13 @@ class BaseTest(RecordCreation, APITestCase):
             'detail': self._ERROR_MESSAGES['credentials'],
             })
 
-        # Test that a project DEFAULT_USER has no access.
-        if method.upper() not in permissions.SAFE_METHODS and default_user:
+        # Test that a PROJECT_USER has no access.
+        if method.upper() not in permissions.SAFE_METHODS and project_user:
             kwargs['login'] = True
             kwargs['is_superuser'] = False
             kwargs['role'] = UserModel.DEFAULT_USER
             user, client = self._create_user(**kwargs)
-            self.project.set_role(user, Membership.DEFAULT_USER)
+            self.project.set_role(user, Membership.PROJECT_USER)
             data = self.__get_request_data('PDU', request_data)
             response = getattr(client, method)(
                 uri, data=data, format='json', **self._HEADERS)
@@ -183,8 +183,9 @@ class BaseTest(RecordCreation, APITestCase):
                 'detail': self._ERROR_MESSAGES['permission'],
                 })
 
-    def _test_user_with_valid_permissions(self, uri, method, default_user=True,
-                                          request_data=None):
+    def _test_users_with_valid_permissions(self, uri, method,
+                                           default_user=True,
+                                           request_data=None):
         self._test_superuser_with_valid_permissions(
             uri, method, request_data=request_data)
         self._test_administrator_with_valid_permissions(
@@ -244,29 +245,29 @@ class BaseTest(RecordCreation, APITestCase):
                 response.status_code, status_code, response.data)
             self.assertEqual(response.status_code, status_code, msg)
 
-    def _test_project_user_with_valid_permissions(self, uri, method,
-                                                  default_user=True,
+    def _test_project_users_with_valid_permissions(self, uri, method,
+                                                  project_user=True,
                                                   request_data=None):
         self._test_project_owner_with_valid_permissions(
             uri, method, request_data=request_data)
         self._test_project_manager_with_valid_permissions(
             uri, method, request_data=request_data)
 
-        if default_user:
-            self._test_project_default_user_with_valid_permissions(
+        if project_user:
+            self._test_project_user_with_valid_permissions(
                 uri, method, request_data=request_data)
 
     def _test_project_owner_with_valid_permissions(self, uri, method,
                                                    request_data=None):
         status_code = self.__get_response_code(method)
-        # Test a valid return with a project OWNER user role.
+        # Test a valid return with a PROJECT_OWNER user role.
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.OWNER)
+        self.project.set_role(user, Membership.PROJECT_OWNER)
         data = self.__get_request_data('POW', request_data)
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
@@ -291,16 +292,16 @@ class BaseTest(RecordCreation, APITestCase):
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)
 
-    def _test_project_default_user_with_valid_permissions(self, uri, method,
-                                                          request_data=None):
+    def _test_project_user_with_valid_permissions(self, uri, method,
+                                                  request_data=None):
         status_code = self.__get_response_code(method)
-        # Test a valid return with a project DEFAULT_USER role.
+        # Test a valid return with a PROJECT_USER role.
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.set_role(user, Membership.DEFAULT_USER)
+        self.project.set_role(user, Membership.PROJECT_USER)
         data = self.__get_request_data('PDU', request_data)
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)

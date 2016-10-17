@@ -3,14 +3,11 @@
 # inventory/projects/tests/test_projects_models.py
 #
 
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from inventory.common.tests.base_tests import BaseTest
 
 from ..models import Project, Membership
-
-User = get_user_model()
 
 
 class TestProjectModels(BaseTest):
@@ -69,8 +66,8 @@ class TestProjectModels(BaseTest):
         role = self.project.get_role(self.user)
         msg = "This user has role {} which does not conform to '{}'.".format(
             Membership.ROLE_MAP.get(role),
-            Membership.ROLE_MAP.get(Membership.OWNER))
-        self.assertEqual(role, Membership.OWNER, msg)
+            Membership.ROLE_MAP.get(Membership.PROJECT_OWNER))
+        self.assertEqual(role, Membership.PROJECT_OWNER, msg)
         # Change the user's role.
         self.project.set_role(self.user, Membership.PROJECT_MANAGER)
         msg = "This user has role {} which does not conform to '{}'.".format(

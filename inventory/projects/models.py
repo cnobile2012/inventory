@@ -196,18 +196,18 @@ class MembershipManager(models.Manager):
 
 @python_2_unicode_compatible
 class Membership(ValidateOnSaveMixin):
-    DEFAULT_USER = 0
-    OWNER = 1
+    PROJECT_USER = 0
+    PROJECT_OWNER = 1
     PROJECT_MANAGER = 2
     ROLE = (
-        (DEFAULT_USER, _("Default User")),
-        (OWNER, _("Owner")),
+        (PROJECT_USER, _("Project User")),
+        (PROJECT_OWNER, _("Project Owner")),
         (PROJECT_MANAGER, _("Project Manager")),
         )
     ROLE_MAP = {k: v for k, v in ROLE}
 
     role = models.SmallIntegerField(
-        verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
+        verbose_name=_("Role"), choices=ROLE, default=PROJECT_USER,
         help_text=_("The role of the user."))
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, verbose_name=_("Project"),
@@ -221,7 +221,7 @@ class Membership(ValidateOnSaveMixin):
 
     def clean(self):
         if self.pk is None:
-            self.role = self.OWNER
+            self.role = self.PROJECT_OWNER
         elif self.role not in self.ROLE_MAP:
             msg = _("Invalid role, must be one of {}.").format(
                 self.ROLE_MAP.values())

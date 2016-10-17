@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/categories/api/tests/test_category_api.py
+# inventory/categories/api/tests/test_categories_api.py
 #
 
 from django.contrib.auth import get_user_model
@@ -45,8 +45,8 @@ class TestCategoryAPI(BaseTest):
         method = 'get'
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_category_list_with_valid_permissions(self):
         """
@@ -56,8 +56,8 @@ class TestCategoryAPI(BaseTest):
         method = 'get'
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
-        self._test_user_with_valid_permissions(uri, method, default_user=False)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_category_list_with_invalid_permissions(self):
         """
@@ -73,12 +73,12 @@ class TestCategoryAPI(BaseTest):
         su['project'] = self.project_uri
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
-        self._test_user_with_invalid_permissions(
+        self._test_users_with_invalid_permissions(
             uri, method, request_data=data)
         data.setdefault('POW', su.copy())
         data.setdefault('PMA', su.copy())
         data.setdefault('PDU', su.copy())
-        self._test_project_user_with_invalid_permissions(
+        self._test_project_users_with_invalid_permissions(
             uri, method, request_data=data)
 
     def test_POST_category_list_with_valid_permissions(self):
@@ -97,7 +97,7 @@ class TestCategoryAPI(BaseTest):
         ad['name'] = 'TestCategory-02'
         du = data.setdefault('DU', su.copy())
         du['name'] = 'TestCategory-03'
-        self._test_user_with_valid_permissions(
+        self._test_users_with_valid_permissions(
             uri, method, request_data=data)
         pow = data.setdefault('POW', su.copy())
         pow['name'] = 'TestCategory-04'
@@ -105,8 +105,8 @@ class TestCategoryAPI(BaseTest):
         pma['name'] = 'TestCategory-05'
         pdu = data.setdefault('PDU', su.copy())
         pdu['name'] = 'TestCategory-06'
-        self._test_project_user_with_valid_permissions(
-            uri, method, default_user=False, request_data=data)
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
 
     def test_OPTIONS_category_list_with_invalid_permissions(self):
         """
@@ -116,8 +116,8 @@ class TestCategoryAPI(BaseTest):
         method = 'options'
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_category_list_with_valid_permissions(self):
         """
@@ -126,8 +126,8 @@ class TestCategoryAPI(BaseTest):
         method = 'options'
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_GET_category_detail_with_invalid_permissions(self):
         """
@@ -138,8 +138,8 @@ class TestCategoryAPI(BaseTest):
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         method = 'get'
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_GET_category_detail_with_valid_permissions(self):
         """
@@ -150,8 +150,8 @@ class TestCategoryAPI(BaseTest):
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         method = 'get'
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_PUT_category_detail_with_invalid_permissions(self):
         """
@@ -168,12 +168,12 @@ class TestCategoryAPI(BaseTest):
         su['project'] = self.project_uri
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
-        self._test_user_with_invalid_permissions(
+        self._test_users_with_invalid_permissions(
             uri, method, request_data=data)
         data.setdefault('POW', su.copy())
         data.setdefault('PMA', su.copy())
         data.setdefault('PDU', su.copy())
-        self._test_project_user_with_invalid_permissions(
+        self._test_project_users_with_invalid_permissions(
             uri, method, request_data=data)
 
     def test_PUT_category_detail_with_valid_permissions(self):
@@ -193,7 +193,7 @@ class TestCategoryAPI(BaseTest):
         ad['name'] = 'TestCategory-02'
         du = data.setdefault('DU', su.copy())
         du['name'] = 'TestCategory-03'
-        self._test_user_with_valid_permissions(
+        self._test_users_with_valid_permissions(
             uri, method, request_data=data)
         pow = data.setdefault('POW', su.copy())
         pow['name'] = 'TestCategory-04'
@@ -201,8 +201,8 @@ class TestCategoryAPI(BaseTest):
         pma['name'] = 'TestCategory-05'
         pdu = data.setdefault('PDU', su.copy())
         pdu['name'] = 'TestCategory-06'
-        self._test_project_user_with_valid_permissions(
-            uri, method, default_user=False, request_data=data)
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
 
     def test_PATCH_category_detail_with_invalid_permissions(self):
         """
@@ -219,12 +219,12 @@ class TestCategoryAPI(BaseTest):
         su['project'] = self.project_uri
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
-        self._test_user_with_invalid_permissions(
+        self._test_users_with_invalid_permissions(
             uri, method, request_data=data)
         data.setdefault('POW', su.copy())
         data.setdefault('PMA', su.copy())
         data.setdefault('PDU', su.copy())
-        self._test_project_user_with_invalid_permissions(
+        self._test_project_users_with_invalid_permissions(
             uri, method, request_data=data)
 
     def test_PATCH_category_detail_with_valid_permissions(self):
@@ -244,7 +244,7 @@ class TestCategoryAPI(BaseTest):
         ad['name'] = 'TestCategory-02'
         du = data.setdefault('DU', {})
         du['name'] = 'TestCategory-03'
-        self._test_user_with_valid_permissions(
+        self._test_users_with_valid_permissions(
             uri, method, request_data=data)
         pow = data.setdefault('POW', {})
         pow['name'] = 'TestCategory-04'
@@ -252,8 +252,8 @@ class TestCategoryAPI(BaseTest):
         pma['name'] = 'TestCategory-05'
         pdu = data.setdefault('PDU', {})
         pdu['name'] = 'TestCategory-06'
-        self._test_project_user_with_valid_permissions(
-            uri, method, default_user=False, request_data=data)
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
 
     def test_DELETE_category_detail_with_invalid_permissions(self):
         """
@@ -264,8 +264,8 @@ class TestCategoryAPI(BaseTest):
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_DELETE_category_detail_with_valid_permissions(self):
         """
@@ -278,29 +278,29 @@ class TestCategoryAPI(BaseTest):
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_superuser_with_valid_permissions(uri, method)
-        self._test_valid_GET_with_errors(uri, method)
+        self._test_valid_GET_with_errors(uri)
         # Test ADMINISTRATOR
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_administrator_with_valid_permissions(uri, method)
-        self._test_valid_GET_with_errors(uri, method)
+        self._test_valid_GET_with_errors(uri)
         # Test DEFAULT_USER
         ## This is an invalid test since the DEFAULT_USER has no access.
-        # Test project OWNER
+        # Test PROJECT_OWNER
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_project_owner_with_valid_permissions(uri, method)
-        self._test_valid_GET_with_errors(uri, method)
-        # Test project MANAGER
+        self._test_valid_GET_with_errors(uri)
+        # Test PROJECT_MANAGER
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_project_manager_with_valid_permissions(uri, method)
-        self._test_valid_GET_with_errors(uri, method)
-        # Test project DEFAULT_USER
-        ## This is an invalid test since the project DEFAULT_USER has no access.
+        self._test_valid_GET_with_errors(uri)
+        # Test PROJECT_USER
+        ## This is an invalid test since the PROJECT_USER has no access.
 
     def test_OPTIONS_category_detail_with_invalid_permissions(self):
         """
@@ -311,8 +311,8 @@ class TestCategoryAPI(BaseTest):
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
-        self._test_user_with_invalid_permissions(uri, method)
-        self._test_project_user_with_invalid_permissions(uri, method)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_OPTIONS_category_detail_with_valid_permissions(self):
         """
@@ -322,8 +322,8 @@ class TestCategoryAPI(BaseTest):
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
-        self._test_user_with_valid_permissions(uri, method)
-        self._test_project_user_with_valid_permissions(uri, method)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_create_category_twice_to_same_parent(self):
         """
