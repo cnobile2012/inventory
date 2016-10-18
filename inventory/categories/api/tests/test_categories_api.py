@@ -65,7 +65,6 @@ class TestCategoryAPI(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
-        category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
         data = {}
         su = data.setdefault('SU', {})
@@ -87,7 +86,6 @@ class TestCategoryAPI(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
-        category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
         data = {}
         su = data.setdefault('SU', {})
