@@ -7,6 +7,7 @@ from inventory.categories.models import Category
 from inventory.projects.models import InventoryType, Project
 from inventory.regions.models import (
     Country, Subdivision, Language, TimeZone, Currency)
+from inventory.suppliers.models import Supplier
 
 
 class RecordCreation(object):
@@ -41,12 +42,21 @@ class RecordCreation(object):
         kwargs['updater'] = self.user
         return Category.objects.create(**kwargs)
 
+    def _create_supplier(self, project, name='Test Supplier',
+                         stype=Supplier.BOTH_MFG_DIS, **kwargs):
+        kwargs['project'] = project
+        kwargs['name'] = name
+        kwargs['stype'] = stype
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return Supplier.objects.create(**kwargs)
+
     def _create_country(self, country='United States', code='US'):
         kwargs = {'country': country,
                   'code': code,}
         return Country.objects.create(**kwargs)
 
-    def _create_subdivision(self, subdivision_name, code, country):
+    def _create_subdivision(self, country, subdivision_name='New York', code='US-NY'):
         kwargs = {'subdivision_name': subdivision_name,
                   'code': code,
                   'country': country}

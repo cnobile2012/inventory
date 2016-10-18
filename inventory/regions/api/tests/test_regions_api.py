@@ -133,7 +133,7 @@ class TestSubdivision(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'get'
         uri = reverse('subdivision-list')
         self._test_users_with_invalid_permissions(uri, method)
@@ -146,7 +146,7 @@ class TestSubdivision(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'get'
         uri = reverse('subdivision-list')
         self._test_users_with_valid_permissions(uri, method)
@@ -158,7 +158,7 @@ class TestSubdivision(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'options'
         # Setup the country, subdivision, method, and uri.
         uri = reverse('country-list')
@@ -171,7 +171,7 @@ class TestSubdivision(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'options'
         # Setup the country, subdivision, method, and uri.
         uri = reverse('country-list')
@@ -185,7 +185,7 @@ class TestSubdivision(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'get'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
         self._test_users_with_invalid_permissions(uri, method)
@@ -198,7 +198,7 @@ class TestSubdivision(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, subdivision, method, and uri.
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'get'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
         self._test_users_with_valid_permissions(uri, method)
@@ -210,7 +210,7 @@ class TestSubdivision(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'options'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
         # Setup the country, subdivision, method, and uri.
@@ -223,7 +223,7 @@ class TestSubdivision(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        subdivision = self._create_subdivision('New York', 'US-NY', country)
+        subdivision = self._create_subdivision(country)
         method = 'options'
         uri = reverse('subdivision-detail', kwargs={'pk': subdivision.pk})
         # Setup the country, subdivision, method, and uri.
