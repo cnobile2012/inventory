@@ -16,7 +16,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
+    IsAdminSuperUser, IsAdministrator, IsProjectOwner, IsProjectManager,
+    IsProjectDefaultUser, IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.suppliers.models import Supplier
 
@@ -37,7 +38,12 @@ class SupplierList(ListCreateAPIView):
     serializer_class = SupplierSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -56,7 +62,12 @@ class SupplierDetail(RetrieveUpdateDestroyAPIView):
     queryset = Supplier.objects.all()
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     serializer_class = SupplierSerializer

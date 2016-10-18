@@ -5,249 +5,312 @@
 
 from rest_framework.reverse import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
 
 from inventory.common.api.tests.base_test import BaseTest
-from inventory.suppliers.models import Supplier
 from inventory.regions.models import Country, Subdivision
+from inventory.suppliers.models import Supplier
 
 
-class TestSuppliers(BaseTest):
+class TestSupplierAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestSuppliers, self).__init__(name)
-        self.country = None
-        self.region = None
+        super(TestSupplierAPI, self).__init__(name)
 
     def setUp(self):
-        super(TestSuppliers, self).setUp()
-        self.country = Country.objects.create(country='United States',
-                                              code='US',
-                                              active=True)
+        super(TestSupplierAPI, self).setUp()
+        self.in_type = self._create_inventory_type()
+        self.project = self._create_project(self.in_type, members=[self.user])
+        kwargs = {'public_id': self.project.public_id}
+        self.project_uri = self._resolve('project-detail', **kwargs)
+        #self.country = self._create_country()
+        #self.subdivision = self._create_subdivision(country)
 
-    def test_create_post_supplier(self):
+    def test_GET_supplier_list_with_invalid_permissions(self):
         """
-        Ensure we can create a new supplier.
+        Test the supplier_list endpoint with no permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Use API to create a supplier.
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        supplier = self._create_supplier(self.project)
         uri = reverse('supplier-list')
-        region_uri = reverse('region-detail', kwargs={'pk': self.region.pk})
-        country_uri = reverse('country-detail', kwargs={'pk': self.country.pk})
-        new_data = {'name': 'Company01', 'address_01': '000 Someplace Road',
-                    'city': 'Anywhere', 'region': region_uri,
-                    'postal_code': '55144-1000', 'country': country_uri,
-                    'phone': '1-888-364-3577', 'stype': 1,}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        msg = "Response Data: {}".format(data)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
-        # Get the same record through the API.
-        pk = data.get('id')
-        uri = reverse('supplier-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_get_supplier_with_no_permissions(self):
+    def test_GET_supplier_list_with_valid_permissions(self):
         """
-        Test the supplier_list endpoint with no permissions. We don't use the
-        self.client created in the setUp method from the base class.
+        Test the supplier_list endpoint with valid permissions.
         """
-        self.skipTest("Temporarily skipped")
-        supplier = self._create_supplier()
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(username, password, login=False)
-        # Use API to get user list with unauthenticated user.
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        supplier = self._create_supplier(self.project)
         uri = reverse('supplier-list')
-        response = client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_401_UNAUTHORIZED,
-            self._clean_data(data))
-        self.assertEqual(
-            response.status_code, status.HTTP_401_UNAUTHORIZED, msg)
-        self.assertTrue('detail' in data, msg)
+        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_create_supplier_post_token(self):
+    def test_POST_supplier_list_with_invalid_permissions(self):
         """
-        Test supplier with API with token. We don't use the self.client
-        created in the setUp method from the base class.
+        Test that a POST to supplier_list fails with invalid permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(username, password,
-                                                email='test@example.com')
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Use API to create a supplier.
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
         uri = reverse('supplier-list')
-        region_uri = reverse('region-detail', kwargs={'pk': self.region.pk})
-        country_uri = reverse('country-detail', kwargs={'pk': self.country.pk})
-        new_data = {'name': 'Company01', 'address_01': '000 Someplace Road',
-                    'city': 'Anywhere', 'region': region_uri,
-                    'postal_code': '55144-1000', 'country': country_uri,
-                    'phone': '1-888-364-3577', 'stype': 1,}
-        response = client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'TestSupplier-01'
+        su['project'] = self.project_uri
+        su['stype'] = Supplier.BOTH_MFG_DIS
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
 
-    def test_update_put_supplier(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a supplier.
+    def test_POST_supplier_list_with_valid_permissions(self):
+        """
+        Test that a POST to supplier_list passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
         uri = reverse('supplier-list')
-        region_uri = reverse('region-detail', kwargs={'pk': self.region.pk})
-        country_uri = reverse('country-detail', kwargs={'pk': self.country.pk})
-        new_data = {'name': 'Company01', 'address_01': '000 Someplace Road',
-                    'city': 'Anywhere', 'region': region_uri,
-                    'postal_code': '55144-1000', 'country': country_uri,
-                    'phone': '1-888-364-3577', 'stype': 1,}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        self.assertFalse(data.get('fax'), msg)
-        # Update record with PUT.
-        pk = data.get('id')
-        uri = reverse('supplier-detail', kwargs={'pk': pk})
-        new_data['fax'] = '1-000-000-0000'
-        response = self.client.put(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertTrue(data.get('fax'), msg)
-        # Read record with GET.
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('fax'), new_data.get('fax'), msg)
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'TestSupplier-01'
+        su['project'] = self.project_uri
+        su['stype'] = Supplier.BOTH_MFG_DIS
+        ad = data.setdefault('AD', su.copy())
+        ad['name'] = 'TestSupplier-02'
+        du = data.setdefault('DU', su.copy())
+        du['name'] = 'TestSupplier-03'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pow['name'] = 'TestSupplier-04'
+        pma = data.setdefault('PMA', su.copy())
+        pma['name'] = 'TestSupplier-05'
+        pdu = data.setdefault('PDU', su.copy())
+        pdu['name'] = 'TestSupplier-06'
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
 
-    def test_update_patch_supplier(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a supplier.
+    def test_OPTIONS_supplier_list_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
         uri = reverse('supplier-list')
-        region_uri = reverse('region-detail', kwargs={'pk': self.region.pk})
-        country_uri = reverse('country-detail', kwargs={'pk': self.country.pk})
-        new_data = {'name': 'Company01', 'address_01': '000 Someplace Road',
-                    'city': 'Anywhere', 'region': region_uri,
-                    'postal_code': '55144-1000', 'country': country_uri,
-                    'phone': '1-888-364-3577', 'stype': 1,}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        self.assertFalse(data.get('fax'), msg)
-        # Update record with PATCH.
-        pk = data.get('id')
-        uri = reverse('supplier-detail', kwargs={'pk': pk})
-        update_data = {'fax': '1-000-000-0000'}
-        response = self.client.patch(uri, update_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertTrue(data.get('fax'), msg)
-        # Read record with GET.
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
-        self.assertTrue(data.get('fax'), msg)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_delete_supplier(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a supplier.
+    def test_OPTIONS_supplier_list_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
         uri = reverse('supplier-list')
-        region_uri = reverse('region-detail', kwargs={'pk': self.region.pk})
-        country_uri = reverse('country-detail', kwargs={'pk': self.country.pk})
-        new_data = {'name': 'Company01', 'address_01': '000 Someplace Road',
-                    'city': 'Anywhere', 'region': region_uri,
-                    'postal_code': '55144-1000', 'country': country_uri,
-                    'phone': '1-888-364-3577', 'stype': 1,}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Delete the User.
-        pk = data.get('id')
-        uri = reverse('supplier-detail', kwargs={'pk': pk})
-        response = self.client.delete(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertTrue(data is None, msg)
-        # Get the same record through the API.
-        response = self.client.get(uri, format='json')
-        code = response.status_code
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_404_NOT_FOUND,
-            self._clean_data(data))
-        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_options_user(self):
-        self.skipTest("Temporarily skipped")
-        # Use API to create a supplier.
-        uri = reverse('supplier-list')
-        region_uri = reverse('region-detail', kwargs={'pk': self.region.pk})
-        country_uri = reverse('country-detail', kwargs={'pk': self.country.pk})
-        new_data = {'name': 'Company01', 'address_01': '000 Someplace Road',
-                    'city': 'Anywhere', 'region': region_uri,
-                    'postal_code': '55144-1000', 'country': country_uri,
-                    'phone': '1-888-364-3577', 'stype': 1,}
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Get the API list OPTIONS.
-        pk = data.get('id')
-        response = self.client.options(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'Supplier List', msg)
-        # Get the API detail OPTIONS.
-        uri = reverse('supplier-detail', kwargs={'pk': pk})
-        response = self.client.options(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'Supplier Detail', msg)
+    def test_GET_supplier_detail_with_invalid_permissions(self):
+        """
+        Test that a GET on the supplier_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        method = 'get'
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def _create_supplier(self):
-        new_data = {'name': 'Company01', 'address_01': '000 Someplace Road',
-                    'city': 'Anywhere', 'region': self.region,
-                    'postal_code': '55144-1000', 'country': self.country,
-                    'phone': '1-888-364-3577', 'stype': 1,
-                    'updater': self.user, 'creator': self.user}
-        return Supplier.objects.create(**new_data)
+    def test_GET_supplier_detail_with_valid_permissions(self):
+        """
+        Test that a GET to supplier_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        method = 'get'
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
+
+    def test_PUT_supplier_detail_with_invalid_permissions(self):
+        """
+        Test that a PUT to supplier_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'TestSupplier-01'
+        su['project'] = self.project_uri
+        su['stype'] = Supplier.BOTH_MFG_DIS
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_PUT_supplier_detail_with_valid_permissions(self):
+        """
+        Test that a PUT to supplier_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'TestSupplier-01'
+        su['project'] = self.project_uri
+        su['stype'] = Supplier.BOTH_MFG_DIS
+        ad = data.setdefault('AD', su.copy())
+        ad['name'] = 'TestSupplier-02'
+        du = data.setdefault('DU', su.copy())
+        du['name'] = 'TestSupplier-03'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pow['name'] = 'TestSupplier-04'
+        pma = data.setdefault('PMA', su.copy())
+        pma['name'] = 'TestSupplier-05'
+        pdu = data.setdefault('PDU', su.copy())
+        pdu['name'] = 'TestSupplier-06'
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
+
+    def test_PATCH_supplier_detail_with_invalid_permissions(self):
+        """
+        Test that a PATCH to supplier_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'TestSupplier-01'
+        su['project'] = self.project_uri
+        su['stype'] = Supplier.BOTH_MFG_DIS
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_PATCH_supplier_detail_with_valid_permissions(self):
+        """
+        Test that a PATCH to supplier_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'TestSupplier-01'
+        su['project'] = self.project_uri
+        su['stype'] = Supplier.BOTH_MFG_DIS
+        ad = data.setdefault('AD', {})
+        ad['name'] = 'TestSupplier-02'
+        du = data.setdefault('DU', {})
+        du['name'] = 'TestSupplier-03'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', {})
+        pow['name'] = 'TestSupplier-04'
+        pma = data.setdefault('PMA', {})
+        pma['name'] = 'TestSupplier-05'
+        pdu = data.setdefault('PDU', {})
+        pdu['name'] = 'TestSupplier-06'
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
+
+    def test_DELETE_supplier_detail_with_invalid_permissions(self):
+        """
+        Test that a DELETE to supplier_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_DELETE_supplier_detail_with_valid_permissions(self):
+        """
+        Test that a DELETE to supplier_detail pass' with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        # Test SUPERUSER
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        self._test_superuser_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test ADMINISTRATOR
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        self._test_administrator_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test DEFAULT_USER
+        ## This is an invalid test since the DEFAULT_USER has no access.
+        # Test PROJECT_OWNER
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        self._test_project_owner_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test PROJECT_MANAGER
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        self._test_project_manager_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test PROJECT_USER
+        ## This is an invalid test since the PROJECT_USER has no access.
+
+    def test_OPTIONS_supplier_detail_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_supplier_detail_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        supplier = self._create_supplier(self.project)
+        uri = reverse('supplier-detail',
+                      kwargs={'public_id': supplier.public_id})
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)

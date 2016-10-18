@@ -13,6 +13,7 @@ from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.accounts.api.serializers import UserSerializer
+from inventory.projects.models import Project
 from inventory.suppliers.models import Supplier
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
@@ -21,11 +22,15 @@ log = logging.getLogger('api.suppliers.serializers')
 
 
 class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
+    project = serializers.HyperlinkedRelatedField(
+        view_name='project-detail', queryset=Project.objects.all(),
+        lookup_field='public_id')
     subdivision = serializers.HyperlinkedRelatedField(
         view_name='subdivision-detail', queryset=Subdivision.objects.all(),
         default=None)
     country = serializers.HyperlinkedRelatedField(
-        view_name='country-detail', queryset=Country.objects.all())
+        view_name='country-detail', queryset=Country.objects.all(),
+        default=None)
     language = serializers.HyperlinkedRelatedField(
         view_name='language-detail', queryset=Language.objects.all(),
         default=None)
@@ -82,7 +87,7 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
         model = Supplier
         fields = ('public_id', 'name', 'address_01', 'address_02', 'city',
                   'subdivision', 'postal_code', 'country', 'language',
-                  'timezone', 'phone', 'fax', 'email', 'stype', 'creator',
-                  'created', 'updater', 'updated', 'uri',)
+                  'timezone', 'phone', 'fax', 'email', 'stype', 'project',
+                  'creator', 'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
                             'updated', 'uri',)
