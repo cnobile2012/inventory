@@ -41,13 +41,12 @@ class CategoryAuthorizationMixin(object):
                 self.request.user.role == UserModel.ADMINISTRATOR)
 
     def get_queryset(self):
-        result = []
-
         if self.has_full_access():
             result = Category.objects.all()
         else:
             projects = self.request.user.projects.all()
-            result = Category.objects.filter(project__in=projects)
+            result = Category.objects.select_related(
+                'project').filter(project__in=projects)
 
         return result
 
