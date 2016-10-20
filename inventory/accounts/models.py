@@ -35,8 +35,8 @@ log = logging.getLogger('inventory.accounts.models')
 def create_hash(value, salt, hasher='default'):
     hasher = get_hasher(hasher)
     # Need to encrypt the salt
-    return (hasher.algorithm,
-            hasher.encode(value, hashlib.sha256(salt).hexdigest()))
+    return (hasher.algorithm, hasher.encode(
+        value, hashlib.sha256(salt.encode('utf-8')).hexdigest()))
 
 
 class UserManager(BaseUserManager):
