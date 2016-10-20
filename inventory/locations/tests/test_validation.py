@@ -42,7 +42,7 @@ class TestValidation(TestCase):
                     message in cm.exception.message_dict.get('separator')[0],
                     msg)
             else:
-                self.assertTrue(message in cm.exception.message, msg)
+                self.assertTrue(message in str(cm.exception), msg)
 
     def test_validate_char_definition(self):
         #self.skipTest("Temporarily skipped")
