@@ -2,8 +2,6 @@
 #
 # inventory/maintenance/tests/test_validation.py
 #
-# Run ./manage.py test -k # Keep the DB, don't rebuild.
-#
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError

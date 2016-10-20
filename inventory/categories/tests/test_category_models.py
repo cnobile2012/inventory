@@ -2,8 +2,6 @@
 #
 # inventory/categories/tests/test_category_model.py
 #
-# Run ./manage.py test -k # Keep the DB, don't rebuild.
-#
 
 import logging
 import datetime

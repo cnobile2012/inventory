@@ -7,8 +7,6 @@ from django.core.exceptions import ValidationError
 
 from inventory.common.tests.base_tests import BaseTest
 
-from ..models import Project, Membership
-
 
 class TestSupplierModels(BaseTest):
 

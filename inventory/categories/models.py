@@ -145,17 +145,16 @@ class CategoryManager(models.Manager):
 
             try:
                 while True:
-                    item.append(iterator.next())
+                    item.append(six.next(iterator))
             except StopIteration:
                 pass
 
-            tree.append(tuple(sorted(
-                item, cmp=lambda x,y: cmp(x.path.lower(), y.path.lower()))))
+            tree.append(tuple(sorted(item, key=lambda x: x.path.lower())))
 
         for item in tree:
             final[hash(item)] = item
 
-        return final.values()
+        return list(final.values())
 
     def get_all_root_trees(self, project, name):
         """
