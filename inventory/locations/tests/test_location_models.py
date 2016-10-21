@@ -2,15 +2,13 @@
 #
 # inventory/maintenance/tests/test_location_models.py
 #
-# Run ./manage.py test -k # Keep the DB, don't rebuild.
-#
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from inventory.common.tests.base_tests import BaseTest
 
-from ..models import LocationDefault, LocationFormat, LocationCode
+from ..models import LocationSetName, LocationFormat, LocationCode
 
 User = get_user_model()
 
@@ -28,9 +26,9 @@ class BaseLocation(BaseTest):
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 
-    def _create_location_default_record(self, project, name, description,
+    def _create_location_set_name_record(self, project, name, description,
                                         separator=None,
-                                        shared=LocationDefault.YES):
+                                        shared=LocationSetName.YES):
         kwargs = {}
         kwargs['description'] = description
         kwargs['shared'] = shared
@@ -40,7 +38,7 @@ class BaseLocation(BaseTest):
 
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        obj, created = LocationDefault.objects.get_or_create(
+        obj, created = LocationSetName.objects.get_or_create(
             project=project, name=name, defaults=kwargs)
 
         if not created:
@@ -55,10 +53,10 @@ class BaseLocation(BaseTest):
         return obj
 
     def _create_location_format_record(self, char_definition, segment_order,
-                                       description, location_default):
+                                       description, location_set_name):
         kwargs = {}
         kwargs['char_definition'] = char_definition
-        kwargs['location_default'] = location_default
+        kwargs['location_set_name'] = location_set_name
         kwargs['segment_order'] = segment_order
         kwargs['description'] = description
         kwargs['creator'] = self.user
@@ -76,25 +74,25 @@ class BaseLocation(BaseTest):
         return LocationCode.objects.create(**kwargs)
 
 
-class TestLocationDefaultModel(BaseLocation):
+class TestLocationSetNameModel(BaseLocation):
 
     def __init__(self, name):
-        super(TestLocationDefaultModel, self).__init__(name)
+        super(TestLocationSetNameModel, self).__init__(name)
 
-    def test_create_location_default_record(self):
+    def test_create_location_set_name_record(self):
         #self.skipTest("Temporarily skipped")
         # Create a location default.
-        name = "Test Location Default"
+        name = "Test Location Set Name"
         desc = "Test description."
-        obj = self._create_location_default_record(self.project, name, desc)
+        obj = self._create_location_set_name_record(self.project, name, desc)
         msg = "{} should be {} and {} should be {}".format(
             obj.name, name, obj.description, desc)
         self.assertEqual(obj.name, name, msg)
         self.assertEqual(obj.description, desc, msg)
 
-    def setup_default_tree(self, name, desc, shared):
+    def setup_set_name_tree(self, name, desc, shared):
         # Create a location default.
-        loc_def = self._create_location_default_record(
+        loc_def = self._create_location_set_name_record(
             self.project, name, desc, shared=shared)
         msg = "{} should be {} and {} should be {}".format(
             loc_def.name, name, loc_def.description, desc)
@@ -118,57 +116,57 @@ class TestLocationDefaultModel(BaseLocation):
             char_definition, segment_order, description, loc_def)
         return loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2
 
-    def test_clone_default_tree_ERRORS(self):
+    def test_clone_set_name_tree_ERRORS(self):
         #self.skipTest("Temporarily skipped")
         # Create a new project
         project = self._create_project(self.inventory_type,
                                        name="2nd Test Project")
         # Setup test
-        name = "Test Location Default"
+        name = "Test Location Set Name"
         desc = "Test description."
-        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_default_tree(
-            name, desc, LocationDefault.NO)
-        # The location_default is not shared and user is not in project
+        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_set_name_tree(
+            name, desc, LocationSetName.NO)
+        # The location_set_name is not shared and user is not in project
         # (should fail).
         with self.assertRaises(ValueError) as cm:
-            tree = LocationDefault.objects.clone_default_tree(
+            tree = LocationSetName.objects.clone_set_name_tree(
                 project, loc_def, self.user)
-        # The location_default is shared but user is not in project
+        # The location_set_name is shared but user is not in project
         # (should fail).
-        loc_def = self._create_location_default_record(
-            self.project, name, desc, shared=LocationDefault.YES)
+        loc_def = self._create_location_set_name_record(
+            self.project, name, desc, shared=LocationSetName.YES)
         with self.assertRaises(ValueError) as cm:
-            tree = LocationDefault.objects.clone_default_tree(
+            tree = LocationSetName.objects.clone_set_name_tree(
                 project, loc_def, self.user)
 
-    def test_clone_default_tree(self):
+    def test_clone_set_name_tree(self):
         #self.skipTest("Temporarily skipped")
         # Create a new project
         project = self._create_project(
             self.inventory_type, name="3rd Test Project", members=[self.user])
         # Setup test
-        name = "Test Location Default Number 2"
+        name = "Test Location Set Name Number 2"
         desc = "Test description."
-        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_default_tree(
-            name, desc, LocationDefault.YES)
+        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_set_name_tree(
+            name, desc, LocationSetName.YES)
         project.process_members([self.user])
         # Make copy of location default and it's format objects.
-        tree = LocationDefault.objects.clone_default_tree(
+        tree = LocationSetName.objects.clone_set_name_tree(
                 project, loc_def, self.user)
         msg = ("tree: '{}', total in tree: '{}'.").format(tree, len(tree))
         self.assertEqual(len(tree), 4, msg)
         # Try a duplicate record (should fail)
         with self.assertRaises(ValueError) as cm:
-            tree = LocationDefault.objects.clone_default_tree(
+            tree = LocationSetName.objects.clone_set_name_tree(
                 project, loc_def, self.user)
 
-    def test_delete_default_tree(self):
+    def test_delete_set_name_tree(self):
         #self.skipTest("Temporarily skipped")
         # Create a location default and tree.
-        name = "Test Location Default"
+        name = "Test Location Set Name"
         desc = "Test description."
-        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_default_tree(
-            name, desc, LocationDefault.YES)
+        loc_def, fmt_obj_0, fmt_obj_1, fmt_obj_2 = self.setup_set_name_tree(
+            name, desc, LocationSetName.YES)
         # Create location code objects .
         code_0 = self._create_location_code_record("T01", fmt_obj_0)
         code_1 = self._create_location_code_record("X01", fmt_obj_1,
@@ -180,20 +178,20 @@ class TestLocationDefaultModel(BaseLocation):
         code_2a = self._create_location_code_record("B01C01R01", fmt_obj_2,
                                                     parent=code_1a)
         # Test for correct number of objects.
-        msg = "Location Default: {}".format(loc_def)
-        self.assertEqual(LocationDefault.objects.count(), 1, msg)
+        msg = "Location Set Name: {}".format(loc_def)
+        self.assertEqual(LocationSetName.objects.count(), 1, msg)
         msg = "Location Formats: {}, {}, {}".format(
             fmt_obj_0, fmt_obj_1, fmt_obj_2)
         self.assertEqual(LocationFormat.objects.count(), 3, msg)
         msg = "Location Codes: {}, {}, {}".format(code_0, code_1, code_2)
         self.assertEqual(LocationCode.objects.count(), 5, msg)
-        # Test delete_default_tree
-        nodes = LocationDefault.objects.delete_default_tree(
+        # Test delete_set_name_tree
+        nodes = LocationSetName.objects.delete_set_name_tree(
             self.project, loc_def, self.user)
         #print nodes
         # Test for correct number of objects.
-        msg = "Location Default: {}".format(loc_def)
-        self.assertEqual(LocationDefault.objects.count(), 0, msg)
+        msg = "Location Set Name: {}".format(loc_def)
+        self.assertEqual(LocationSetName.objects.count(), 0, msg)
         msg = "Location Formats: {}, {}, {}".format(
             fmt_obj_0, fmt_obj_1, fmt_obj_2)
         self.assertEqual(LocationFormat.objects.count(), 0, msg)
@@ -208,8 +206,8 @@ class TestLocationDefaultModel(BaseLocation):
         #self.skipTest("Temporarily skipped")
         # Create a location default object.
         with self.assertRaises(ValidationError) as cm:
-            obj = self._create_location_default_record(
-                self.project, "Another Default", "Test Description 2",
+            obj = self._create_location_set_name_record(
+                self.project, "Another Set Name", "Test Description 2",
                 separator='--->')
             msg = "Created Object: {}".format(obj)
             self.assertFalse(obj, msg)
@@ -228,9 +226,9 @@ class TestLocationFormatModel(BaseLocation):
     def setUp(self):
         super(TestLocationFormatModel, self).setUp()
         # Create a valid location default object.
-        self.name = "Test Location Default"
+        self.name = "Test Location Set Name"
         desc = "Test description."
-        self.loc_def = self._create_location_default_record(
+        self.loc_def = self._create_location_set_name_record(
             self.project, self.name, desc)
 
     def test_create_location_format_record(self):
@@ -243,9 +241,9 @@ class TestLocationFormatModel(BaseLocation):
             char_definition, segment_order, description, self.loc_def)
         msg = "{} should be {} and {} should be {}".format(
             obj.char_definition, char_definition,
-            obj.location_default.name, self.name)
+            obj.location_set_name.name, self.name)
         self.assertEqual(obj.char_definition, char_definition, msg)
-        self.assertEqual(obj.location_default.name, self.name, msg)
+        self.assertEqual(obj.location_set_name.name, self.name, msg)
 
     def test_get_char_definition(self):
         #self.skipTest("Temporarily skipped")
@@ -292,9 +290,9 @@ class TestLocationCodeModel(BaseLocation):
     def setUp(self):
         super(TestLocationCodeModel, self).setUp()
         # Create a valid location default object.
-        self.name = "Test Location Default"
+        self.name = "Test Location Set Name"
         desc = "Test description."
-        self.loc_def = self._create_location_default_record(
+        self.loc_def = self._create_location_set_name_record(
             self.project, self.name, desc)
         # Create a location format object.
         char_definition = 'T\\d\\d'
@@ -310,9 +308,9 @@ class TestLocationCodeModel(BaseLocation):
         obj = self._create_location_code_record(segment, self.loc_fmt)
         msg = "{} should be {} and {} should be {}".format(
             obj.segment, segment,
-            obj.char_definition.location_default.name, self.name)
+            obj.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj.segment, segment, msg)
-        self.assertEqual(obj.char_definition.location_default.name,
+        self.assertEqual(obj.char_definition.location_set_name.name,
                          self.name, msg)
 
     def test_invalid_child(self):
@@ -321,7 +319,7 @@ class TestLocationCodeModel(BaseLocation):
         obj_0 = self._create_location_code_record(segment, self.loc_fmt)
         msg = "{} should be {} and {} should be {}".format(
             obj_0.segment, segment,
-            obj_0.char_definition.location_default.name, self.name)
+            obj_0.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_0.segment, segment, msg)
         # Try to create a child to itself.
         with self.assertRaises(ValidationError):
@@ -330,7 +328,7 @@ class TestLocationCodeModel(BaseLocation):
                                                       parent=obj_0)
             msg = "{} should be {} and {} should be {}".format(
                 obj_1.segment, segment,
-                obj_1.char_definition.location_default.name, self.name)
+                obj_1.char_definition.location_set_name.name, self.name)
             self.assertFalse(obj_1, msg)
 
     def test_invalid_number_of_segments(self):
@@ -340,7 +338,7 @@ class TestLocationCodeModel(BaseLocation):
         obj_0 = self._create_location_code_record(segment, self.loc_fmt)
         msg = "{} should be {} and {} should be {}".format(
             obj_0.segment, segment,
-            obj_0.char_definition.location_default.name, self.name)
+            obj_0.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_0.segment, segment, msg)
         # Create 2nd location format object.
         char_definition = 'C\\d\\d' # Container nn
@@ -354,7 +352,7 @@ class TestLocationCodeModel(BaseLocation):
                                                   parent=obj_0)
         msg = "{} should be {} and {} should be {}".format(
             obj_1.segment, segment,
-            obj_1.char_definition.location_default.name, self.name)
+            obj_1.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_1.segment, segment, msg)
         # Create 3rd location format object.
         char_definition = 'B\\d\\d' # Container nn
@@ -368,7 +366,7 @@ class TestLocationCodeModel(BaseLocation):
                                                   parent=obj_1)
         msg = "{} should be {} and {} should be {}".format(
             obj_2.segment, segment,
-            obj_2.char_definition.location_default.name, self.name)
+            obj_2.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_2.segment, segment, msg)
         # Try to create a 4nd parent, but with no new format object.
         with self.assertRaises(ValidationError):
@@ -377,7 +375,7 @@ class TestLocationCodeModel(BaseLocation):
                                                       parent=obj_2)
             msg = "{} should be {} and {} should be {}".format(
                 obj_3.segment, segment,
-                obj_3.char_definition.location_default.name, self.name)
+                obj_3.char_definition.location_set_name.name, self.name)
             self.assertFalse(obj_3, msg)
 
     def test_get_parents(self):
@@ -387,7 +385,7 @@ class TestLocationCodeModel(BaseLocation):
         obj_0 = self._create_location_code_record(segment, self.loc_fmt)
         msg = "{} should be {} and {} should be {}".format(
             obj_0.segment, segment,
-            obj_0.char_definition.location_default.name, self.name)
+            obj_0.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_0.segment, segment, msg)
         # Test get_parent
         parents = LocationCode.objects.get_parents(obj_0)
@@ -405,7 +403,7 @@ class TestLocationCodeModel(BaseLocation):
                                                   parent=obj_0)
         msg = "{} should be {} and {} should be {}".format(
             obj_1.segment, segment,
-            obj_1.char_definition.location_default.name, self.name)
+            obj_1.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_1.segment, segment, msg)
         # Test get_parent
         parents = LocationCode.objects.get_parents(obj_1)
@@ -423,7 +421,7 @@ class TestLocationCodeModel(BaseLocation):
                                                   parent=obj_1)
         msg = "{} should be {} and {} should be {}".format(
             obj_2.segment, segment,
-            obj_2.char_definition.location_default.name, self.name)
+            obj_2.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_2.segment, segment, msg)
         # Test get_parent
         parents = LocationCode.objects.get_parents(obj_2)
@@ -438,7 +436,7 @@ class TestLocationCodeModel(BaseLocation):
         obj_0 = self._create_location_code_record(segment, self.loc_fmt)
         msg = "{} should be {} and {} should be {}".format(
             obj_0.segment, segment,
-            obj_0.char_definition.location_default.name, self.name)
+            obj_0.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_0.segment, segment, msg)
         # Create 2nd location format object.
         char_definition = 'C\\d\\d' # Container nn
@@ -452,14 +450,14 @@ class TestLocationCodeModel(BaseLocation):
                                                   parent=obj_0)
         msg = "{} should be {} and {} should be {}".format(
             obj_1.segment, segment,
-            obj_1.char_definition.location_default.name, self.name)
+            obj_1.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_1.segment, segment, msg)
         # Create 2nd tree.
         segment = "T02"
         obj_0 = self._create_location_code_record(segment, self.loc_fmt)
         msg = "{} should be {} and {} should be {}".format(
             obj_0.segment, segment,
-            obj_0.char_definition.location_default.name, self.name)
+            obj_0.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_0.segment, segment, msg)
         # Create 2nd location format object.
         char_definition = 'C\\d\\d' # Container nn
@@ -473,7 +471,7 @@ class TestLocationCodeModel(BaseLocation):
                                                   parent=obj_0)
         msg = "{} should be {} and {} should be {}".format(
             obj_1.segment, segment,
-            obj_1.char_definition.location_default.name, self.name)
+            obj_1.char_definition.location_set_name.name, self.name)
         self.assertEqual(obj_1.segment, segment, msg)
         # get_all_root_trees
         trees = LocationCode.objects.get_all_root_trees(self.project, segment)
@@ -516,15 +514,15 @@ class TestLocationCodeModel(BaseLocation):
         msg = "Exception: {}".format(cm.exception)
         self.assertTrue("child to itself." in cm.exception.messages[0], msg)
 
-    def test_segments_have_same_location_default(self):
+    def test_segments_have_same_location_set_name(self):
         """
         Test that all the segments in a given tree have the same location
         default.
         """
         #self.skipTest("Temporarily skipped")
         # Create a location default object.
-        loc_def1 = self._create_location_default_record(
-            self.project, "Another Default", "Test Description 2")
+        loc_def1 = self._create_location_set_name_record(
+            self.project, "Another Set Name", "Test Description 2")
         # Create a location format object with loc_def1.
         char_definition = 'C\\d\\dR\\d\\d'
         segment_order = 1
@@ -541,7 +539,7 @@ class TestLocationCodeModel(BaseLocation):
             self.assertFalse(obj, msg)
 
         msg = "Exception: {}".format(cm.exception)
-        self.assertTrue("same location default." in cm.exception.messages[0],
+        self.assertTrue("same location set name." in cm.exception.messages[0],
                         msg)
 
     def test_number_segments_number_formats(self):

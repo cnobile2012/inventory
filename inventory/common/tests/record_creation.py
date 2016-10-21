@@ -4,6 +4,8 @@
 #
 
 from inventory.categories.models import Category
+from inventory.locations.models import (
+    LocationSetName, LocationFormat, LocationCode)
 from inventory.projects.models import InventoryType, Project
 from inventory.regions.models import (
     Country, Subdivision, Language, TimeZone, Currency)
@@ -29,7 +31,8 @@ class RecordCreation(object):
         kwargs['public'] = public
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        obj, created = Project.objects.get_or_create(name=name, defaults=kwargs)
+        obj, created = Project.objects.get_or_create(
+            name=name, defaults=kwargs)
         obj.process_members(members)
         return obj
 
@@ -51,12 +54,38 @@ class RecordCreation(object):
         kwargs['updater'] = self.user
         return Supplier.objects.create(**kwargs)
 
+    def _create_location_set_name(self, project, name='Test Location Set Name',
+                                 **kwargs):
+        kwargs['project'] = project
+        kwargs['name'] = name
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return LocationSetName.objects.create(**kwargs)
+
+    def _create_location_format(self, location_set_name, char_definition,
+                                **kwargs):
+        kwargs['location_set_name'] = location_set_name
+        kwargs['char_definition'] = char_definition
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return LocationFormat.objects.create(**kwargs)
+
+    def _create_location_code(self, char_definition, segment, parent=None):
+        kwargs = {}
+        kwargs['char_definition'] = char_definition
+        kwargs['segment'] = segment
+        kwargs['parent'] = parent
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return LocationCode.objects.create(**kwargs)
+
     def _create_country(self, country='United States', code='US'):
         kwargs = {'country': country,
                   'code': code,}
         return Country.objects.create(**kwargs)
 
-    def _create_subdivision(self, country, subdivision_name='New York', code='US-NY'):
+    def _create_subdivision(self, country, subdivision_name='New York',
+                            code='US-NY'):
         kwargs = {'subdivision_name': subdivision_name,
                   'code': code,
                   'country': country}

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/validation.py
+# inventory/locations/validation.py
 #
+"""
+Format validation code.
+"""
+__docformat__ = "restructuredtext en"
 
 import re
 
@@ -35,14 +39,14 @@ class FormatValidator(object):
         """
         This method has mixed exception types.
         """
-        from .models import LocationDefault
+        from .models import LocationSetName
 
         # This is not a validation error, but could be a programming error.
         if not value:
             raise ValueError(_("A separator cannot be empty or a None value."))
 
         size = len(value)
-        separator_obj = LocationDefault._meta.get_field('separator')
+        separator_obj = LocationSetName._meta.get_field('separator')
 
         if size > separator_obj.max_length:
             raise ValidationError(

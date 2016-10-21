@@ -26,7 +26,7 @@ try:
         LocationCodeDefault, LocationCodeCategory)
 except:
     from inventory.locations.models import (
-        LocationDefault, LocationFormat, LocationCode)
+        LocationSetName, LocationFormat, LocationCode)
 
 
 class MigrateLocation(MigrateBase):
@@ -44,8 +44,8 @@ class MigrateLocation(MigrateBase):
 
         if self._options.populate:
             project = self._create_project()
-            defaults = self._create_location_defaults(project)
-            self._create_location_format(defaults)
+            set_names = self._create_location_set_names(project)
+            self._create_location_format(set_names)
             self._create_location_code()
 
     def _create_location_format_csv(self):
@@ -97,7 +97,7 @@ class MigrateLocation(MigrateBase):
             for item in loc_list:
                 writer.writerow(item)
 
-    def _create_location_defaults(self, project):
+    def _create_location_set_names(self, project):
         user = self.get_user()
         data = [
             {
@@ -108,27 +108,27 @@ class MigrateLocation(MigrateBase):
                 'updater': user
                 },
             ]
-        defaults = []
+        set_names = []
 
         for kwargs in data:
             name = kwargs.pop('name', '')
 
             if not self._options.noop:
-                obj, created = LocationDefault.objects.get_or_create(
+                obj, created = LocationSetName.objects.get_or_create(
                     name=name, defaults=kwargs)
-                defaults.append(obj)
-                self._log.info("Created/Updated location default: %s", name)
+                set_names.append(obj)
+                self._log.info("Created/Updated location set name: %s", name)
             else:
-                self._log.info("NOOP Mode: Found location default: %s", name)
+                self._log.info("NOOP Mode: Found location set name: %s", name)
 
-        return defaults
+        return set_names
 
-    def _create_location_format(self, defaults):
+    def _create_location_format(self, set_names):
         # Only have one default at ths time.
-        if len(defaults) > 0:
-            default = defaults[0]
+        if len(set_names) > 0:
+            set_name = set_names[0]
         else:
-            default = None
+            set_name = None
 
         with open(self._LOCATION_FORMAT, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
@@ -141,7 +141,7 @@ class MigrateLocation(MigrateBase):
                 mtime = duparser.parse(row[5])
                 kwargs = {}
                 kwargs['char_definition'] = char_definition
-                kwargs['location_default'] = default
+                kwargs['location_set_name'] = set_name
                 kwargs['segment_order'] = segment_order
                 kwargs['description'] = description
                 kwargs['creator'] = user
@@ -160,7 +160,7 @@ class MigrateLocation(MigrateBase):
                         self._log.info("Created location format: %s",
                                        char_definition)
                     else:
-                        obj.location_default = default
+                        obj.location_set_name = set_name
                         obj.segment_order = segment_order
                         obj.description = description
                         obj.creator = user

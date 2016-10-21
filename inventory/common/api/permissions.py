@@ -58,7 +58,8 @@ class IsAdministrator(permissions.BasePermission):
         result = False
         user = get_user(request)
 
-        if user and user.role == UserModel.ADMINISTRATOR:
+        if (user and hasattr(user, 'role') and
+            user.role == UserModel.ADMINISTRATOR):
             result = True
 
         log.debug("IsAdministrator: %s", result)
@@ -74,7 +75,8 @@ class IsDefaultUser(permissions.BasePermission):
         result = False
         user = get_user(request)
 
-        if user and user.role == UserModel.DEFAULT_USER:
+        if (user and hasattr(user, 'role') and
+            user.role == UserModel.DEFAULT_USER):
             result = True
 
         log.debug("IsDefaultUser: %s", result)
@@ -91,8 +93,9 @@ class IsAnyUser(permissions.BasePermission):
         user = get_user(request)
 
         # This permission is broken
-        if user and (user.is_superuser or user.role in (
-            UserModel.DEFAULT_USER, UserModel.ADMINISTRATOR)):
+        if (user and hasattr(user, 'role') and
+            (user.is_superuser or user.role in (
+            UserModel.DEFAULT_USER, UserModel.ADMINISTRATOR))):
             result = True
 
         log.debug("IsAnyUser: %s", result)
@@ -116,7 +119,8 @@ class BaseProjectPermission(permissions.BasePermission):
             if not isinstance(level, (list, tuple)):
                 level = (level,)
 
-            if user.memberships.filter(role__in=level).count():
+            if (hasattr(user, 'memberships') and
+                user.memberships.filter(role__in=level).count()):
                 result = True
 
         return result

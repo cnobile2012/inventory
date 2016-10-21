@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/forms.py
+# inventory/locations/forms.py
 #
 
 import logging
@@ -8,15 +8,15 @@ import logging
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from .models import LocationDefault, LocationFormat, LocationCode
+from .models import LocationSetName, LocationFormat, LocationCode
 
 log = logging.getLogger('inventory.maintenance.forms')
 
 
-class LocationDefaultForm(forms.ModelForm):
+class LocationSetNameForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(LocationDefaultForm, self).__init__(*args, **kwargs)
+        super(LocationSetNameForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget = forms.TextInput(
             attrs={'size': 70, 'maxlength': 100})
         self.fields['separator'].widget = forms.TextInput(
@@ -25,7 +25,7 @@ class LocationDefaultForm(forms.ModelForm):
             attrs={'size': 70, 'maxlength': 254})
 
     class Meta:
-        model = LocationDefault
+        model = LocationSetName
         exclude = ()
 
 

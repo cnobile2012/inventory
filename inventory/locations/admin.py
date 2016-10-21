@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/admin.py
+# inventory/locations/admin.py
 #
 
 from django.contrib import admin
@@ -8,12 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin
 
-from .models import LocationDefault, LocationFormat, LocationCode
-from .forms import LocationDefaultForm, LocationFormatForm, LocationCodeForm
+from .models import LocationSetName, LocationFormat, LocationCode
+from .forms import LocationSetNameForm, LocationFormatForm, LocationCodeForm
 
 
-@admin.register(LocationDefault)
-class LocationDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
+@admin.register(LocationSetName)
+class LocationSetNameAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('project', 'name', 'description', 'separator',
                            'shared',)}),
@@ -25,13 +25,13 @@ class LocationDefaultAdmin(UserAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'project', 'separator', 'shared', 'updated',)
     list_editable = ('separator', 'shared',)
     list_filter = ('project',)
-    form = LocationDefaultForm
+    form = LocationSetNameForm
 
 
 @admin.register(LocationFormat)
 class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('location_default', 'char_definition',
+        (None, {'fields': ('location_set_name', 'char_definition',
                            'segment_order', 'description', 'segment_length',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
@@ -39,7 +39,7 @@ class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('segment_length', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('char_definition', 'location_default', 'segment_order',
+    list_display = ('char_definition', 'location_set_name', 'segment_order',
                     'description', 'segment_length', 'updated',)
     list_editable = ('segment_order',)
     form = LocationFormatForm

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/projects/api/serializers.py
+# inventory/locations/api/serializers.py
 #
+"""
+LocationSetName, LocationFormat, and LocationCode serializers.
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -13,16 +17,16 @@ from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.accounts.models import User
 from inventory.projects.models import Project
 
-from ..models import LocationDefault, LocationFormat, LocationCode
+from ..models import LocationSetName, LocationFormat, LocationCode
 
-log = logging.getLogger('api.maintenance.serializers')
+log = logging.getLogger('api.locations.serializers')
 User = get_user_model()
 
 
 #
 # Location
 #
-class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
+class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         view_name='project-detail', queryset=Project.objects.all(),
         lookup_field='public_id')
@@ -31,15 +35,16 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     location_formats = serializers.HyperlinkedRelatedField(
-        view_name='location-format-detail', many=True, read_only=True)
+        view_name='location-format-detail', many=True, read_only=True,
+        lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
-        view_name='location-default-detail')
+        view_name='location-set-name-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return LocationDefault.objects.create(**validated_data)
+        return LocationSetName.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -54,7 +59,7 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = LocationDefault
+        model = LocationSetName
         fields = ('id', 'project', 'name', 'description', 'shared',
                   'separator', 'location_formats', 'creator', 'created',
                   'updater', 'updated', 'uri',)
@@ -62,17 +67,18 @@ class LocationDefaultSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
-    location_default = serializers.HyperlinkedRelatedField(
-        view_name='location-default-detail',
-        queryset=LocationDefault.objects.all())
+    location_set_name = serializers.HyperlinkedRelatedField(
+        view_name='location-set-name-detail',
+        queryset=LocationSetName.objects.all(), lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     location_codes = serializers.HyperlinkedRelatedField(
-        view_name='location-code-detail', many=True, read_only=True)
+        view_name='location-code-detail', many=True, read_only=True,
+        lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
-        view_name='location-format-detail')
+        view_name='location-format-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -83,8 +89,8 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.char_definition = validated_data.get(
             'char_definition', instance.char_definition)
-        instance.location_default = validated_data.get(
-            'location_default', instance.location_default)
+        instance.location_set_name = validated_data.get(
+            'location_set_name', instance.location_set_name)
         instance.segment_order =  validated_data.get(
             'segment_order', instance.segment_order)
         instance.description = validated_data.get(
@@ -95,7 +101,7 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = LocationFormat
-        fields = ('id', 'location_default', 'char_definition',
+        fields = ('id', 'location_set_name', 'char_definition',
                   'segment_order', 'segment_length', 'description',
                   'location_codes', 'creator', 'created', 'updater',
                   'updated', 'uri',)
@@ -105,20 +111,20 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
 
 class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     char_definition = serializers.HyperlinkedRelatedField(
-        view_name='location-format-detail',
+        view_name='location-format-detail', lookup_field='public_id',
         queryset=LocationFormat.objects.all())
     parent = serializers.HyperlinkedRelatedField(
         view_name='location-code-detail', default=None,
-        queryset=LocationCode.objects.all())
+        queryset=LocationCode.objects.all(), lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
-    #items = serializers.HyperlinkedRelatedField(
-    #    view_name='item-detail', many=True, read_only=True,
-    #    lookup_field='public_id')
+    items = serializers.HyperlinkedRelatedField(
+        view_name='item-detail', many=True, read_only=True,
+        lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
-        view_name='location-code-detail')
+        view_name='location-code-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -140,6 +146,7 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = LocationCode
         fields = ('id', 'char_definition', 'segment', 'parent', 'path',
-                  'level', 'creator', 'created', 'updater', 'updated', 'uri',)
-        read_only_fields = ('id', 'path', 'level', 'creator', 'created',
-                            'updater', 'updated',)
+                  'level', 'items', 'creator', 'created', 'updater',
+                  'updated', 'uri',)
+        read_only_fields = ('id', 'path', 'level', 'items', 'creator',
+                            'created', 'updater', 'updated',)

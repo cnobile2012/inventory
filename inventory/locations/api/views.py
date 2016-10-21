@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/api/views.py
+# inventory/locations/api/views.py
 #
 
 import logging
@@ -16,75 +16,84 @@ from rest_framework import serializers
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsDefaultUser,
-    IsReadOnly)
+    IsAdminSuperUser, IsAdministrator, IsProjectOwner, IsProjectManager,
+    IsProjectDefaultUser, IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
-from ..models import LocationDefault, LocationFormat, LocationCode
+from ..models import LocationSetName, LocationFormat, LocationCode
 
 from .serializers import (
-    LocationDefaultSerializer, LocationFormatSerializer,
+    LocationSetNameSerializer, LocationFormatSerializer,
     LocationCodeSerializer)
 
-log = logging.getLogger('api.maintenance.views')
+log = logging.getLogger('api.locations.views')
 User = get_user_model()
 
 
 #
-# LocationDefault
+# LocationSetName
 #
-class LocationDefaultAuthorizationMixin(object):
+class LocationSetNameAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
             self.request.user.role == User.ADMINISTRATOR):
-            result = LocationDefault.objects.all()
+            result = LocationSetName.objects.all()
         else:
-            result = (self.request.user.
-                      maintenance_locationdefault_owner_related.all())
+            projects = self.request.user.projects.all()
+            result = LocationSetName.objects.select_related(
+                'project').filter(project__in=projects)
 
         return result
 
 
-class LocationDefaultList(LocationDefaultAuthorizationMixin,
+class LocationSetNameList(LocationSetNameAuthorizationMixin,
                           TrapDjangoValidationErrorCreateMixin,
                           ListCreateAPIView):
     """
-    LocationDefault list endpoint.
+    LocationSetName list endpoint.
     """
-    queryset = LocationDefault.objects.all()
-    serializer_class = LocationDefaultSerializer
+    queryset = LocationSetName.objects.all()
+    serializer_class = LocationSetNameSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(IsAuthenticated),
-           ),
-        )
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
+         )
     pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
 
-location_default_list = LocationDefaultList.as_view()
+location_set_name_list = LocationSetNameList.as_view()
 
 
-class LocationDefaultDetail(LocationDefaultAuthorizationMixin,
+class LocationSetNameDetail(LocationSetNameAuthorizationMixin,
                             TrapDjangoValidationErrorUpdateMixin,
                             RetrieveUpdateDestroyAPIView):
     """
-    LocationDefault detail endpoint.
+    LocationSetName detail endpoint.
     """
-    queryset = LocationDefault.objects.all()
-    serializer_class = LocationDefaultSerializer
+    queryset = LocationSetName.objects.all()
+    serializer_class = LocationSetNameSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(IsAuthenticated),
-           ),
-        )
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
+         )
+    lookup_field = 'public_id'
 
-location_default_detail = LocationDefaultDetail.as_view()
+location_set_name_detail = LocationSetNameDetail.as_view()
 
 
 #
@@ -93,15 +102,13 @@ location_default_detail = LocationDefaultDetail.as_view()
 class LocationFormatAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
             self.request.user.role == User.ADMINISTRATOR):
             result = LocationFormat.objects.all()
         else:
             for default in (self.request.user.
                             maintenance_locationdefault_owner_related.all()):
-                result += default.locationformat_set.all()
+                result = default.locationformat_set.all()
 
         return result
 
@@ -115,12 +122,17 @@ class LocationFormatList(LocationFormatAuthorizationMixin,
     queryset = LocationFormat.objects.all()
     serializer_class = LocationFormatSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(IsAuthenticated),
-           ),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
 
 location_format_list = LocationFormatList.as_view()
 
@@ -134,11 +146,16 @@ class LocationFormatDetail(LocationFormatAuthorizationMixin,
     queryset = LocationFormat.objects.all()
     serializer_class = LocationFormatSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(IsAuthenticated),
-           ),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
         )
+    lookup_field = 'public_id'
 
 location_format_detail = LocationFormatDetail.as_view()
 
@@ -149,8 +166,6 @@ location_format_detail = LocationFormatDetail.as_view()
 class LocationCodeAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
             self.request.user.role == User.ADMINISTRATOR):
             result = LocationCode.objects.all()
@@ -158,7 +173,7 @@ class LocationCodeAuthorizationMixin(object):
             for default in (self.request.user.
                             maintenance_locationdefault_owner_related.all()):
                 for fmt in default.locationformat_set.all():
-                    result += fmt.locationcode_set.all()
+                    result = fmt.locationcode_set.all()
 
         return result
 
@@ -172,12 +187,17 @@ class LocationCodeList(LocationCodeAuthorizationMixin,
     queryset = LocationCode.objects.all()
     serializer_class = LocationCodeSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(IsAuthenticated),
-           ),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
 
 location_code_list = LocationCodeList.as_view()
 
@@ -191,10 +211,15 @@ class LocationCodeDetail(LocationCodeAuthorizationMixin,
     queryset = LocationCode.objects.all()
     serializer_class = LocationCodeSerializer
     permission_classes = (
-        Or(IsAdminSuperUser, IsAdministrator, IsProjectManager,
-           And(IsDefaultUser, IsReadOnly),
-           And(IsAuthenticated),
-           ),
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
         )
+    lookup_field = 'public_id'
 
 location_code_detail = LocationCodeDetail.as_view()

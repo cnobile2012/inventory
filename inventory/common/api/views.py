@@ -82,8 +82,8 @@ def api_root(request, format=None):
         'invoice-list', request=request, format=format)
     # Maintenance
     locations = items.setdefault('locations', OrderedDict())
-    locations['location-default'] = reverse(
-        'location-default-list', request=request, format=format)
+    locations['location-set-name'] = reverse(
+        'location-set-name-list', request=request, format=format)
     locations['location-format'] = reverse(
         'location-format-list', request=request, format=format)
     locations['location-code'] = reverse(
