@@ -478,8 +478,15 @@ class BaseTest(RecordCreation, APITestCase):
 
                 err_msg = errors.pop(key, None)
                 self.assertTrue(err_msg, "Could not find key: {}".format(key))
+                msg = "More than one error for key '{}', error: {}".format(
+                    key, err_msg)
+                self.assertTrue(len(err_msg), msg)
                 msg = "For key '{}' value '{}' not found in '{}'".format(
                     key, value, err_msg)
+
+                if isinstance(err_msg, (list, tuple)):
+                    err_msg = err_msg[0]
+
                 self.assertTrue(value and value in err_msg, msg)
         elif hasattr(response, 'content'):
             errors = json.loads(response.content.decode('utf-8'))
@@ -491,6 +498,9 @@ class BaseTest(RecordCreation, APITestCase):
 
                 err_msg = errors.pop(key, None)
                 self.assertTrue(err_msg, "Could not find key: {}".format(key))
+                msg = "More than one error for key '{}', error: {}".format(
+                    key, err_msg)
+                self.assertTrue(len(err_msg), msg)
                 msg = "For key '{}' value '{}' not found in '{}'".format(
                     key, value, err_msg)
 
@@ -499,7 +509,7 @@ class BaseTest(RecordCreation, APITestCase):
 
                 self.assertTrue(value and value in err_msg, msg)
         else:
-            msg = "No context_data"
+            msg = "No data found."
             self.assertTrue(False, msg)
 
         msg = "Unaccounted for errors: {}".format(errors)
