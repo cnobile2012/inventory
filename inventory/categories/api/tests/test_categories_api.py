@@ -331,20 +331,18 @@ class TestCategoryAPI(BaseTest):
         new_data = {'name': 'TestCategory-1',
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
-        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_201_CREATED, self._clean_data(data))
+            response.status_code, HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, HTTP_201_CREATED, msg)
         # Create Category two.
-        parent_uri = data.get('uri')
+        parent_uri = response.data.get('uri')
         uri = reverse('category-list')
         new_data = {'name': 'TestCategory-2',
                     'parent': parent_uri,
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
-        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_201_CREATED, self._clean_data(data))
+            response.status_code, HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, HTTP_201_CREATED, msg)
         # Create Category two again--should fail.
         uri = reverse('category-list')
@@ -352,9 +350,8 @@ class TestCategoryAPI(BaseTest):
                     'parent': parent_uri,
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
-        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, self._clean_data(data))
+            response.status_code, HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
 
     def test_delimitor_in_category_name(self):
@@ -368,11 +365,13 @@ class TestCategoryAPI(BaseTest):
             Category.DEFAULT_SEPARATOR),
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
-        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, self._clean_data(data))
+            response.status_code, HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue("A category name cannot " in data.get('name')[0], msg)
+        self.assertTrue(self._has_error(response, 'name'), msg)
+        self._test_errors(response, tests={
+            'name': u"A category name cannot ",
+            })
 
     def test_category_is_not_parent(self):
         """
@@ -394,11 +393,13 @@ class TestCategoryAPI(BaseTest):
                     'project': self.project_uri,
                     'parent': cat2_uri}
         response = self.client.post(uri, new_data, format='json')
-        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, self._clean_data(data))
+            response.status_code, HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue("A category in this tree " in data.get('name')[0], msg)
+        self.assertTrue(self._has_error(response, 'name'), msg)
+        self._test_errors(response, tests={
+            'name': u"A category in this tree ",
+            })
 
     def test_root_level_category_exists(self):
         """
@@ -414,9 +415,10 @@ class TestCategoryAPI(BaseTest):
                     'project': self.project_uri}
         uri = reverse('category-list')
         response = self.client.post(uri, new_data, format='json')
-        data = response.data
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, self._clean_data(data))
+            response.status_code, HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(
-            "A root level category name " in data.get('name')[0], msg)
+        self.assertTrue(self._has_error(response, 'name'), msg)
+        self._test_errors(response, tests={
+            'name': u"A root level category name ",
+            })
