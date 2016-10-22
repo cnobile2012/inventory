@@ -352,391 +352,369 @@ class TestLocationFormatAPI(BaseTest):
     def __init__(self, name):
         super(TestLocationFormatAPI, self).__init__(name)
 
-    def test_create_post_location_format(self):
-        """
-        Test that a record can be created with a POST.
-        """
-        # Create LocationFormat with POST.
-        self.skipTest("Temporarily skipped")
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set-name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
-        uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Read record with GET.
-        pk = data.get('id')
-        uri = reverse('location-format-detail', kwargs={'pk': pk})
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
+    def setUp(self):
+        super(TestLocationFormatAPI, self).setUp()
+        # Create an InventoryType, Project, and LocationSetName.
+        self.in_type = self._create_inventory_type()
+        self.project = self._create_project(self.in_type, members=[self.user])
+        self.location_set_name = self._create_location_set_name(self.project)
+        kwargs = {'public_id': self.location_set_name.public_id}
+        self.location_set_name_uri = self._resolve('location-set-name-detail',
+                                                   **kwargs)
 
-    def test_get_location_format_with_no_permissions(self):
+    def test_GET_location_format_list_with_invalid_permissions(self):
         """
-        Test the location_format_list endpoint with no permissions. We don't
-        use the self.client created in the setUp method from the base class.
+        Test the location_format_list endpoint with no permissions.
         """
-        self.skipTest("Temporarily skipped")
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(username, password, login=False)
-        ld = self._create_location_set_name()
-        lf = self._create_location_format(ld)
-        # Use API to get user list with unauthenticated user.
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        location_format = self._create_location_format(
+            self.location_set_name, "T\d\d")
         uri = reverse('location-format-list')
-        response = client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_401_UNAUTHORIZED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code,
-                         status.HTTP_401_UNAUTHORIZED, msg)
-        self.assertTrue('detail' in data, msg)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_create_location_format_post_token_superuser(self):
+    def test_GET_location_format_list_with_valid_permissions(self):
         """
-        Test LocationFormat with API with token.
+        Test the location_format_list endpoint with valid permissions.
         """
-        self.skipTest("Temporarily skipped")
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            self.user, app_name, self.client, client_type='public',
-            grant_type='client_credentials')
-        # Use API to create a LocationSet_name.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        owner_uri = reverse('user-detail', kwargs={'pk': self.user.pk})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        location_format = self._create_location_format(
+            self.location_set_name, "T\d\d")
         uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_create_location_format_post_token_administrator(self):
+    def test_POST_location_format_list_with_invalid_permissions(self):
         """
-        Test LocationFormat with API with token. We don't use the self.client
-        created in the setUp method from the base class.
+        Test that a POST to location_format_list fails with invalid
+        permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(
-            username, password, email='test@example.com',
-            role=UserModel.ADMINISTRATOR)
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Use API to create a supplier.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
         uri = reverse('location-format-list')
-        response = client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        data = {}
+        su = data.setdefault('SU', {})
+        su['char_definition'] = 'T\d\d'
+        su['location_set_name'] = self.location_set_name_uri
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
 
-    def test_create_location_format_post_token_project_manager(self):
+    def test_POST_location_format_list_with_valid_permissions(self):
         """
-        Test LocationFormat with API with token. We don't use the self.client
-        created in the setUp method from the base class.
+        Test that a POST to location_format_list passes with valid permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(
-            username, password, email='test@example.com')
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Create a project for this user.
-        project = self._create_project(user)
-        # Get the user, to be sure we get the updated members and managers.
-        user = User.objects.get(pk=user.pk)
-        msg = "user.role: {} sould be {}.".format(
-            user.role,  UserModel.PROJECT_MANAGER)
-        self.assertEqual(user.role, UserModel.PROJECT_MANAGER, msg)
-        # Use API to create a supplier.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
         uri = reverse('location-format-list')
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
-        response = client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        data = {}
+        su = data.setdefault('SU', {})
+        su['char_definition'] = 'A\d\d'
+        su['location_set_name'] = self.location_set_name_uri
+        ad = data.setdefault('AD', su.copy())
+        ad['char_definition'] = 'B\d\d'
+        du = data.setdefault('DU', su.copy())
+        du['char_definition'] = 'C\d\d'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pow['char_definition'] = 'D\d\d'
+        pma = data.setdefault('PMA', su.copy())
+        pma['char_definition'] = 'E\d\d'
+        pdu = data.setdefault('PDU', su.copy())
+        pdu['char_definition'] = 'F\d\d'
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
 
-    def test_create_location_format_post_token_set_name_user(self):
+    def test_OPTIONS_location_format_list_with_invalid_permissions(self):
         """
-        Test LocationFormat with API with token. We don't use the self.client
-        created in the setUp method from the base class.
+        Test that the method OPTIONS fails with invald permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(
-            username, password, email='test@example.com',
-            role=UserModel.SET_NAME_USER)
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Use API to create a supplier.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
         uri = reverse('location-format-list')
-        response = client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_403_FORBIDDEN,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_update_put_location_format(self):
+    def test_OPTIONS_location_format_list_with_valid_permissions(self):
         """
-        Test that an update can be done with a PUT.
+        Test that the method OPTIONS brings back the correct data.
         """
-        self.skipTest("Temporarily skipped")
-        # Create LocationFormat with POST.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
+        method = 'options'
         uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Update record with PUT.
-        pk = data.get('id')
-        uri = reverse('location-format-detail', kwargs={'pk': pk})
-        new_data['char_definition'] = r'T\d\d\d'
-        response = self.client.put(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        # Read record with GET.
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}, new_data: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data),
-            new_data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('char_definition'),
-                         new_data.get('char_definition'), msg)
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_update_put_location_format_set_name_user(self):
+    def test_GET_location_format_detail_with_invalid_permissions(self):
         """
-        Test that an update can be done with a PUT by a set_name user.
+        Test that a GET on the location_format_detail fails with invalid
+        permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create a non-logged in user, but one that has a valid token.
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(
-            username, password, email='test@example.com',
-            role=UserModel.SET_NAME_USER)
-        app_name = 'Token Test'
-        data = self._make_app_token(
-            user, app_name, client, client_type='public',
-            grant_type='client_credentials')
-        # Create LocationFormat with POST by superuser.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
-        uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Update record with PUT by set_name role.
-        pk = data.get('id')
-        uri = reverse('location-format-detail', kwargs={'pk': pk})
-        new_data['char_definition'] = r'T\d\d\d'
-        response = client.put(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_403_FORBIDDEN,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        #self.skipTest("Temporarily skipped")
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        method = 'get'
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_update_patch_location_format(self):
+    def test_GET_location_format_detail_with_valid_permissions(self):
         """
-        Test that an update can e dome with a PATCH.
+        Test that a GET to location_format_detail passes with valid
+        permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create LocationFormat with POST.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
-        uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Update record with PATCH.
-        pk = data.get('id')
-        uri = reverse('location-format-detail', kwargs={'pk': pk})
-        updated_data = {'description': 'Test PATCH LocationFormat'}
-        response = self.client.patch(uri, updated_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        # Read record with GET.
-        response = self.client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), new_data.get('name'), msg)
-        self.assertEqual(data.get('description'),
-                         updated_data.get('description'), msg)
+        #self.skipTest("Temporarily skipped")
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        method = 'get'
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_delete_location_format(self):
+    def test_PUT_location_format_detail_with_invalid_permissions(self):
         """
-        Test that a record can be removed with a DELETE.
+        Test that a PUT to location_format_detail fails with invalid
+        permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create LocationFormat with POST.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
-        uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Delete the User.
-        pk = data.get('id')
-        uri = reverse('location-format-detail', kwargs={'pk': pk})
-        response = self.client.delete(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertTrue(data is None, msg)
-        # Get the same record through the API.
-        response = self.client.get(uri, format='json')
-        code = response.status_code
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_404_NOT_FOUND,
-            self._clean_data(data))
-        self.assertEqual(code, status.HTTP_404_NOT_FOUND, msg)
+        #self.skipTest("Temporarily skipped")
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['char_definition'] = 'A\d\d'
+        su['location_set_name'] = self.location_set_name_uri
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
 
-    def test_options_location_format(self):
+    def test_PUT_location_format_detail_with_valid_permissions(self):
         """
-        Test that the correct data is returned with OPTIONS.
+        Test that a PUT to location_format_detail passes with valid permissions.
         """
-        self.skipTest("Temporarily skipped")
-        # Create LocationFormat with POST.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'T\d\d' ,
-                    'segment_order': 0, 'description': "Test POST"}
-        uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
-        pk = data.get('id')
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_201_CREATED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
-        # Get the API list OPTIONS.
-        response = self.client.options(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'Location Format List', msg)
-        # Get the API detail OPTIONS.
-        uri = reverse('location-format-detail', kwargs={'pk': pk})
-        response = self.client.options(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(data.get('name'), 'Location Format Detail', msg)
+        #self.skipTest("Temporarily skipped")
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['char_definition'] = 'A\d\d'
+        su['location_set_name'] = self.location_set_name_uri
+        ad = data.setdefault('AD', su.copy())
+        ad['char_definition'] = 'B\d\d'
+        ad['location_set_name'] = self.location_set_name_uri
+        du = data.setdefault('DU', su.copy())
+        du['char_definition'] = 'C\d\d'
+        du['location_set_name'] = self.location_set_name_uri
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pow['char_definition'] = 'D\d\d'
+        pow['location_set_name'] = self.location_set_name_uri
+        pma = data.setdefault('PMA', su.copy())
+        pma['char_definition'] = 'E\d\d'
+        pma['location_set_name'] = self.location_set_name_uri
+        pdu = data.setdefault('PDU', su.copy())
+        pdu['char_definition'] = 'F\d\d'
+        pdu['location_set_name'] = self.location_set_name_uri
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
+
+    def test_PATCH_location_format_detail_with_invalid_permissions(self):
+        """
+        Test that a PATCH to location_format_detail fails with invalid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['char_definition'] = 'B\d\d'
+        su['location_set_name'] = self.location_set_name_uri
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_PATCH_location_format_detail_with_valid_permissions(self):
+        """
+        Test that a PATCH to location_format_detail passes with valid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['char_definition'] = 'B\d\d'
+        su['location_set_name'] = self.location_set_name_uri
+        ad = data.setdefault('AD', {})
+        ad['char_definition'] = 'C\d\d'
+        du = data.setdefault('DU', {})
+        du['char_definition'] = 'D\d\d'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', {})
+        pow['char_definition'] = 'E\d\d'
+        pma = data.setdefault('PMA', {})
+        pma['char_definition'] = 'F\d\d'
+        pdu = data.setdefault('PDU', {})
+        pdu['char_definition'] = 'G\d\d'
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
+
+    def test_DELETE_location_format_detail_with_invalid_permissions(self):
+        """
+        Test that a DELETE to location_format_detail fails with invalid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_DELETE_location_format_detail_with_valid_permissions(self):
+        """
+        Test that a DELETE to location_format_detail pass' with valid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        # Test SUPERUSER
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        self._test_superuser_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test ADMINISTRATOR
+        location_format = self._create_location_format(
+            self.location_set_name, "B\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        self._test_administrator_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test DEFAULT_USER
+        ## This is an invalid test since the DEFAULT_USER has no access.
+        # Test PROJECT_OWNER
+        location_format = self._create_location_format(
+            self.location_set_name, "C\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        self._test_project_owner_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test PROJECT_MANAGER
+        location_format = self._create_location_format(
+            self.location_set_name, "D\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        self._test_project_manager_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test PROJECT_USER
+        ## This is an invalid test since the PROJECT_USER has no access.
+
+    def test_OPTIONS_location_format_detail_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_location_format_detail_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        location_format = self._create_location_format(
+            self.location_set_name, "A\d\d")
+        uri = reverse('location-format-detail',
+                      kwargs={'public_id': location_format.public_id})
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_delimitor_in_char_definition(self):
         """
         Test that the delimitor is not in the character definition.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         # Test delimitor in char_definition.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri,
-                    'char_definition': r'T{}\d\d'.format(ld.separator),
-                    'segment_order': 0, 'description': "Test POST"}
+        data = {}
+        data['location_set_name'] = self.location_set_name_uri
+        data['char_definition'] = 'T{}\d\d'.format(
+            self.location_set_name.separator)
+        data['segment_order'] = 0
+        data['description'] = "Test POST"
         uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
+        response = self.client.post(uri, data=data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST,
-            self._clean_data(data))
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(
-            "Invalid format, found separator" in data.get('char_definition')[0],
-            msg)
+        self.assertTrue(self._has_error(response, 'char_definition'), msg)
+        self._test_errors(response, tests={
+            'char_definition': u"Invalid format, found separator",
+            })
 
     def test_char_definition_length_is_not_zero(self):
         """
         Test that the char_definition length is not zero.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         # Test that character_definition length is not zero.
-        ld = self._create_location_set_name()
-        ld_uri = reverse('location-set_name-detail', kwargs={'pk': ld.id})
-        new_data = {'location_set_name': ld_uri, 'char_definition': r'',
-                    'segment_order': 0, 'description': "Test POST"}
+        data = {}
+        data['location_set_name'] = self.location_set_name_uri
+        data['char_definition'] = ''
+        data['segment_order'] = 0
+        data['description'] = "Test POST"
         uri = reverse('location-format-list')
-        response = self.client.post(uri, new_data, format='json')
-        data = response.data
+        response = self.client.post(uri, data=data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST,
-            self._clean_data(data))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(
-            "This field may not be blank." in data.get('char_definition'),
-            msg)
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertTrue(self._has_error(response, 'char_definition'), msg)
+        self._test_errors(response, tests={
+            'char_definition': u"This field may not be blank.",
+            })
 
 
 class TestLocationCodeAPI(BaseTest):

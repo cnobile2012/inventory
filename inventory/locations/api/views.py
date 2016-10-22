@@ -106,9 +106,11 @@ class LocationFormatAuthorizationMixin(object):
             self.request.user.role == User.ADMINISTRATOR):
             result = LocationFormat.objects.all()
         else:
-            for default in (self.request.user.
-                            maintenance_locationdefault_owner_related.all()):
-                result = default.locationformat_set.all()
+            projects = self.request.user.projects.all()
+            lsn = LocationSetName.objects.select_related(
+                'project').filter(project__in=projects)
+            result = LocationFormat.objects.select_related(
+                'location_set_name').filter(location_set_name__in=lsn)
 
         return result
 

@@ -202,7 +202,7 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         unique=True, blank=True,
         help_text=_("Public ID to identify an individual project."))
     location_set_name = models.ForeignKey(
-        LocationSetName, on_delete=models.CASCADE,
+        LocationSetName, on_delete=models.CASCADE, db_index=False,
         verbose_name=_("Location Set Name"), related_name="location_formats",
         help_text=_("The location set name relative to this location format."))
     segment_length = models.PositiveIntegerField(
@@ -249,6 +249,7 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         return self.char_definition
 
     class Meta:
+        unique_together = ('location_set_name', 'char_definition',)
         ordering = ('segment_order',)
         verbose_name = _("Location Format")
         verbose_name_plural = _("Location Formats")
@@ -295,7 +296,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("Public ID to identify an individual project."))
     char_definition = models.ForeignKey(
         LocationFormat, on_delete=models.CASCADE, verbose_name=_("Format"),
-        related_name="location_codes",
+        related_name="location_codes", db_index=False,
         help_text=_("Choose the format that this segment will be based on."))
     segment = models.CharField(
         verbose_name=_("Segment"), max_length=250,
@@ -374,7 +375,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         return self.segment
 
     class Meta:
-        unique_together = ('parent', 'segment',)
+        unique_together = ('char_definition', 'parent', 'segment',)
         ordering = ('path',)
         verbose_name = _("Location Code")
         verbose_name_plural = _("Location Codes")
