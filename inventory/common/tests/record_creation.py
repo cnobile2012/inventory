@@ -70,9 +70,9 @@ class RecordCreation(object):
         kwargs['updater'] = self.user
         return LocationFormat.objects.create(**kwargs)
 
-    def _create_location_code(self, char_definition, segment, parent=None):
+    def _create_location_code(self, location_format, segment, parent=None):
         kwargs = {}
-        kwargs['char_definition'] = char_definition
+        kwargs['location_format'] = location_format
         kwargs['segment'] = segment
         kwargs['parent'] = parent
         kwargs['creator'] = self.user

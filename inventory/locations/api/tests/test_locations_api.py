@@ -722,6 +722,121 @@ class TestLocationCodeAPI(BaseTest):
     def __init__(self, name):
         super(TestLocationCodeAPI, self).__init__(name)
 
+    def setUp(self):
+        super(TestLocationCodeAPI, self).setUp()
+        # Create an InventoryType, Project, and LocationSetName.
+        self.in_type = self._create_inventory_type()
+        self.project = self._create_project(self.in_type, members=[self.user])
+        self.location_set_name = self._create_location_set_name(self.project)
+        self.location_format = self._create_location_format(
+            self.location_set_name, 'A\d\d')
+        kwargs = {'public_id': self.location_format.public_id}
+        self.location_format_uri = self._resolve('location-format-detail',
+                                                 **kwargs)
+
+    def test_GET_location_code_list_with_invalid_permissions(self):
+        """
+        Test the location_code_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-code-list')
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_GET_location_code_list_with_valid_permissions(self):
+        """
+        Test the location_code_list endpoint with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-code-list')
+        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_project_users_with_valid_permissions(uri, method)
+
+    def test_POST_location_code_list_with_invalid_permissions(self):
+        """
+        Test that a POST to location_code_list fails with invalid
+        permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        uri = reverse('location-code-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['segment'] = 'A01'
+        su['location_format'] = self.location_format_uri
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_POST_location_code_list_with_valid_permissions(self):
+        """
+        Test that a POST to location_code_list passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        uri = reverse('location-code-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['segment'] = 'A01'
+        su['location_format'] = self.location_format_uri
+        ad = data.setdefault('AD', su.copy())
+        ad['segment'] = 'A01'
+        du = data.setdefault('DU', su.copy())
+        du['segment'] = 'A01'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        pow = data.setdefault('POW', su.copy())
+        pow['segment'] = 'A01'
+        pma = data.setdefault('PMA', su.copy())
+        pma['segment'] = 'A01'
+        pdu = data.setdefault('PDU', su.copy())
+        pdu['segment'] = 'A01'
+        self._test_project_users_with_valid_permissions(
+            uri, method, project_user=False, request_data=data)
+
+        for lc in LocationCode.objects.all():
+            print("name: {}, format: {}, parent: {}, path: {}".format(
+                lc.location_format.location_set_name, lc.location_format,
+                lc.parent, lc.path))
+
+    def test_OPTIONS_location_code_list_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        uri = reverse('location-code-list')
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_OPTIONS_location_code_list_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        uri = reverse('location-code-list')
+        self._test_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(uri, method)
+
+
+
+
+
+
+
+
+
+
     def test_create_post_location_code(self):
         """
         Test that a record can be created with a POST.
@@ -729,7 +844,7 @@ class TestLocationCodeAPI(BaseTest):
         # Create LocationCode with POST.
         self.skipTest("Temporarily skipped")
         ld = self._create_location_set_name()
-        lf = self._create_location_format(ld)
+        lf = self._create_location_code(ld)
         lf_uri = reverse('location-format-detail', kwargs={'pk': lf.id})
         new_data = {'char_definition': lf_uri, 'segment': 'T01'}
         #, 'parent': None} This should be permitted
@@ -749,29 +864,6 @@ class TestLocationCodeAPI(BaseTest):
             response.status_code, status.HTTP_200_OK, self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(data.get('segment'), new_data.get('segment'), msg)
-
-    def test_get_location_code_with_no_permissions(self):
-        """
-        Test the location_code_list endpoint with no permissions. We don't
-        use the self.client created in the setUp method from the base class.
-        """
-        self.skipTest("Temporarily skipped")
-        username = 'Normal_User'
-        password = '123456'
-        user, client = self._create_normal_user(username, password, login=False)
-        ld = self._create_location_set_name()
-        lf = self._create_location_format(ld)
-        lc = self._create_location_code(lf)
-        # Use API to get user list with unauthenticated user.
-        uri = reverse('location-code-list')
-        response = client.get(uri, format='json')
-        data = response.data
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_401_UNAUTHORIZED,
-            self._clean_data(data))
-        self.assertEqual(response.status_code,
-                         status.HTTP_401_UNAUTHORIZED, msg)
-        self.assertTrue('detail' in data, msg)
 
     def test_create_location_code_post_token_superuser(self):
         """
@@ -963,7 +1055,6 @@ class TestLocationCodeAPI(BaseTest):
             response.status_code, status.HTTP_403_FORBIDDEN,
             self._clean_data(data))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
-
 
     def test_update_patch_location_code(self):
         """

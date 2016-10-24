@@ -110,7 +110,7 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
-    char_definition = serializers.HyperlinkedRelatedField(
+    location_format = serializers.HyperlinkedRelatedField(
         view_name='location-format-detail', lookup_field='public_id',
         queryset=LocationFormat.objects.all())
     parent = serializers.HyperlinkedRelatedField(
@@ -133,8 +133,8 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
         return LocationCode.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.char_definition = validated_data.get(
-            'char_definition', instance.char_definition)
+        instance.location_format = validated_data.get(
+            'location_format', instance.location_format)
         instance.segment = validated_data.get(
             'segment', instance.segment)
         instance.parent = validated_data.get(
@@ -145,7 +145,7 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = LocationCode
-        fields = ('id', 'char_definition', 'segment', 'parent', 'path',
+        fields = ('id', 'location_format', 'segment', 'parent', 'path',
                   'level', 'items', 'creator', 'created', 'updater',
                   'updated', 'uri',)
         read_only_fields = ('id', 'path', 'level', 'items', 'creator',

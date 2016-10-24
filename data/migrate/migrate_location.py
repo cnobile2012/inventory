@@ -179,7 +179,7 @@ class MigrateLocation(MigrateBase):
         with open(self._LOCATION_CODE, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                char_definition = LocationFormat.objects.get(
+                location_format = LocationFormat.objects.get(
                     char_definition=row[0])
 
                 try:
@@ -193,7 +193,7 @@ class MigrateLocation(MigrateBase):
                 ctime = duparser.parse(row[5])
                 mtime = duparser.parse(row[6])
                 kwargs = {}
-                kwargs['char_definition'] = char_definition
+                kwargs['location_format'] = location_format
                 kwargs['parent'] = parent
                 kwargs['segment'] = segment
                 kwargs['creator'] = user
@@ -213,7 +213,7 @@ class MigrateLocation(MigrateBase):
                                        "parent: %s", segment, parent)
                     else:
                         obj.parent = parent
-                        obj.char_definition = char_definition
+                        obj.location_format = location_format
                         obj.creator = user
                         obj.created = ctime
                         obj.updater = user

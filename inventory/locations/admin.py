@@ -48,7 +48,7 @@ class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
 @admin.register(LocationCode)
 class LocationCodeAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('char_definition', 'segment', 'parent', 'path',
+        (None, {'fields': ('location_format', 'segment', 'parent', 'path',
                            'level',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',

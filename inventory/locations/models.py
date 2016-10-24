@@ -14,6 +14,8 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
 from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
@@ -34,7 +36,20 @@ log = logging.getLogger('inventory.locations.models')
 #
 class LocationSetNameManager(models.Manager):
 
-    def clone_set_name_tree(self, project, loc_def_obj, user):
+    def get_root_format(self, loc_set_name):
+        """
+        Returnds the auto generated root LocationFormat object.
+        """
+        try:
+            return loc_set_name.location_formats.get(
+                char_definition=LocationCode.ROOT_NAME)
+        except LocationFormat.DoesNotExist as e:
+            msg = _("Root format does not exist for set name '{}'."
+                    ).format(loc_set_name)
+            log.error(msg)
+            raise LocationFormat.DoesNotExist(msg)
+
+    def clone_set_name_tree(self, project, loc_set_name, user):
         """
         Gets and/or creates designated location set name with a new project,
         from the location set name provided, then creates all location formats
@@ -43,32 +58,29 @@ class LocationSetNameManager(models.Manager):
         """
         node_list = []
 
-        if loc_def_obj.shared and project.has_authority(user):
-            try:
-                obj = self.get(project=project, name=loc_def_obj.name)
-            except self.model.DoesNotExist:
-                from .models import LocationFormat
+        if loc_set_name.shared and project.has_authority(user):
+            kwargs = {}
+            kwargs['description'] = loc_set_name.description
+            kwargs['shared'] = loc_set_name.shared
+            kwargs['separator'] = loc_set_name.separator
+            kwargs['creator'] = user
+            kwargs['updater'] = user
+            obj, created = self.get_or_create(
+                project=project, name=loc_set_name.name, defaults=kwargs)
 
-                kwargs = {}
-                kwargs['project'] = project
-                kwargs['name'] = loc_def_obj.name
-                kwargs['description'] = loc_def_obj.description
-                kwargs['shared'] = loc_def_obj.shared
-                kwargs['separator'] = loc_def_obj.separator
-                kwargs['creator'] = user
-                kwargs['updater'] = user
-                obj = self.create(**kwargs)
+            if created:
                 node_list.append(obj)
 
-                for fmt_obj in loc_def_obj.location_formats.all():
+                for fmt_obj in loc_set_name.location_formats.all():
                     kwargs = {}
-                    kwargs['location_set_name'] = obj
-                    kwargs['char_definition'] = fmt_obj.char_definition
                     kwargs['segment_order'] = fmt_obj.segment_order
                     kwargs['description'] = fmt_obj.description
                     kwargs['creator'] = user
                     kwargs['updater'] = user
-                    node = LocationFormat.objects.create(**kwargs)
+                    node, created = LocationFormat.objects.get_or_create(
+                        location_set_name=obj,
+                        char_definition=fmt_obj.char_definition,
+                        defaults=kwargs)
                     node_list.append(node)
             else:
                 msg = _("The '{}' record already exists, cannot clone."
@@ -78,13 +90,13 @@ class LocationSetNameManager(models.Manager):
         else:
             msg = _("To clone the '{}' location objects they must be shared "
                     "and the user must have authority."
-                    ).format(loc_def_obj.name)
+                    ).format(loc_set_name.name)
             log.error(msg)
             raise ValueError(msg)
 
         return node_list
 
-    def delete_set_name_tree(self, project, loc_def_obj, user):
+    def delete_set_name_tree(self, project, loc_set_name, user):
         """
         Deletes the set name tree starting with any location code objects,
         continuing with location format objects, then deleting the location
@@ -93,7 +105,7 @@ class LocationSetNameManager(models.Manager):
         """
         deleted_nodes = []
 
-        for fmt in loc_def_obj.location_formats.all():
+        for fmt in loc_set_name.location_formats.all():
             child_nodes = []
 
             for code in fmt.location_codes.all():
@@ -103,8 +115,8 @@ class LocationSetNameManager(models.Manager):
             fmt.delete()
             deleted_nodes.append(fmt_obj)
 
-        deleted_nodes.insert(0, loc_def_obj.name)
-        loc_def_obj.delete()
+        deleted_nodes.insert(0, loc_set_name.name)
+        loc_set_name.delete()
         return deleted_nodes
 
     def _recurse_children(self, child):
@@ -175,6 +187,29 @@ class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         verbose_name_plural = _("Location Set Names")
 
 
+@receiver(post_save, sender=LocationSetName)
+def set_root_objects(sender, **kwargs):
+    """
+    Create this set name's root format and code.
+    """
+    instance = kwargs.get('instance')
+
+    if instance:
+        kwargs = {}
+        kwargs['description'] = ("This is the root format for the root code "
+                                 "in this project.")
+        kwargs['creator'] = instance.creator
+        kwargs['updater'] = instance.updater
+        lf, created = LocationFormat.objects.get_or_create(
+            location_set_name=instance,
+            char_definition=LocationCode.ROOT_NAME, defaults=kwargs)
+
+        if created:
+            kwargs.pop('description', None)
+            LocationCode.objects.create(
+                location_format=lf, segment=LocationCode.ROOT_NAME, **kwargs)
+
+
 #
 # LocationFormat
 #
@@ -212,8 +247,8 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         verbose_name=_("Format"), max_length=250, db_index=True,
         help_text=_("Determine the character position definition where "
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
-                    "any hard coded character. ex. \\a\\d\\d\\d could be B001 "
-                    "or \\a@\d\d could be D@99."))
+                    "any hard coded character. ex. \\a\\d\\d\\d could be "
+                    "B001 or \\a@\d\d could be D@99."))
     segment_order =  models.PositiveIntegerField(
         verbose_name=_("Segment Order"), default=0,
         help_text=_("A number indicating the order that this segment will "
@@ -260,6 +295,20 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 #
 class LocationCodeManager(models.Manager):
 
+    def get_root_code(self, loc_set_name):
+        """
+        Returnds the auto generated root LocationFormat object.
+        """
+        loc_fmt = LocationSetName.objects.get_root_format(loc_set_name)
+
+        try:
+            return loc_fmt.location_codes.get(segment=LocationCode.ROOT_NAME)
+        except LocationCode.DoesNotExist as e:
+            msg = _("Root code does not exist for set name '{}'."
+                    ).format(loc_set_name)
+            log.error(msg)
+            raise LocationCode.DoesNotExist(msg)
+
     def get_parents(self, fmt_obj):
         parents = self._recurse_parents(fmt_obj)
         parents.reverse()
@@ -277,9 +326,9 @@ class LocationCodeManager(models.Manager):
 
     def get_all_root_trees(self, project, segment):
         result = []
-        records = self.filter(
+        records = self.select_related('parent').filter(
             segment=segment,
-            char_definition__location_set_name__project=project)
+            location_format__location_set_name__project=project)
 
         if len(records) > 0:
             result[:] = [self.get_parents(record) for record in records]
@@ -289,12 +338,13 @@ class LocationCodeManager(models.Manager):
 
 @python_2_unicode_compatible
 class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+    ROOT_NAME = 'ROOT'
 
     public_id = models.CharField(
         verbose_name=_("Public Location Code ID"), max_length=30,
         unique=True, blank=True,
         help_text=_("Public ID to identify an individual project."))
-    char_definition = models.ForeignKey(
+    location_format = models.ForeignKey(
         LocationFormat, on_delete=models.CASCADE, verbose_name=_("Format"),
         related_name="location_codes", db_index=False,
         help_text=_("Choose the format that this segment will be based on."))
@@ -321,10 +371,10 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
             self.public_id = generate_public_key()
 
         # Test max length, is not None, and format validity of segment.
-        separator = self.char_definition.location_set_name.separator
+        separator = self.location_format.location_set_name.separator
 
         self.segment = FormatValidator(
-            separator, fmt=self.char_definition.char_definition
+            separator, fmt=self.location_format.char_definition
             ).validate_segment(self.segment)
 
         # Test that a segment is not a parent to itself.
@@ -335,16 +385,16 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
                 _("You cannot have a segment as a child to itself."))
 
         # Test that all segments have the same location set name.
-        set_name = self.char_definition.location_set_name.name
+        set_name = self.location_format.location_set_name.name
 
-        if not all([set_name == parent.char_definition.location_set_name.name
+        if not all([set_name == parent.location_format.location_set_name.name
                     for parent in parents]):
             raise ValidationError(_("All segments must be derived from the "
                                     "same location set name."))
 
         # Test that the number of segments defined are equal to or less than
         # the number of formats for this location set name.
-        max_num_segments = (self.char_definition.location_set_name.
+        max_num_segments = (self.location_format.location_set_name.
                             location_formats.count())
         length = len(parents) + 1 # Parents plus self.
 
@@ -375,13 +425,13 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         return self.segment
 
     class Meta:
-        unique_together = ('char_definition', 'parent', 'segment',)
+        unique_together = ('location_format', 'parent', 'segment',)
         ordering = ('path',)
         verbose_name = _("Location Code")
         verbose_name_plural = _("Location Codes")
 
     def get_separator(self):
-        return self.char_definition.location_set_name.separator
+        return self.location_format.location_set_name.separator
 
     def _get_category_path(self, current=True):
         parents = LocationCode.objects.get_parents(self)
@@ -393,5 +443,17 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     parents_producer.short_description = _("Segment Parents")
 
     def char_def_producer(self):
-        return self.char_definition.char_definition
+        return self.location_format.char_definition
     char_def_producer.short_description = _("Character Definition")
+
+
+@receiver(pre_save, sender=LocationCode)
+def create_parent(sender, **kwargs):
+    instance = kwargs.get('instance')
+
+    if (instance and not instance.parent and
+        instance.segment != instance.ROOT_NAME):
+        instance.parent = LocationCode.objects.get(
+            location_format=instance.location_format,
+            segment=instance.ROOT_NAME)
+        instance.save()
