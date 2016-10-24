@@ -91,7 +91,7 @@ class TestLocationSetNameModel(BaseLocation):
         loc_set_name = self._create_location_set_name(
             self.project, name="My Set Name")
         # Test that we have a ROOT format.
-        lf_root = LocationSetName.objects.get_root_format(loc_set_name)
+        lf_root = LocationFormat.objects.get_root_format(loc_set_name)
         self.assertTrue(lf_root.char_definition == LocationCode.ROOT_NAME)
         # Test that we have a ROOT code.
         lcs = LocationCode.objects.filter(
@@ -109,7 +109,7 @@ class TestLocationSetNameModel(BaseLocation):
         msg = "{} should be {} and {} should be {}".format(
             loc_set_name.name, name, loc_set_name.description, desc)
         # Get the root location format.
-        fmt_root = LocationSetName.objects.get_root_format(loc_set_name)
+        fmt_root = LocationFormat.objects.get_root_format(loc_set_name)
         # Create a location format object 0.
         char_definition = 'T\\d\\d'
         segment_order = 0

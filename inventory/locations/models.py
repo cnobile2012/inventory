@@ -36,19 +36,6 @@ log = logging.getLogger('inventory.locations.models')
 #
 class LocationSetNameManager(models.Manager):
 
-    def get_root_format(self, loc_set_name):
-        """
-        Returnds the auto generated root LocationFormat object.
-        """
-        try:
-            return loc_set_name.location_formats.get(
-                char_definition=LocationCode.ROOT_NAME)
-        except LocationFormat.DoesNotExist as e:
-            msg = _("Root format does not exist for set name '{}'."
-                    ).format(loc_set_name)
-            log.error(msg)
-            raise LocationFormat.DoesNotExist(msg)
-
     def clone_set_name_tree(self, project, loc_set_name, user):
         """
         Gets and/or creates designated location set name with a new project,
@@ -215,6 +202,19 @@ def set_root_objects(sender, **kwargs):
 #
 class LocationFormatManager(models.Manager):
 
+    def get_root_format(self, loc_set_name):
+        """
+        Returnds the auto generated root LocationFormat object.
+        """
+        try:
+            return self.get(location_set_name=loc_set_name,
+                            char_definition=LocationCode.ROOT_NAME)
+        except LocationFormat.DoesNotExist as e:
+            msg = _("Root format does not exist for set name '{}'."
+                    ).format(loc_set_name)
+            log.error(msg)
+            raise LocationFormat.DoesNotExist(msg)
+
     def get_char_definition(self, project, name, fmt):
         record = None
 
@@ -299,7 +299,7 @@ class LocationCodeManager(models.Manager):
         """
         Returnds the auto generated root LocationFormat object.
         """
-        loc_fmt = LocationSetName.objects.get_root_format(loc_set_name)
+        loc_fmt = LocationFormat.objects.get_root_format(loc_set_name)
 
         try:
             return loc_fmt.location_codes.get(segment=LocationCode.ROOT_NAME)
@@ -408,7 +408,6 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         self.level = self.path.count(separator)
 
     def save(self, *args, **kwargs):
-        # Fix our self.
         super(LocationCode, self).save(*args, **kwargs)
 
         # Fix all the children if any.
@@ -451,9 +450,9 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 def create_parent(sender, **kwargs):
     instance = kwargs.get('instance')
 
-    if (instance and not instance.parent and
-        instance.segment != instance.ROOT_NAME):
+    if (instance and instance.parent is None and
+        instance.segment != LocationCode.ROOT_NAME):
         instance.parent = LocationCode.objects.get(
             location_format=instance.location_format,
-            segment=instance.ROOT_NAME)
+            segment=LocationCode.ROOT_NAME)
         instance.save()
