@@ -203,7 +203,7 @@ class TestLocationSetNameModel(BaseLocation):
 
         msg = "Exception: {}".format(cm.exception)
         messages = [msg for msg in cm.exception.messages
-                    if "The length of the separator is" in msg]
+                    if "Ensure this value has at most 3 characters " in msg]
         self.assertTrue(messages, msg)
 
 

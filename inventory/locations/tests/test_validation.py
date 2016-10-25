@@ -77,7 +77,6 @@ class TestValidation(TestCase):
             (':', r'',), # Empty format
             (':', r'T:\d\d',), # Separator in format, 1st case
             ('->', r'T\d->\d',), # Separator in format 2nd case
-            ('--->', r'T\d\d',), # Separator too long
             ]
 
         for delim, fmt in formats:

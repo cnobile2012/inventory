@@ -242,7 +242,7 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("The location set name relative to this location format."))
     segment_length = models.PositiveIntegerField(
         verbose_name=_("Segment Length"), editable=False, default=0,
-        help_text=_("The lenth of this segment."))
+        help_text=_("The length of this character definition."))
     char_definition = models.CharField(
         verbose_name=_("Format"), max_length=250, db_index=True,
         help_text=_("Determine the character position definition where "
@@ -265,17 +265,13 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         if self.pk is None and not self.public_id:
             self.public_id = generate_public_key()
 
-        # Test that the format obeys the rules.
+        # Set the char_definition after checking it's validity.
         self.char_definition = FormatValidator(
             self.location_set_name.separator
             ).validate_char_definition(self.char_definition)
 
+        # Set the segment_length.
         self.segment_length = len(self.char_definition.replace('\\', ''))
-
-        # Test that there is a segment length.
-        if not self.segment_length:
-            raise ValidationError(_("Character definition formats are "
-                                    "required."))
 
     def save(self, *args, **kwargs):
         super(LocationFormat, self).save(*args, **kwargs)
@@ -381,16 +377,18 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         parents = LocationCode.objects.get_parents(self)
 
         if self.segment in [parent.segment for parent in parents]:
-            raise ValidationError(
-                _("You cannot have a segment as a child to itself."))
+            raise ValidationError({
+                'parent': _("You cannot have a segment as a child to itself.")
+                })
 
         # Test that all segments have the same location set name.
         set_name = self.location_format.location_set_name.name
 
         if not all([set_name == parent.location_format.location_set_name.name
                     for parent in parents]):
-            raise ValidationError(_("All segments must be derived from the "
-                                    "same location set name."))
+            raise ValidationError({
+                'location_set_name': _("All segments must be derived from the "
+                                       "same location set name.")})
 
         # Test that the number of segments defined are equal to or less than
         # the number of formats for this location set name.
@@ -399,9 +397,11 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         length = len(parents) + 1 # Parents plus self.
 
         if length > max_num_segments:
-            raise ValidationError(
-                _("There are more segments than defined formats, found: {}, "
-                  "allowed: {}").format(length, max_num_segments))
+            raise ValidationError({
+                'segment': _("There are more segments than defined formats, "
+                             "found: {}, allowed: {}").format(
+                    length, max_num_segments)
+                })
 
         # Set the path and level.
         self.path = self._get_category_path()
