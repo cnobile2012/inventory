@@ -452,7 +452,9 @@ def create_parent(sender, **kwargs):
 
     if (instance and instance.parent is None and
         instance.segment != LocationCode.ROOT_NAME):
+        # Find the ROOT format
+        lf = instance.location_format.location_set_name.location_formats.get(
+            char_definition=LocationCode.ROOT_NAME)
+        # Set the parent to the ROOT code.
         instance.parent = LocationCode.objects.get(
-            location_format=instance.location_format,
-            segment=LocationCode.ROOT_NAME)
-        instance.save()
+            location_format=lf, parent=None, segment=LocationCode.ROOT_NAME)

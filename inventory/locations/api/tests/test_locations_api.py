@@ -790,24 +790,19 @@ class TestLocationCodeAPI(BaseTest):
         su['segment'] = 'A01'
         su['location_format'] = self.location_format_uri
         ad = data.setdefault('AD', su.copy())
-        ad['segment'] = 'A01'
+        ad['segment'] = 'A02'
         du = data.setdefault('DU', su.copy())
-        du['segment'] = 'A01'
+        du['segment'] = 'A03'
         self._test_users_with_valid_permissions(
             uri, method, request_data=data)
         pow = data.setdefault('POW', su.copy())
-        pow['segment'] = 'A01'
+        pow['segment'] = 'A04'
         pma = data.setdefault('PMA', su.copy())
-        pma['segment'] = 'A01'
+        pma['segment'] = 'A05'
         pdu = data.setdefault('PDU', su.copy())
-        pdu['segment'] = 'A01'
+        pdu['segment'] = 'A06'
         self._test_project_users_with_valid_permissions(
             uri, method, project_user=False, request_data=data)
-
-        for lc in LocationCode.objects.all():
-            print("name: {}, format: {}, parent: {}, path: {}".format(
-                lc.location_format.location_set_name, lc.location_format,
-                lc.parent, lc.path))
 
     def test_OPTIONS_location_code_list_with_invalid_permissions(self):
         """

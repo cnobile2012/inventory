@@ -13,17 +13,18 @@ from inventory.suppliers.models import Supplier
 
 
 class RecordCreation(object):
-    _INV_TYPE_NAME = "Test Inventory"
-    _PROJECT_NAME = "My Test Project"
+    INV_TYPE_NAME = "Test Inventory"
+    PROJECT_NAME = "My Test Project"
+    LOCATION_SET_NAME = "Test Location Set Name"
 
-    def _create_inventory_type(self, name=_INV_TYPE_NAME):
+    def _create_inventory_type(self, name=INV_TYPE_NAME):
         kwargs = {}
         kwargs['name'] = name
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
         return InventoryType.objects.create(**kwargs)
 
-    def _create_project(self, i_type, name=_PROJECT_NAME, members=[],
+    def _create_project(self, i_type, name=PROJECT_NAME, members=[],
                         public=Project.YES):
         kwargs = {}
         kwargs['name'] = name
@@ -54,7 +55,7 @@ class RecordCreation(object):
         kwargs['updater'] = self.user
         return Supplier.objects.create(**kwargs)
 
-    def _create_location_set_name(self, project, name='Test Location Set Name',
+    def _create_location_set_name(self, project, name=LOCATION_SET_NAME,
                                  **kwargs):
         kwargs['project'] = project
         kwargs['name'] = name
