@@ -134,7 +134,8 @@ class MigrateLocation(MigrateBase):
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
                 char_definition = row[0]
-                segment_order = int(row[1])
+                so = int(row[1])
+                segment_order = so + 1 if so != 10 else so
                 description = row[2]
                 user = self.get_user(username=row[3])
                 ctime = duparser.parse(row[4])
@@ -192,20 +193,22 @@ class MigrateLocation(MigrateBase):
                 user = self.get_user(username=row[4])
                 ctime = duparser.parse(row[5])
                 mtime = duparser.parse(row[6])
-                kwargs = {}
-                kwargs['location_format'] = location_format
-                kwargs['parent'] = parent
-                kwargs['segment'] = segment
-                kwargs['creator'] = user
-                kwargs['created'] = ctime
-                kwargs['updater'] = user
-                kwargs['updated'] = mtime
 
                 if not self._options.noop:
                     try:
                         obj = LocationCode.objects.get(
-                            parent=parent, segment=segment)
+                            location_format=location_format,
+                            parent=parent,
+                            segment=segment)
                     except LocationCode.DoesNotExist:
+                        kwargs = {}
+                        kwargs['location_format'] = location_format
+                        kwargs['parent'] = parent
+                        kwargs['segment'] = segment
+                        kwargs['creator'] = user
+                        kwargs['created'] = ctime
+                        kwargs['updater'] = user
+                        kwargs['updated'] = mtime
                         obj = LocationCode(**kwargs)
                         obj.save(**{'disable_created': True,
                                     'disable_updated': True})
