@@ -334,7 +334,7 @@ class LocationCodeManager(models.Manager):
 
 @python_2_unicode_compatible
 class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
-    ROOT_NAME = 'ROOT'
+    ROOT_NAME = '#'
 
     public_id = models.CharField(
         verbose_name=_("Public Location Code ID"), max_length=30,
