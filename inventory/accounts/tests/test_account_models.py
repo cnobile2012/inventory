@@ -15,7 +15,7 @@ from inventory.common.tests.base_tests import BaseTest
 
 from ..models import Question, Answer, create_hash
 
-User = get_user_model()
+UserModel = get_user_model()
 
 
 class BaseAccountModels(BaseTest):
@@ -42,13 +42,13 @@ class TestUser(BaseAccountModels):
         username = "TestSuperuser"
         email = "TSU@example.com"
         password = "{TSU_999}"
-        user = User.objects.create_superuser(username, email, password)
+        user = UserModel.objects.create_superuser(username, email, password)
         msg = "Username: {}, email: {}, is_superuser: {}, role: {}".format(
             user.username, user.email, user.is_superuser, user.role)
         self.assertEqual(user.username, username, msg)
         self.assertEqual(user.email, email, msg)
         self.assertEqual(user.is_superuser, True, msg)
-        self.assertEqual(user.role, User.ADMINISTRATOR, msg)
+        self.assertEqual(user.role, UserModel.ADMINISTRATOR, msg)
 
     def test_create_user(self):
         """
@@ -58,37 +58,45 @@ class TestUser(BaseAccountModels):
         username = "TestCreateUser"
         email = "TCU@example.com"
         password = "{TCU_999}"
-        user = User.objects.create_user(username, email, password)
+        user = UserModel.objects.create_user(username, email, password)
         msg = "Username: {}, email: {}, is_superuser: {}, role: {}".format(
             user.username, user.email, user.is_superuser, user.role)
         self.assertEqual(user.username, username, msg)
         self.assertEqual(user.email, email, msg)
         self.assertEqual(user.is_superuser, False, msg)
-        self.assertEqual(user.role, User.DEFAULT_USER, msg)
+        self.assertEqual(user.role, UserModel.DEFAULT_USER, msg)
 
-    def test_update_user(self):
+        # No username
+        with self.assertRaises(ValueError) as cm:
+            user = UserModel.objects.create_user('', email, password)
+
+        # No password with email
+        user = UserModel.objects.create_user("SecondTestUser", email, None)
+        msg = "send_email: {}, need_password: {}".format(
+            user.send_email, user.need_password)
+        self.assertTrue(user.send_email, msg)
+        self.assertTrue(user.need_password, msg)
+
+        # No password and email
+        with self.assertRaises(ValueError) as cm:
+            user = UserModel.objects.create_user("ThirdTestUser", '', None)
+
+    def test_invalid_role(self):
         """
-        Test that a user is updated.
+        Test that for invalid role.
         """
         #self.skipTest("Temporarily skipped")
-        username = self.user.username
-        email = self.user.email
-        extra_fields = {}
-        extra_fields['role'] = User.ADMINISTRATOR
-        extra_fields['address_01'] = "123 Some Place Street"
-        extra_fields['postal_code'] = "12345"
-        user = User.objects.update_user(username=username, email=email,
-                                        **extra_fields)
-        msg = ("Username: {}, email: {}, is_superuser: {}, role: {}, "
-               "address_01: {}, postal_code: {}").format(
-            user.username, user.email, user.is_superuser, user.role,
-            user.address_01, user.postal_code)
-        self.assertEqual(user.username, username, msg)
-        self.assertEqual(user.email, email, msg)
-        self.assertEqual(user.is_superuser, True, msg)
-        self.assertEqual(user.role, User.ADMINISTRATOR, msg)
-        self.assertEqual(user.address_01, extra_fields.get('address_01'), msg)
-        self.assertEqual(user.postal_code, extra_fields.get('postal_code'), msg)
+        kwargs = {}
+        kwargs['username'] = "TestUser_01"
+        kwargs['password'] = "9876543210"
+        kwargs['role'] = 999
+        user = UserModel(**kwargs)
+
+        with self.assertRaises(ValidationError) as cm:
+            user.save()
+
+        msg = "Found: {}".format(cm.exception)
+        self.assertTrue(" is not a valid choice." in str(cm.exception), msg)
 
     def test_get_full_name_reversed(self):
         """
@@ -98,8 +106,18 @@ class TestUser(BaseAccountModels):
         name = self.user.get_full_name_reversed()
         msg = "Username: {}, First Name: {}, Last Name: {}".format(
             self.user.username, self.user.first_name, self.user.last_name)
-        self.assertEqual(name, "{}, {}".format(self.user.last_name,
-                                                self.user.first_name), msg)
+        reversed_name = "{}, {}".format(self.user.last_name,
+                                        self.user.first_name)
+        self.assertEqual(name, reversed_name, msg)
+        self.assertTrue(reversed_name == str(self.user), msg)
+        # Test with no first and last names
+        username = "TestCreateUser"
+        email = "TCU@example.com"
+        password = "{TCU_999}"
+        user = UserModel.objects.create_user(username, email, password)
+        name = user.get_full_name_reversed()
+        msg = "name: {}, username: {}".format(name, username)
+        self.assertTrue(name == username, msg)
 
     def test_process_projects(self):
         """
@@ -137,7 +155,7 @@ class TestUser(BaseAccountModels):
         Test that only unused questions are returned as choices.
         """
         #self.skipTest("Temporarily skipped")
-        # Create some stupid questions.
+        # Create some questions.
         q1 = self._create_question("What is your favorite color?")
         q2 = self._create_question("What is your favorite animal?")
         q3 = self._create_question("In what country is New York?")
@@ -150,6 +168,69 @@ class TestUser(BaseAccountModels):
         self.assertEqual(len(questions), 1, msg)
         self.assertTrue(q3.pk in [q.pk for q in questions], msg)
 
+    def test_full_name_reversed_producer(self):
+        """
+        Test that the full_name_reversed_producer() method produces the
+        reversed full name for the admin.
+        """
+        #self.skipTest("Temporarily skipped")
+        name = self.user.full_name_reversed_producer()
+        msg = "Username: {}, First Name: {}, Last Name: {}".format(
+            self.user.username, self.user.first_name, self.user.last_name)
+        reversed_name = "{}, {}".format(self.user.last_name,
+                                        self.user.first_name)
+        self.assertEqual(name, reversed_name, msg)
+        self.assertTrue(reversed_name == str(self.user), msg)
+        # Test with no first and last names
+        username = "TestCreateUser"
+        email = "TCU@example.com"
+        password = "{TCU_999}"
+        user = UserModel.objects.create_user(username, email, password)
+        name = user.full_name_reversed_producer()
+        msg = "name: {}, username: {}".format(name, username)
+        self.assertTrue(name == username, msg)
+
+    def test_projects_producer(self):
+        """
+        Test that the projects_producer() method produces the projects the
+        user has for the admin.
+        """
+        #self.skipTest("Temporarily skipped")
+        self.user.process_projects((self.project,))
+        projects = self.user.projects_producer()
+        msg = "Projects found: {}, has: {}".format(projects, self.project)
+        self.assertTrue(len(projects.split('<br />')) == 1, msg)
+
+    def test_image_url_producer(self):
+        """
+        Test that the image_url_producer() method displays an image from the
+        admin.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Test no image.
+        image = self.user.image_url_producer()
+        msg = "Image: {}".format(image)
+        self.assertEqual(image, "No Image URL", msg)
+        self.user.picture = "Test Image"
+        self.user.save()
+        image = self.user.image_url_producer()
+        msg = "Image: {}".format(image)
+        self.assertTrue('href' in image, msg)
+
+    def test_image_thumb_producer(self):
+        """
+        Test that the image_thumb_producer() method displays an image in the
+        admin.
+        """
+        image = self.user.image_thumb_producer()
+        msg = "Image: {}".format(image)
+        self.assertEqual(image, "No Image", msg)
+        self.user.picture = "Test Image"
+        self.user.save()
+        image = self.user.image_thumb_producer()
+        msg = "Image: {}".format(image)
+        self.assertTrue('src' in image, msg)
+
 
 class TestQuestion(BaseAccountModels):
 
@@ -161,7 +242,7 @@ class TestQuestion(BaseAccountModels):
         Test that only active questions are returned.
         """
         #self.skipTest("Temporarily skipped")
-        # Create some stupid questions.
+        # Create some questions.
         q1 = self._create_question("What is your favorite color?")
         q2 = self._create_question("What is your favorite animal?",
                                    active=False)
@@ -183,7 +264,7 @@ class TestAnswer(BaseAccountModels):
         Test that the validation works for the answer field.
         """
         #self.skipTest("Temporarily skipped")
-        # Create a stupid question.
+        # Create a question.
         q1 = self._create_question("What is your favorite color?")
         # Create an answer to the question.
         answer = "Blue"

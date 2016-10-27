@@ -43,7 +43,7 @@ def api_root(request, format=None):
 
     ## Notes:
       1. When access is done through a non-browser client use the `Accept`
-         header instead of passing parameters on the URI.
+         header instead of passing the `format` parameter on the URI.
       2. When paging through a list the `next` and `previous` link relations
          should be used. Both links default to 25 items per page, add the
          appropriate `page_size` to the URI if a value different from the

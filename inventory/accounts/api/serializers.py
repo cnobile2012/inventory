@@ -43,8 +43,8 @@ class UserSerializer(serializers.ModelSerializer):
         view_name='timezone-detail', queryset=TimeZone.objects.all(),
         default=None, label=_("Timezone"))
     answers = serializers.HyperlinkedRelatedField(
-        view_name='answer-detail', many=True, queryset=Answer.objects.all(),
-        default=None, label=_("Security answers"))
+        view_name='answer-detail', many=True, read_only=True,
+        label=_("Security answers"), lookup_field='public_id')
     projects = ProjectSerializer(many=True, required=False)
     uri = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
@@ -54,11 +54,9 @@ class UserSerializer(serializers.ModelSerializer):
         username = validated_data.pop('username', '')
         password = validated_data.pop('password', '')
         email = validated_data.pop('email', '')
-        answers = validated_data.pop('answers', [])
         projects = validated_data.pop('projects', [])
         obj = UserModel.objects.create_user(
             username, email=email, password=password, **validated_data)
-        obj.process_answers(answers)
         obj.process_projects(projects)
         return obj
 
@@ -106,7 +104,6 @@ class UserSerializer(serializers.ModelSerializer):
         instance.is_superuser = validated_data.get(
             'is_superuser', instance.is_superuser)
         instance.save()
-        instance.process_answers(validated_data.get('answers', []))
         instance.process_projects(validated_data.get('projects', []))
         return instance
 
@@ -115,8 +112,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('public_id', 'username', 'password', 'send_email',
                   'need_password', 'first_name', 'last_name', 'address_01',
                   'address_02', 'city', 'subdivision', 'postal_code',
-                  'country', 'language', 'timezone', 'dob', 'email', 'answers',
-                  'role', 'projects', 'project_default', 'is_active',
+                  'country', 'language', 'timezone', 'dob', 'email', 'role',
+                  'projects', 'project_default', 'answers', 'is_active',
                   'is_staff', 'is_superuser', 'last_login', 'date_joined',
                   'uri',)
         read_only_fields = ('public_id', 'last_login', 'date_joined', 'uri',)
@@ -212,7 +209,8 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ('public_id', 'user', 'answer', 'question', 'creator',
+        fields = ('public_id', 'user', 'question', 'answer', 'creator',
                   'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('id', 'public_id', 'creator', 'created', 'updater',
                             'updated',)
+        extra_kwargs = {'answer': {'write_only': True}}

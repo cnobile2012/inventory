@@ -66,12 +66,6 @@ class TestUserAPI(BaseAccount):
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
-        kwargs = {}
-        kwargs['username'] = 'POST_User'
-        kwargs['password'] = '9876543210'
-        kwargs['login'] = False
-        kwargs['is_superuser'] = False
-        user, client = self._create_user(**kwargs)
         uri = reverse('user-list')
         data = {}
         su = data.setdefault('SU', {})
@@ -93,12 +87,6 @@ class TestUserAPI(BaseAccount):
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
-        kwargs = {}
-        kwargs['username'] = 'POST_User'
-        kwargs['password'] = '9876543210'
-        kwargs['login'] = False
-        kwargs['is_superuser'] = False
-        user, client = self._create_user(**kwargs)
         uri = reverse('user-list')
         data = {}
         su = data.setdefault('SU', {})

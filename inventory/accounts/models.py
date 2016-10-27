@@ -49,7 +49,7 @@ class UserManager(BaseUserManager):
         now = timezone.now()
 
         if not username:
-            raise ValueError(_("The given username must be set."))
+            raise ValueError(_("The username must be set."))
 
         email = self.normalize_email(email)
         role = extra_fields.pop('role', None)
@@ -82,32 +82,6 @@ class UserManager(BaseUserManager):
     def create_superuser(self, username, email, password, **extra_fields):
         return self._create_user(username, email, password, True, True,
                                  **extra_fields)
-
-    def update_user(self, pk=None, username=None, email=None, **extra_fields):
-        query = []
-
-        if pk is not None:
-            query.append(models.Q(pk=pk))
-
-        if username is not None:
-            query.append(models.Q(username=username))
-
-        if email is not None:
-            query.append(models.Q(email=email))
-
-        if len(query) <= 0:
-            raise ValueError(_("At least one of pk, username, or email needs "
-                               "to be provided."))
-
-        users = self.filter(*query)
-
-        if users.count() != 1:
-             raise ValueError(_("Please supply both the username and email "
-                                "to narrow down the search."))
-
-        self.model.role = extra_fields.pop('role', self.model.DEFAULT_USER)
-        users.update(**extra_fields)
-        return users[0]
 
 
 @python_2_unicode_compatible
@@ -190,11 +164,6 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
             if self.is_superuser:
                 self._role = self.ADMINISTRATOR
-        elif self._role not in self.ROLE_MAP:
-            msg = _("Invalid role, must be one of ()").format(
-                self.ROLE_MAP.values())
-            log.error(msg)
-            raise ValidationError(msg)
 
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
@@ -242,22 +211,6 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
             for project in Project.objects.filter(pk__in=add_pks):
                 Membership.objects.create(user=self, project=project)
-
-    def process_answers(self, answers):
-        """
-        This method adds and removes answers to a member.
-        """
-        if answers:
-            wanted_pks = [inst.pk for inst in answers]
-            old_pks = [inst.pk for inst in self.answers.all()]
-            # Remove unwanted answers.
-            unwanted_pks = list(set(old_pks) - set(wanted_pks))
-            rem_prod = Answer.objects.filter(pk__in=unwanted_pks)
-            self.answers.remove(*rem_prod)
-            # Add new answers.
-            add_pks = list(set(wanted_pks) - set(unwanted_pks))
-            new_objs = Answer.objects.filter(pk__in=add_pks)
-            self.answers.add(*new_objs)
 
     def get_unused_questions(self):
         used_pks = [answer.question.pk for answer in self.answers.all()]
@@ -359,7 +312,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         help_text=_("The question relative to this answer."))
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("User"),
-        related_name='answers', blank=True,
+        related_name='answers',
         help_text=_("User to which this answer applies."))
 
     objects = AnswerManager()

@@ -17,7 +17,7 @@ UserModel = get_user_model()
 
 
 class BaseTest(RecordCreation, TestCase):
-    _TEST_USERNAME = 'TestUser'
+    _TEST_USERNAME = 'BaseTestUser'
     _TEST_PASSWORD = 'TestPassword_007'
 
     def __init__(self, name):
