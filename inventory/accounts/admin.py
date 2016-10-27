@@ -60,15 +60,16 @@ admin.site.register(get_user_model(), UserAdmin)
 @admin.register(Question)
 class QuestionAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('question',)}),
+        (None, {'fields': ('public_id', 'question',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
+    readonly_fields = ('public_id', 'creator', 'created', 'updater', 'updated',)
     list_display = ('question', 'active', 'updater', 'updated',)
     list_editable = ('active',)
     list_filter = ('active',)
+    search_fields = ('question', 'public_id',)
     form = QuestionForm
 
 
@@ -78,11 +79,12 @@ class QuestionAdmin(UserAdminMixin, admin.ModelAdmin):
 @admin.register(Answer)
 class AnswerAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('user', 'question', 'answer',)}),
+        (None, {'fields': ('public_id', 'user', 'question', 'answer',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
+    readonly_fields = ('public_id', 'creator', 'created', 'updater', 'updated',)
     list_display = ('question', 'user', 'answer', 'updater', 'updated',)
+    search_fields = ('user__username', 'question__question', 'public_id',)
     form = AnswerForm

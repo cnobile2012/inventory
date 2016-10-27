@@ -22,7 +22,7 @@ from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import Question, Answer
 from .serializers import (
-    UserSerializer, GroupSerializer, QuestionSerializer, AnswerSerializer)
+    UserSerializer, QuestionSerializer, AnswerSerializer)
 
 log = logging.getLogger('api.accounts.views')
 UserModel = get_user_model()
@@ -82,46 +82,46 @@ user_detail = UserDetail.as_view()
 #
 # Group
 #
-class GroupAuthorizationMixin(object):
+## class GroupAuthorizationMixin(object):
 
-    def get_queryset(self):
-        if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
-            result = Group.objects.all()
-        else:
-            result = self.request.user.groups.all()
+##     def get_queryset(self):
+##         if (self.request.user.is_superuser or
+##             self.request.user.role == UserModel.ADMINISTRATOR):
+##             result = Group.objects.all()
+##         else:
+##             result = self.request.user.groups.all()
 
-        return result
-
-
-class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
-    """
-    Group list endpoint.
-    """
-    serializer_class = GroupSerializer
-    permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser,
-               IsAdministrator)
-            ),
-        )
-    required_scopes = ('read', 'write', 'groups',)
-    pagination_class = SmallResultsSetPagination
-
-group_list = GroupList.as_view()
+##         return result
 
 
-class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateAPIView):
-    serializer_class = GroupSerializer
-    permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser,
-               IsAdministrator)
-            ),
-        )
-    required_scopes = ('read', 'write', 'groups',)
+## class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
+##     """
+##     Group list endpoint.
+##     """
+##     serializer_class = GroupSerializer
+##     permission_classes = (
+##         And(IsUserActive, #IsAuthenticated,
+##             Or(IsAdminSuperUser,
+##                IsAdministrator)
+##             ),
+##         )
+##     required_scopes = ('read', 'write', 'groups',)
+##     pagination_class = SmallResultsSetPagination
 
-group_detail = GroupDetail.as_view()
+## group_list = GroupList.as_view()
+
+
+## class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateAPIView):
+##     serializer_class = GroupSerializer
+##     permission_classes = (
+##         And(IsUserActive, #IsAuthenticated,
+##             Or(IsAdminSuperUser,
+##                IsAdministrator)
+##             ),
+##         )
+##     required_scopes = ('read', 'write', 'groups',)
+
+## group_detail = GroupDetail.as_view()
 
 
 #
@@ -144,6 +144,7 @@ class QuestionList(ListCreateAPIView):
             ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
 
 question_list = QuestionList.as_view()
 
@@ -153,6 +154,7 @@ class QuestionDetail(RetrieveUpdateAPIView):
     Question detail endpoint.
     """
     queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
     permission_classes = (
          And(IsUserActive, #IsAuthenticated,
             Or(IsAdminSuperUser,
@@ -163,7 +165,7 @@ class QuestionDetail(RetrieveUpdateAPIView):
                )
             ),
         )
-    serializer_class = QuestionSerializer
+    lookup_field = 'public_id'
 
 question_detail = QuestionDetail.as_view()
 
@@ -195,6 +197,7 @@ class AnswerList(AnswerAuthorizationMixin, ListCreateAPIView):
             ),
         )
     pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
 
 answer_list = AnswerList.as_view()
 
@@ -203,12 +206,13 @@ class AnswerDetail(AnswerAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     """
     Answer detail endpoint.
     """
+    serializer_class = AnswerSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
             Or(IsAnyUser,
                IsAnyProjectUser)
             ),
         )
-    serializer_class = AnswerSerializer
+    lookup_field = 'public_id'
 
 answer_detail = AnswerDetail.as_view()

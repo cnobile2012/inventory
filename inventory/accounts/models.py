@@ -302,18 +302,27 @@ class User(AbstractUser, ValidateOnSaveMixin):
 class QuestionManager(StatusModelManagerMixin, models.Manager):
 
     def get_active_questions(self, exclude_pks=[]):
-        return self.filter(active=True).exclude(pk__in=exclude_pks)
+        return self.active().exclude(pk__in=exclude_pks)
 
 
 @python_2_unicode_compatible
 class Question(TimeModelMixin, UserModelMixin, StatusModelMixin,
                ValidateOnSaveMixin):
 
+    public_id = models.CharField(
+        verbose_name=_("Public Question ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify an individual security question."))
     question = models.CharField(
         verbose_name=_("Question"), max_length=100,
         help_text=_("A question for authentication."))
 
     objects = QuestionManager()
+
+    def clean(self):
+        # Populate the public_id on record creation only.
+        if self.pk is None and not self.public_id:
+            self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
         super(Question, self).save(*args, **kwargs)
@@ -338,6 +347,10 @@ class AnswerManager(models.Manager):
 class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     ANSWER_SALT = "inventory.accounts.models.Answer.clean"
 
+    public_id = models.CharField(
+        verbose_name=_("Public Answer ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify an individual secure answer."))
     answer = models.CharField(
         verbose_name=_("Answer"), max_length=250,
         help_text=_("An answer to an authentication question."))
@@ -352,6 +365,10 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     objects = AnswerManager()
 
     def clean(self):
+        # Populate the public_id on record creation only.
+        if self.pk is None and not self.public_id:
+            self.public_id = generate_public_key()
+
         # Convert the ASCII text answer to a one way hash.
         algorithm, hash_value = create_hash(self.answer, self.ANSWER_SALT)
 

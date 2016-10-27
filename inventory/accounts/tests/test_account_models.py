@@ -28,23 +28,6 @@ class BaseAccountModels(BaseTest):
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 
-    def _create_question_record(self, question, active=True):
-        kwargs = {}
-        kwargs['question'] = question
-        kwargs['active'] = active
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
-        return Question.objects.create(**kwargs)
-
-    def _create_answer_record(self, user, answer, question_obj):
-        kwargs = {}
-        kwargs['answer'] = answer
-        kwargs['question'] = question_obj
-        kwargs['user'] = user
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
-        return Answer.objects.create(**kwargs)
-
 
 class TestUser(BaseAccountModels):
 
@@ -155,12 +138,12 @@ class TestUser(BaseAccountModels):
         """
         #self.skipTest("Temporarily skipped")
         # Create some stupid questions.
-        q1 = self._create_question_record("What is your favorite color?")
-        q2 = self._create_question_record("What is your favorite animal?")
-        q3 = self._create_question_record("In what country is New York?")
+        q1 = self._create_question("What is your favorite color?")
+        q2 = self._create_question("What is your favorite animal?")
+        q3 = self._create_question("In what country is New York?")
         # Create two answers.
-        a1 = self._create_answer_record(self.user, "Blue", q1)
-        a2 = self._create_answer_record(self.user, "Dog", q2)
+        a1 = self._create_answer(q1, "Blue", self.user)
+        a2 = self._create_answer(q2, "Dog", self.user)
         # Get any remaining questions that have not been used yet.
         questions = self.user.get_unused_questions()
         msg = "Unused Questions: {}".format(questions)
@@ -179,10 +162,10 @@ class TestQuestion(BaseAccountModels):
         """
         #self.skipTest("Temporarily skipped")
         # Create some stupid questions.
-        q1 = self._create_question_record("What is your favorite color?")
-        q2 = self._create_question_record("What is your favorite animal?",
-                                          active=False)
-        q3 = self._create_question_record("In what country is New York?")
+        q1 = self._create_question("What is your favorite color?")
+        q2 = self._create_question("What is your favorite animal?",
+                                   active=False)
+        q3 = self._create_question("In what country is New York?")
         # Get the active questions.
         questions = Question.objects.get_active_questions()
         msg = "Active Questions: {}".format(questions)
@@ -201,10 +184,10 @@ class TestAnswer(BaseAccountModels):
         """
         #self.skipTest("Temporarily skipped")
         # Create a stupid question.
-        q1 = self._create_question_record("What is your favorite color?")
+        q1 = self._create_question("What is your favorite color?")
         # Create an answer to the question.
         answer = "Blue"
-        a1 = self._create_answer_record(self.user, answer, q1)
+        a1 = self._create_answer(q1, answer, self.user)
         # Check that the answer is encripted.
         algorithum, hash_value = create_hash(answer, Answer.ANSWER_SALT)
         msg = "Question: {}, algorithum: {}".format(a1, algorithum)

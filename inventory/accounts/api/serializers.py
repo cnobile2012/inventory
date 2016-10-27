@@ -126,24 +126,24 @@ class UserSerializer(serializers.ModelSerializer):
 #
 # Group
 #
-class GroupSerializer(serializers.ModelSerializer):
-    user_set = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='user-detail')
-    uri = serializers.HyperlinkedIdentityField(view_name='group-detail')
+## class GroupSerializer(serializers.ModelSerializer):
+##     user_set = serializers.HyperlinkedRelatedField(
+##         many=True, read_only=True, view_name='user-detail')
+##     uri = serializers.HyperlinkedIdentityField(view_name='group-detail')
 
-    def create(self, validated_data):
-        return Group.objects.create(**validated_data)
+##     def create(self, validated_data):
+##         return Group.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.user_set = validated_data.get('user_set', instance.user_set)
-        instance.save()
-        return instance
+##     def update(self, instance, validated_data):
+##         instance.name = validated_data.get('name', instance.name)
+##         instance.user_set = validated_data.get('user_set', instance.user_set)
+##         instance.save()
+##         return instance
 
-    class Meta:
-        model = Group
-        fields = ('id', 'name', 'user_set', 'uri',)
-        read_only_fields = ('id',)
+##     class Meta:
+##         model = Group
+##         fields = ('id', 'name', 'user_set', 'uri',)
+##         read_only_fields = ('id',)
 
 
 #
@@ -151,10 +151,11 @@ class GroupSerializer(serializers.ModelSerializer):
 #
 class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
     creator = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
-    uri = serializers.HyperlinkedIdentityField(view_name='question-detail')
+        view_name='user-detail', read_only=True, lookup_field='public_id')
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='question-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -171,32 +172,34 @@ class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ('id', 'question', 'active', 'creator', 'created', 'updater',
-                  'updated', 'uri',)
-        read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
+        fields = ('public_id', 'question', 'active', 'creator', 'created',
+                  'updater', 'updated', 'uri',)
+        read_only_fields = ('id', 'public_id', 'creator', 'created', 'updater',
+                            'updated',)
 
 
 #
 # Answer
 #
 class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
-    users = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', many=True, queryset=UserModel.objects.all())
+    user = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', queryset=UserModel.objects.all(),
+        lookup_field='public_id')
     question = serializers.HyperlinkedRelatedField(
-        view_name='question-detail', queryset=Question.objects.all())
+        view_name='question-detail', queryset=Question.objects.all(),
+        lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
+        view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', read_only=True)
-    uri = serializers.HyperlinkedIdentityField(view_name='answer-detail')
+        view_name='user-detail', read_only=True, lookup_field='public_id')
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='answer-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        users = validated_data.pop('users')
         obj = Answer.objects.create(**validated_data)
-        obj.process_users(users)
         return obj
 
     def update(self, instance, validated_data):
@@ -209,6 +212,7 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ('id', 'users', 'answer', 'question', 'creator', 'created',
-                  'updater', 'updated', 'uri',)
-        read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
+        fields = ('public_id', 'user', 'answer', 'question', 'creator',
+                  'created', 'updater', 'updated', 'uri',)
+        read_only_fields = ('id', 'public_id', 'creator', 'created', 'updater',
+                            'updated',)

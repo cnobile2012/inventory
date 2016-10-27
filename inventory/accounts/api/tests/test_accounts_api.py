@@ -14,7 +14,18 @@ from inventory.common.api.tests.base_test import BaseTest
 UserModel = get_user_model()
 
 
-class TestUserAPI(BaseTest):
+class BaseAccount(BaseTest):
+    DEFAULT_QUESTION = "What make car do you have?"
+    DEFAULT_ANSWER = "Tesla Model S"
+
+    def __init__(self, name):
+        super(BaseAccount, self).__init__(name)
+
+    def setUp(self):
+        super(BaseAccount, self).setUp()
+
+
+class TestUserAPI(BaseAccount):
 
     def __init__(self, name):
         super(TestUserAPI, self).__init__(name)
@@ -311,24 +322,532 @@ class TestUserAPI(BaseTest):
         self._test_project_users_with_valid_permissions(uri, method)
 
 
-class TestGroupAPI(BaseTest):
+## class TestGroupAPI(BaseTest):
 
-    def __init__(self, name):
-        super(TestGroupAPI, self).__init__(name)
+##     def __init__(self, name):
+##         super(TestGroupAPI, self).__init__(name)
+
+##     def setUp(self):
+##         super(TestGroupAPI, self).setUp()
 
 
-
-
-class TestQuestionAPI(BaseTest):
+class TestQuestionAPI(BaseAccount):
 
     def __init__(self, name):
         super(TestQuestionAPI, self).__init__(name)
 
+    def setUp(self):
+        super(TestQuestionAPI, self).setUp()
+
+    def test_GET_question_list_with_invalid_permissions(self):
+        """
+        Test the question_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-list')
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_GET_question_list_with_valid_permissions(self):
+        """
+        Test the question_list endpoint with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-list')
+        self._test_users_with_valid_permissions(uri, method, default_user=False)
+
+    def test_POST_question_list_with_invalid_permissions(self):
+        """
+        Test that a POST to question_list fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        uri = reverse('question-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['question'] = 'Test Question 1'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_POST_question_list_with_valid_permissions(self):
+        """
+        Test that a POST to question_list passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        uri = reverse('question-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['question'] = 'Test Question 1'
+        ad = data.setdefault('AD', su.copy())
+        ad['question'] = 'Test Question 2'
+        du = data.setdefault('DU', su.copy())
+        du['question'] = 'Test Question 3'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_OPTIONS_question_list_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        uri = reverse('question-list')
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_OPTIONS_question_list_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        uri = reverse('question-list')
+        self._test_users_with_valid_permissions(uri, method)
+
+    def test_GET_question_detail_with_invalid_permissions(self):
+        """
+        Test that a GET on the question_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        method = 'get'
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_GET_question_detail_with_valid_permissions(self):
+        """
+        Test that a GET to question_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        method = 'get'
+        self._test_users_with_valid_permissions(uri, method)
+
+    def test_PUT_question_detail_with_invalid_permissions(self):
+        """
+        Test that a PUT to question_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['question'] = 'Test Question 1'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_PUT_question_detail_with_valid_permissions(self):
+        """
+        Test that a PUT to question_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['question'] = 'Test Question 1'
+        ad = data.setdefault('AD', su.copy())
+        ad['question'] = 'Test Question 2'
+        du = data.setdefault('DU', su.copy())
+        du['question'] = 'Test Question 3'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_PATCH_question_detail_with_invalid_permissions(self):
+        """
+        Test that a PATCH to question_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['question'] = 'Test Question 1'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+
+    def test_PATCH_question_detail_with_valid_permissions(self):
+        """
+        Test that a PATCH to question_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['question'] = 'Test Question 1'
+        ad = data.setdefault('AD', {})
+        ad['question'] = 'Test Question 2'
+        du = data.setdefault('DU', {})
+        du['question'] = 'Test Question 3'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_DELETE_question_detail_with_invalid_permissions(self):
+        """
+        Test that a DELETE to question_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        self._test_users_with_invalid_permissions(uri, method)
+
+    def test_DELETE_question_detail_with_valid_permissions(self):
+        """
+        Test that a DELETE to question_detail pass' with valid permissions.
+
+        A DELETE on this endpoint is not permitted by any role.
+        """
+        pass
+        #self.skipTest("Temporarily skipped")
+        ## method = 'delete'
+        ## # Test SUPERUSER
+        ## question = self._create_question(self.DEFAULT_QUESTION)
+        ## uri = reverse('question-detail',
+        ##               kwargs={'public_id': question.public_id})
+        ## self._test_superuser_with_valid_permissions(uri, method)
+        ## self._test_valid_GET_with_errors(uri)
+        ## # Test ADMINISTRATOR
+        ## question = self._create_question(self.DEFAULT_QUESTION)
+        ## uri = reverse('question-detail',
+        ##               kwargs={'public_id': question.public_id})
+        ## self._test_administrator_with_valid_permissions(uri, method)
+        ## self._test_valid_GET_with_errors(uri)
+        ## # Test DEFAULT_USER
+        ## ## This is an invalid test since the DEFAULT_USER has no access.
+
+    def test_OPTIONS_question_detail_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_OPTIONS_question_detail_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        uri = reverse('question-detail',
+                      kwargs={'public_id': question.public_id})
+        self._test_users_with_valid_permissions(uri, method)
 
 
-
-class TestAnswerAPI(BaseTest):
+class TestAnswerAPI(BaseAccount):
 
     def __init__(self, name):
         super(TestAnswerAPI, self).__init__(name)
 
+    def setUp(self):
+        super(TestAnswerAPI, self).setUp()
+        self.user_uri = reverse('user-detail',
+                      kwargs={'public_id': self.user.public_id})
+
+    def test_GET_answer_list_with_invalid_permissions(self):
+        """
+        Test the answer_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-list')
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_GET_answer_list_with_valid_permissions(self):
+        """
+        Test the answer_list endpoint with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-list')
+        self._test_users_with_valid_permissions(uri, method, default_user=False)
+
+    def test_POST_answer_list_with_invalid_permissions(self):
+        """
+        Test that a POST to answer_list fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        method = 'post'
+        uri = reverse('answer-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['answer'] = 'Test Answer 1'
+        su['question'] = question_uri
+        su['user'] = self.user_uri
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data, default_user=False)
+
+    def test_POST_answer_list_with_valid_permissions(self):
+        """
+        Test that a POST to answer_list passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        method = 'post'
+        uri = reverse('answer-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['answer'] = 'Test Answer 1'
+        su['question'] = question_uri
+        su['user'] = self.user_uri
+        ad = data.setdefault('AD', su.copy())
+        ad['answer'] = 'Test Answer 2'
+        du = data.setdefault('DU', su.copy())
+        du['answer'] = 'Test Answer 3'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_OPTIONS_answer_list_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        uri = reverse('answer-list')
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_OPTIONS_answer_list_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        uri = reverse('answer-list')
+        self._test_users_with_valid_permissions(uri, method)
+
+    def test_GET_answer_detail_with_invalid_permissions(self):
+        """
+        Test that a GET on the answer_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail', kwargs={'public_id': answer.public_id})
+        method = 'get'
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_GET_answer_detail_with_valid_permissions(self):
+        """
+        Test that a GET to answer_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        method = 'get'
+        self._test_users_with_valid_permissions(uri, method)
+
+    def test_PUT_answer_detail_with_invalid_permissions(self):
+        """
+        Test that a PUT to answer_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['answer'] = 'Test Answer 1'
+        su['question'] = question_uri
+        su['user'] = self.user_uri
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data, default_user=False)
+
+    def test_PUT_answer_detail_with_valid_permissions(self):
+        """
+        Test that a PUT to answer_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        method = 'put'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['answer'] = 'Test Answer 1'
+        su['question'] = question_uri
+        su['user'] = self.user_uri
+        ad = data.setdefault('AD', su.copy())
+        ad['answer'] = 'Test Answer 2'
+        du = data.setdefault('DU', su.copy())
+        du['answer'] = 'Test Answer 3'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_PATCH_answer_detail_with_invalid_permissions(self):
+        """
+        Test that a PATCH to answer_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_url = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['answer'] = 'Test Answer 1'
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data, default_user=False)
+
+    def test_PATCH_answer_detail_with_valid_permissions(self):
+        """
+        Test that a PATCH to answer_detail passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_url = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        method = 'patch'
+        data = {}
+        su = data.setdefault('SU', {})
+        su['answer'] = 'Test Answer 1'
+        ad = data.setdefault('AD', {})
+        ad['answer'] = 'Test Answer 2'
+        du = data.setdefault('DU', {})
+        du['answer'] = 'Test Answer 3'
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_DELETE_answer_detail_with_invalid_permissions(self):
+        """
+        Test that a DELETE to answer_detail fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_url = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        method = 'delete'
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_DELETE_answer_detail_with_valid_permissions(self):
+        """
+        Test that a DELETE to answer_detail pass' with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_url = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        # Test SUPERUSER
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        self._test_superuser_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test ADMINISTRATOR
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        self._test_administrator_with_valid_permissions(uri, method)
+        self._test_valid_GET_with_errors(uri)
+        # Test DEFAULT_USER
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        response = client.delete(uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_204_NO_CONTENT, response.data)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, msg)
+        self._test_valid_GET_with_errors(uri)
+
+    def test_OPTIONS_answer_detail_with_invalid_permissions(self):
+        """
+        Test that the method OPTIONS fails with invald permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'options'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        self._test_users_with_invalid_permissions(
+            uri, method, default_user=False)
+
+    def test_OPTIONS_answer_detail_with_valid_permissions(self):
+        """
+        Test that the method OPTIONS brings back the correct data.
+        """
+        method = 'options'
+        question = self._create_question(self.DEFAULT_QUESTION)
+        question_uri = reverse('question-detail',
+                               kwargs={'public_id': question.public_id})
+        answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
+        uri = reverse('answer-detail',
+                      kwargs={'public_id': answer.public_id})
+        self._test_users_with_valid_permissions(uri, method)

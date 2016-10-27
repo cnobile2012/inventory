@@ -3,6 +3,7 @@
 # inventory/common/tests/record_creation.py
 #
 
+from inventory.accounts.models import Question, Answer
 from inventory.categories.models import Category
 from inventory.locations.models import (
     LocationSetName, LocationFormat, LocationCode)
@@ -112,3 +113,20 @@ class RecordCreation(object):
         kwargs['minor_unit'] = minor_unit
         kwargs['country'] = country
         return Currency.objects.create(**kwargs)
+
+    def _create_question(self, question, active=True):
+        kwargs = {}
+        kwargs['question'] = question
+        kwargs['active'] = active
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return Question.objects.create(**kwargs)
+
+    def _create_answer(self, question, answer, user):
+        kwargs = {}
+        kwargs['question'] = question
+        kwargs['answer'] = answer
+        kwargs['user'] = user
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return Answer.objects.create(**kwargs)
