@@ -8,6 +8,7 @@
 !development.txt
 !production.txt
 !staging.txt
+!travis.txt
 *.pdf
 #!docs/*.pdf
 .~lock.*

@@ -1,0 +1,7 @@
+# Travis only pip packages.
+
+-r base.txt
+
+# Test coverage
+coverage
+python-coveralls
