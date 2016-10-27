@@ -14,7 +14,7 @@ install: "pip install -r requirements/travis.txt"
 
 # Command to setup Django, database, and run tests
 script:
-  - (cd inventroy/settings/; ln -s travis.py local.py)
+  - (cd inventory/settings/; ln -s travis.py local.py)
   - python manage.py makemigrations
   - python manage.py migrate
   - make coverage
