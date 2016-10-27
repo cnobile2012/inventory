@@ -1,0 +1,22 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.5-dev" # 3.5 development branch
+  - "nightly" # currently points to 3.6-dev
+
+sudo: false
+
+# Command to install dependencies
+install: "pip install -r requirements/travis.txt"
+
+# Command to setup Django, database, and run tests
+script:
+  - (cd example_site/settings/; ln -s travis.py local.py)
+  - python manage.py migrate
+  - make coverage
+
+after_success:
+  - coveralls 
