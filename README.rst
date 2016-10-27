@@ -2,11 +2,7 @@
 Project Based Parts Management Service
 ======================================
 
-.. image:: https://img.shields.io/pypi/pyversions/inventory.svg
-   :target: https://pypi.python.org/pypi/inventroy
-   :alt: PY Versions
-
-.. image:: http://img.shields.io/travis/cnobile2012/inventroy/master.svg
+.. image:: http://img.shields.io/travis/cnobile2012/inventory/master.svg
    :target: http://travis-ci.org/cnobile2012/inventory
    :alt: Build Status
 
