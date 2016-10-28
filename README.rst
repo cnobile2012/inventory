@@ -2,6 +2,8 @@
 Project Based Parts Management Service
 ======================================
 
+The MIT License (MIT)
+
 .. image:: https://travis-ci.org/cnobile2012/inventory.svg?branch=develop
     :target: https://travis-ci.org/cnobile2012/inventory
     :alt: Build Status
