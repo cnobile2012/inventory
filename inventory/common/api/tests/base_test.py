@@ -434,8 +434,11 @@ class BaseTest(RecordCreation, APITestCase):
 
         if request:
             uri = reverse(name, request=request)
-        elif hasattr(settings, 'SITE_URL'):
-            uri = settings.SITE_URL + reverse(name, kwargs=kwargs)
+        else:
+            uri = reverse(name, kwargs=kwargs)
+
+        #elif hasattr(settings, 'SITE_URL'):
+        #    uri = settings.SITE_URL + reverse(name, kwargs=kwargs)
 
         return uri
 
