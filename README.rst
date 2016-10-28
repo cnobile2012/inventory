@@ -6,9 +6,9 @@ Project Based Parts Management Service
    :target: http://travis-ci.org/cnobile2012/inventory
    :alt: Build Status
 
-.. image:: http://img.shields.io/coveralls/cnobile2012/inventory/master.svg
-   :target: https://coveralls.io/r/cnobile2012/inventory
-   :alt: Test Coverage
+.. image:: https://coveralls.io/repos/github/cnobile2012/inventory/badge.svg?branch=develop
+   :target: https://coveralls.io/github/cnobile2012/inventory?branch=develop
+   :alt: Test Coverage
 
 This is an old application which I am currently in the process of updating. Most of what you see here will be slowly removed and completely rewritten.
 
