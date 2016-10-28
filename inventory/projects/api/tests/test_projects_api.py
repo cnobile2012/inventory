@@ -29,8 +29,6 @@ class TestInventoryType(BaseTest):
         kwargs = {'public_id': self.in_type.public_id}
         self.in_type_uri = self._resolve('inventory-type-detail', **kwargs)
         self.project = self._create_project(self.in_type, members=[self.user])
-        #kwargs = {'public_id': self.project.public_id}
-        #self.project_uri = self._resolve('project-detail', **kwargs)
 
     def test_GET_inventory_type_list_with_invalid_permissions(self):
         """
