@@ -8,9 +8,9 @@ The MIT License (MIT)
     :target: https://travis-ci.org/cnobile2012/inventory
     :alt: Build Status
 
-.. image:: https://coveralls.io/repos/github/cnobile2012/inventory/badge.svg?branch=develop
-    :target: https://coveralls.io/github/cnobile2012/inventory?branch=develop
-    :alt: Test Coverage
+.. image:: http://img.shields.io/coveralls/cnobile2012/inventory/develop.svg?branch=develop
+   :target: https://coveralls.io/r/cnobile2012/inventory?branch=develop
+   :alt: Test Coverage
 
 Current Status of Project
 =========================
