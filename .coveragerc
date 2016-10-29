@@ -4,6 +4,7 @@ source = inventory
 omit =
     ../*migrations*
     ../*management*
+    *settings*
     *urls*
     *tests*
     *admin*
