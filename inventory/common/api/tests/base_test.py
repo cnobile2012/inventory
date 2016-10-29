@@ -433,7 +433,7 @@ class BaseTest(RecordCreation, APITestCase):
         request = kwargs.pop('request', None)
 
         if request:
-            uri = reverse(name, request=request)
+            uri = reverse(name, request=request, kwargs=kwargs)
         else:
             uri = reverse(name, kwargs=kwargs)
 
