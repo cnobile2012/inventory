@@ -8,9 +8,9 @@ On Ubuntu Basic Packages Need to be Installed
 Use ``sudo apt-get install`` or ``sudo aptitude install``.
 
 
-ubuntu-dev-tools python-setuptools python3-dev OR python-dev
-postgresql postgresql-client postgresql-contrib postgresql-server-dev-all
-redis-server redis-tools libssl-dev
+|    ubuntu-dev-tools python-setuptools python3-dev OR python-dev
+|    postgresql postgresql-client postgresql-contrib postgresql-server-dev-all
+|    redis-server redis-tools libssl-dev
 
 Python Packages Need to be Installed
 ====================================
