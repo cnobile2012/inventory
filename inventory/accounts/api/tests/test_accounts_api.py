@@ -35,8 +35,6 @@ class TestUserAPI(BaseAccount):
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
-#        kwargs = {'public_id': self.project.public_id}
-#        self.project_uri = self._resolve('project-detail', **kwargs)
 
     def test_GET_user_list_with_invalid_permissions(self):
         """

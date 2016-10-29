@@ -15,7 +15,6 @@ from django.utils import six
 
 from rest_framework import permissions
 from rest_framework.test import APITestCase, APIClient
-from rest_framework.reverse import reverse
 from rest_framework.status import (
     HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND,
@@ -427,20 +426,6 @@ class BaseTest(RecordCreation, APITestCase):
             value = ugettext(value)
 
         return value
-
-    def _resolve(self, name, field='', **kwargs):
-        uri = ''
-        request = kwargs.pop('request', None)
-
-        if request:
-            uri = reverse(name, request=request, kwargs=kwargs)
-        else:
-            uri = reverse(name, kwargs=kwargs)
-
-        #elif hasattr(settings, 'SITE_URL'):
-        #    uri = settings.SITE_URL + reverse(name, kwargs=kwargs)
-
-        return uri
 
     def _has_error(self, response, error_key='detail'):
         result = False

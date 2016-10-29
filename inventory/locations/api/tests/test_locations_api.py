@@ -28,7 +28,7 @@ class TestLocationSetNameAPI(BaseTest):
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
         kwargs = {'public_id': self.project.public_id}
-        self.project_uri = self._resolve('project-detail', **kwargs)
+        self.project_uri = reverse('project-detail', kwargs=kwargs)
 
     def test_GET_location_set_name_list_with_invalid_permissions(self):
         """
@@ -359,8 +359,8 @@ class TestLocationFormatAPI(BaseTest):
         self.project = self._create_project(self.in_type, members=[self.user])
         self.location_set_name = self._create_location_set_name(self.project)
         kwargs = {'public_id': self.location_set_name.public_id}
-        self.location_set_name_uri = self._resolve('location-set-name-detail',
-                                                   **kwargs)
+        self.location_set_name_uri = reverse('location-set-name-detail',
+                                             kwargs=kwargs)
 
     def test_GET_location_format_list_with_invalid_permissions(self):
         """
@@ -731,8 +731,8 @@ class TestLocationCodeAPI(BaseTest):
         self.location_format = self._create_location_format(
             self.location_set_name, 'A\d\d')
         kwargs = {'public_id': self.location_format.public_id}
-        self.location_format_uri = self._resolve('location-format-detail',
-                                                 **kwargs)
+        self.location_format_uri = reverse('location-format-detail',
+                                           kwargs=kwargs)
 
     def test_GET_location_code_list_with_invalid_permissions(self):
         """

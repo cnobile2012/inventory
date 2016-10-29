@@ -21,7 +21,7 @@ class TestSupplierAPI(BaseTest):
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
         kwargs = {'public_id': self.project.public_id}
-        self.project_uri = self._resolve('project-detail', **kwargs)
+        self.project_uri = reverse('project-detail', kwargs=kwargs)
         #self.country = self._create_country()
         #self.subdivision = self._create_subdivision(country)
 

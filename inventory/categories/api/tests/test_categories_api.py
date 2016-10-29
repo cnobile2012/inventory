@@ -28,7 +28,7 @@ class TestCategoryAPI(BaseTest):
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
         kwargs = {'public_id': self.project.public_id}
-        self.project_uri = self._resolve('project-detail', **kwargs)
+        self.project_uri = reverse('project-detail', kwargs=kwargs)
 
     def get_category_field(self, uri, field):
         """
