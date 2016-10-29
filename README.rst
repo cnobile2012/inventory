@@ -17,7 +17,8 @@ Current Status of Project
 
 The major updates on this package, as of late October 2016, has been
 progressing very well. Most of the database and RESTful API work is completed
-and unittests are now being updated and coverage should be going up acordingly.
+and unittests are now being updated and coverage should be going up
+accordingly.
 
 Expect to see frontend code be added within the next few months.
 
