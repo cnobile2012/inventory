@@ -25,8 +25,8 @@ Virtual Wrapper Initialization
 Use your favorite editor to add the following lines at the end of your
 ``.bashrc`` file.
 
-``# Setup the Python virtual environment.``
-``. /usr/local/bin/virtualenvwrapper.sh``
+|    ``# Setup the Python virtual environment.``
+|    ``. /usr/local/bin/virtualenvwrapper.sh``
 
 Create the Virtual Environment
 ==============================
