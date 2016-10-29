@@ -20,7 +20,7 @@ progressing very well. Most of the database and RESTful API work is completed
 and unittests are now being updated and coverage should be going up
 accordingly.
 
-Expect to see frontend code be added within the next few months.
+Expect to see frontend work starting within the next few months.
 
 All new development is being done in the develop branch and will eventually be
 rebased into the master branch.
