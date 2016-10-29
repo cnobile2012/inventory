@@ -142,11 +142,6 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
             msg = _("Invalid user '{}'.").format(user)
             log.error(ugettext(msg))
             raise Membership.DoesNotExist(msg)
-        except Membership.MultipleObjectsReturned as e:
-            msg = _("Multiple instances of user '{}' were found "
-                    "for project '{}'.").format(user, self)
-            log.critical(msg)
-            raise Membership.MultipleObjectsReturned(msg)
 
         # objs.update(role=role) does not work since it does not call save
         # skipping all validation on the model.

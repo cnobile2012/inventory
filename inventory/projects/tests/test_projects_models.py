@@ -7,16 +7,36 @@ from django.core.exceptions import ValidationError
 
 from inventory.common.tests.base_tests import BaseTest
 
-from ..models import Project, Membership
+from ..models import InventoryType, Project, Membership
 
 
-class TestProjectModels(BaseTest):
+class TestInventoryType(BaseTest):
 
     def __init__(self, name):
-        super(TestProjectModels, self).__init__(name)
+        super(TestInventoryType, self).__init__(name)
 
     def setUp(self):
-        super(TestProjectModels, self).setUp()
+        super(TestInventoryType, self).setUp()
+
+    def test_str(self):
+        """
+        Test that __str__ on the class returns the record's name.
+        """
+        #self.skipTest("Temporarily skipped")
+        inventory_type = self._create_inventory_type()
+        name = str(inventory_type)
+        msg = "__str__ name: {}, object name: {}".format(
+            name, inventory_type.name)
+        self.assertEqual(name, inventory_type.name, msg)
+
+
+class TestProject(BaseTest):
+
+    def __init__(self, name):
+        super(TestProject, self).__init__(name)
+
+    def setUp(self):
+        super(TestProject, self).setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 
@@ -51,9 +71,10 @@ class TestProjectModels(BaseTest):
         self.assertEqual(self.project.members.count(), 1, msg)
         self.assertEqual(users[0].username, username_1, msg)
 
-    def test_role(self):
+    def test_get_role(self):
         """
-        Test that the role is set properly on the Membership object.
+        Test that get_role returns the correct role from the Membership
+        model.
         """
         #self.skipTest("Temporarily skipped")
         # Test that the user is not a member.
@@ -68,14 +89,27 @@ class TestProjectModels(BaseTest):
             Membership.ROLE_MAP.get(role),
             Membership.ROLE_MAP.get(Membership.PROJECT_OWNER))
         self.assertEqual(role, Membership.PROJECT_OWNER, msg)
+
+    def test_set_role(self):
+        """
+        Test that set_role sets the correct role on the Membership model.
+        """
+        # Test that Membership.DoesNotExist is raised.
+        with self.assertRaises(Membership.DoesNotExist) as cm:
+            self.project.set_role(self.user, Membership.PROJECT_MANAGER)
+
+        # Add user to membership.
+        self.project.process_members([self.user])
         # Change the user's role.
         self.project.set_role(self.user, Membership.PROJECT_MANAGER)
+        role = self.project.get_role(self.user)
         msg = "This user has role {} which does not conform to '{}'.".format(
             Membership.ROLE_MAP.get(role),
             Membership.ROLE_MAP.get(Membership.PROJECT_MANAGER))
         role = self.project.get_role(self.user)
         self.assertEqual(role, Membership.PROJECT_MANAGER, msg)
-        # Test the clean for role on the Membership model.
+
+        # Test clean on the Membership model for the proper exception.
         with self.assertRaises(ValidationError) as cm:
             self.project.set_role(self.user, 100)
 
@@ -96,3 +130,29 @@ class TestProjectModels(BaseTest):
         msg = "User {} should have permission to access project {}".format(
             user, self.project)
         self.assertTrue(self.project.has_authority(user), msg)
+
+
+class TestMembership(BaseTest):
+
+    def __init__(self, name):
+        super(TestMembership, self).__init__(name)
+
+    def setUp(self):
+        super(TestMembership, self).setUp()
+        self.inventory_type = self._create_inventory_type()
+        self.project = self._create_project(self.inventory_type)
+
+    def test_str(self):
+        """
+        Test that __str__ on the class returns the record's name.
+        """
+        #self.skipTest("Temporarily skipped")
+        self.project.process_members([self.user])
+        membership = Membership.objects.get(
+            user=self.user, project=self.project)
+        result = str(membership)
+        obj_result = "{} ({})".format(
+            self.user.get_full_name_reversed(), self.project.name)
+        msg = "__str__ result: {}, object result: {}".format(
+            result, obj_result)
+        self.assertEqual(result, obj_result, msg)
