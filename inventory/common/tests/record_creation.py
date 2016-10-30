@@ -33,8 +33,7 @@ class RecordCreation(object):
         kwargs['public'] = public
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        obj, created = Project.objects.get_or_create(
-            name=name, defaults=kwargs)
+        obj, created = Project.objects.get_or_create(name=name, defaults=kwargs)
         obj.process_members(members)
         return obj
 
@@ -64,12 +63,22 @@ class RecordCreation(object):
 
     def _create_supplier(self, project, name='Test Supplier',
                          stype=Supplier.BOTH_MFG_DIS, **kwargs):
-        kwargs['project'] = project
-        kwargs['name'] = name
-        kwargs['stype'] = stype
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
-        return Supplier.objects.create(**kwargs)
+        try:
+            obj = Supplier.objects.get(project=project, name=name)
+        except Supplier.DoesNotExist:
+            kwargs['project'] = project
+            kwargs['name'] = name
+            kwargs['stype'] = stype
+            kwargs['creator'] = self.user
+            kwargs['updater'] = self.user
+            obj = Supplier.objects.create(**kwargs)
+        else:
+            for key, value in kwargs.items():
+                setattr(obj, key, value)
+
+            obj.save()
+
+        return obj
 
     def _create_location_set_name(self, project, name=LOCATION_SET_NAME,
                                  **kwargs):
