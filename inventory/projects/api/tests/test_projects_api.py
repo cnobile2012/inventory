@@ -27,7 +27,7 @@ class TestInventoryType(BaseTest):
         # Create an InventoryType and a Project.
         self.in_type = self._create_inventory_type()
         kwargs = {'public_id': self.in_type.public_id}
-        self.in_type_uri = self._resolve('inventory-type-detail', **kwargs)
+        self.in_type_uri = reverse('inventory-type-detail', kwargs=kwargs)
         self.project = self._create_project(self.in_type, members=[self.user])
 
     def test_GET_inventory_type_list_with_invalid_permissions(self):
@@ -349,29 +349,29 @@ class TestProject(BaseTest):
         # Create an InventoryType and a Project.
         self.in_type = self._create_inventory_type()
         kwargs = {'public_id': self.in_type.public_id}
-        self.in_type_uri = self._resolve('inventory-type-detail', **kwargs)
+        self.in_type_uri = reverse('inventory-type-detail', kwargs=kwargs)
         self.project = self._create_project(self.in_type, members=[self.user])
         kwargs = {'public_id': self.project.public_id}
-        self.project_uri = self._resolve('project-detail', **kwargs)
+        self.project_uri = reverse('project-detail', kwargs=kwargs)
 
-    def test_GET_condition_errors(self):
-        self.skipTest("Temporarily skipped")
-        username = 'Normal_User'
-        password = '123456'
-        kwargs = {}
-        kwargs['username'] = username
-        kwargs['password'] = password
-        kwargs['is_superuser'] = True
-        kwargs['is_active'] = True
-        user = UserModel.objects.create(**kwargs)
-        client = APIClient()
-        client.force_authenticate(user=user)
-        response = client.get(
-            self.project_uri, format='json',
-            **{'HTTP_ACCEPT': 'application/json',})
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+    ## def test_GET_condition_errors(self):
+    ##     self.skipTest("Temporarily skipped")
+    ##     username = 'Normal_User'
+    ##     password = '123456'
+    ##     kwargs = {}
+    ##     kwargs['username'] = username
+    ##     kwargs['password'] = password
+    ##     kwargs['is_superuser'] = True
+    ##     kwargs['is_active'] = True
+    ##     user = UserModel.objects.create(**kwargs)
+    ##     client = APIClient()
+    ##     client.force_authenticate(user=user)
+    ##     response = client.get(
+    ##         self.project_uri, format='json',
+    ##         **{'HTTP_ACCEPT': 'application/json',})
+    ##     msg = "Response: {} should be {}, content: {}".format(
+    ##         response.status_code, status.HTTP_200_OK, response.data)
+    ##     self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
 
     def test_GET_project_list_with_invalid_permissions(self):
         """
@@ -409,8 +409,8 @@ class TestProject(BaseTest):
         su = data.setdefault('SU', {})
         su['name'] = 'My Test Project'
         su['inventory_type'] = self.in_type_uri
-        su['members'] = [self._resolve('user-detail',
-                                       **{'public_id': user.public_id})]
+        su['members'] = [
+            reverse('user-detail', kwargs={'public_id': user.public_id})]
         su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
         ad = data.setdefault('AD', su.copy())
         #du = data.setdefault('DU', su.copy())
@@ -435,8 +435,8 @@ class TestProject(BaseTest):
         su = data.setdefault('SU', {})
         su['name'] = 'My Test Project 1'
         su['inventory_type'] = self.in_type_uri
-        su['members'] = [self._resolve('user-detail',
-                                       **{'public_id': user.public_id})]
+        su['members'] = [
+            reverse('user-detail', kwargs={'public_id': user.public_id})]
         su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
         ad = data.setdefault('AD', su.copy())
         ad['name'] = 'My Test Project 2'
@@ -507,8 +507,8 @@ class TestProject(BaseTest):
         su = data.setdefault('SU', {})
         su['name'] = 'Test Project 01'
         su['inventory_type'] = self.in_type_uri
-        su['members'] = [self._resolve('user-detail',
-                                       **{'public_id': user.public_id})]
+        su['members'] = [
+            reverse('user-detail', kwargs={'public_id': user.public_id})]
         su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
@@ -532,8 +532,8 @@ class TestProject(BaseTest):
         su = data.setdefault('SU', {})
         su['name'] = 'Test Project 01'
         su['inventory_type'] = self.in_type_uri
-        su['members'] = [self._resolve('user-detail',
-                                       **{'public_id': user.public_id})]
+        su['members'] = [
+            reverse('user-detail', kwargs={'public_id': user.public_id})]
         su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
         ad = data.setdefault('AD', su.copy())
         ad['name'] = 'Test Project 02'
@@ -563,8 +563,8 @@ class TestProject(BaseTest):
         su = data.setdefault('SU', {})
         su['name'] = 'Test Project 01'
         su['inventory_type'] = self.in_type_uri
-        su['members'] = [self._resolve('user-detail',
-                                       **{'public_id': user.public_id})]
+        su['members'] = [
+            reverse('user-detail', kwargs={'public_id': user.public_id})]
         su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
@@ -668,7 +668,76 @@ class TestProject(BaseTest):
         """
         Test that the method OPTIONS brings back the correct data.
         """
+        #self.skipTest("Temporarily skipped")
         method = 'options'
         self._test_users_with_valid_permissions(self.project_uri, method)
         self._test_project_users_with_valid_permissions(
             self.project_uri, method)
+
+    def test_set_user(self):
+        """
+        Test that an invalid user raises an validation exception.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Setup user for valid POST test.
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        method = 'post'
+        uri = reverse('project-list')
+        data = {}
+        # Test valid POST
+        su = data.setdefault('SU', {})
+        su['name'] = 'Test Project 01'
+        su['inventory_type'] = self.in_type_uri
+        su['members'] = [
+            reverse('user-detail', kwargs={'public_id': user.public_id})]
+        su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
+        self._test_superuser_with_valid_permissions(
+            uri, method, request_data=data)
+        # Test invalid POST
+        su['role'] = {'user': 'Garbage_Name', 'role': Membership.PROJECT_USER}
+        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='role'), msg)
+        self._test_errors(response, tests={
+            'role': "is not a valid user for setting a role."
+            })
+        # Test with a string numeric value.
+        su['role'] = {
+            'user': user.username, 'role': str(Membership.PROJECT_USER)
+            }
+        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Test invalid numeric value for the role.
+        su['role'] = {'user': user.username, 'role': 100}
+        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='role'), msg)
+        self._test_errors(response, tests={
+            'role': " is not a valid role."
+            })
+        # Test an invalid empty string or None value for the role.
+        su['role'] = {'user': user.username, 'role': ''}
+        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='role'), msg)
+        self._test_errors(response, tests={
+            'role': "The user project role '' is not valid."
+            })
+        su['role'] = {'user': user.username, 'role': None}
+        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='role'), msg)
+        self._test_errors(response, tests={
+            'role': "The user project role 'None' is not valid."
+            })

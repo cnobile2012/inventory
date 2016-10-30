@@ -126,6 +126,10 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-code-detail', lookup_field='public_id')
 
+    # Disallow any change to root items
+
+
+
     def create(self, validated_data):
         user = self.get_user_object()
         validated_data['creator'] = user

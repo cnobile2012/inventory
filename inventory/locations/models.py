@@ -16,7 +16,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -209,11 +208,11 @@ class LocationFormatManager(models.Manager):
         try:
             return self.get(location_set_name=loc_set_name,
                             char_definition=LocationCode.ROOT_NAME)
-        except LocationFormat.DoesNotExist as e:
+        except self.model.DoesNotExist:
             msg = _("Root format does not exist for set name '{}'."
                     ).format(loc_set_name)
             log.error(msg)
-            raise LocationFormat.DoesNotExist(msg)
+            raise self.model.DoesNotExist(msg)
 
     def get_char_definition(self, project, name, fmt):
         record = None
@@ -293,29 +292,22 @@ class LocationCodeManager(models.Manager):
 
     def get_root_code(self, loc_set_name):
         """
-        Returnds the auto generated root LocationFormat object.
+        Returns the auto generated root LocationFormat object.
         """
         loc_fmt = LocationFormat.objects.get_root_format(loc_set_name)
+        return loc_fmt.location_codes.get(segment=self.model.ROOT_NAME)
 
-        try:
-            return loc_fmt.location_codes.get(segment=LocationCode.ROOT_NAME)
-        except LocationCode.DoesNotExist as e:
-            msg = _("Root code does not exist for set name '{}'."
-                    ).format(loc_set_name)
-            log.error(msg)
-            raise LocationCode.DoesNotExist(msg)
-
-    def get_parents(self, fmt_obj):
-        parents = self._recurse_parents(fmt_obj)
+    def get_parents(self, code_obj):
+        parents = self._recurse_parents(code_obj)
         parents.reverse()
         return parents
 
-    def _recurse_parents(self, fmt_obj):
+    def _recurse_parents(self, code_obj):
         parents = []
 
-        if fmt_obj.parent_id:
-            parents.append(fmt_obj.parent)
-            more = self._recurse_parents(fmt_obj.parent)
+        if code_obj.parent:
+            parents.append(code_obj.parent)
+            more = self._recurse_parents(code_obj.parent)
             parents.extend(more)
 
         return parents
@@ -404,21 +396,15 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
                 })
 
         # Set the path and level.
-        self.path = self._get_category_path()
+        self.path = self._get_category_path(separator=separator)
         self.level = self.path.count(separator)
 
     def save(self, *args, **kwargs):
         super(LocationCode, self).save(*args, **kwargs)
 
         # Fix all the children if any.
-        iterator = self.children.iterator()
-
-        try:
-            while True:
-                child = six.next(iterator)
-                child.save()
-        except StopIteration:
-            pass
+        for child in self.children.all():
+            child.save()
 
     def __str__(self):
         return self.segment
@@ -432,10 +418,11 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
     def get_separator(self):
         return self.location_format.location_set_name.separator
 
-    def _get_category_path(self, current=True):
+    def _get_category_path(self, current=True, separator=None):
         parents = LocationCode.objects.get_parents(self)
         if current: parents.append(self)
-        return self.get_separator().join([parent.segment for parent in parents])
+        separator = separator if separator else self.get_separator()
+        return separator.join([parent.segment for parent in parents])
 
     def parents_producer(self):
         return self._get_category_path(current=False)
@@ -458,3 +445,7 @@ def create_parent(sender, **kwargs):
         # Set the parent to the ROOT code.
         instance.parent = LocationCode.objects.get(
             location_format=lf, parent=None, segment=LocationCode.ROOT_NAME)
+        # Set the path and level for the first record after the root record.
+        separator = instance.get_separator()
+        instance.path = instance._get_category_path(separator=separator)
+        instance.level = instance.path.count(separator)

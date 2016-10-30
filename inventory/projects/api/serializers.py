@@ -105,20 +105,22 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
             try:
                 user = UserModel.objects.get(username=username)
             except UserModel.DoesNotExist:
-                raise serializers.ValidationError(
-                    _("The username '{}' is not a valid user for setting "
-                      "a role.").format(username))
+                raise serializers.ValidationError({
+                    'role': _("The username '{}' is not a valid user for "
+                              "setting a role.").format(username)})
 
             if role not in ['', None]:
                 if isinstance(role, six.string_types) and role.isdigit():
                     role = int(role)
 
                 if role not in Membership.ROLE_MAP:
-                    raise serializers.ValidationError(
-                        _("The role '{}' is not a valid.").format(role))
+                    raise serializers.ValidationError({
+                        'role': _("The value '{}' is not a valid role."
+                                  ).format(role)})
             else:
-                raise serializers.ValidationError(
-                    _("The user project role '{}' is not valid.").format(role))
+                raise serializers.ValidationError({
+                    'role': _("The user project role '{}' is not valid."
+                              ).format(role)})
 
             data['user'] = user
             data['role'] = role

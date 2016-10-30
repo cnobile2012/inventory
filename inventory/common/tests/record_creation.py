@@ -72,14 +72,31 @@ class RecordCreation(object):
         kwargs['updater'] = self.user
         return LocationFormat.objects.create(**kwargs)
 
-    def _create_location_code(self, location_format, segment, parent=None):
-        kwargs = {}
-        kwargs['location_format'] = location_format
-        kwargs['segment'] = segment
-        kwargs['parent'] = parent
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
-        return LocationCode.objects.create(**kwargs)
+    def _create_location_code(self, location_format, segment, parent=None,
+                              **kwargs):
+        """
+        The kwargs can pass an updated segment.
+        """
+        try:
+            obj = LocationCode.objects.get(
+                location_format=location_format, parent=parent,
+                segment=segment)
+        except LocationCode.DoesNotExist:
+            kwargs = {}
+            kwargs['location_format'] = location_format
+            kwargs['parent'] = parent
+            kwargs['segment'] = segment
+            kwargs['creator'] = self.user
+            kwargs['updater'] = self.user
+            obj = LocationCode.objects.create(**kwargs)
+        else:
+            segment = kwargs.get('update_segment')
+
+            if segment:
+                obj.segment = segment
+                obj.save()
+
+        return obj
 
     def _create_country(self, country='United States', code='US'):
         kwargs = {'country': country,

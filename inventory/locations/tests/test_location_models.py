@@ -163,14 +163,17 @@ class TestLocationSetNameModel(BaseLocation):
         code_2 = self._create_location_code(fmt_2, "B01C01R01", parent=code_1)
         code_2a = self._create_location_code(fmt_2, "B01C01R01", parent=code_1a)
         # Test for correct number of objects.
-        msg = "Location Set Name: {}".format(loc_set_name)
-        self.assertEqual(LocationSetName.objects.count(), 1, msg)
-        msg = "Location Formats: {}, {}, {}, {}".format(
-            fmt_root, fmt_0, fmt_1, fmt_2)
-        self.assertEqual(LocationFormat.objects.count(), 4, msg)
-        msg = "Location Codes: {}, {}, {}, {}".format(
-            code_root, code_0, code_1, code_2)
-        self.assertEqual(LocationCode.objects.count(), 6, msg)
+        count = LocationSetName.objects.count()
+        msg = "Location Set Name: {}, count: {}".format(loc_set_name, count)
+        self.assertEqual(count, 1, msg)
+        count = LocationFormat.objects.count()
+        msg = "Location Formats: {}, {}, {}, {}, count: {}".format(
+            fmt_root, fmt_0, fmt_1, fmt_2, count)
+        self.assertEqual(count, 4, msg)
+        count = LocationCode.objects.count()
+        msg = "Location Codes: {}, {}, {}, {}, count: {}".format(
+            code_root, code_0, code_1, code_2, count)
+        self.assertEqual(count, 6, msg)
         # Test delete_set_name_tree
         nodes = LocationSetName.objects.delete_set_name_tree(
             self.project, loc_set_name, self.user)
@@ -217,6 +220,21 @@ class TestLocationFormatModel(BaseLocation):
         # Create a valid location default object.
         self.loc_set_name = self._create_location_set_name(self.project)
 
+    def test_get_root_format(self):
+        """
+        Test that the root format is returned and that errors are reported
+        properly.
+        """
+        # Test proper operation
+        root = LocationFormat.objects.get_root_format(self.loc_set_name)
+        msg = "Found: {}, should be: {}".format(
+            root.char_definition, LocationCode.ROOT_NAME)
+        self.assertTrue(root.char_definition == LocationCode.ROOT_NAME, msg)
+
+        # Test inproper operation
+        with self.assertRaises(LocationFormat.DoesNotExist) as cm:
+            root = LocationFormat.objects.get_root_format(None)
+
     def test_create_location_format_record(self):
         #self.skipTest("Temporarily skipped")
         # Create a location format object.
@@ -251,6 +269,11 @@ class TestLocationFormatModel(BaseLocation):
             self.project, self.LOCATION_SET_NAME, char_definition)
         msg = "Created object: {}, queried object: {}".format(loc_fmt, fmt_obj)
         self.assertEqual(loc_fmt, fmt_obj, msg)
+        # Test for non-existant record.
+        fmt_obj = LocationFormat.objects.get_char_definition(
+            None, self.LOCATION_SET_NAME, char_definition)
+        msg = "Returned: '{}', should return a None object".format(fmt_obj)
+        self.assertTrue(fmt_obj == None, msg)
 
     def test_failure_on_record_creation(self):
         #self.skipTest("Temporarily skipped")
@@ -300,6 +323,17 @@ class TestLocationCodeModel(BaseLocation):
         kwargs['description'] = description
         self.loc_fmt = self._create_location_format(
             self.loc_set_name, char_definition, **kwargs)
+
+    def test_get_root_code(self):
+        """
+        Test that the proper root object is returned and that the proper
+        exception is raised.
+        """
+        # Test for proper operation
+        root = LocationCode.objects.get_root_code(self.loc_set_name)
+        msg = "Found: {}, should be: {}".format(
+            root.segment, LocationCode.ROOT_NAME)
+        self.assertTrue(root.segment == LocationCode.ROOT_NAME, msg)
 
     def test_create_location_code(self):
         #self.skipTest("Temporarily skipped")
@@ -594,3 +628,103 @@ class TestLocationCodeModel(BaseLocation):
         msg = "Exception: {}".format(cm.exception)
         self.assertTrue("There are more segments " in cm.exception.messages[0],
                         msg)
+
+    def test_fix_path_in_children(self):
+        """
+        Test that children path information is fixed when a parent's
+        name is changed.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create three formats.
+        char_definition = 'A\d\d'
+        segment_order = 1
+        description = "Test character definition level 1."
+        kwargs = {}
+        kwargs['description'] = description
+        kwargs['segment_order'] = segment_order
+        loc_fmt_1 = self._create_location_format(
+            self.loc_set_name, char_definition, **kwargs)
+        char_definition = 'B\d\d'
+        segment_order = 2
+        description = "Test character definition level 2."
+        kwargs = {}
+        kwargs['description'] = description
+        kwargs['segment_order'] = segment_order
+        loc_fmt_2 = self._create_location_format(
+            self.loc_set_name, char_definition, **kwargs)
+        char_definition = 'C\d\dR\d\d'
+        segment_order = 3
+        description = "Test character definition level 3."
+        kwargs = {}
+        kwargs['description'] = description
+        kwargs['segment_order'] = segment_order
+        loc_fmt_3 = self._create_location_format(
+            self.loc_set_name, char_definition, **kwargs)
+        # Create three codes
+        code_1 = self._create_location_code(loc_fmt_1, "A01")
+        code_2 = self._create_location_code(loc_fmt_2, "B01", parent=code_1)
+        code_3 = self._create_location_code(loc_fmt_3, "C01R01", parent=code_2)
+        # Test that the paths and levels are correct.
+        root = LocationCode.ROOT_NAME
+        sep = code_1.get_separator()
+        path = '{0}{1}A01'.format(root, sep)
+        msg = ("Found path: {}, should be: {}, found level: {}, "
+               "should be: {}").format(code_1.path, path, code_1.level, 1)
+        self.assertEqual(code_1.path, path, msg)
+        self.assertEqual(code_1.level, 1, msg)
+        path = '{0}{1}A01{1}B01'.format(root, sep)
+        msg = ("Found path: {}, should be: {}, found level: {}, "
+               "should be: {}").format(code_2.path, path, code_2.level, 2)
+        self.assertEqual(code_2.path, path, msg)
+        self.assertEqual(code_2.level, 2, msg)
+        path = '{0}{1}A01{1}B01{1}C01R01'.format(root, sep)
+        msg = ("Found path: {}, should be: {}, found level: {}, "
+               "should be: {}").format(code_3.path, path, code_3.level, 3)
+        self.assertEqual(code_3.path, path, msg)
+        self.assertEqual(code_3.level, 3, msg)
+        # Test that the children update the path when the parent changes.
+        code_1 = self._create_location_code(
+            loc_fmt_1, "A01", parent=code_1.parent, **{'update_segment': "A02"})
+        code_2 = self._create_location_code(loc_fmt_2, "B01", parent=code_1)
+        code_3 = self._create_location_code(loc_fmt_3, "C01R01", parent=code_2)
+        path = '{0}{1}A02'.format(root, sep)
+        msg = ("Found path: {}, should be: {}, found level: {}, "
+               "should be: {}").format(code_1.path, path, code_1.level, 1)
+        self.assertEqual(code_1.path, path, msg)
+        self.assertEqual(code_1.level, 1, msg)
+        path = '{0}{1}A02{1}B01'.format(root, sep)
+        msg = ("Found path: {}, should be: {}, found level: {}, "
+               "should be: {}").format(code_2.path, path, code_2.level, 2)
+        self.assertEqual(code_2.path, path, msg)
+        self.assertEqual(code_2.level, 2, msg)
+        path = '{0}{1}A02{1}B01{1}C01R01'.format(root, sep)
+        msg = ("Found path: {}, should be: {}, found level: {}, "
+               "should be: {}").format(code_3.path, path, code_3.level, 3)
+        self.assertEqual(code_3.path, path, msg)
+        self.assertEqual(code_3.level, 3, msg)
+
+    def test_parents_producer(self):
+        """
+        Test that the parents_producer() method produces the parents for
+        the admin.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Test first code
+        root = LocationCode.ROOT_NAME
+        code_1 = self._create_location_code(self.loc_fmt, 'T01')
+        sep = code_1.get_separator()
+        parents = code_1.parents_producer()
+        msg = "Found: {}, should be: {}".format(parents, root)
+        self.assertEqual(parents, root, msg)
+
+    def test_char_def_producer(self):
+        """
+        Test that the char_def_producer() method produces the correct format.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Test first code
+        code_1 = self._create_location_code(self.loc_fmt, 'T01')
+        fmt = code_1.char_def_producer()
+        cd = code_1.location_format.char_definition
+        msg = "Found: {}, should be: {}".format(fmt, cd)
+        self.assertEqual(fmt, cd, msg)
