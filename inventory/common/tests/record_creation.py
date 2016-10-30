@@ -38,14 +38,29 @@ class RecordCreation(object):
         obj.process_members(members)
         return obj
 
-    def _create_category(self, project, name, parent=None):
-        kwargs = {}
-        kwargs['project'] = project
-        kwargs['name'] = name
-        kwargs['parent'] = parent
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
-        return Category.objects.create(**kwargs)
+    def _create_category(self, project, name, parent=None, **kwargs):
+        """
+        The kwargs can pass an updated segment.
+        """
+        try:
+            obj = Category.objects.get(
+                project=project, parent=parent, name=name)
+        except Category.DoesNotExist:
+            kwargs = {}
+            kwargs['project'] = project
+            kwargs['name'] = name
+            kwargs['parent'] = parent
+            kwargs['creator'] = self.user
+            kwargs['updater'] = self.user
+            obj = Category.objects.create(**kwargs)
+        else:
+            name = kwargs.get('update_name')
+
+            if name:
+                obj.name = name
+                obj.save()
+
+        return obj
 
     def _create_supplier(self, project, name='Test Supplier',
                          stype=Supplier.BOTH_MFG_DIS, **kwargs):

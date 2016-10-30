@@ -70,10 +70,17 @@ class TestCategoryModels(BaseTest):
         # the same name.
         create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
         categories_1 = Category.objects.create_category_tree(
-            self.project, create_list_0, self.user)
+            self.project, create_list_1, self.user)
         level_0_cats = Category.objects.filter(name=create_list_1[0], level=0)
         msg = "{}".format(level_0_cats)
         self.assertEqual(len(level_0_cats), 1, msg)
+        # Test that a delimiter in a category name raises and exception.
+        create_list_2 = ('TestLevel-0',
+                         'Test{}Level-1.1'.format(Category.DEFAULT_SEPARATOR),
+                         'TestLevel-2.1',)
+        with self.assertRaises(ValueError) as cm:
+            categories_1 = Category.objects.create_category_tree(
+                self.project, create_list_2, self.user)
 
     def test_delete_category_tree(self):
         #self.skipTest("Temporarily skipped")
@@ -119,6 +126,12 @@ class TestCategoryModels(BaseTest):
             self.project, categories_0[-1])
         msg = "categories_0: {}, parents: {}".format(categories_0, parents)
         self.assertEqual(len(parents), 2, msg)
+        # Test invalid project
+        project = self._create_project(
+            self.inventory_type, name="Wrong Project")
+
+        with self.assertRaises(ValueError) as cm:
+            parents = Category.objects.get_parents(project, categories_0[-1])
 
     def test_get_child_tree_from_list_with_root(self):
         #self.skipTest("Temporarily skipped")
@@ -205,8 +218,51 @@ class TestCategoryModels(BaseTest):
 
     def test_no_duplicate_root_categories(self):
         #self.skipTest("Temporarily skipped")
-        name = "First Category"
-        parent = self._create_category(self.project, name)
+        kwargs = {}
+        kwargs['name'] = "First Category"
+        kwargs['project'] = self.project
+        kwargs['parent'] = None
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        parent = Category.objects.create(**kwargs)
 
         with self.assertRaises(ValidationError):
-            self._create_category(self.project, name)
+            parent = Category.objects.create(**kwargs)
+
+    def test_parents_producer(self):
+        """
+        Test that the parents_producer() method returns the parents for
+        the admin.
+        """
+        #self.skipTest("Temporarily skipped")
+        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories_0 = Category.objects.create_category_tree(
+            self.project, create_list_0, self.user)
+        parents = categories_0[-1].parents_producer()
+        path = 'TestLevel-0{}TestLevel-1'.format(Category.DEFAULT_SEPARATOR)
+        msg = "Found: {}, should be: {}".format(parents, path)
+        self.assertEqual(parents, path, msg)
+
+    def test_fix_path_in_children(self):
+        """
+        Test that children path information is fixed when a parent's
+        name is changed.
+        """
+        #self.skipTest("Temporarily skipped")
+        create_list = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories = Category.objects.create_category_tree(
+            self.project, create_list, self.user)
+        root = categories[0].name
+
+        for cat in categories:
+            msg = "{} not found in {}".format(root, cat.path)
+            self.assertTrue(root in cat.path, msg)
+
+        root = 'TestLevel-0a'
+        category = self._create_category(
+            self.project, create_list[0], **{'update_name': root})
+        categories = Category.objects.get_child_tree_from_list([category])
+
+        for cat in categories[0]:
+            msg = "{} not found in {}".format(root, cat.path)
+            self.assertTrue(root in cat.path, msg)

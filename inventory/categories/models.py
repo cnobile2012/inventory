@@ -137,17 +137,13 @@ class CategoryManager(models.Manager):
         final = OrderedDict()
 
         for cat in category_list:
-            iterator = cat.children.iterator()
             item = []
 
             if with_root:
                 item.append(cat)
 
-            try:
-                while True:
-                    item.append(six.next(iterator))
-            except StopIteration:
-                pass
+            for child in cat.children.all():
+                item.append(child)
 
             tree.append(tuple(sorted(item, key=lambda x: x.path.lower())))
 
@@ -263,14 +259,8 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         super(Category, self).save(*args, **kwargs)
 
         # Fix all children if any.
-        iterator = self.children.iterator()
-
-        try:
-            while True:
-                child = six.next(iterator)
-                child.save()
-        except StopIteration:
-            pass
+        for child in self.children.all():
+            child.save()
 
     def __str__(self):
         return "{}".format(self.path)
