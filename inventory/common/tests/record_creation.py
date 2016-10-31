@@ -134,20 +134,19 @@ class RecordCreation(object):
                   'country': country}
         return Subdivision.objects.create(**kwargs)
 
-    def _create_language(self, locale, code, country):
-        kwargs = {'locale': locale,
-                  'code': code,
+    def _create_language(self, country, code):
+        kwargs = {'code': code,
                   'country': country}
         return Language.objects.create(**kwargs)
 
-    def _create_timezone(self, zone, coordinates, country):
+    def _create_timezone(self, country, zone, coordinates):
         kwargs = {'zone': zone,
                   'coordinates': coordinates,
                   'country': country}
         return TimeZone.objects.create(**kwargs)
 
-    def _create_currency(self, currency, alphabetic_code, numeric_code,
-                         minor_unit, country, **kwargs):
+    def _create_currency(self, country, currency, alphabetic_code,
+                         numeric_code, minor_unit, **kwargs):
         kwargs['currency'] = currency
         kwargs['alphabetic_code'] = alphabetic_code
         kwargs['numeric_code'] = numeric_code
