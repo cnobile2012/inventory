@@ -243,7 +243,7 @@ class TestLanguage(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, language, method, and uri.
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'get'
         uri = reverse('language-list')
         self._test_users_with_invalid_permissions(uri, method)
@@ -256,7 +256,7 @@ class TestLanguage(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, language, method, and uri.
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'get'
         uri = reverse('language-list')
         self._test_users_with_valid_permissions(uri, method)
@@ -268,7 +268,7 @@ class TestLanguage(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'options'
         # Setup the country, language, method, and uri.
         uri = reverse('country-list')
@@ -281,7 +281,7 @@ class TestLanguage(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'options'
         # Setup the country, language, method, and uri.
         uri = reverse('country-list')
@@ -295,7 +295,7 @@ class TestLanguage(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, language, method, and uri.
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'get'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
         self._test_users_with_invalid_permissions(uri, method)
@@ -308,7 +308,7 @@ class TestLanguage(BaseRegion):
         #self.skipTest("Temporarily skipped")
         # Setup the country, language, method, and uri.
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'get'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
         self._test_users_with_valid_permissions(uri, method)
@@ -320,7 +320,7 @@ class TestLanguage(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'options'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
         # Setup the country, language, method, and uri.
@@ -333,7 +333,7 @@ class TestLanguage(BaseRegion):
         """
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
-        language = self._create_language('en-US', 'en', country)
+        language = self._create_language(country, 'en')
         method = 'options'
         uri = reverse('language-detail', kwargs={'pk': language.pk})
         # Setup the country, language, method, and uri.
@@ -354,7 +354,7 @@ class TestTimezone(BaseRegion):
         # Setup the country, timezone, method, and uri.
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'get'
         uri = reverse('timezone-list')
         self._test_users_with_invalid_permissions(uri, method)
@@ -368,7 +368,7 @@ class TestTimezone(BaseRegion):
         # Setup the country, timezone, method, and uri.
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'get'
         uri = reverse('timezone-list')
         self._test_users_with_valid_permissions(uri, method)
@@ -381,7 +381,7 @@ class TestTimezone(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'options'
         # Setup the country, timezone, method, and uri.
         uri = reverse('country-list')
@@ -395,7 +395,7 @@ class TestTimezone(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'options'
         # Setup the country, timezone, method, and uri.
         uri = reverse('country-list')
@@ -410,7 +410,7 @@ class TestTimezone(BaseRegion):
         # Setup the country, timezone, method, and uri.
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'get'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
         self._test_users_with_invalid_permissions(uri, method)
@@ -424,7 +424,7 @@ class TestTimezone(BaseRegion):
         # Setup the country, timezone, method, and uri.
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'get'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
         self._test_users_with_valid_permissions(uri, method)
@@ -437,7 +437,7 @@ class TestTimezone(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'options'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
         # Setup the country, timezone, method, and uri.
@@ -451,7 +451,7 @@ class TestTimezone(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         timezone = self._create_timezone(
-            'America/New_York', '+404251-0740023', country)
+            country, 'America/New_York', '+404251-0740023')
         method = 'options'
         uri = reverse('timezone-detail', kwargs={'pk': timezone.pk})
         # Setup the country, timezone, method, and uri.
@@ -472,7 +472,7 @@ class TestCurrency(BaseRegion):
         # Setup the country, currency, method, and uri.
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'get'
         uri = reverse('currency-list')
         self._test_users_with_invalid_permissions(uri, method)
@@ -486,7 +486,7 @@ class TestCurrency(BaseRegion):
         # Setup the country, currency, method, and uri.
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'get'
         uri = reverse('currency-list')
         self._test_users_with_valid_permissions(uri, method)
@@ -499,7 +499,7 @@ class TestCurrency(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'options'
         # Setup the country, currency, method, and uri.
         uri = reverse('country-list')
@@ -513,7 +513,7 @@ class TestCurrency(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'options'
         # Setup the country, currency, method, and uri.
         uri = reverse('country-list')
@@ -528,7 +528,7 @@ class TestCurrency(BaseRegion):
         # Setup the country, currency, method, and uri.
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'get'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
         self._test_users_with_invalid_permissions(uri, method)
@@ -542,7 +542,7 @@ class TestCurrency(BaseRegion):
         # Setup the country, currency, method, and uri.
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'get'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
         self._test_users_with_valid_permissions(uri, method)
@@ -555,7 +555,7 @@ class TestCurrency(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'options'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
         # Setup the country, currency, method, and uri.
@@ -569,7 +569,7 @@ class TestCurrency(BaseRegion):
         #self.skipTest("Temporarily skipped")
         country = self._create_country()
         currency = self._create_currency(
-            'US Dollar', 'USD', '840', '2', country)
+            country, 'US Dollar', 'USD', '840', '2')
         method = 'options'
         uri = reverse('currency-detail', kwargs={'pk': currency.pk})
         # Setup the country, currency, method, and uri.
