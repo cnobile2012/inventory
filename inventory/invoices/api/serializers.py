@@ -179,7 +179,7 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
     supplier = serializers.HyperlinkedRelatedField(
         view_name='supplier-detail', default=None,
         queryset=Supplier.objects.all(), lookup_field='public_id')
-    invoice_items = InvoiceItemSerializer(many=True)
+    invoice_items = InvoiceItemSerializer(many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
         view_name='invoice-detail', read_only=True, lookup_field='public_id')
 
@@ -187,10 +187,7 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        invoice_items = validated_data.get('invoice_items', [])
-        obj = Item.objects.create(**validated_data)
-        obj.process_invoice_items(invoice_items)
-        return obj
+        return Item.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.project = validated_data.get(
@@ -215,7 +212,6 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
             'notes', instance.notes)
         instance.updater = self.get_user_object()
         instance.save()
-        instance.process_invoice_items(validated_data.get('invoice_items', []))
         return instance
 
     class Meta:

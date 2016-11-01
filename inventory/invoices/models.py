@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 
 """
-Invoice, InvoiceItem and Item model.
+Invoice, InvoiceItem and Item model and the Condition pseudo model.
 """
 __docformat__ = "restructuredtext en"
 
@@ -153,17 +153,17 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         verbose_name = _("Item")
         verbose_name_plural = _("Items")
 
-    def category_producer(self):
-        return mark_safe("<br />".join(
-            [record.path for record in self.categories.all()]))
-    category_producer.allow_tags = True
-    category_producer.short_description = _("Categories")
-
     def location_code_producer(self):
         return mark_safe("<br />".join(
             [record.path for record in self.location_codes.all()]))
     location_code_producer.allow_tags = True
     location_code_producer.short_description = _("Location Code")
+
+    def category_producer(self):
+        return mark_safe("<br />".join(
+            [record.path for record in self.categories.all()]))
+    category_producer.allow_tags = True
+    category_producer.short_description = _("Categories")
 
     def process_location_codes(self, location_codes):
         """
@@ -202,7 +202,7 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         Add and remove shared projects.
         """
         if shared_projects:
-            wanted_pks = [inst.pk for inst in shared_projects]
+            wanted_pks = [inst.pk for inst in shared_projects if inst.public]
             old_pks = [inst.pk for inst in self.shared_projects.all()]
             # Remove unwanted shared projects.
             rem_pks = list(set(old_pks) - set(wanted_pks))
@@ -280,22 +280,6 @@ class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
-    def process_invoice_items(self, items):
-        """
-        This method adds and removes invoice items on the invoice.
-        """
-        if items:
-            wanted_pks = [inst.pk for inst in items]
-            old_pks = [inst.pk for inst in self.invoice_items.all()]
-            # Remove unwanted invoice items.
-            rem_pks = list(set(old_pks) - set(wanted_pks))
-            unwanted = self.invoice_items.filter(pk__in=rem_pks)
-            self.invoice_items.remove(*unwanted)
-            # Add new invoice items.
-            add_pks = list(set(wanted_pks) - set(old_pks))
-            wanted = InvoiceItem.objects.filter(pk__in=add_pks)
-            self.invoice_items.add(*wanted)
-
 
 #
 # InvoiceItem
@@ -336,9 +320,6 @@ class InvoiceItem(models.Model):
         help_text=_("The inventory item."))
 
     objects = InvoiceItemManager()
-
-    def clean(self):
-        pass
 
     def save(self, *args, **kwargs):
         super(InvoiceItem, self).save(*args, **kwargs)

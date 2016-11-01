@@ -5,6 +5,7 @@
 
 from inventory.accounts.models import Question, Answer
 from inventory.categories.models import Category
+from inventory.invoices.models import Item, Invoice, InvoiceItem
 from inventory.locations.models import (
     LocationSetName, LocationFormat, LocationCode)
 from inventory.projects.models import InventoryType, Project
@@ -170,3 +171,36 @@ class RecordCreation(object):
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
         return Answer.objects.create(**kwargs)
+
+    def _create_item(self, project, column_collection, item_number, **kwargs):
+        kwargs['column_collection'] = column_collection
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        obj, created = Item.objects.get_or_create(
+            project=project, item_number=item_number, defaults=kwargs)
+
+        if not created:
+            for key, value in kwargs.items():
+                setattr(obj, key, value)
+
+            obj.save()
+
+        return obj
+
+    def _create_invoice(self, project, currency, supplier, invoice_number,
+                        **kwargs):
+        kwargs['project'] = project
+        kwargs['currency'] = currency
+        kwargs['supplier'] = supplier
+        kwargs['invoice_number'] = invoice_number
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        return Invoice.objects.create(**kwargs)
+
+    def _create_invoice_item(self, invoice, item_number, quantity, unit_price,
+                             **kwargs):
+        kwargs['invoice'] = invoice
+        kwargs['item_number'] = item_number
+        kwargs['quantity'] = quantity
+        kwargs['unit_price'] = unit_price
+        return InvoiceItem.objects.create(**kwargs)
