@@ -64,7 +64,7 @@ class Condition(BaseChoice):
     objects = ConditionManager()
 
     def __str__(self):
-        return self.name
+        return "{}".format(self.name)
 
 dcolumn_manager.register_choice(Condition, 1, 'name')
 
