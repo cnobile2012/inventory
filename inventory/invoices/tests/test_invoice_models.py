@@ -232,31 +232,6 @@ class TestItem(BaseInvoice):
         msg = "Found: {} codes, should be 1".format(shared_projects.count())
         self.assertEqual(shared_projects.count(), 1, msg)
 
-    def test_read_only_shared_projects(self):
-        """
-        Test read only capability to shared projects.
-        """
-        self.skipTest("Temporarily skipped")
-        # Add the default user to the default project and create an item
-        self.project.process_members([self.user])
-        item_number = "LM7805"
-        item = self._create_item(project, self.collection, item_number)
-        # Create a second user
-        user = self._create_user(username="SecondUser", password="0987654321")
-        # Create second project with second user
-        project = self._create_project(
-            self.inventory_type, name="Test Project_1")
-        project.process_members([user])
-        # Create an item with second project sharing default project
-        item_number = "NE555"
-        item = self._create_item(project, self.collection, item_number)
-        item.process_shared_projects([self.project])
-        # Test that second project can read default project's item.
-        
-
-
-
-
 
 class TestInvoice(BaseInvoice):
 
