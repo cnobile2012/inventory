@@ -63,7 +63,7 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
         queryset=Category.objects.all(), lookup_field='public_id')
     location_codes = serializers.HyperlinkedRelatedField(
         view_name='location-code-detail', many=True, default=None,
-        queryset=LocationCode.objects.all())
+        queryset=LocationCode.objects.all(), lookup_field='public_id')
     shared_projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', many=True, queryset=Project.objects.all(),
         default=None, lookup_field='public_id')
