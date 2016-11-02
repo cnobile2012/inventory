@@ -368,11 +368,6 @@ def create_item_post_save(sender, **kwargs):
                     kwargs['updater'] = instance.invoice.updater
                     item = Item.objects.create(**kwargs)
                     instance.item = item
-
-                    try:
-                        instance.save()
-                    except Exception as e:
-                        log.error("Unknown error: %s, %s", kwargs, e)
-                        raise e
+                    instance.save()
         else:
             instance.item.delete()
