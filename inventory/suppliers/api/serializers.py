@@ -77,9 +77,9 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
             'language', instance.language)
         instance.timezone = validated_data.get(
             'timezone', instance.timezone)
-        instance.updater = self.get_user_object()
         instance.active = validated_data.get(
             'active', instance.active)
+        instance.updater = self.get_user_object()
         instance.save()
         return instance
 

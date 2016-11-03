@@ -49,9 +49,6 @@ class SupplierList(ListCreateAPIView):
     pagination_class = SmallResultsSetPagination
     lookup_field = 'public_id'
 
-    def pre_save(self, obj):
-        obj.creator = self.request.user
-
 supplier_list = SupplierList.as_view()
 
 
