@@ -6,9 +6,7 @@
 from django.contrib.auth import get_user_model
 
 from rest_framework.reverse import reverse
-from rest_framework.status import (
-    HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED,
-    HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND)
+from rest_framework import status
 
 from inventory.categories.models import Category
 from inventory.common.api.tests.base_test import BaseTest
@@ -332,8 +330,8 @@ class TestCategoryAPI(BaseTest):
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_201_CREATED, response.data)
-        self.assertEqual(response.status_code, HTTP_201_CREATED, msg)
+            response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Create Category two.
         parent_uri = response.data.get('uri')
         uri = reverse('category-list')
@@ -342,8 +340,8 @@ class TestCategoryAPI(BaseTest):
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_201_CREATED, response.data)
-        self.assertEqual(response.status_code, HTTP_201_CREATED, msg)
+            response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Create Category two again--should fail.
         uri = reverse('category-list')
         new_data = {'name': 'TestCategory-2',
@@ -351,8 +349,8 @@ class TestCategoryAPI(BaseTest):
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
     def test_delimitor_in_category_name(self):
         """
@@ -366,8 +364,8 @@ class TestCategoryAPI(BaseTest):
                     'project': self.project_uri}
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, 'name'), msg)
         self._test_errors(response, tests={
             'name': u"A category name cannot ",
@@ -394,8 +392,8 @@ class TestCategoryAPI(BaseTest):
                     'parent': cat2_uri}
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, 'name'), msg)
         self._test_errors(response, tests={
             'name': u"A category in this tree ",
@@ -416,9 +414,52 @@ class TestCategoryAPI(BaseTest):
         uri = reverse('category-list')
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST, msg)
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, 'name'), msg)
         self._test_errors(response, tests={
             'name': u"A root level category name ",
+            })
+
+    def test_wrong_user_gets_no_results(self):
+        """
+        Test that the request user gets no results of categories that are
+        in a different project. This test determines that a user of one
+        project does not have access to another project's objects.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a category
+        name = "Test Category 1"
+        category = self._create_category(self.project, name=name)
+        # Create a new user and project
+        user, client = self._create_user(
+            username="SecondUser", password="0987654321")
+        project = self._create_project(self.in_type, name="Test Project_1")
+        project.process_members([user])
+        uri = reverse('category-list')
+        response = client.get(uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEqual(response.data.get('count'), 0, msg)
+        # Test GET on a specific category
+        uri = reverse('category-detail',
+                      kwargs={'public_id': category.public_id})
+        response = client.get(uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND, response.data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "Not found.",
+            })
+        # Test PUT to a specific category
+        data = {'name': 'Changed Category'}
+        response = client.patch(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_404_NOT_FOUND, response.data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "Not found.",
             })

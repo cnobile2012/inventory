@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-User = get_user_model()
+UserModel = get_user_model()
 
 
 class SerializerMixin(object):
@@ -27,7 +27,7 @@ class SerializerMixin(object):
         request = self.get_request()
         return (request is not None and
                 (request.user.is_superuser or
-                 request.user.role == User.ADMINISTRATOR))
+                 request.user.role == UserModel.ADMINISTRATOR))
 
 
 #

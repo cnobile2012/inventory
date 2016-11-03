@@ -39,22 +39,6 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='category-detail', lookup_field='public_id')
 
-    def validate(self, data):
-        if not self.has_full_access():
-            project = data.get('project')
-            user = self.get_user_object()
-            projects = user.projects.all()
-
-            if project not in projects:
-                log.info("User's projects: %s, current project: %s",
-                         projects, project)
-                raise PermissionDenied(
-                    detail=_("This user must be a member of the project to "
-                             "be able to create or alter the record.")
-                    )
-
-        return data
-
     def create(self, validated_data):
         user = self.get_user_object()
         validated_data['creator'] = user
