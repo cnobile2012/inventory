@@ -10,6 +10,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from django.contrib.auth import get_user_model
 
 from inventory.accounts.api.views import user_list
+from inventory.categories.api.views import category_detail
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.projects.api.views import (
     project_list, project_detail, inventory_type_list)
@@ -18,7 +19,7 @@ from inventory.projects.models import Membership
 from ..permissions import (
     IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser, IsReadOnly,
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
-    IsUserActive)
+    IsUserActive, CannotDelete, IsPostOnly)
 
 UserModel = get_user_model()
 
@@ -448,7 +449,7 @@ class TestPermissions(BaseTest):
             request.user, role, members)
         self.assertTrue(auth.has_object_permission(
             request, project_list, project), msg)
-        # Test that an PROJECT_OWNER role has access.
+        # Test that a PROJECT_OWNER role has access.
         project.set_role(user, Membership.PROJECT_OWNER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
@@ -457,6 +458,19 @@ class TestPermissions(BaseTest):
             request.user, role, members)
         self.assertTrue(auth.has_object_permission(
             request, project_detail, project), msg)
+        # Test that a PROJECT_OWNER role has access to a project dependent
+        # model
+        category = self._create_category(project, 'TestLevel-0')
+        uri = reverse('category-detail',
+                      kwargs={'public_id': category.public_id})
+        factory = APIRequestFactory()
+        request = factory.get(uri)
+        request.user = user
+        force_authenticate(request, user=user)
+        auth = IsAnyProjectUser()
+        msg = "User '{}', role: {}".format(request.user, role)
+        self.assertTrue(auth.has_object_permission(
+            request, category_detail, category), msg)
 
     #
     # Miscellaneous level roles
@@ -527,3 +541,72 @@ class TestPermissions(BaseTest):
         user.save()
         msg = "User: {}".format(user)
         self.assertFalse(auth.has_permission(request, inventory_type_list), msg)
+
+    def test_CannotDelete(self):
+        """
+        Test that a user cannot DELETE on the endpoint.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create an InventoryType, a Project, and a user
+        kwargs = {'username': 'Test_CannotDelete',
+                  'password': '1234567890',
+                  'email': 'test@example.org',
+                  'role': UserModel.DEFAULT_USER}
+        user, client = self._create_user(**kwargs)
+        in_type = self._create_inventory_type()
+        project = self._create_project(in_type, members=[self.user])
+        project.process_members([user])
+        project.set_role(user, Membership.PROJECT_USER)
+        # Setup failing DELETE request
+        factory = APIRequestFactory()
+        uri = reverse('project-detail', kwargs={'public_id': project.public_id})
+        request = factory.delete(uri)
+        request.user = user
+        force_authenticate(request, user=user)
+        auth = CannotDelete()
+        # Test that an active PROJECT_USER cannot delete
+        msg = "User: {}".format(user)
+        self.assertFalse(auth.has_permission(request, project_detail), msg)
+        # Setup for passing DELETE request
+        project.set_role(user, Membership.PROJECT_MANAGER)
+        request = factory.get(uri)
+        request.user = user
+        force_authenticate(request, user=user)
+        auth = CannotDelete()
+        # Test that an active PROJECT_MANAGER can delete
+        msg = "User: {}".format(user)
+        self.assertTrue(auth.has_permission(request, project_detail), msg)
+
+    def test_IsPostOnly(self):
+        """
+        Test that a user has POST only access to an endpoint.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = {'username': 'Test_IsPostOnly',
+                  'password': '1234567890',
+                  'email': 'test@example.org',
+                  'role': UserModel.DEFAULT_USER}
+        user, client = self._create_user(**kwargs)
+        in_type = self._create_inventory_type()
+        in_type_uri = reverse('inventory-type-detail',
+                              kwargs={'public_id': in_type.public_id})
+        # Test that user can not GET the project endpoint
+        factory = APIRequestFactory()
+        request = factory.get('project-list')
+        request.user = user
+        force_authenticate(request, user=user)
+        auth = IsPostOnly()
+        msg = "User: {}".format(user)
+        self.assertFalse(auth.has_permission(request, project_list), msg)
+        # Test that this user can POST a new project
+        factory = APIRequestFactory()
+        kwargs = {
+            'name': "New Project",
+            'inventory_type': in_type_uri,
+            }
+        request = factory.post('project-list', **kwargs)
+        request.user = user
+        force_authenticate(request, user=user)
+        auth = IsPostOnly()
+        msg = "User: {}".format(user)
+        self.assertTrue(auth.has_permission(request, project_list), msg)
