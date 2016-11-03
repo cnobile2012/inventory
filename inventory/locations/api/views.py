@@ -29,7 +29,7 @@ from .serializers import (
     LocationCodeSerializer)
 
 log = logging.getLogger('api.locations.views')
-User = get_user_model()
+UserModel = get_user_model()
 
 
 #
@@ -39,7 +39,7 @@ class LocationSetNameAuthorizationMixin(object):
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = LocationSetName.objects.all()
         else:
             projects = self.request.user.projects.all()
@@ -103,7 +103,7 @@ class LocationFormatAuthorizationMixin(object):
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = LocationFormat.objects.all()
         else:
             projects = self.request.user.projects.all()
@@ -169,7 +169,7 @@ class LocationCodeAuthorizationMixin(object):
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = LocationCode.objects.all()
         else:
             projects = self.request.user.projects.all()
