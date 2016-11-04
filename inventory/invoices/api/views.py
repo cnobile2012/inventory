@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 import logging
 
+from django.contrib.auth import get_user_model
+
 from django.utils import six
 
 from rest_framework.generics import (
@@ -19,7 +21,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_condition import C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsProjectManager, IsUserActive)
+    IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser, IsReadOnly,
+    IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
+    IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
 
 from ..models import Condition, Item, Invoice, InvoiceItem
@@ -28,6 +32,7 @@ from .serializers import (
     ConditionSerializer, ItemSerializer, InvoiceSerializer)
 
 log = logging.getLogger('api.invoices.views')
+UserModel = get_user_model()
 
 
 #
@@ -40,8 +45,10 @@ class ConditionList(ListAPIView):
     queryset = Condition.objects.model_objects()
     serializer_class = ConditionSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+        And(IsUserActive,
+            IsReadOnly, #IsAuthenticated,
+            Or(IsAnyProjectUser,
+               IsAnyProjectUser),
             ),
         )
     lookup_field = 'pk'
@@ -56,8 +63,10 @@ class ConditionDetail(RetrieveAPIView):
     queryset = Condition.objects.model_objects()
     serializer_class = ConditionSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+        And(IsUserActive,
+            IsReadOnly, #IsAuthenticated,
+            Or(IsAnyProjectUser,
+               IsAnyProjectUser),
             ),
         )
     lookup_field = 'pk'
@@ -86,7 +95,7 @@ class ItemAuthorizationMixin(object):
         result = []
 
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = Item.objects.all()
         else:
             #result = self.request.user.projects.all()
@@ -102,7 +111,12 @@ class ItemList(ItemAuthorizationMixin, ListCreateAPIView):
     serializer_class = ItemSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -118,7 +132,12 @@ class ItemDetail(ItemAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = ItemSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     lookup_field = 'public_id'
@@ -135,7 +154,7 @@ class InvoiceAuthorizationMixin(object):
         result = []
 
         if (self.request.user.is_superuser or
-            self.request.user.role == User.ADMINISTRATOR):
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = Invoice.objects.all()
         else:
             #result = self.request.user.projects.all()
@@ -151,7 +170,12 @@ class InvoiceList(InvoiceAuthorizationMixin, ListCreateAPIView):
     serializer_class = InvoiceSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
         )
     pagination_class = SmallResultsSetPagination
@@ -167,9 +191,14 @@ class InvoiceDetail(InvoiceAuthorizationMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = InvoiceSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
-            Or(IsAdminSuperUser, IsAdministrator, IsProjectManager)
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
             ),
-        )
+         )
     lookup_field = 'public_id'
 
 invoice_detail = InvoiceDetail.as_view()

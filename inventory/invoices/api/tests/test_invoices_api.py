@@ -5,16 +5,17 @@
 
 from django.contrib.auth import get_user_model
 
+from dcolumn.dcolumns.models import ColumnCollection
+
 from rest_framework.reverse import reverse
 from rest_framework.status import (
     HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED,
     HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND)
 
 from inventory.common.api.tests.base_test import BaseTest
+from inventory.invoices.models import Item, Invoice, InvoiceItem
 
-
-
-
+UserModel = get_user_model()
 
 
 class TestItemAPI(BaseTest):
@@ -29,6 +30,36 @@ class TestItemAPI(BaseTest):
         self.project = self._create_project(self.in_type, members=[self.user])
         kwargs = {'public_id': self.project.public_id}
         self.project_uri = reverse('project-detail', kwargs=kwargs)
+        kwargs = {}
+        kwargs['name'] = "Test Collection"
+        kwargs['related_model'] = 'item'
+        kwargs['creator'] = self.user
+        kwargs['updater'] = self.user
+        self.collection = ColumnCollection.objects.create(**kwargs)
+
+    def test_GET_item_list_with_invalid_permissions(self):
+        """
+        Test the item_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        item_number = "NE555"
+        item = self._create_item(self.project, self.collection, item_number)
+        uri = reverse('item-list')
+        self._test_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(uri, method)
+
+    def test_GET_item_list_with_valid_permissions(self):
+        """
+        Test the item_list endpoint with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        item_number = "NE555"
+        item = self._create_item(self.project, self.collection, item_number)
+        uri = reverse('item-list')
+        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_project_users_with_valid_permissions(uri, method)
 
 
 
