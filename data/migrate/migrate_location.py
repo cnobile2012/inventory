@@ -195,13 +195,14 @@ class MigrateLocation(MigrateBase):
                 mtime = duparser.parse(row[6])
 
                 if not self._options.noop:
+                    kwargs = {}
+                    kwargs['location_format'] = location_format
+                    if parent: kwargs['parent'] = parent
+                    kwargs['segment'] = segment
+
                     try:
-                        obj = LocationCode.objects.get(
-                            location_format=location_format,
-                            parent=parent,
-                            segment=segment)
+                        obj = LocationCode.objects.get(**kwargs)
                     except LocationCode.DoesNotExist:
-                        kwargs = {}
                         kwargs['location_format'] = location_format
                         kwargs['parent'] = parent
                         kwargs['segment'] = segment
