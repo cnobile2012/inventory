@@ -183,7 +183,7 @@ class MigrateItem(MigrateBase):
                     record.mtime.isoformat()
                     ])
 
-                # Get the dynamic columns from the item recored itself.
+                # Get the dynamic columns from the item record itself.
                 dc = {
                     'Condition': record.condition,
                     'item_number': record.item_number.encode('utf-8'),
@@ -370,18 +370,18 @@ class MigrateItem(MigrateBase):
         with open(self._ITEM, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
                 if idx == 0: continue # Skip the header
-                title = row[0].decode('utf-8').strip()
-                item_number = row[1].decode('utf-8').strip()
-                item_number_mfg = row[2].decode('utf-8').strip()
+                title = row[0].strip()
+                item_number = row[1].strip()
+                item_number_mfg = row[2].strip()
                 #item_number_dst = row[3] # Not used
                 quantity = self._fix_numeric(row[4])
-                loc = row[5].decode('utf-8').strip()
+                loc = row[5].strip()
                 location_codes = LocationCode.objects.filter(segment=loc)
-                cat = row[6].decode('utf-8').strip()
+                cat = row[6].strip()
                 categories = Category.objects.filter(name=cat)
                 #distributor = Supplier.objects.get(name=row[7]) # Not used
                 #print("Supplier: {}".format(row[8]))
-                mfg = row[8].decode('utf-8').strip()
+                mfg = row[8].strip()
 
                 if mfg:
                     manufacturer = Supplier.objects.get(name=mfg)
@@ -561,14 +561,14 @@ class MigrateItem(MigrateBase):
                     headers[:] = row
                     continue
 
-                item_number = row[36].decode('utf-8').strip()
+                item_number = row[36].strip()
                 item_obj = Item.objects.get(item_number=item_number)
                 # Get only the columns used with this item.
                 values = [col for col in row if col != ""]
 
                 for value in values[:-1]: # Don't want the item_number.
                     header = headers[row.index(value)]
-                    value = value.decode('utf-8').strip()
+                    value = value.strip()
 
                     if header == 'Condition':
                         if value.isdigit():
