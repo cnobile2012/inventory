@@ -94,7 +94,7 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
     search_fields = ('sku', 'public_id', 'item_number', 'item_number_mfg',
                      'project__name', 'description', 'categories__path',
                      'manufacturer__name',)
-    list_filter = ('active', 'project__name', 'manufacturer',)
+    list_filter = ('active', 'purge', 'project__name', 'manufacturer',)
     filter_horizontal = ('categories', 'location_codes', 'shared_projects',)
     inlines = (InvoiceItemItemInline, KeyValueInline,)
     date_hierarchy = 'created'
