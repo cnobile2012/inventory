@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.fields import Field
@@ -20,7 +21,7 @@ log = logging.getLogger('api.common.fields')
 #
 # HyperlinkedCustomIdentityField
 #
-class HyperlinkedCustomIdentityField(serializers.HyperlinkedRelatedField):
+class HyperlinkedCustomIdentityField(serializers.HyperlinkedIdentityField):
 
     def get_object(self, view_name, view_args, view_kwargs):
         """
@@ -32,41 +33,17 @@ class HyperlinkedCustomIdentityField(serializers.HyperlinkedRelatedField):
         value = view_kwargs[self.lookup_url_kwarg]
         value = int(value) if value.isdigit() else value
         obj = None
-        log.debug(value)
 
         for result in self.queryset:
-            if value == getattr(result, self.lookup_field, ''):
+            v = getattr(result, self.lookup_field, '')
+            v = int(v) if v.isdigit() else v
+
+            if value == v:
                 obj = result
                 break
 
         if not obj:
-            raise ObjectDoesNotExist()
+            msg = _("Could not find object with field '{}' and value '{}'.")
+            raise ObjectDoesNotExist(msg.format(self.lookup_field, value))
 
         return obj
-
-    def get_url(self, obj, view_name, request, format):
-        """
-        Given an object, return the URL that hyperlinks to the object.
-
-        May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
-        attributes are not configured to correctly match the URL conf.
-        """
-        ## # Unsaved objects will not yet have a valid URL.
-        ## if hasattr(obj, 'pk') and obj.pk in (None, ''):
-        ##     return None
-
-        ## lookup_value = getattr(obj, self.lookup_field)
-
-        ## value = view_kwargs[self.lookup_url_kwarg]
-        ## value = int(value) if value.isdigit() else value
-        ## obj = None
-
-        ## for result in self.queryset:
-        ##     if value == getattr(result, self.lookup_field, ''):
-        ##         obj = result
-        ##         break
-
-        ## return obj
-        log.error("obj: %s", obj)
-        super(HyperlinkedCustomIdentityField, self).get_url(
-            obj, view_name, request, format)
