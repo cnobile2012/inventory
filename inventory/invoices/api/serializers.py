@@ -27,18 +27,15 @@ from ..models import Condition, Item, Invoice, InvoiceItem
 class ConditionSerializer(DynamicFieldsSerializer):
     pk = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
-    uri = HyperlinkedCustomIdentityField(
-        view_name='condition-detail',
-        queryset=Condition.objects.model_objects())
+    uri = HyperlinkedCustomIdentityField(view_name='condition-detail')
 
     def __init__(self, *args, **kwargs):
-        fields=('pk', 'name',)
+        fields=('pk', 'name', 'uri',)
         super(ConditionSerializer, self).__init__(
             *args, fields=fields, **kwargs)
 
     class Meta:
         fields = ('pk', 'name', 'uri',)
-        read_only_fields = ('uri',)
 
 
 #
@@ -74,6 +71,8 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
+        validated_data[
+            'column_collection'] = Item.objects.get_column_collection()
         categories = validated_data.pop('categories', [])
         location_codes = validated_data.pop('location_codes', [])
         shared_projects = validated_data.pop('shared_projects', [])

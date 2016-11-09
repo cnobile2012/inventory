@@ -73,7 +73,13 @@ dcolumn_manager.register_choice(Condition, 1, 'name')
 # Item
 #
 class ItemManager(CollectionBaseManager, StatusModelManagerMixin):
-    pass
+
+    def get_column_collection(self):
+        """
+        This method should be in the CollectionBaseManager managers.
+        """
+        related_model = dcolumn_manager.get_collection_name('Item')
+        return ColumnCollection.objects.get(related_model=related_model)
 
 
 @python_2_unicode_compatible

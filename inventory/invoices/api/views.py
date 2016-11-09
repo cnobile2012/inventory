@@ -10,13 +10,14 @@ __docformat__ = "restructuredtext en"
 import logging
 
 from django.contrib.auth import get_user_model
-
+from django.db.models import Q
 from django.utils import six
 
 from rest_framework.generics import (
     ListAPIView, ListCreateAPIView, RetrieveAPIView,
     RetrieveUpdateDestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from rest_condition import C, And, Or, Not
 
@@ -38,38 +39,7 @@ UserModel = get_user_model()
 #
 # Condition
 #
-class ConditionList(ListAPIView):
-    """
-    Condition list endpoint.
-    """
-    queryset = Condition.objects.model_objects()
-    serializer_class = ConditionSerializer
-    permission_classes = (
-        And(IsUserActive,
-            IsReadOnly, #IsAuthenticated,
-            Or(IsAnyProjectUser,
-               IsAnyProjectUser),
-            ),
-        )
-    lookup_field = 'pk'
-
-condition_list = ConditionList.as_view()
-
-
-class ConditionDetail(RetrieveAPIView):
-    """
-    Condition detail endpoint.
-    """
-    queryset = Condition.objects.model_objects()
-    serializer_class = ConditionSerializer
-    permission_classes = (
-        And(IsUserActive,
-            IsReadOnly, #IsAuthenticated,
-            Or(IsAnyProjectUser,
-               IsAnyProjectUser),
-            ),
-        )
-    lookup_field = 'pk'
+class ConditionMixin(object):
 
     def get_object(self):
         value = self.kwargs.get(self.lookup_field, None)
@@ -81,7 +51,43 @@ class ConditionDetail(RetrieveAPIView):
                 obj = result
                 break
 
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
         return obj
+
+
+class ConditionList(ConditionMixin, ListAPIView):
+    """
+    Condition list endpoint.
+    """
+    queryset = Condition.objects.model_objects()
+    serializer_class = ConditionSerializer
+    permission_classes = (
+        And(IsUserActive,
+            IsReadOnly, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser),
+            ),
+        )
+
+condition_list = ConditionList.as_view()
+
+
+class ConditionDetail(ConditionMixin, RetrieveAPIView):
+    """
+    Condition detail endpoint.
+    """
+    queryset = Condition.objects.model_objects()
+    serializer_class = ConditionSerializer
+    permission_classes = (
+        And(IsUserActive,
+            IsReadOnly, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsAnyProjectUser),
+            ),
+        )
 
 condition_detail = ConditionDetail.as_view()
 
@@ -92,14 +98,13 @@ condition_detail = ConditionDetail.as_view()
 class ItemAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
             self.request.user.role == UserModel.ADMINISTRATOR):
             result = Item.objects.all()
         else:
-            #result = self.request.user.projects.all()
-            pass
+            projects = self.request.user.projects.all()
+            query = Q(project__in=projects) | Q(shared_projects__in=projects)
+            result = Item.objects.select_related('project').filter(query)
 
         return result
 
@@ -151,14 +156,13 @@ item_detail = ItemDetail.as_view()
 class InvoiceAuthorizationMixin(object):
 
     def get_queryset(self):
-        result = []
-
         if (self.request.user.is_superuser or
             self.request.user.role == UserModel.ADMINISTRATOR):
             result = Invoice.objects.all()
         else:
-            #result = self.request.user.projects.all()
-            pass
+            projects = self.request.user.projects.all()
+            result = Invoice.objects.select_related(
+                'project').filter(project__in=projects)
 
         return result
 
