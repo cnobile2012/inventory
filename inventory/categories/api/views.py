@@ -79,7 +79,7 @@ class CategoryDetail(CategoryAuthorizationMixin,
     """
     Category detail endpoint.
     """
-    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
             Or(IsAdminSuperUser,
@@ -90,7 +90,6 @@ class CategoryDetail(CategoryAuthorizationMixin,
                ),
             ),
         )
-    serializer_class = CategorySerializer
     lookup_field='public_id'
 
 category_detail = CategoryDetail.as_view()
