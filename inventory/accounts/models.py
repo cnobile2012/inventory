@@ -16,6 +16,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.hashers import get_hasher
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -52,7 +53,7 @@ class UserManager(BaseUserManager):
             raise ValueError(_("The username must be set."))
 
         email = self.normalize_email(email)
-        role = extra_fields.pop('role', None)
+        role = extra_fields.pop('role', self.model.DEFAULT_USER)
 
         if not password:
             if email:
@@ -65,9 +66,7 @@ class UserManager(BaseUserManager):
             extra_fields['send_email'] = False
             extra_fields['need_password'] = False
 
-        if role is None:
-            extra_fields['_role'] = self.model.DEFAULT_USER
-
+        extra_fields['_role'] = role
         user = self.model(username=username, email=email, is_staff=is_staff,
                           is_active=True, is_superuser=is_superuser,
                           date_joined=now, **extra_fields)
@@ -164,6 +163,12 @@ class User(AbstractUser, ValidateOnSaveMixin):
 
             if self.is_superuser:
                 self._role = self.ADMINISTRATOR
+
+        if self._role not in self.ROLE_MAP:
+            msg = _("Invalid user role, must be one of {}.").format(
+                self.ROLE_MAP.values())
+            log.error(msg)
+            raise ValidationError(msg)
 
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
