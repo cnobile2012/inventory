@@ -175,7 +175,7 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         """
         Add and remove location_codes.
         """
-        if location_codes:
+        if isinstance(location_codes, (list, tuple)):
             wanted_pks = [inst.pk for inst in location_codes]
             old_pks = [inst.pk for inst in self.location_codes.all()]
             # Remove unwanted location_codes.
@@ -191,7 +191,7 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         """
         Add and remove categories.
         """
-        if categories:
+        if isinstance(categories, (list, tuple)):
             wanted_pks = [inst.pk for inst in categories]
             old_pks = [inst.pk for inst in self.categories.all()]
             # Remove unwanted categories.
@@ -207,7 +207,7 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         """
         Add and remove shared projects.
         """
-        if shared_projects:
+        if isinstance(shared_projects, (list, tuple)):
             wanted_pks = [inst.pk for inst in shared_projects if inst.public]
             old_pks = [inst.pk for inst in self.shared_projects.all()]
             # Remove unwanted shared projects.
