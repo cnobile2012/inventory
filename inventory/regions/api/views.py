@@ -13,6 +13,8 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyProjectUser,
     IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.view_mixins import (
+    TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 from inventory.regions.models import (
     Country, Subdivision, Language, TimeZone, Currency)
 
@@ -27,7 +29,8 @@ log = logging.getLogger('api.regions.views')
 #
 # Country
 #
-class CountryList(ListAPIView):
+class CountryList(TrapDjangoValidationErrorCreateMixin,
+                  ListAPIView):
     """
     Country list endpoint.
     """
@@ -45,7 +48,8 @@ class CountryList(ListAPIView):
 country_list = CountryList.as_view()
 
 
-class CountryDetail(RetrieveAPIView):
+class CountryDetail(TrapDjangoValidationErrorUpdateMixin,
+                    RetrieveAPIView):
     """
     Country detail endpoint.
     """
@@ -65,7 +69,8 @@ country_detail = CountryDetail.as_view()
 #
 # Subdivision Views
 #
-class SubdivisionList(ListAPIView):
+class SubdivisionList(TrapDjangoValidationErrorCreateMixin,
+                      ListAPIView):
     """
     Subdivision list endpoint.
     """
@@ -83,7 +88,8 @@ class SubdivisionList(ListAPIView):
 subdivision_list = SubdivisionList.as_view()
 
 
-class SubdivisionDetail(RetrieveAPIView):
+class SubdivisionDetail(TrapDjangoValidationErrorUpdateMixin,
+                        RetrieveAPIView):
     """
     Subdivision detail endpoint.
     """
@@ -103,7 +109,8 @@ subdivision_detail = SubdivisionDetail.as_view()
 #
 # Language Views
 #
-class LanguageList(ListAPIView):
+class LanguageList(TrapDjangoValidationErrorCreateMixin,
+                   ListAPIView):
     """
     Language list endpoint.
     """
@@ -121,7 +128,8 @@ class LanguageList(ListAPIView):
 language_list = LanguageList.as_view()
 
 
-class LanguageDetail(RetrieveAPIView):
+class LanguageDetail(TrapDjangoValidationErrorUpdateMixin,
+                     RetrieveAPIView):
     """
     Language detail endpoint.
     """
@@ -141,7 +149,8 @@ language_detail = LanguageDetail.as_view()
 #
 # TimeZone Views
 #
-class TimeZoneList(ListAPIView):
+class TimeZoneList(TrapDjangoValidationErrorCreateMixin,
+                   ListAPIView):
     """
     TimeZone list endpoint.
     """
@@ -159,7 +168,8 @@ class TimeZoneList(ListAPIView):
 timezone_list = TimeZoneList.as_view()
 
 
-class TimeZoneDetail(RetrieveAPIView):
+class TimeZoneDetail(TrapDjangoValidationErrorUpdateMixin,
+                     RetrieveAPIView):
     """
     TimeZone detail endpoint.
     """
@@ -179,7 +189,8 @@ timezone_detail = TimeZoneDetail.as_view()
 #
 # Currency
 #
-class CurrencyList(ListAPIView):
+class CurrencyList(TrapDjangoValidationErrorCreateMixin,
+                   ListAPIView):
     """
     Currency list endpoint.
     """
@@ -197,7 +208,8 @@ class CurrencyList(ListAPIView):
 currency_list = CurrencyList.as_view()
 
 
-class CurrencyDetail(RetrieveAPIView):
+class CurrencyDetail(TrapDjangoValidationErrorUpdateMixin,
+                     RetrieveAPIView):
     """
     Currency detail endpoint.
     """

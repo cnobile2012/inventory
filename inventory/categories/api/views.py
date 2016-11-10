@@ -36,12 +36,9 @@ UserModel = get_user_model()
 #
 class CategoryAuthorizationMixin(object):
 
-    def has_full_access(self):
-        return (self.request.user.is_superuser or
-                self.request.user.role == UserModel.ADMINISTRATOR)
-
     def get_queryset(self):
-        if self.has_full_access():
+        if (self.request.user.is_superuser or
+            self.request.user.role == UserModel.ADMINISTRATOR):
             result = Category.objects.all()
         else:
             projects = self.request.user.projects.all()

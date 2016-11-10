@@ -20,6 +20,8 @@ from inventory.common.api.permissions import (
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
     IsReadOnly, IsUserActive, CannotDelete)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.view_mixins import (
+    TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import InventoryType, Project, Membership
 
@@ -33,7 +35,8 @@ UserModel = get_user_model()
 #
 # InventoryType
 #
-class InventoryTypeList(ListCreateAPIView):
+class InventoryTypeList(TrapDjangoValidationErrorCreateMixin,
+                        ListCreateAPIView):
     """
     InventoryType list endpoint.
     """
@@ -53,7 +56,8 @@ class InventoryTypeList(ListCreateAPIView):
 inventory_type_list = InventoryTypeList.as_view()
 
 
-class InventoryTypeDetail(RetrieveUpdateAPIView):
+class InventoryTypeDetail(TrapDjangoValidationErrorUpdateMixin,
+                          RetrieveUpdateAPIView):
     """
     InventoryType detail endpoint.
     """
@@ -87,7 +91,9 @@ class ProjectAuthorizationMixin(object):
         return result
 
 
-class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
+class ProjectList(TrapDjangoValidationErrorCreateMixin,
+                  ProjectAuthorizationMixin,
+                  ListCreateAPIView):
     """
     Project list endpoint.
     """
@@ -109,7 +115,9 @@ class ProjectList(ProjectAuthorizationMixin, ListCreateAPIView):
 project_list = ProjectList.as_view()
 
 
-class ProjectDetail(ProjectAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+class ProjectDetail(TrapDjangoValidationErrorUpdateMixin,
+                    ProjectAuthorizationMixin,
+                    RetrieveUpdateDestroyAPIView):
     """
     Project detail endpoint.
     """

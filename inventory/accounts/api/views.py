@@ -19,6 +19,8 @@ from inventory.common.api.permissions import (
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
     IsUserActive, IsPostOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.view_mixins import (
+    TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import Question, Answer
 from .serializers import (
@@ -43,7 +45,9 @@ class UserAuthorizationMixin(object):
         return result
 
 
-class UserList(UserAuthorizationMixin, ListCreateAPIView):
+class UserList(TrapDjangoValidationErrorCreateMixin,
+               UserAuthorizationMixin,
+               ListCreateAPIView):
     """
     User list endpoint.
     """
@@ -65,7 +69,9 @@ class UserList(UserAuthorizationMixin, ListCreateAPIView):
 user_list = UserList.as_view()
 
 
-class UserDetail(UserAuthorizationMixin, RetrieveUpdateAPIView):
+class UserDetail(TrapDjangoValidationErrorUpdateMixin,
+                 UserAuthorizationMixin,
+                 RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = (
         And(IsUserActive, #IsAuthenticated,
@@ -94,7 +100,9 @@ user_detail = UserDetail.as_view()
 ##         return result
 
 
-## class GroupList(GroupAuthorizationMixin, ListCreateAPIView):
+## class GroupList(TrapDjangoValidationErrorCreateMixin,
+##                 GroupAuthorizationMixin,
+##                 ListCreateAPIView):
 ##     """
 ##     Group list endpoint.
 ##     """
@@ -111,7 +119,9 @@ user_detail = UserDetail.as_view()
 ## group_list = GroupList.as_view()
 
 
-## class GroupDetail(GroupAuthorizationMixin, RetrieveUpdateAPIView):
+## class GroupDetail(TrapDjangoValidationErrorUpdateMixin,
+##                   GroupAuthorizationMixin,
+##                   RetrieveUpdateAPIView):
 ##     serializer_class = GroupSerializer
 ##     permission_classes = (
 ##         And(IsUserActive, #IsAuthenticated,
@@ -127,7 +137,8 @@ user_detail = UserDetail.as_view()
 #
 # Question
 #
-class QuestionList(ListCreateAPIView):
+class QuestionList(TrapDjangoValidationErrorCreateMixin,
+                   ListCreateAPIView):
     """
     Question list endpoint.
     """
@@ -149,7 +160,8 @@ class QuestionList(ListCreateAPIView):
 question_list = QuestionList.as_view()
 
 
-class QuestionDetail(RetrieveUpdateAPIView):
+class QuestionDetail(TrapDjangoValidationErrorUpdateMixin,
+                     RetrieveUpdateAPIView):
     """
     Question detail endpoint.
     """
@@ -185,7 +197,9 @@ class AnswerAuthorizationMixin(object):
         return result
 
 
-class AnswerList(AnswerAuthorizationMixin, ListCreateAPIView):
+class AnswerList(TrapDjangoValidationErrorCreateMixin,
+                 AnswerAuthorizationMixin,
+                 ListCreateAPIView):
     """
     Answer list endpoint.
     """
@@ -202,7 +216,9 @@ class AnswerList(AnswerAuthorizationMixin, ListCreateAPIView):
 answer_list = AnswerList.as_view()
 
 
-class AnswerDetail(AnswerAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+class AnswerDetail(TrapDjangoValidationErrorUpdateMixin,
+                   AnswerAuthorizationMixin,
+                   RetrieveUpdateDestroyAPIView):
     """
     Answer detail endpoint.
     """

@@ -26,6 +26,8 @@ from inventory.common.api.permissions import (
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
     IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.view_mixins import (
+    TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import Condition, Item, Invoice, InvoiceItem
 
@@ -109,9 +111,11 @@ class ItemAuthorizationMixin(object):
         return result
 
 
-class ItemList(ItemAuthorizationMixin, ListCreateAPIView):
+class ItemList(TrapDjangoValidationErrorCreateMixin,
+               ItemAuthorizationMixin,
+               ListCreateAPIView):
     """
-    Item list endpoint
+    Item list endpoint.
     """
     serializer_class = ItemSerializer
     permission_classes = (
@@ -130,7 +134,9 @@ class ItemList(ItemAuthorizationMixin, ListCreateAPIView):
 item_list = ItemList.as_view()
 
 
-class ItemDetail(ItemAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+class ItemDetail(TrapDjangoValidationErrorUpdateMixin,
+                 ItemAuthorizationMixin,
+                 RetrieveUpdateDestroyAPIView):
     """
     Item detail endpoint.
     """
@@ -167,7 +173,9 @@ class InvoiceAuthorizationMixin(object):
         return result
 
 
-class InvoiceList(InvoiceAuthorizationMixin, ListCreateAPIView):
+class InvoiceList(TrapDjangoValidationErrorCreateMixin,
+                  InvoiceAuthorizationMixin,
+                  ListCreateAPIView):
     """
     Invoice list endpoint
     """
@@ -188,7 +196,9 @@ class InvoiceList(InvoiceAuthorizationMixin, ListCreateAPIView):
 invoice_list = InvoiceList.as_view()
 
 
-class InvoiceDetail(InvoiceAuthorizationMixin, RetrieveUpdateDestroyAPIView):
+class InvoiceDetail(TrapDjangoValidationErrorUpdateMixin,
+                    InvoiceAuthorizationMixin,
+                    RetrieveUpdateDestroyAPIView):
     """
     Invoice detail endpoint.
     """

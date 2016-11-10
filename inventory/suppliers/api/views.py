@@ -19,6 +19,8 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectOwner, IsProjectManager,
     IsProjectDefaultUser, IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.view_mixins import (
+    TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 from inventory.suppliers.models import Supplier
 
 from .serializers import SupplierSerializer
@@ -30,7 +32,8 @@ log = logging.getLogger('api.suppliers.views')
 #
 # Supplier
 #
-class SupplierList(ListCreateAPIView):
+class SupplierList(TrapDjangoValidationErrorCreateMixin,
+                   ListCreateAPIView):
     """
     Supplier list endpoint.
     """
@@ -52,7 +55,8 @@ class SupplierList(ListCreateAPIView):
 supplier_list = SupplierList.as_view()
 
 
-class SupplierDetail(RetrieveUpdateDestroyAPIView):
+class SupplierDetail(TrapDjangoValidationErrorUpdateMixin,
+                     RetrieveUpdateDestroyAPIView):
     """
     Supplier detail endpoint.
     """
