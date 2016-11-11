@@ -28,9 +28,10 @@ class BaseTest(RecordCreation, TestCase):
         self.user = self._create_user()
 
     def _create_user(self, username=_TEST_USERNAME, email=None,
-                     password=_TEST_PASSWORD, is_superuser=True):
+                     password=_TEST_PASSWORD, is_superuser=True,
+                     role=UserModel.DEFAULT_USER):
         user = UserModel.objects.create_user(username=username,
-                                             password=password)
+                                             password=password, role=role)
         user.first_name = "Test"
         user.last_name = "User"
         user.is_active = True

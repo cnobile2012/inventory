@@ -384,32 +384,39 @@ class TestItemAPI(BaseTest):
         """
         Test that the method OPTIONS brings back the correct data.
         """
+        #self.skipTest("Temporarily skipped")
         method = 'options'
         item = self._create_item(self.project, self.collection, "NE555")
         uri = reverse('item-detail', kwargs={'public_id': item.public_id})
         self._test_users_with_valid_permissions(uri, method)
         self._test_project_users_with_valid_permissions(uri, method)
 
-    def test_read_only_shared_projects(self):
-        """
-        Test read only capability of item from shared projects.
-        """
-        #self.skipTest("Temporarily skipped")
+    def _create_shared_project_objects(self):
+        # Add the default user to the default project and create an item
+        self.project.process_members([self.user])
+        item_number = "LM7805"
+        item = self._create_item(self.project, self.collection, item_number)
+        uri = reverse('item-detail', kwargs={'public_id': item.public_id})
         # Create a second user
         user, client = self._create_user(
             username="SecondUser", password="0987654321")
         # Create second project with second user
-        project = self._create_project(self.in_type, name="Test Project_1")
+        project = self._create_project(self.in_type, name="Test Project 1")
         project.process_members([user])
         # Create an item for second project sharing default project
         item_number_1 = "NE555"
         item_1 = self._create_item(project, self.collection, item_number_1)
-        # Add the default user to the default project and create an item
-        self.project.process_members([self.user])
-        item_number_2 = "LM7805"
-        item_2 = self._create_item(self.project, self.collection, item_number_2)
-        uri = reverse('item-detail', kwargs={'public_id': item_2.public_id})
-        # Test that secode project cannot read default project's item.
+        return client, uri, self.project, item, project, item_1
+
+    def test_GET_only_shared_projects(self):
+        """
+        Test read only capability of item from shared projects.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create objects
+        (client, uri, project_0, item_0,
+         project_1, item_1) = self._create_shared_project_objects()
+        # Test that second project cannot read default project's item.
         response = client.get(uri, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_404_NOT_FOUND, response.data, uri)
@@ -418,9 +425,72 @@ class TestItemAPI(BaseTest):
         self._test_errors(response, tests={
             'detail': "Not found.",
             })
-        # Test that second project can read by the default project's item.
-        item_2.process_shared_projects([project])
+        # Share the default project's item with second project.
+        item_0.process_shared_projects([project_1])
+        # Test that second project can read default project's item.
         response = client.get(uri, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_200_OK, response.data, uri)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+
+    def test_invalid_PUT_shared_projects(self):
+        #self.skipTest("Temporarily skipped")
+        # Create objects
+        (client, uri, project_0, item_0,
+         project_1, item_1) = self._create_shared_project_objects()
+        # Share the default project's item with second project.
+        item_0.process_shared_projects([project_1])
+        # Test that the shared_project item cannot be updated by a second
+        # project user.
+        data = {}
+        data['item_number'] = 'NE556N'
+        data['project'] = reverse('project-detail',
+                                  kwargs={'public_id': project_0.public_id})
+        response = client.put(uri, data=data, **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}, uri: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            response.data, uri)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, 'project'), msg)
+        self._test_errors(response, tests={
+            'project': " does not belong to project ",
+            })
+
+    def test_invalid_PATCH_shared_projects(self):
+        #self.skipTest("Temporarily skipped")
+        # Create objects
+        (client, uri, project_0, item_0,
+         project_1, item_1) = self._create_shared_project_objects()
+        # Share the default project's item with second project.
+        item_0.process_shared_projects([project_1])
+        # Test that the shared_project item cannot be updated by a second
+        # project user.
+        data = {'item_number': 'NE556N'}
+        response = client.patch(uri, data=data, **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}, uri: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            response.data, uri)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, 'project'), msg)
+        self._test_errors(response, tests={
+            'project': " does not belong to project ",
+            })
+
+    def test_invalid_DELETE_shared_projects(self):
+        #self.skipTest("Temporarily skipped")
+        # Create objects
+        (client, uri, project_0, item_0,
+         project_1, item_1) = self._create_shared_project_objects()
+        # Share the default project's item with second project.
+        item_0.process_shared_projects([project_1])
+        # Test that the shared_project item cannot be updated by a second
+        # project user.
+        response = client.delete(uri, **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}, uri: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST,
+            response.data, uri)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, 'project'), msg)
+        self._test_errors(response, tests={
+            'project': " does not belong to project ",
+            })
