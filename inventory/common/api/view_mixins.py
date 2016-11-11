@@ -7,7 +7,7 @@ import logging
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 
-from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 log = logging.getLogger('api.common.view_mixin')
 
@@ -18,11 +18,7 @@ class TrapDjangoValidationErrorCreateMixin(object):
         try:
             instance = serializer.save()
         except DjangoValidationError as detail:
-            #log.debug("error_dict: %s", detail.error_dict)
-            #log.debug("message: %s", detail.message)
-            #log.debug("message_dict: %s", detail.message_dict)
-            #log.debug("messages: %s", detail.messages)
-            raise serializers.ValidationError(detail.message_dict)
+            raise ValidationError(detail.message_dict)
 
 
 class TrapDjangoValidationErrorUpdateMixin(object):
@@ -31,8 +27,4 @@ class TrapDjangoValidationErrorUpdateMixin(object):
         try:
             instance = serializer.save()
         except DjangoValidationError as detail:
-            #log.debug("error_dict: %s", detail.error_dict)
-            #log.debug("message: %s", detail.message)
-            #log.debug("message_dict: %s", detail.message_dict)
-            #log.debug("messages: %s", detail.messages)
-            raise serializers.ValidationError(detail.message_dict)
+            raise ValidationError(detail.message_dict)

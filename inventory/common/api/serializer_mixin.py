@@ -23,12 +23,6 @@ class SerializerMixin(object):
 
         return user
 
-    def has_full_access(self):
-        request = self.get_request()
-        return (request is not None and
-                (request.user.is_superuser or
-                 request.user.role == UserModel.ADMINISTRATOR))
-
 
 #
 # DynamicFieldsSerializer
