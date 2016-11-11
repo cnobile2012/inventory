@@ -1,6 +1,8 @@
 #
 # inventory/locations/views.py
 #
-
-import logging
+"""
+Location views.
+"""
+__docformat__ = "restructuredtext en"
 

@@ -65,7 +65,7 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
-        view_name='item-detail', read_only=True, lookup_field='public_id')
+        view_name='item-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -128,14 +128,16 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
     Invoice Item Serializer
     """
     invoice = serializers.HyperlinkedRelatedField(
-        view_name='invoice-detail', read_only=True, default=None,
+        view_name='invoice-detail', queryset=Invoice.objects.all(),
         lookup_field='public_id')
     item = serializers.HyperlinkedRelatedField(
         view_name='item-detail', read_only=True, default=None,
         lookup_field='public_id')
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='invoice-item-detail', lookup_field='public_id')
 
     def create(self, validated_data):
-        return Item.objects.create(**validated_data)
+        return InvoiceItem.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.item_number = validated_data.get(
@@ -154,7 +156,7 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = InvoiceItem
         fields = ('invoice', 'item_number', 'description', 'quantity',
-                  'unit_price', 'process', 'item',)
+                  'unit_price', 'process', 'item', 'uri',)
         read_only_fields = ('invoice',)
 
 
@@ -176,13 +178,13 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
         queryset=Supplier.objects.all(), lookup_field='public_id')
     invoice_items = InvoiceItemSerializer(many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
-        view_name='invoice-detail', read_only=True, lookup_field='public_id')
+        view_name='invoice-detail', lookup_field='public_id')
 
     def create(self, validated_data):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return Item.objects.create(**validated_data)
+        return Invoice.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.project = validated_data.get(

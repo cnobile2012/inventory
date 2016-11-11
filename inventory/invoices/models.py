@@ -231,6 +231,7 @@ class InvoiceManager(models.Manager):
 
 @python_2_unicode_compatible
 class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
+
     public_id = models.CharField(
         verbose_name=_("Public Invoice ID"), max_length=30, unique=True,
         blank=True,
@@ -295,7 +296,7 @@ class InvoiceItemManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class InvoiceItem(models.Model):
+class InvoiceItem(ValidateOnSaveMixin):
     YES = True
     NO = False
     YES_NO = (
@@ -303,6 +304,10 @@ class InvoiceItem(models.Model):
         (NO, _("No")),
         )
 
+    public_id = models.CharField(
+        verbose_name=_("Public Invoice Item ID"), max_length=30, unique=True,
+        blank=True,
+        help_text=_("Public ID to identify a individual invoice item."))
     invoice = models.ForeignKey(
         Invoice, on_delete=models.CASCADE, verbose_name=_("Invoice"),
         related_name='invoice_items', help_text=_("This item's invoice."))
@@ -326,6 +331,11 @@ class InvoiceItem(models.Model):
         help_text=_("The inventory item."))
 
     objects = InvoiceItemManager()
+
+    def clean(self):
+        if self.pk is None and not self.public_id:
+            # Populate the public_id on record creation only.
+            self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
         super(InvoiceItem, self).save(*args, **kwargs)

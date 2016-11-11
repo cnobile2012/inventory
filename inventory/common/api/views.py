@@ -80,6 +80,8 @@ def api_root(request, format=None):
         'item-list', request=request, format=format)
     invoices['invoices'] = reverse(
         'invoice-list', request=request, format=format)
+    invoices['invoice-items'] = reverse(
+        'invoice-item-list', request=request, format=format)
     # Maintenance
     locations = items.setdefault('locations', OrderedDict())
     locations['location-set-name'] = reverse(
@@ -110,5 +112,4 @@ def api_root(request, format=None):
     suppliers = items.setdefault('suppliers', OrderedDict())
     suppliers['suppliers'] = reverse(
         'supplier-list', request=request, format=format)
-
     return Response(buff)

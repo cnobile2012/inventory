@@ -34,7 +34,8 @@ from inventory.common.api.view_mixins import (
 from ..models import Condition, Item, Invoice, InvoiceItem
 
 from .serializers import (
-    ConditionSerializer, ItemSerializer, InvoiceSerializer)
+    ConditionSerializer, ItemSerializer, InvoiceSerializer,
+    InvoiceItemSerializer)
 
 log = logging.getLogger('api.invoices.views')
 UserModel = get_user_model()
@@ -253,3 +254,67 @@ class InvoiceDetail(TrapDjangoValidationErrorUpdateMixin,
     lookup_field = 'public_id'
 
 invoice_detail = InvoiceDetail.as_view()
+
+
+#
+# InvoiceItem
+#
+class InvoiceItemAuthorizationMixin(object):
+
+    def get_queryset(self):
+        if (self.request.user.is_superuser or
+            self.request.user.role == UserModel.ADMINISTRATOR):
+            result = InvoiceItem.objects.all()
+        else:
+            projects = self.request.user.projects.all()
+            invoices = Invoice.objects.select_related(
+                'project').filter(project__in=projects)
+            result = InvoiceItem.objects.select_related(
+                'invoice').filter(invoice__in=invoices)
+
+        return result
+
+
+class InvoiceItemList(TrapDjangoValidationErrorCreateMixin,
+                      InvoiceItemAuthorizationMixin,
+                      ListCreateAPIView):
+    """
+    InvoiceItem list endpoint
+    """
+    serializer_class = InvoiceItemSerializer
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
+        )
+    pagination_class = SmallResultsSetPagination
+    lookup_field = 'public_id'
+
+invoice_item_list = InvoiceItemList.as_view()
+
+
+class InvoiceItemDetail(TrapDjangoValidationErrorUpdateMixin,
+                        InvoiceItemAuthorizationMixin,
+                        RetrieveUpdateDestroyAPIView):
+    """
+    InvoiceItem detail endpoint.
+    """
+    serializer_class = InvoiceItemSerializer
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
+         )
+    lookup_field = 'public_id'
+
+invoice_item_detail = InvoiceItemDetail.as_view()
