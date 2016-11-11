@@ -172,12 +172,14 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         Test if the provided user has athority to add, change, or delete
         records.
         """
-        try:
-            obj = self.members.get(pk=user.pk)
-        except get_user_model().DoesNotExist:
-            result = False
-        else:
-            result = True
+        UserModel = get_user_model()
+        result = True
+
+        if not (user.is_superuser or user.role == UserModel.ADMINISTRATOR):
+            try:
+                obj = self.members.get(pk=user.pk)
+            except UserModel.DoesNotExist:
+                result = False
 
         return result
 
@@ -218,7 +220,7 @@ class Membership(ValidateOnSaveMixin):
         if self.pk is None:
             self.role = self.PROJECT_OWNER
         elif self.role not in self.ROLE_MAP:
-            msg = _("Invalid role, must be one of {}.").format(
+            msg = _("Invalid project role, must be one of {}.").format(
                 self.ROLE_MAP.values())
             log.error(msg)
             raise ValidationError(msg)

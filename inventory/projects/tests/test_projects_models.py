@@ -3,11 +3,14 @@
 # inventory/projects/tests/test_projects_models.py
 #
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from inventory.common.tests.base_tests import BaseTest
 
 from ..models import InventoryType, Project, Membership
+
+UserModel = get_user_model()
 
 
 class TestInventoryType(BaseTest):
@@ -113,14 +116,44 @@ class TestProject(BaseTest):
         with self.assertRaises(ValidationError) as cm:
             self.project.set_role(self.user, 100)
 
-    def test_has_authority(self):
+    def test_superuser_has_authority(self):
         """
-        Test that the user has authority to change objects in this project.
+        Test that the superuser has authority to change objects in
+        this project.
         """
         #self.skipTest("Temporarily skipped")
         # Create a user
         username = "TestUser_02"
-        user = self._create_user(username=username, password="123456789")
+        user = self._create_user(
+            username=username, password="123456789", is_superuser=True)
+        msg = "User {} should have permission to access project {}".format(
+            user, self.project)
+        self.assertTrue(self.project.has_authority(user), msg)
+
+    def test_ADMINISTRATOR_has_authority(self):
+        """
+        Test that an ADMINISTRATOR has authority to change objects in
+        this project.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a user
+        username = "TestUser_02"
+        user = self._create_user(
+            username=username, password="123456789", is_superuser=False,
+            role=UserModel.ADMINISTRATOR)
+        msg = "User {} should have permission to access project {}".format(
+            user, self.project)
+        self.assertTrue(self.project.has_authority(user), msg)
+
+    def test_DEFAULT_USER_has_authority(self):
+        """
+        Test that an DEFAULT_USER has authority to change objects in
+        this project.
+        """
+        #self.skipTest("Temporarily skipped")
+        username = "TestUser_02"
+        user = self._create_user(
+            username=username, password="123456789", is_superuser=False)
         # Test user with project.
         msg = "User {} should not have permission to access project {}".format(
             user, self.project)
