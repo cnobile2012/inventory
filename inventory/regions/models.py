@@ -16,8 +16,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from inventory.common.model_mixins import (
-    UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
-    ValidateOnSaveMixin)
+    StatusModelMixin, StatusModelManagerMixin, ValidateOnSaveMixin)
 
 log = logging.getLogger('inventory.regions.models')
 
