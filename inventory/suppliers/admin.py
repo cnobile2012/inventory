@@ -28,11 +28,11 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     readonly_fields = ('public_id', 'creator', 'created', 'updater',
                        'updated',)
     list_display = ('name', 'public_id', 'project', 'stype', 'phone', 'email',
-                    'url_producer', 'active',)
+                    'url_producer', 'updater_producer', 'active',)
     list_editable = ('stype', 'active',)
     search_fields = ('project__name', 'country__country', 'city',
                      'region__region', 'region__region_code',)
-    list_filter = ('stype', 'active',)
+    list_filter = ('stype', 'active', 'project__name', 'updater__username',)
     ordering = ('name',)
 
     class Media:

@@ -65,10 +65,11 @@ class QuestionAdmin(UserAdminMixin, admin.ModelAdmin):
                        'fields': ('active', 'creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('public_id', 'creator', 'created', 'updater', 'updated',)
-    list_display = ('question', 'active', 'updater', 'updated',)
+    readonly_fields = ('public_id', 'creator', 'created', 'updater',
+                       'updated',)
+    list_display = ('question', 'active', 'updater_producer', 'updated',)
     list_editable = ('active',)
-    list_filter = ('active',)
+    list_filter = ('active', 'updater__username',)
     search_fields = ('question', 'public_id',)
     form = QuestionForm
 
@@ -85,6 +86,7 @@ class AnswerAdmin(UserAdminMixin, admin.ModelAdmin):
                                   'updated',)}),
         )
     readonly_fields = ('public_id', 'creator', 'created', 'updater', 'updated',)
-    list_display = ('question', 'user', 'answer', 'updater', 'updated',)
+    list_display = ('question', 'user', 'updater_producer', 'updated',)
+    list_filter = ('user__username',)
     search_fields = ('user__username', 'question__question', 'public_id',)
     form = AnswerForm

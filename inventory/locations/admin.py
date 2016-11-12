@@ -22,9 +22,10 @@ class LocationSetNameAdmin(UserAdminMixin, admin.ModelAdmin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'project', 'separator', 'shared', 'updated',)
+    list_display = ('name', 'project', 'separator', 'shared',
+                    'updater_producer', 'updated',)
     list_editable = ('separator', 'shared',)
-    list_filter = ('project',)
+    list_filter = ('project__name', 'updater__username')
     form = LocationSetNameForm
 
 
@@ -40,8 +41,10 @@ class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
     readonly_fields = ('segment_length', 'creator', 'created', 'updater',
                        'updated',)
     list_display = ('char_definition', 'location_set_name', 'segment_order',
-                    'description', 'segment_length', 'updated',)
+                    'description', 'segment_length', 'updater_producer',
+                    'updated',)
     list_editable = ('segment_order',)
+    list_filter = ('location_set_name__project__name', 'updater__username')
     form = LocationFormatForm
 
 
@@ -57,8 +60,11 @@ class LocationCodeAdmin(UserAdminMixin, admin.ModelAdmin):
     readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
                        'updated',)
     list_display = ('segment', 'parents_producer', 'path',
-                    'char_def_producer', 'level', 'updated',)
+                    'char_def_producer', 'level', 'updater_producer',
+                    'updated',)
     search_fields = ('segment', 'path',)
     list_filter = ('level',)
+    list_filter = ('location_format__location_set_name__project__name',
+                   'updater__username')
     ordering = ('path',)
     form = LocationCodeForm

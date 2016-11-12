@@ -26,8 +26,8 @@ class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
     readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
                        'updated',)
     list_display = ('name', 'parents_producer', 'path', 'level',
-                    'project',)
+                    'project', 'updater_producer',)
     search_fields = ('name', 'project__name',)
-    list_filter = ('level', 'project',)
+    list_filter = ('level', 'project__name', 'updater__username',)
     ordering = ('project__name', 'path',)
     form = CategoryForm

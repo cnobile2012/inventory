@@ -25,8 +25,9 @@ class InventoryTypeAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('public_id', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('name', 'public_id', 'updater', 'updated',)
+    list_display = ('name', 'public_id', 'updater_producer', 'updated',)
     search_fields = ('name', 'description', 'projects__name',)
+    list_filter = ('projects__name', 'updater__username',)
 
 
 #
@@ -52,10 +53,11 @@ class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('public_id', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('name', 'public_id', 'public', 'active', 'updater',
+    list_display = ('name', 'public_id', 'public', 'active', 'updater_producer',
                     'updated',)
     list_editable = ('active',)
     search_fields = ('name', 'memberships__user__username',)
-    list_filter = ('public', 'active', 'memberships__role',)
+    list_filter = ('public', 'active', 'memberships__role',
+                   'updater__username',)
     inlines = (MembershipInline,)
     form = ProjectForm

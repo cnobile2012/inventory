@@ -10,8 +10,6 @@ __docformat__ = "restructuredtext en"
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from inventory.common.admin_mixins import UserAdminMixin
-
 from .models import Country, Subdivision, Language, TimeZone, Currency
 from .forms import (
     CountryForm, SubdivisionForm, LanguageForm, TimeZoneForm, CurrencyForm)
@@ -21,7 +19,7 @@ from .forms import (
 # CountryAdmin
 #
 @admin.register(Country)
-class CountryAdmin(UserAdminMixin, admin.ModelAdmin):
+class CountryAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('country', 'code',)}),
         (_('Status'), {'classes': ('collapse',),

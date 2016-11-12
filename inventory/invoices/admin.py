@@ -63,9 +63,10 @@ class InvoiceAdmin(UserAdminMixin, admin.ModelAdmin):
     readonly_fields = ('public_id', 'creator', 'created', 'updater',
                        'updated',)
     list_display = ('invoice_number', 'public_id', 'supplier', 'invoice_date',
-                    'updated',)
+                    'updater_producer', 'updated',)
     inlines = (InvoiceItemInvoiceInline,)
     search_fields = ('invoice_number', 'supplier__name',)
+    list_filter = ('project__name', 'updater__username',)
     date_hierarchy = 'created'
 
 
@@ -94,7 +95,8 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
     search_fields = ('sku', 'public_id', 'item_number', 'item_number_mfg',
                      'project__name', 'description', 'categories__path',
                      'manufacturer__name',)
-    list_filter = ('active', 'purge', 'project__name', 'manufacturer',)
+    list_filter = ('active', 'purge', 'project__name', 'manufacturer',
+                   'updater__username',)
     filter_horizontal = ('categories', 'location_codes', 'shared_projects',)
     inlines = (InvoiceItemItemInline, KeyValueInline,)
     date_hierarchy = 'created'
