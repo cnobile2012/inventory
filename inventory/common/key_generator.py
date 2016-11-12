@@ -55,15 +55,15 @@ class KeyGenerator(object):
         random number generator.
         """
         if not self.__key or regen:
-            if not isinstance(length, six.integer_types):
-                msg = self._ERROR_MSGS.get('invalid_length', self._UNKNOWN_MSG)
-                log.error(ugettext(msg))
-                raise ValueError(msg)
-
             if not length:
                 length = self._length
             else:
                 self._length = length
+
+            if not isinstance(length, six.integer_types):
+                msg = self._ERROR_MSGS.get('invalid_length', self._UNKNOWN_MSG)
+                log.error(ugettext(msg))
+                raise ValueError(msg)
 
             if length <= 0:
                 msg = self._ERROR_MSGS.get('invalid_length', self._UNKNOWN_MSG)
