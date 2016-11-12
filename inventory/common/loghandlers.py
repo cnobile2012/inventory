@@ -10,16 +10,16 @@ from logging.handlers import RotatingFileHandler
 import os
 
 
-class DeferredFileHandler(FileHandler):
+## class DeferredFileHandler(FileHandler):
 
-    def __init__(self, filename, *args, **kwargs):
-        self.filename = filename
-        kwargs['delay'] = True
-        FileHandler.__init__(self, "/dev/null", *args, **kwargs)
+##     def __init__(self, filename, *args, **kwargs):
+##         self.filename = filename
+##         kwargs['delay'] = True
+##         FileHandler.__init__(self, "/dev/null", *args, **kwargs)
 
-    def _open(self):
-        self.baseFilename = self.filename
-        return BaseFileHandler._open(self)
+##     def _open(self):
+##         self.baseFilename = self.filename
+##         return BaseFileHandler._open(self)
 
 
 class DeferredRotatingFileHandler(RotatingFileHandler):
