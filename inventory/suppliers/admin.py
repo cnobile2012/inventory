@@ -27,8 +27,8 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
         )
     readonly_fields = ('public_id', 'creator', 'created', 'updater',
                        'updated',)
-    list_display = ('name', 'public_id', 'project', 'stype', 'phone', 'email',
-                    'url_producer', 'updater_producer', 'active',)
+    list_display = ('name', 'public_id', 'stype', 'phone', 'email',
+                    'url_producer', 'project', 'updater_producer', 'active',)
     list_editable = ('stype', 'active',)
     search_fields = ('project__name', 'country__country', 'city',
                      'region__region', 'region__region_code',)

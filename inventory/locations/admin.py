@@ -22,7 +22,7 @@ class LocationSetNameAdmin(UserAdminMixin, admin.ModelAdmin):
                                   'updated',)}),
         )
     readonly_fields = ('creator', 'created', 'updater', 'updated',)
-    list_display = ('name', 'project', 'separator', 'shared',
+    list_display = ('name', 'separator', 'shared','project',
                     'updater_producer', 'updated',)
     list_editable = ('separator', 'shared',)
     list_filter = ('project__name', 'updater__username')
