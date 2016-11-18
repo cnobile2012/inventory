@@ -144,7 +144,8 @@ class TestCategoryModels(BaseTest):
             self.project, create_list_1, self.user)
         # Get all children plus the root
         new_cats = (categories_0[0], categories_1[0])
-        categories = Category.objects.get_child_tree_from_list(new_cats)
+        categories = Category.objects.get_child_tree_from_list(
+            self.project, new_cats)
         msg = "categories: {}".format(categories)
         self.assertEqual(len(categories), 1, msg)
         self.assertEqual(len(categories[0]), 3, msg)
@@ -161,10 +162,14 @@ class TestCategoryModels(BaseTest):
         # Get all children no root
         new_cats = (categories_0[0], categories_1[0])
         categories = Category.objects.get_child_tree_from_list(
-            new_cats, with_root=False)
+            self.project, new_cats, with_root=False)
         msg = "categories: {}".format(categories)
         self.assertTrue(len(categories) == 1, msg)
         self.assertEqual(len(categories[0]), 2, msg)
+
+
+# Test error condition with get_child_tree_from_list()
+
 
     def test_get_child_tree_from_list_different_roots(self):
         #self.skipTest("Temporarily skipped")
@@ -177,7 +182,8 @@ class TestCategoryModels(BaseTest):
             self.project, create_list_1, self.user)
         # Get all children with seperate roots
         new_cats = (categories_0[0], categories_1[0])
-        categories = Category.objects.get_child_tree_from_list(new_cats)
+        categories = Category.objects.get_child_tree_from_list(
+            self.project, new_cats)
         msg = "categories: {}".format(categories)
         self.assertTrue(len(categories) == 2, msg)
         self.assertEqual(len(categories[0]), 2, msg)
@@ -261,7 +267,8 @@ class TestCategoryModels(BaseTest):
         root = 'TestLevel-0a'
         category = self._create_category(
             self.project, create_list[0], **{'update_name': root})
-        categories = Category.objects.get_child_tree_from_list([category])
+        categories = Category.objects.get_child_tree_from_list(
+            self.project, [category])
 
         for cat in categories[0]:
             msg = "{} not found in {}".format(root, cat.path)

@@ -30,34 +30,34 @@ log = logging.getLogger('inventory.categories.models')
 
 class CategoryManager(models.Manager):
 
-    def create_category_tree(self, project, category_list, user):
+    def create_category_tree(self, project, category_names, user):
         """
         Gets and/or creates designated category, creating parent categories
         as necessary. Returns a list of objects in category order or an empty
-        list if 'category_list' is the wrong data type.
+        list if 'category_names' is the wrong data type.
 
         raise ValueError If the delimiter is found in a category name.
         """
         node_list = []
 
-        if isinstance(category_list, (list, tuple)):
+        if isinstance(category_names, (list, tuple)):
             delimiter = self.model.DEFAULT_SEPARATOR
 
-            if any([cat for cat in category_list if delimiter in cat]):
+            if any([cat for cat in category_names if delimiter in cat]):
                 msg = _("A category name cannot contain the category "
                         "delimiter '{}'.").format(delimiter)
                 log.error(ugettext(msg))
                 raise ValueError(msg)
 
-            for level, name in enumerate(category_list):
+            for level, name in enumerate(category_names):
                 if node_list:
                     parent = node_list[-1]
                 else:
                     parent = None
 
                 try:
-                    node = self.get(project=project, name=name, parent=parent,
-                                    level=level)
+                    node = self.get(
+                        project=project, name=name, parent=parent, level=level)
                 except self.model.DoesNotExist:
                     kwargs = {}
                     kwargs['project'] = project
@@ -74,12 +74,12 @@ class CategoryManager(models.Manager):
 
     def delete_category_tree(self, project, node_list):
         """
-        Deletes the category tree back to the beginning, but will stop if there
-        are other children on the category. The result is that it will delete
-        whatever was just added. This is useful for rollbacks. The 'node_list'
-        should be the unaltered result of the create_category_tree method or
-        its equivalent. A list of strings is returned representing the deleted
-        nodes.
+        Deletes the category tree back to the beginning, but will stop if
+        there are other children on the category. The result is that it
+        will delete whatever was just added. This is useful for rollbacks.
+        The 'node_list' should be the unaltered result of the
+        ``create_category_tree`` method or its equivalent. A list of strings
+        is returned representing the deleted nodes.
         """
         node_list.reverse()
         deleted_nodes = []
@@ -124,19 +124,23 @@ class CategoryManager(models.Manager):
 
         return parents
 
-    def get_child_tree_from_list(self, category_list, with_root=True):
+    def get_child_tree_from_list(self, project, node_list, with_root=True):
         """
         Given a list of Category objects, return a list of all the Categories
         plus all the Categories' children, plus the children's children, etc.
         For example, if the 'Arts' and 'Color' Categories are passed in a list,
         this function will return the [['Arts', 'Arts>Music',
-        'Arts>Music>Local', ...], ['Color', 'Red', 'Green', 'Blue', ...]]
+        'Arts>Music>Local', ...], ['Color', 'Blue', 'Green', 'Red', ...]]
         objects. Duplicates will be removed.
         """
         tree = []
         final = OrderedDict()
 
-        for cat in category_list:
+        for cat in node_list:
+            assert cat.project == project, _(
+                "The category '{}' is not in the '{}' project.").format(
+                cat, project)
+
             item = []
 
             if with_root:
@@ -240,7 +244,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         Returns a list of Category objects that are children of this category.
         """
         children = Category.objects.get_child_tree_from_list(
-            (self,), with_root=False)
+            self.project, (self,), with_root=False)
         return children[0]
 
     def get_children_and_root(self):
@@ -248,7 +252,8 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         Return a list of Category objects that are children of this category
         including this category.
         """
-        children = Category.objects.get_child_tree_from_list((self,))
+        children = Category.objects.get_child_tree_from_list(
+            self.project, (self,))
         return children[0]
 
     def parents_producer(self):
