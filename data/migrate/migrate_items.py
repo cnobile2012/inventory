@@ -439,7 +439,11 @@ class MigrateItem(MigrateBase):
                         self._log.info("Updated item: %s", item_number)
 
                     obj.process_location_codes(location_codes)
+                    self._log.info("Updated location_codes '%s' on item: %s",
+                                   location_codes, item_number)
                     obj.process_categories(categories)
+                    self._log.info("Updated categories '%s' on item: %s",
+                                   categories, item_number)
                 else:
                     self._log.info("NOOP Mode: Found item: %s", item_number)
 
