@@ -152,7 +152,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         """
         This method adds and removes members to the project.
         """
-        if isinstance(members, (list, tuple)):
+        if isinstance(members, (list, tuple, models.QuerySet)):
             UserModel = get_user_model()
             wanted_pks = [inst.pk for inst in members]
             old_pks = [inst.pk for inst in self.members.all()]

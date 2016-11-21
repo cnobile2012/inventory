@@ -203,7 +203,7 @@ class User(AbstractUser, ValidateOnSaveMixin):
         """
         This method adds and removes projects to a member.
         """
-        if isinstance(projects, (list, tuple)):
+        if isinstance(projects, (list, tuple, models.QuerySet)):
             wanted_pks = [inst.pk for inst in projects]
             old_pks = [inst.pk for inst in self.projects.all()]
             # Remove unwanted projects.
