@@ -1,5 +1,5 @@
 /*
- * $ sudo su - postgres psql template1 -f db/create_schema.ddl
+ * $ sudo -u postgres psql template1 -f db/create_schema.ddl
  */
 
 DROP DATABASE IF EXISTS inventory;
