@@ -20,15 +20,15 @@ log = logging.getLogger('inventory')
 log.setLevel(logging.CRITICAL)
 
 
-class TestCategoryModels(BaseTest):
+class TestCategoryModel(BaseTest):
     _TEST_USERNAME = 'TestUser'
     _TEST_PASSWORD = 'TestPassword_007'
 
     def __init__(self, name):
-        super(TestCategoryModels, self).__init__(name)
+        super(TestCategoryModel, self).__init__(name)
 
     def setUp(self):
-        super(TestCategoryModels, self).setUp()
+        super(TestCategoryModel, self).setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 
@@ -143,12 +143,16 @@ class TestCategoryModels(BaseTest):
         categories_1 = Category.objects.create_category_tree(
             self.project, create_list_1, self.user)
         # Get all children plus the root
-        new_cats = (categories_0[0], categories_1[0])
+        new_cats = (categories_0[0],)
         categories = Category.objects.get_child_tree_from_list(
             self.project, new_cats)
         msg = "categories: {}".format(categories)
         self.assertEqual(len(categories), 1, msg)
-        self.assertEqual(len(categories[0]), 3, msg)
+        self.assertEqual(len(categories[0]), 2, msg)
+        self.assertEqual(len(categories[0][1]), 2, msg)
+        self.assertEqual(len(categories[0][1][0]), 2, msg)
+        self.assertEqual(len(categories[0][1][1]), 2, msg)
+        #print(msg)
 
     def test_get_child_tree_from_list_without_root(self):
         #self.skipTest("Temporarily skipped")
@@ -160,12 +164,14 @@ class TestCategoryModels(BaseTest):
         categories_1 = Category.objects.create_category_tree(
             self.project, create_list_1, self.user)
         # Get all children no root
-        new_cats = (categories_0[0], categories_1[0])
+        new_cats = (categories_0[0],)
         categories = Category.objects.get_child_tree_from_list(
             self.project, new_cats, with_root=False)
         msg = "categories: {}".format(categories)
-        self.assertTrue(len(categories) == 1, msg)
+        self.assertTrue(len(categories) == 2, msg)
         self.assertEqual(len(categories[0]), 2, msg)
+        self.assertEqual(len(categories[1]), 2, msg)
+        #print(msg)
 
 
 # Test error condition with get_child_tree_from_list()
@@ -187,7 +193,10 @@ class TestCategoryModels(BaseTest):
         msg = "categories: {}".format(categories)
         self.assertTrue(len(categories) == 2, msg)
         self.assertEqual(len(categories[0]), 2, msg)
+        self.assertEqual(len(categories[0][1]), 2, msg)
         self.assertEqual(len(categories[1]), 2, msg)
+        self.assertEqual(len(categories[1][1]), 2, msg)
+        #print(msg)
 
     def test_get_all_root_trees(self):
         #self.skipTest("Temporarily skipped")
@@ -241,10 +250,10 @@ class TestCategoryModels(BaseTest):
         the admin.
         """
         #self.skipTest("Temporarily skipped")
-        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
-        categories_0 = Category.objects.create_category_tree(
-            self.project, create_list_0, self.user)
-        parents = categories_0[-1].parents_producer()
+        create_list = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories = Category.objects.create_category_tree(
+            self.project, create_list, self.user)
+        parents = categories[-1].parents_producer()
         path = 'TestLevel-0{}TestLevel-1'.format(Category.DEFAULT_SEPARATOR)
         msg = "Found: {}, should be: {}".format(parents, path)
         self.assertEqual(parents, path, msg)
@@ -258,6 +267,9 @@ class TestCategoryModels(BaseTest):
         create_list = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
         categories = Category.objects.create_category_tree(
             self.project, create_list, self.user)
+        size = len(categories)
+        msg = "Tree length {} should be 3, {}".format(size, categories)
+        self.assertTrue(size == 3, msg)
         root = categories[0].name
 
         for cat in categories:
@@ -269,7 +281,13 @@ class TestCategoryModels(BaseTest):
             self.project, create_list[0], **{'update_name': root})
         categories = Category.objects.get_child_tree_from_list(
             self.project, [category])
+        size = len(categories[0])
+        msg = "Tree length {} should be 2, {}".format(size, categories)
+        self.assertTrue(size == 2, msg)
+        size = len(categories[0][1])
+        msg = "Tree length {} should be 2, {}".format(size, categories[0][1])
+        self.assertTrue(size == 2, msg)
 
-        for cat in categories[0]:
+        for cat in categories[0][1]:
             msg = "{} not found in {}".format(root, cat.path)
             self.assertTrue(root in cat.path, msg)

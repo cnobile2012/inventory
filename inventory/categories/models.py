@@ -134,27 +134,40 @@ class CategoryManager(models.Manager):
         objects. Duplicates will be removed.
         """
         tree = []
-        final = OrderedDict()
 
-        for cat in node_list:
+        for cat in set(node_list):
             assert cat.project == project, _(
                 "The category '{}' is not in the '{}' project.").format(
                 cat, project)
 
-            item = []
+            items = self._recurse_children(cat)
 
             if with_root:
-                item.append(cat)
+                root = [cat]
+                self._remove_empty_lists(root, items)
+                tree.append(root)
+            else:
+                tree = items
 
-            for child in cat.children.all():
-                item.append(child)
+        return tree
 
-            tree.append(tuple(sorted(item, key=lambda x: x.path.lower())))
+    def _recurse_children(self, category):
+        tree = []
 
-        for item in tree:
-            final[hash(item)] = item
+        for child in category.children.all():
+            items = self._recurse_children(child)
+            items.insert(0, child)
+            self._remove_empty_lists(tree, items)
 
-        return list(final.values())
+        return tree
+
+    def _remove_empty_lists(self, tree, items):
+        size = len(items)
+
+        if size == 1:
+            tree.append(items[0])
+        elif size > 1:
+            tree.append(items)
 
     def get_all_root_trees(self, project, name):
         """
@@ -164,7 +177,7 @@ class CategoryManager(models.Manager):
         trees.
         """
         result = []
-        records = self.filter(name=name, project=project)
+        records = self.filter(project=project, name=name)
 
         if len(records) > 0:
             result[:] = [self.get_parents(project, record)
@@ -245,7 +258,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         """
         children = Category.objects.get_child_tree_from_list(
             self.project, (self,), with_root=False)
-        return children[0]
+        return children
 
     def get_children_and_root(self):
         """
