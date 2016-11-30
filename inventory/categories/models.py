@@ -103,7 +103,7 @@ class CategoryManager(models.Manager):
         """
         Get all the parents to this category object.
         """
-        if category.project.pk != project.pk:
+        if category.project != project:
             msg = _("Trying to access a category with an invalid project, "
                     "updater: {}, updated: {}, project: {}, invalid "
                     "project: {}").format(category.updater, category.updated,
@@ -136,9 +136,10 @@ class CategoryManager(models.Manager):
         tree = []
 
         for cat in set(node_list):
-            assert cat.project == project, _(
-                "The category '{}' is not in the '{}' project.").format(
-                cat, project)
+            if cat.project != project or not cat.project.public:
+                msg = _("The category '{0}' is not in the '{1}' project or "
+                        "the '{0}' project is not public.").format(cat, project)
+                raise ValueError(msg)
 
             items = self._recurse_children(cat)
 

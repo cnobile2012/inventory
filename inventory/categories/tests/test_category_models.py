@@ -173,9 +173,26 @@ class TestCategoryModel(BaseTest):
         self.assertEqual(len(categories[1]), 2, msg)
         #print(msg)
 
-
-# Test error condition with get_child_tree_from_list()
-
+    def test_get_child_tree_from_list_errors(self):
+        #self.skipTest("Temporarily skipped")
+        # Create two category trees.
+        create_list = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        categories = Category.objects.create_category_tree(
+            self.project, create_list, self.user)
+        # Create a second project.
+        project = self._create_project(self.inventory_type, "2nd Project")
+        # Test that the 2nd project can access another projects categories
+        # when the project is shared.
+        tree = Category.objects.get_child_tree_from_list(
+            self.project, categories)
+        msg = "tree: {}".format(tree)
+        self.assertTrue(tree, msg)
+        # Test that the 2nd project cannot access another projects categories.
+        self.project.public = False
+        self.project.save()
+        with self.assertRaises(ValueError) as cm:
+            tree = Category.objects.get_child_tree_from_list(
+                self.project, categories)
 
     def test_get_child_tree_from_list_different_roots(self):
         #self.skipTest("Temporarily skipped")
