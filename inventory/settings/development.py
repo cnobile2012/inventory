@@ -1,4 +1,7 @@
+import sys
 
+# Uncomment this line when testing changes to dcolumn.
+#sys.path.insert(0, '/home/cnobile/src/django/dcolumn')
 
 from inventory.common.utils import IPList
 
@@ -27,8 +30,8 @@ DATABASES = {
 #KEY_PREFIX = 'dev'
 #KEY_FUNCTION = 'inventory.common.caching.make_key'
 
-# Add to the MIDDLEWARE_CLASSES here.
-MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+# Add to the MIDDLEWARE here.
+MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 CACHES = {
     'default': {
@@ -55,7 +58,6 @@ INTERNAL_IPS = IPList(['127.0.0.1', '192.168.1.0/24'])
 # If it were working, set it to follow redirects by default.
 DEBUG_TOOLBAR_CONFIG = {
     'DEBUG_TOOLBAR_PATCH_SETTINGS': False,
-    'INTERCEPT_REDIRECTS': False,
     }
 
 # email settings

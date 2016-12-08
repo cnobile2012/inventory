@@ -93,9 +93,10 @@ AUTHENTICATION_BACKENDS = (
 # Guardian requirement
 ANONYMOUS_USER_ID = -1
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     # UpdateCacheMiddleware must be first on the list
     'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
