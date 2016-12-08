@@ -66,14 +66,15 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         verbose_name=_("City"), max_length=30, null=True, blank=True,
         help_text=_("The city of the supplier."))
     subdivision = models.ForeignKey(
-        Subdivision, verbose_name=_("State/Province"), null=True, blank=True,
+        Subdivision, on_delete=models.CASCADE,
+        verbose_name=_("State/Province"), null=True, blank=True,
         help_text=_("The subdivision in the country."))
     postal_code = models.CharField(
         verbose_name=_("Postal Code"), max_length=15, null=True, blank=True,
         help_text=_("The postal code in the country."))
     country = models.ForeignKey(
-        Country, verbose_name=_("Country"), null=True, blank=True,
-        help_text=_("The country."))
+        Country, on_delete=models.CASCADE, verbose_name=_("Country"),
+        null=True, blank=True, help_text=_("The country."))
     phone = models.CharField(
         verbose_name=_("Phone"), max_length=20, null=True, blank=True,
         help_text=_("The phone number of the supplier."))
@@ -87,11 +88,11 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         verbose_name=_("URL"), null=True, blank=True,
         help_text=_("The web site of the supplier."))
     language = models.ForeignKey(
-        Language, verbose_name=_("Language"), null=True, blank=True,
-        help_text=_("The language code."))
+        Language, on_delete=models.CASCADE, verbose_name=_("Language"),
+        null=True, blank=True, help_text=_("The language code."))
     timezone = models.ForeignKey(
-        TimeZone, verbose_name=_("Timezone"), null=True, blank=True,
-        help_text=_("The timezone."))
+        TimeZone, on_delete=models.CASCADE, verbose_name=_("Timezone"),
+        null=True, blank=True, help_text=_("The timezone."))
     stype = models.SmallIntegerField(
         verbose_name=_("Supplier Type"), choices=SUPPLIER_TYPE,
         help_text=_("The type of supplier."))

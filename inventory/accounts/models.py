@@ -136,20 +136,21 @@ class User(AbstractUser, ValidateOnSaveMixin):
         verbose_name=_("City"), max_length=30, null=True, blank=True,
         help_text=_("The city this individual lives in."))
     subdivision = models.ForeignKey(
-        Subdivision, verbose_name=_("State/Province"), null=True, blank=True,
+        Subdivision, on_delete=models.CASCADE,
+        verbose_name=_("State/Province"), null=True, blank=True,
         help_text=_("The state of residence."))
     postal_code = models.CharField(
         verbose_name=_("Postal Code"), max_length=15, null=True, blank=True,
         help_text=_("The zip code of residence."))
     country = models.ForeignKey(
-        Country, verbose_name=_("Country"), null=True, blank=True,
-        help_text=_("The country of residence."))
+        Country, on_delete=models.CASCADE, verbose_name=_("Country"),
+        null=True, blank=True, help_text=_("The country of residence."))
     language = models.ForeignKey(
-        Language, verbose_name=_("Language"), null=True, blank=True,
-        help_text=_("The language code."))
+        Language, on_delete=models.CASCADE, verbose_name=_("Language"),
+        null=True, blank=True, help_text=_("The language code."))
     timezone = models.ForeignKey(
-        TimeZone, verbose_name=_("Timezone"), null=True, blank=True,
-        help_text=_("The timezone."))
+        TimeZone, on_delete=models.CASCADE, verbose_name=_("Timezone"),
+        null=True, blank=True, help_text=_("The timezone."))
     project_default = models.SmallIntegerField(
         verbose_name=_("Project Default"), choices=P_DEFAULTS,
         default=LAST_USED, help_text=_("The default project setting."))
@@ -313,11 +314,12 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         verbose_name=_("Answer"), max_length=250,
         help_text=_("An answer to an authentication question."))
     question = models.ForeignKey(
-        Question, verbose_name=_("Question"), related_name='answers',
+        Question, on_delete=models.CASCADE, verbose_name=_("Question"),
+        related_name='answers',
         help_text=_("The question relative to this answer."))
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=_("User"),
-        related_name='answers',
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        verbose_name=_("User"), related_name='answers',
         help_text=_("User to which this answer applies."))
 
     objects = AnswerManager()

@@ -96,8 +96,9 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         blank=True,
         help_text=_("Public ID to identify a individual item."))
     project = models.ForeignKey(
-        Project, verbose_name=_("Project"), related_name='items',
-        db_index=False, help_text=_("The project the item is part of."))
+        Project, on_delete=models.CASCADE, verbose_name=_("Project"),
+        related_name='items', db_index=False,
+        help_text=_("The project the item is part of."))
     sku = models.CharField(
         verbose_name=_("Stock Keeping Unit (SKU)"), max_length=20, blank=True,
         help_text=_("Internal part number."))
@@ -112,9 +113,9 @@ class Item(CollectionBase, ValidateOnSaveMixin):
         verbose_name=_("MFG Item Number"), max_length=50, null=True,
         blank=True, help_text=_("Manufacturer item number."))
     manufacturer = models.ForeignKey(
-        Supplier, verbose_name=_("Manufacturer"), db_index=True,
-        limit_choices_to={'stype__in': [Supplier.MANUFACTURER,
-                                        Supplier.BOTH_MFG_DIS]},
+        Supplier, on_delete=models.CASCADE, verbose_name=_("Manufacturer"),
+        db_index=True, limit_choices_to={'stype__in': [Supplier.MANUFACTURER,
+                                                       Supplier.BOTH_MFG_DIS]},
         related_name='manufacturers_items', null=True, blank=True,
         help_text=_("The manufacturer that produced the item."))
     description = models.TextField(
@@ -237,7 +238,8 @@ class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
         blank=True,
         help_text=_("Public ID to identify a individual invoice."))
     project = models.ForeignKey(
-        Project, verbose_name=_("Project"), related_name='invoices',
+        Project, on_delete=models.CASCADE, verbose_name=_("Project"),
+        related_name='invoices',
         help_text=_("The project the invoice is part of."))
     currency = models.ForeignKey(
         Currency, on_delete=models.CASCADE, verbose_name=_("Currency"),
