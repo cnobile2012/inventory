@@ -42,11 +42,11 @@ install-dev:
 
 .PHONY	: install-prd
 install-prd:
-	pip install $(PIP_ARGS) -r requirements/development.txt
+	pip install $(PIP_ARGS) -r requirements/production.txt
 
 .PHONY	: install-stg
 install-stg:
-	pip install $(PIP_ARGS) -r requirements/stage.txt
+	pip install $(PIP_ARGS) -r requirements/staging.txt
 
 #----------------------------------------------------------------------
 clean	:
