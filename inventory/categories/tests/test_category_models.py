@@ -58,13 +58,8 @@ class TestCategoryModel(BaseTest):
 
     def test_create_category_tree(self):
         #self.skipTest("Temporarily skipped")
-        create_list_0 = [
-            ['TestLevel-0', [
-                ['TestLevel-1', 'TestLevel-2',],
-                ['TestLevel-1a', 'TestLevel-2a']
-                ]
-             ]
-            ]
+        create_list_0 = [['TestLevel-0', [['TestLevel-1', 'TestLevel-2',],
+                                          ['TestLevel-1a', 'TestLevel-2a']]]]
         categories_0 = Category.objects.create_category_tree(
             self.project, self.user, create_list_0)
         msg = "{}".format(categories_0)
@@ -74,36 +69,49 @@ class TestCategoryModel(BaseTest):
         self.assertTrue(categories_0[0][1][0][1].level == 2, msg)
         # Test that the same level cannot have more than one category with
         # the same name.
-        create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
+        create_list_1 = 'TestLevel-0'
         categories_1 = Category.objects.create_category_tree(
             self.project, self.user, create_list_1)
-        level_0_cats = Category.objects.filter(name=create_list_1[0], level=0)
+        level_0_cats = Category.objects.filter(name=create_list_1, level=0)
         msg = "{}".format(level_0_cats)
         self.assertEqual(len(level_0_cats), 1, msg)
+        # Test that a single new object is created.
+        create_list_2 = 'TestLeven-1b'
+        parent = categories_0[0][0] # 'TestLevel-0'
+        categories_2 = Category.objects.create_category_tree(
+            self.project, self.user, create_list_2, parents=parent)
+        msg = "{}".format(categories_2)
+        self.assertEqual(len(categories_2), 1, msg)
         # Test that a delimiter in a category name raises and exception.
-        create_list_2 = ('TestLevel-0',
+        create_list_3 = ('TestLevel-0',
                          'Test{}Level-1.1'.format(Category.DEFAULT_SEPARATOR),
                          'TestLevel-2.1',)
         with self.assertRaises(ValidationError) as cm:
             categories_1 = Category.objects.create_category_tree(
-                self.project, self.user, create_list_2)
+                self.project, self.user, create_list_3)
+
+        # Test that multiple roots need parents passes.
+        create_list_4 = ('TestLevel-0a', 'TestLevel-1a')
+
+        with self.assertRaises(ValueError) as cm:
+            Category.objects.create_category_tree(
+                self.project, self.user, create_list_4, parents='')
+
+        # Test parents are needed if multiple roots.
+        create_list_5 = ('TestLevel-0a', 'TestLevel-1a')
+        parents = [None, None, None] # Too many parents
+
+        with self.assertRaises(ValueError) as cm:
+            Category.objects.create_category_tree(
+                self.project, self.user, create_list_5, parents=parents)
 
     def test_delete_category_tree(self):
         #self.skipTest("Temporarily skipped")
         # Create three categories
-        create_list = [
-            ['TestLevel-0', [
-                ['TestLevel-1', [
-                    ['TestLevel-1a', 'TestLevel-1b'],
-                    ],
-                 ],
-                ['TestLevel-2', [
-                    ['TestLevel-2a', 'TestLevel-2b'],
-                    ],
-                 ]
-                ]
-             ]
-            ]
+        create_list = [['TestLevel-0',
+                        [['TestLevel-1', [['TestLevel-1a', 'TestLevel-1b']]],
+                         ['TestLevel-2', [['TestLevel-2a', 'TestLevel-2b']]]
+                         ]]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
         # Try to delete a categegory in the middle of a list, should fail.
@@ -157,9 +165,7 @@ class TestCategoryModel(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create three categories
-        create_list = [
-            ['TestLevel-0', [['TestLevel-1', 'TestLevel-2']]]
-            ]
+        create_list = [['TestLevel-0', [['TestLevel-1', 'TestLevel-2']]]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
         cat = categories[0][1][0][1] # 'TestLevel-2'
@@ -195,13 +201,8 @@ class TestCategoryModel(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create two category trees.
-        create_list = [
-            ['TestLevel-0', (
-                ('TestLevel-1', 'TestLevel-2',),
-                ('TestLevel-1a', 'TestLevel-2a',),
-                )
-             ]
-            ]
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
         # Get all children plus the root
@@ -233,13 +234,8 @@ class TestCategoryModel(BaseTest):
         """
         #self.skipTest("Temporarily skipped")
         # Create two category trees.
-        create_list = [
-            ['TestLevel-0', (
-                ('TestLevel-1', 'TestLevel-2',),
-                ('TestLevel-1a', 'TestLevel-2a',),
-                )
-             ]
-            ]
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
         new_categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
         # Get all children no root
@@ -275,10 +271,8 @@ class TestCategoryModel(BaseTest):
     def test_get_child_tree_from_list_different_roots(self):
         #self.skipTest("Temporarily skipped")
         # Create two category trees.
-        create_list = [
-            ['TestLevel-0', ['TestLevel-1', 'TestLevel-2']],
-            ['TestLevel-0a', ['TestLevel-1a', 'TestLevel-2a']]
-            ]
+        create_list = [['TestLevel-0', ['TestLevel-1', 'TestLevel-2']],
+                       ['TestLevel-0a', ['TestLevel-1a', 'TestLevel-2a']]]
         new_categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
         # Get all children with seperate roots
@@ -299,10 +293,8 @@ class TestCategoryModel(BaseTest):
         #self.skipTest("Temporarily skipped")
         # Create two category trees.
         cat = 'TestLevel-2'
-        create_list = [
-            ['TestLevel-0', ['TestLevel-1', cat]],
-            ['TestLevel-0a', ['TestLevel-1a', cat]]
-            ]
+        create_list = [['TestLevel-0', ['TestLevel-1', cat]],
+                       ['TestLevel-0a', ['TestLevel-1a', cat]]]
         new_categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
         categories = Category.objects.get_all_root_trees(

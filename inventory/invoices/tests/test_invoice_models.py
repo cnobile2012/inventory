@@ -93,13 +93,11 @@ class BaseInvoice(BaseTest):
 
     def setup_categories(self):
         # Create some categories
-        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
-        categories_0 = Category.objects.create_category_tree(
-            self.project, create_list_0, self.user)
-        create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
-        categories_1 = Category.objects.create_category_tree(
-            self.project, create_list_1, self.user)
-        return categories_0, categories_1
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
+        categories = Category.objects.create_category_tree(
+            self.project, self.user, create_list)
+        return categories
 
 
 class TestItem(BaseInvoice):
@@ -150,11 +148,13 @@ class TestItem(BaseInvoice):
         item_number = "NE555"
         item = self._create_item(self.project, self.collection, item_number)
         # Create some categories
-        categories_0, categories_1 = self.setup_categories()
+        categories = self.setup_categories()
         # Add categories to the item
-        item.process_categories([categories_0[-1], categories_1[-1]])
+        cat_0 = categories[0][1][0][1] # 'TestLevel-2'
+        cat_1 = categories[0][1][1][1] # 'TestLevel-2a'
+        item.process_categories([cat_0, cat_1])
         # Test for proper categories
-        cats = ("TestLevel-0>TestLevel-1.1>TestLevel-2.1<br />"
+        cats = ("TestLevel-0>TestLevel-1a>TestLevel-2a<br />"
                 "TestLevel-0>TestLevel-1>TestLevel-2")
         result = item.category_producer()
         msg = "Found: {}, should be: {}".format(result, cats)
@@ -189,14 +189,16 @@ class TestItem(BaseInvoice):
         item_number = "NE555"
         item = self._create_item(self.project, self.collection, item_number)
         # Create some categories
-        categories_0, categories_1 = self.setup_categories()
+        categories = self.setup_categories()
         # Test adding categories
-        item.process_categories([categories_0[-1], categories_1[-1]])
+        cat_0 = categories[0][1][0][1] # 'TestLevel-2'
+        cat_1 = categories[0][1][1][1] # 'TestLevel-2a'
+        item.process_categories([cat_0, cat_1])
         categories = item.categories.all()
         msg = "Found: {} codes, should be 2".format(categories.count())
         self.assertEqual(categories.count(), 2, msg)
         # Test deleting categories
-        item.process_categories([categories_1[-1]])
+        item.process_categories([cat_0])
         categories = item.categories.all()
         msg = "Found: {} codes, should be 1".format(categories.count())
         self.assertEqual(categories.count(), 1, msg)

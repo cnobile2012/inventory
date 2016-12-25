@@ -34,12 +34,12 @@ class CategoryManager(models.Manager):
         """
         Gets and/or creates designated category, creating parent categories
         as necessary. Returns a list of objects in category order or an empty
-        list if 'category_names' is the wrong data type.
+        list if `cat_name_tree` is the wrong data type.
         """
         tree = []
 
-        if not isinstance(parents, (list, tuple)):
-            parents = [parents] # Could be a single parent or None.
+        if parents is None or isinstance(parents, self.model):
+            parents = [parents]
 
         if not isinstance(cat_name_tree, (list, tuple)):
             cat_name_tree = [cat_name_tree]
