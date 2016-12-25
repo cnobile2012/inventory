@@ -30,59 +30,78 @@ log = logging.getLogger('inventory.categories.models')
 
 class CategoryManager(models.Manager):
 
-    def create_category_tree(self, project, category_names, user):
+    def create_category_tree(self, project, user, cat_name_tree, parents=None):
         """
         Gets and/or creates designated category, creating parent categories
         as necessary. Returns a list of objects in category order or an empty
         list if 'category_names' is the wrong data type.
-
-        raise ValueError If the delimiter is found in a category name.
         """
-        node_list = []
+        tree = []
 
-        if isinstance(category_names, (list, tuple)):
-            delimiter = self.model.DEFAULT_SEPARATOR
+        if not isinstance(parents, (list, tuple)):
+            parents = [parents] # Could be a single parent or None.
 
-            if any([cat for cat in category_names if delimiter in cat]):
-                msg = _("A category name cannot contain the category "
-                        "delimiter '{}'.").format(delimiter)
-                log.error(ugettext(msg))
+        if not isinstance(cat_name_tree, (list, tuple)):
+            cat_name_tree = [cat_name_tree]
+
+        len_parents = len(parents)
+        len_roots = len(cat_name_tree)
+
+        if len_roots > 1:
+            if not len_parents:
+                msg = _("Multiple roots need at least one parent.")
                 raise ValueError(msg)
 
-            for level, name in enumerate(category_names):
-                if node_list:
-                    parent = node_list[-1]
-                else:
-                    parent = None
+            if len_parents > 1 and len_parents != len_roots:
+                msg = _("If multiple roots the number parents must be one, "
+                        "or equal to the number of roots.")
+                raise ValueError(msg)
 
-                try:
-                    node = self.get(
-                        project=project, name=name, parent=parent, level=level)
-                except self.model.DoesNotExist:
-                    kwargs = {}
-                    kwargs['project'] = project
-                    kwargs['name'] = name
-                    kwargs['parent'] = parent
-                    kwargs['creator'] = user
-                    kwargs['updater'] = user
-                    node = self.create(**kwargs)
-                    node.save()
+        for idx, item in enumerate(cat_name_tree):
+            parent = parents[0] if len_parents == 1 else parents[idx]
+            nodes, junk = self._recurse_names(project, user, item, parent)
+            tree.append(nodes)
 
-                node_list.append(node)
+        return tree
 
-        return node_list
+    def _recurse_names(self, project, user, item, parent):
+        tree = []
+        node = None
+        outer_parent = parent
+
+        if isinstance(item, (list, tuple)):
+            if len(item) > 1:
+                hold = all([isinstance(x, (list, tuple)) for x in item])
+            else:
+                hold = False
+
+            for next in item:
+                parent = outer_parent if hold else parent
+                nodes, parent = self._recurse_names(
+                    project, user, next, parent)
+                tree.append(nodes)
+        else:
+            kwargs = {}
+            kwargs['creator'] = user
+            kwargs['updater'] = user
+            node, created = self.get_or_create(project=project, parent=parent,
+                                               name=item, defaults=kwargs)
+            tree = node
+
+        return tree, node
 
     def delete_category_tree(self, project, node_list):
         """
         Deletes the category tree back to the beginning, but will stop if
         there are other children on the category. The result is that it
         will delete whatever was just added. This is useful for rollbacks.
-        The 'node_list' should be the unaltered result of the
-        ``create_category_tree`` method or its equivalent. A list of strings
-        is returned representing the deleted nodes.
+        The 'node_list' should be a flat list of end level categories. A
+        list of strings is returned representing the deleted nodes.
         """
-        node_list.reverse()
-        deleted_nodes = []
+        paths = []
+
+        if not isinstance(node_list, (list, tuple)):
+            node_list = [node_list]
 
         for node in node_list:
             if node.project.pk != project.pk:
@@ -92,12 +111,25 @@ class CategoryManager(models.Manager):
                 log.error(ugettext(msg))
                 raise ValueError(msg)
 
-        for node in node_list:
-            if node.children.count() > 0: break
-            deleted_nodes.append(node.path)
+            deleted = self._recurse_delete(node)
+
+            if len(deleted) > 0:
+                paths.append(deleted)
+
+        return paths
+
+    def _recurse_delete(self, node):
+        paths = []
+
+        if node.children.count() <= 0:
+            parent = node.parent
+            paths.append(node.path)
             node.delete()
 
-        return deleted_nodes
+            if parent:
+                [paths.append(path) for path in self._recurse_delete(parent)]
+
+        return paths
 
     def get_parents(self, project, category):
         """
@@ -118,7 +150,7 @@ class CategoryManager(models.Manager):
     def _recurse_parents(self, category):
         parents = []
 
-        if category.parent_id:
+        if category.parent:
             parents.append(category.parent)
             parents.extend(self._recurse_parents(category.parent))
 
@@ -126,56 +158,60 @@ class CategoryManager(models.Manager):
 
     def get_child_tree_from_list(self, project, node_list, with_root=True):
         """
-        Given a list of Category objects, return a list of all the Categories
-        plus all the Categories' children, plus the children's children, etc.
-        For example, if the 'Arts' and 'Color' Categories are passed in a list,
-        this function will return the [['Arts', 'Arts>Music',
-        'Arts>Music>Local', ...], ['Color', 'Blue', 'Green', 'Red', ...]]
-        objects. Duplicates will be removed.
+        Given a list of Category objects, return a list of all the
+        Categories plus all the Categories' children, plus the children's
+        children, etc. For example, if the ['Arts', 'Color'] Categories
+        are passed in `node_list`, this function will return
+        [['Arts', [['Arts>Music', 'Arts>Music>Local']]],
+         ['Color', [['Color>Blue','Color>Green', 'Color>Red']]]] objects.
+        Lists are compressed if they only have a single value.
         """
         tree = []
 
-        for cat in set(node_list):
-            if cat.project != project or not cat.project.public:
+        if not isinstance(node_list, (list, tuple)):
+            node_list = [node_list]
+
+        for node in node_list:
+            if node.project != project or not node.project.public:
                 msg = _("The category '{0}' is not in the '{1}' project or "
-                        "the '{0}' project is not public.").format(cat, project)
+                        "the '{0}' project is not public."
+                        ).format(node, project)
                 raise ValueError(msg)
 
-            items = self._recurse_children(cat)
+            children = self._recurse_children(node)
 
             if with_root:
-                root = [cat]
-                self._remove_empty_lists(root, items)
-                tree.append(root)
+                nodes = []
+                nodes.append(node)
+                nodes.append(children)
             else:
-                tree = items
+                nodes = children
+
+            tree.append(nodes)
 
         return tree
 
-    def _recurse_children(self, category):
+    def _recurse_children(self, item):
         tree = []
 
-        for child in category.children.all():
-            items = self._recurse_children(child)
-            items.insert(0, child)
-            self._remove_empty_lists(tree, items)
+        for child in item.children.all():
+            nodes = self._recurse_children(child)
+            nodes.insert(0, child)
+            len_nodes = len(nodes)
+
+            if len_nodes == 1:
+                tree.append(nodes[0])
+            elif len_nodes > 1:
+                tree.append(nodes)
 
         return tree
-
-    def _remove_empty_lists(self, tree, items):
-        size = len(items)
-
-        if size == 1:
-            tree.append(items[0])
-        elif size > 1:
-            tree.append(items)
 
     def get_all_root_trees(self, project, name):
         """
-        Given a category 'name' and 'project' return a list of trees where each
-        each tree has the category 'name' as one of its members. ex. [[<color>,
-        <color>red>, <color>green>], [<light>, <light>red>]] Red is in both
-        trees.
+        Given a category 'name' and 'project' return a list of trees where
+        each tree has the category 'name' as one of its members.
+        ex. [[<color>, <color>red>, <color>green>], [<light>, <light>red>]]
+        Red is in both trees.
         """
         result = []
         records = self.filter(project=project, name=name)
