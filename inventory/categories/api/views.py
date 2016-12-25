@@ -8,11 +8,13 @@ import logging
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework import status
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView)
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
+from rest_framework.mixins import DestroyModelMixin, CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import serializers
+from rest_framework.response import Response
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -25,7 +27,8 @@ from inventory.common.api.view_mixins import (
 
 from ..models import Category
 
-from .serializers import CategorySerializer
+from .serializers import (
+    CategorySerializer, CategoryItemSerializer, CategoryCloneSerializer)
 
 log = logging.getLogger('api.categories.views')
 UserModel = get_user_model()
@@ -46,6 +49,7 @@ class CategoryAuthorizationMixin(object):
                 'project').filter(project__in=projects)
 
         return result
+
 
 class CategoryList(CategoryAuthorizationMixin,
                    TrapDjangoValidationErrorCreateMixin,
@@ -90,3 +94,76 @@ class CategoryDetail(CategoryAuthorizationMixin,
     lookup_field='public_id'
 
 category_detail = CategoryDetail.as_view()
+
+
+#
+# CategoryClone
+#
+class CategoryCloneList(TrapDjangoValidationErrorCreateMixin,
+                        CreateModelMixin,
+                        DestroyModelMixin,
+                        GenericAPIView):
+    """
+    Retrives, clones, and deletes lists of categories.
+    """
+    serializer_class = CategoryCloneSerializer
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
+        )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        input_serializer = self.get_serializer(data=request.query_params)
+        input_serializer.is_valid(raise_exception=True)
+        queryset = self.get_queryset(**input_serializer.validated_data)
+        result = []
+
+        for item in queryset:
+            serializer = CategoryItemSerializer(
+                item, many=True, context={'request': request})
+            result.append(serializer.data)
+
+        return Response(result)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        input_serializer = self.get_serializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        data_list = input_serializer.create(input_serializer.validated_data)
+        result = []
+
+        for item in data_list:
+            serializer = CategoryItemSerializer(
+                item, many=False, context={'request': request})
+            result.append(serializer.data)
+
+        headers = self.get_success_headers(result)
+        print(result)
+        return Response(result, status=status.HTTP_201_CREATED, headers=headers)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        ## for instance in self.get_queryset():
+        ##     self.perform_destroy(instance)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_queryset(self, **kwargs):
+        project = kwargs.get('project')
+        categories = kwargs.get('categories')
+        return Category.objects.get_child_tree_from_list(project, categories)
+
+category_clone_list = CategoryCloneList.as_view()

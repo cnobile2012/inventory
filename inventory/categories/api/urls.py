@@ -13,4 +13,6 @@ urlpatterns = [
         name="category-list"),
     url(r'category/(?P<public_id>\w+)/$', views.category_detail,
         name="category-detail"),
+    url(r'category-clone/$', views.category_clone_list,
+        name='category-clone-list'),
     ]
