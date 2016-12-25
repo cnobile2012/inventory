@@ -158,7 +158,9 @@ class TestItem(BaseInvoice):
                 "TestLevel-0>TestLevel-1>TestLevel-2")
         result = item.category_producer()
         msg = "Found: {}, should be: {}".format(result, cats)
-        self.assertEqual(result, cats, msg)
+
+        for cat in cats:
+            self.assertTrue(cat in result, msg)
 
     def test_process_location_codes(self):
         """
