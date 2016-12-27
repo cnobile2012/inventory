@@ -27,6 +27,9 @@ log = logging.getLogger('api.categories.serializers')
 User = get_user_model()
 
 
+#
+# CategorySerializer
+#
 class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         view_name='project-detail', queryset=Project.objects.all(),
@@ -64,20 +67,18 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
         extra_kwargs = {'level': {'default': 0}}
 
 
+#
+# CloneListSerializer
+#
 class CloneListSerializer(serializers.ListSerializer):
 
     def to_representation(self, data):
         """
         data = [<Category: TestLevel-0>,
-                [
-                 [<Category: TestLevel-0>TestLevel-1>,
-                  <Category: TestLevel-0>TestLevel-1>TestLevel-2>
-                 ],
+                [[<Category: TestLevel-0>TestLevel-1>,
+                  <Category: TestLevel-0>TestLevel-1>TestLevel-2>],
                  [<Category: TestLevel-0>TestLevel-1.1>,
-                  <Category: TestLevel-0>TestLevel-1.1>TestLevel-2.1>
-                 ]
-                ]
-               ]
+                  <Category: TestLevel-0>TestLevel-1.1>TestLevel-2.1>]]]
         """
         items = []
 
@@ -98,6 +99,9 @@ class CloneListSerializer(serializers.ListSerializer):
         return items
 
 
+#
+# CategoryItemSerializer
+#
 class CategoryItemSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=250)
     path = serializers.CharField(max_length=250)
@@ -111,70 +115,48 @@ class CategoryItemSerializer(serializers.Serializer):
         list_serializer_class = CloneListSerializer
 
 
+from rest_framework.exceptions import ErrorDetail, ValidationError
+from rest_framework.fields import get_error_detail, set_value
+
+#
+# CategoryCloneSerializer
+#
 class CategoryCloneSerializer(SerializerMixin, serializers.Serializer):
     project = serializers.CharField(max_length=30)
-    categories = serializers.ListField(
-        child=serializers.CharField(max_length=250))
+    categories = serializers.ListField()
 
     def validate_project(self, value):
         try:
             project = Project.objects.get(public_id=value)
         except Project.DoesNotExist:
-            msg = _("A Project with the {} '{}' does not exist.").format(
+            msg = _("A project with the {} '{}' does not exist.").format(
                 "public_id", value)
             raise serializers.ValidationError({'project': msg})
         else:
             return project
 
-    def validate_categories(self, value):
-        if not value:
+    def validate(self, data):
+        project = data.get('project')
+        categories = data.get('categories')
+
+        if not categories:
             msg = _("The list of categories is empty.")
             raise serializers.ValidationError({'categories': msg})
 
         request = self.get_request()
 
         if request.method in ('GET', 'DELETE'):
-            objs = Category.objects.filter(public_id__in=value)
-        else: # Should only be a POST.
-            objs = value
+            data['categories'] = Category.objects.filter(
+                project=project, public_id__in=categories)
 
-        return objs
-
-    ## def to_representation(self, instance):
-    ##     result = []
-    ##     fields = ('name', 'path', 'uri',)
-
-    ##     for inst in instance:
-    ##         ret = OrderedDict()
-
-    ##         for field in fields:
-    ##             try:
-    ##                 attribute = field.get_attribute(inst)
-    ##             except SkipField:
-    ##                 continue
-
-    ##             # We skip `to_representation` for `None` values so that
-    ##             # fields do not have to explicitly deal with that case.
-    ##             #
-    ##             # For related fields with `use_pk_only_optimization` we need
-    ##             # to resolve the pk value.
-    ##             check_for_none = attribute.pk if isinstance(
-    ##                 attribute, PKOnlyObject) else attribute
-
-    ##             if check_for_none is None:
-    ##                 ret[field.field_name] = None
-    ##             else:
-    ##                 ret[field.field_name] = field.to_representation(attribute)
-
-    ##             result.append(ret)
-
-    ##     return result
+        return data
 
     def create(self, validated_data):
         user = self.get_user_object()
         project = validated_data.get('project')
         categories = validated_data.get('categories')
-        return Category.objects.create_category_tree(project, user, categories)
+        return Category.objects.create_category_tree(
+            project, user, categories)
 
     class Meta:
         fields = ('project', 'categories',)

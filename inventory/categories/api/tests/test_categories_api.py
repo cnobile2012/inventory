@@ -482,7 +482,7 @@ class TestCategoryCloneAPI(BaseTest):
         """
         Test the category_clone_list endpoint with no permissions.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         method = 'get'
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-clone-list')
@@ -504,19 +504,16 @@ class TestCategoryCloneAPI(BaseTest):
         """
         Test the category_clone_list endpoint with valid permissions.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         method = 'get'
-        create_list_0 = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
-        categories_0 = Category.objects.create_category_tree(
-            self.project, self.user, create_list_0)
-        create_list_1 = ('TestLevel-0', 'TestLevel-1.1', 'TestLevel-2.1',)
-        categories_1 = Category.objects.create_category_tree(
-            self.project, self.user, create_list_1)
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
+        categories = Category.objects.create_category_tree(
+            self.project, self.user, create_list)
         uri = reverse('category-clone-list')
         data = {}
         su = data.setdefault('SU', {})
-        su['categories'] = [categories_0[0].public_id,
-                            categories_1[0].public_id]
+        su['categories'] = [categories[0][0].public_id] # 'TestLevel-0'
         su['project'] = self.project.public_id
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
@@ -532,9 +529,10 @@ class TestCategoryCloneAPI(BaseTest):
         """
         Test the category_clone_list endpoint with no permissions.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         method = 'post'
-        create_list = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
         uri = reverse('category-clone-list')
         data = {}
         su = data.setdefault('SU', {})
@@ -549,14 +547,19 @@ class TestCategoryCloneAPI(BaseTest):
         data.setdefault('PDU', su.copy())
         self._test_project_users_with_invalid_permissions(
             uri, method, request_data=data)
+        categories = Category.objects.all()
+        msg = "categories: {}, count: {}, should be 0".format(
+            categories, categories.count())
+        self.assertEqual(categories.count(), 0, msg)
 
     def test_POST_category_clone_list_with_valid_permissions(self):
         """
         Test the category_clone_list endpoint with valid permissions.
         """
-        self.skipTest("Temporarily skipped")
+        #self.skipTest("Temporarily skipped")
         method = 'post'
-        create_list = ('TestLevel-0', 'TestLevel-1', 'TestLevel-2',)
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
         uri = reverse('category-clone-list')
         data = {}
         su = data.setdefault('SU', {})
@@ -571,3 +574,125 @@ class TestCategoryCloneAPI(BaseTest):
         data.setdefault('PDU', su.copy())
         self._test_project_users_with_valid_permissions(
             uri, method, request_data=data, project_user=False)
+        categories = Category.objects.all()
+        msg = "categories: {}, count: {}, should be 5".format(
+            categories, categories.count())
+        self.assertEqual(categories.count(), 5, msg)
+
+    def test_DELETE_category_clone_list_with_invalid_permissions(self):
+        """
+        Test the category_clone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
+        categories = Category.objects.create_category_tree(
+            self.project, self.user, create_list)
+        uri = reverse('category-clone-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['categories'] = [categories[0][0].public_id]
+        su['project'] = self.project.public_id
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        categories = Category.objects.all()
+        msg = "categories: {}, count: {}, should be 5".format(
+            categories, categories.count())
+        self.assertEqual(categories.count(), 5, msg)
+
+    def test_DELETE_category_clone_list_with_valid_permissions(self):
+        """
+        Test the category_clone_list endpoint with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
+        categories = Category.objects.create_category_tree(
+            self.project, self.user, create_list)
+        uri = reverse('category-clone-list')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['categories'] = [categories[0][0].public_id]
+        su['project'] = self.project.public_id
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data, default_user=False)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_valid_permissions(
+            uri, method, request_data=data, project_user=False)
+        categories = Category.objects.all()
+        msg = "categories: {}, count: {}, should be 0".format(
+            categories, categories.count())
+        self.assertEqual(categories.count(), 0, msg)
+
+    def test_serializer_validation_errors_on_project(self):
+        """
+        Test that invalid data causes validation errors.
+        """
+        #self.skipTest("Temporarily skipped")
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
+        categories = Category.objects.create_category_tree(
+            self.project, self.user, create_list)
+        uri = reverse('category-clone-list')
+        data = {}
+        data['categories'] = [categories[0][0].public_id]
+        data['project'] = 'junk'
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.PROJECT_USER)
+        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='project'), msg)
+        self._test_errors(response, tests={
+            'project': "A project with the public_id 'junk' does not exist.",
+            })
+
+    def test_serializer_validation_errors_on_categories(self):
+        """
+        Test that invalid data causes validation errors.
+        """
+        #self.skipTest("Temporarily skipped")
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
+        categories = Category.objects.create_category_tree(
+            self.project, self.user, create_list)
+        uri = reverse('category-clone-list')
+        data = {}
+        data['categories'] = []
+        data['project'] = self.project.public_id
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.PROJECT_USER)
+        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='categories'), msg)
+        self._test_errors(response, tests={
+            'categories': "The list of categories is empty.",
+            })

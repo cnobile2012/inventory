@@ -100,7 +100,7 @@ class CategoryManager(models.Manager):
         """
         paths = []
 
-        if not isinstance(node_list, (list, tuple)):
+        if not isinstance(node_list, (models.QuerySet, list, tuple)):
             node_list = [node_list]
 
         for node in node_list:
@@ -168,7 +168,7 @@ class CategoryManager(models.Manager):
         """
         tree = []
 
-        if not isinstance(node_list, (list, tuple)):
+        if not isinstance(node_list, (models.QuerySet, list, tuple)):
             node_list = [node_list]
 
         for node in node_list:

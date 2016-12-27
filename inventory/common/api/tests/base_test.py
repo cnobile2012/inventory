@@ -474,6 +474,8 @@ class BaseTest(RecordCreation, APITestCase):
 
                 if isinstance(err_msg, (list, tuple)):
                     err_msg = err_msg[0]
+                elif isinstance(err_msg, dict):
+                    err_msg = err_msg.get(key)
 
                 self.assertTrue(value and value in err_msg, msg)
         elif hasattr(response, 'content'):

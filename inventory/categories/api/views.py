@@ -140,24 +140,45 @@ class CategoryCloneList(TrapDjangoValidationErrorCreateMixin,
     def create(self, request, *args, **kwargs):
         input_serializer = self.get_serializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
+        # Create the object tree
         data_list = input_serializer.create(input_serializer.validated_data)
         result = []
 
-        for item in data_list:
+        # Return the flattened results.
+        for item in self.flatten(data_list):
             serializer = CategoryItemSerializer(
                 item, many=False, context={'request': request})
             result.append(serializer.data)
 
         headers = self.get_success_headers(result)
-        print(result)
-        return Response(result, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(result, status=status.HTTP_201_CREATED,
+                        headers=headers)
+
+    def flatten(self, items):
+        """
+        Given a list, possibly nested to any level, return it flattened.
+        http://code.activestate.com/recipes/578948-flattening-an-arbitrarily-nested-list-in-python/
+        """
+        flattened = []
+
+        for item in items:
+            if isinstance(item, list):
+                flattened.extend(self.flatten(item))
+            else:
+                flattened.append(item)
+
+        return flattened
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        ## for instance in self.get_queryset():
-        ##     self.perform_destroy(instance)
+        input_serializer = self.get_serializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        categories = input_serializer.validated_data.get('categories')
+
+        for instance in categories:
+            self.perform_destroy(instance)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
