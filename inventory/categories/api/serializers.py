@@ -115,9 +115,6 @@ class CategoryItemSerializer(serializers.Serializer):
         list_serializer_class = CloneListSerializer
 
 
-from rest_framework.exceptions import ErrorDetail, ValidationError
-from rest_framework.fields import get_error_detail, set_value
-
 #
 # CategoryCloneSerializer
 #
