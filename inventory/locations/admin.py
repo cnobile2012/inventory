@@ -15,13 +15,14 @@ from .forms import LocationSetNameForm, LocationFormatForm, LocationCodeForm
 @admin.register(LocationSetName)
 class LocationSetNameAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('project', 'name', 'description', 'separator',
-                           'shared',)}),
+        (None, {'fields': ('public_id', 'project', 'name', 'description',
+                           'separator', 'shared',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('creator', 'created', 'updater', 'updated',)
+    readonly_fields = ('public_id', 'creator', 'created', 'updater',
+                       'updated',)
     list_display = ('name', 'separator', 'shared','project',
                     'updater_producer', 'updated',)
     list_editable = ('separator', 'shared',)
@@ -32,14 +33,14 @@ class LocationSetNameAdmin(UserAdminMixin, admin.ModelAdmin):
 @admin.register(LocationFormat)
 class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('location_set_name', 'char_definition',
+        (None, {'fields': ('public_id', 'location_set_name', 'char_definition',
                            'segment_order', 'description', 'segment_length',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('segment_length', 'creator', 'created', 'updater',
-                       'updated',)
+    readonly_fields = ('public_id', 'segment_length', 'creator', 'created',
+                       'updater', 'updated',)
     list_display = ('char_definition', 'location_set_name', 'segment_order',
                     'description', 'segment_length', 'updater_producer',
                     'updated',)
@@ -51,14 +52,14 @@ class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
 @admin.register(LocationCode)
 class LocationCodeAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('location_format', 'segment', 'parent', 'path',
-                           'level',)}),
+        (None, {'fields': ('public_id', 'location_format', 'segment',
+                           'parent', 'path', 'level',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
-                       'updated',)
+    readonly_fields = ('public_id', 'path', 'level', 'creator', 'created',
+                       'updater', 'updated',)
     list_display = ('segment', 'parents_producer', 'path',
                     'char_def_producer', 'level', 'updater_producer',
                     'updated',)
