@@ -104,9 +104,10 @@ class CategoryManager(models.Manager):
             node_list = [node_list]
 
         for node in node_list:
-            if node.project.pk != project.pk:
-                msg = _("Delete category: {}, updater: {}, updated: {}, "
-                        "project: {}, invalid project: {}").format(
+            if node.project != project:
+                msg = _("Trying to delete category '{}' with invalid project, "
+                        "updater: {}, updated: {}, project: {}, "
+                        "invalid project: {}").format(
                     node, node.updater, node.updated, node.project, project)
                 log.error(ugettext(msg))
                 raise ValueError(msg)
@@ -135,11 +136,12 @@ class CategoryManager(models.Manager):
         """
         Get all the parents to this category object.
         """
-        if category.project != project:
-            msg = _("Trying to access a category with an invalid project, "
-                    "updater: {}, updated: {}, project: {}, invalid "
-                    "project: {}").format(category.updater, category.updated,
-                                          category.project, project)
+        if category.project != project or not category.project.public:
+            msg = _("Trying to access a category '{}' with an invalid "
+                    "project, updater: {}, updated: {}, project: {}, invalid "
+                    "project: {}").format(
+                category, category.updater, category.updated,
+                category.project, project)
             log.error(ugettext(msg))
             raise ValueError(msg)
 

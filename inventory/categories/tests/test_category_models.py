@@ -156,7 +156,7 @@ class TestCategoryModel(BaseTest):
             cats[:] = Category.objects.delete_category_tree(project, cat)
 
         msg = "{}, {}".format(str(cm.exception), cats)
-        self.assertTrue("Delete category:" in msg, msg)
+        self.assertTrue("Trying to delete category " in msg, msg)
 
     def test_get_parents(self):
         """
