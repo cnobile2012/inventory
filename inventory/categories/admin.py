@@ -18,15 +18,16 @@ from .models import Category
 @admin.register(Category)
 class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('project', 'name', 'parent', 'path', 'level',)}),
+        (None, {'fields': ('public_id', 'project', 'name', 'parent', 'path',
+                           'level',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('path', 'level', 'creator', 'created', 'updater',
-                       'updated',)
-    list_display = ('name', 'parents_producer', 'path', 'level',
-                    'project', 'updater_producer',)
+    readonly_fields = ('public_id', 'path', 'level', 'creator', 'created',
+                       'updater', 'updated',)
+    list_display = ('name', 'parents_producer', 'path', 'level', 'project',
+                    'updater_producer',)
     search_fields = ('name', 'project__name',)
     list_filter = ('level', 'project__name', 'updater__username',)
     ordering = ('project__name', 'path',)
