@@ -18,7 +18,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
@@ -297,17 +297,27 @@ class LocationCodeManager(models.Manager):
         loc_fmt = LocationFormat.objects.get_root_format(loc_set_name)
         return loc_fmt.location_codes.get(segment=self.model.ROOT_NAME)
 
-    def get_parents(self, code_obj):
-        parents = self._recurse_parents(code_obj)
+    def get_parents(self, project, code):
+        sn_project = code.location_format.location_set_name.project
+
+        if sn_project != project:
+            msg = _("Trying to access a location code with an invalid "
+                    "project, updater: {}, updated: {}, project: {}, invalid "
+                    "project: {}").format(code.updater, code.updated,
+                                          sn_project, project)
+            log.error(ugettext(msg))
+            raise ValueError(msg)
+
+        parents = self._recurse_parents(code)
         parents.reverse()
         return parents
 
-    def _recurse_parents(self, code_obj):
+    def _recurse_parents(self, code):
         parents = []
 
-        if code_obj.parent:
-            parents.append(code_obj.parent)
-            more = self._recurse_parents(code_obj.parent)
+        if code.parent:
+            parents.append(code.parent)
+            more = self._recurse_parents(code.parent)
             parents.extend(more)
 
         return parents
@@ -319,7 +329,8 @@ class LocationCodeManager(models.Manager):
             location_format__location_set_name__project=project)
 
         if len(records) > 0:
-            result[:] = [self.get_parents(record) for record in records]
+            result[:] = [self.get_parents(project, record)
+                         for record in records]
 
         return result
 
@@ -366,7 +377,8 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
             ).validate_segment(self.segment)
 
         # Test that a segment is not a parent to itself.
-        parents = LocationCode.objects.get_parents(self)
+        parents = LocationCode.objects.get_parents(
+            self.location_format.location_set_name.project, self)
 
         if self.segment in [parent.segment for parent in parents]:
             raise ValidationError({
@@ -419,7 +431,8 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
         return self.location_format.location_set_name.separator
 
     def _get_category_path(self, current=True, separator=None):
-        parents = LocationCode.objects.get_parents(self)
+        parents = LocationCode.objects.get_parents(
+            self.location_format.location_set_name.project, self)
         if current: parents.append(self)
         separator = separator if separator else self.get_separator()
         return separator.join([parent.segment for parent in parents])

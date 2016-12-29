@@ -433,7 +433,7 @@ class TestLocationCodeModel(BaseLocation):
             self.LOCATION_SET_NAME)
         self.assertEqual(code_0.segment, segment, msg)
         # Test get_parent
-        parents = LocationCode.objects.get_parents(code_0)
+        parents = LocationCode.objects.get_parents(self.project, code_0)
         msg = "parents: {}".format(parents)
         self.assertEqual(len(parents), 1, msg)
         # Create 2nd location format object.
@@ -454,7 +454,7 @@ class TestLocationCodeModel(BaseLocation):
             self.LOCATION_SET_NAME)
         self.assertEqual(code_1.segment, segment, msg)
         # Test get_parent
-        parents = LocationCode.objects.get_parents(code_1)
+        parents = LocationCode.objects.get_parents(self.project, code_1)
         msg = "parents: {}".format(parents)
         self.assertEqual(len(parents), 2, msg)
         # Create 3rd location format object.
@@ -474,9 +474,33 @@ class TestLocationCodeModel(BaseLocation):
             self.LOCATION_SET_NAME)
         self.assertEqual(code_2.segment, segment, msg)
         # Test get_parent
-        parents = LocationCode.objects.get_parents(code_2)
+        parents = LocationCode.objects.get_parents(self.project, code_2)
         msg = "parents: {}".format(parents)
         self.assertEqual(len(parents), 3, msg)
+
+    def test_get_parents_with_invalid_project(self):
+        """
+        Test that an unauthorized project cannot access another projects
+        location codes.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a location code object.
+        segment = "T01"
+        code_0 = self._create_location_code(self.loc_fmt, segment)
+        msg = "{} should be {} and {} should be {}".format(
+            code_0.segment, segment,
+            code_0.location_format.location_set_name.name,
+            self.LOCATION_SET_NAME)
+        self.assertEqual(code_0.segment, segment, msg)
+        # Create a second project
+        project = self._create_project(self.inventory_type,
+                                       name="Unauthenticated Project")
+        # Test get_parent
+        with self.assertRaises(ValueError) as cm:
+            parents = LocationCode.objects.get_parents(project, code_0)
+
+        message = "Trying to access a location code with an invalid project, "
+        self.assertTrue(self._has_error(cm.exception, message=message))
 
     def test_get_all_root_trees(self):
         """
