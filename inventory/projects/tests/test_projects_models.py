@@ -154,11 +154,11 @@ class TestProject(BaseTest):
         username = "TestUser_02"
         user = self._create_user(
             username=username, password="123456789", is_superuser=False)
-        # Test user with project.
+        # Test that user has no authority with project.
         msg = "User {} should not have permission to access project {}".format(
             user, self.project)
         self.assertFalse(self.project.has_authority(user), msg)
-        # Test that user has authority.
+        # Test that user has authority with project.
         self.project.process_members([user])
         msg = "User {} should have permission to access project {}".format(
             user, self.project)
