@@ -46,8 +46,8 @@ class BaseTest(RecordCreation, TestCase):
         if hasattr(response, 'context_data'):
             if response.context_data.get('form').errors:
                 result = True
-        elif hasattr(response, 'message'):
-            if message in response.message:
+        elif hasattr(response, '__str__'):
+            if message in str(response):
                 result = True
 
         return result
