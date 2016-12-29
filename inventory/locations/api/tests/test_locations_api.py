@@ -346,6 +346,28 @@ class TestLocationSetNameAPI(BaseTest):
             'separator': "Ensure this field has no more than 3 characters.",
             })
 
+class TestLocationSetNameCloneAPI(BaseTest):
+
+    def __init__(self, name):
+        super(TestLocationSetNameCloneAPI, self).__init__(name)
+
+    def setUp(self):
+        super(TestLocationSetNameCloneAPI, self).setUp()
+        # Create an InventoryType and Project.
+        self.in_type = self._create_inventory_type()
+        self.project = self._create_project(self.in_type, members=[self.user])
+        #kwargs = {'public_id': self.project.public_id}
+        #self.project_uri = reverse('project-detail', kwargs=kwargs)
+        self.location_set_name = self._create_location_set_name(self.project)
+        kwargs = {'public_id': self.location_set_name.public_id}
+        self.location_set_name_uri = reverse('location-set-name-detail',
+                                             kwargs=kwargs)
+
+
+
+
+
+
 
 class TestLocationFormatAPI(BaseTest):
 
@@ -1148,4 +1170,29 @@ class TestLocationCodeAPI(BaseTest):
             response, error_key='location_set_name'), msg)
         self._test_errors(response, tests={
             'location_set_name': "All segments must be derived",
+            })
+
+    def test_altering_root_code(self):
+        """
+        Test that altering the root code is disallowed.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a location code.
+        location_code = self._create_location_code(
+            self.location_format, "A01")
+        uri = reverse('location-code-detail',
+                      kwargs={'public_id': location_code.public_id})
+        data = {
+            'location_format': self.location_format_uri,
+            'segment': LocationCode.ROOT_NAME
+            }
+        response = self.client.put(
+            uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='segment'), msg)
+        self._test_errors(response, tests={
+            'segment': ("Segment is '{}', This is an unalterable root "
+                        "location.").format(LocationCode.ROOT_NAME)
             })

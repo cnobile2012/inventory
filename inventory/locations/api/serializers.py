@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 import logging
 
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 
@@ -24,7 +25,7 @@ User = get_user_model()
 
 
 #
-# Location
+# LocationSetNameSerializer
 #
 class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
@@ -66,6 +67,9 @@ class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
 
 
+#
+# LocationFormatSerializer
+#
 class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
     location_set_name = serializers.HyperlinkedRelatedField(
         view_name='location-set-name-detail',
@@ -109,6 +113,9 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
                             'updater', 'updated',)
 
 
+#
+# LocationCodeSerializer
+#
 class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     location_format = serializers.HyperlinkedRelatedField(
         view_name='location-format-detail', lookup_field='public_id',
@@ -126,9 +133,19 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='location-code-detail', lookup_field='public_id')
 
-    # Disallow any change to root items
+    def validate_segment(self, value):
+        """
+        Disallow any change to root items.
+        """
+        request = self.get_request()
 
+        if (value == LocationCode.ROOT_NAME
+            and request.method not in ('GET', 'HEAD', 'OPTIONS')):
+            msg = _("Segment is '{}', This is an unalterable root location."
+                    ).format(LocationCode.ROOT_NAME)
+            raise serializers.ValidationError(msg)
 
+        return value
 
     def create(self, validated_data):
         user = self.get_user_object()
