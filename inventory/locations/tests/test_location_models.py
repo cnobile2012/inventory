@@ -117,7 +117,7 @@ class TestLocationSetNameModel(BaseLocation):
         # (should fail).
         with self.assertRaises(ValueError) as cm:
             tree = LocationSetName.objects.clone_set_name_tree(
-                project, loc_set_name, self.user)
+                project, self.user, loc_set_name)
         # The location_set_name is shared but user is not in project
         # (should fail).
         kwargs = {}
@@ -127,7 +127,7 @@ class TestLocationSetNameModel(BaseLocation):
             self.project, name=name, **kwargs)
         with self.assertRaises(ValueError) as cm:
             tree = LocationSetName.objects.clone_set_name_tree(
-                project, loc_set_name, self.user)
+                project, self.user, loc_set_name)
 
     def test_clone_set_name_tree(self):
         #self.skipTest("Temporarily skipped")
@@ -140,13 +140,13 @@ class TestLocationSetNameModel(BaseLocation):
         project = self._create_project(
             self.inventory_type, name="Test Project 2", members=[self.user])
         tree = LocationSetName.objects.clone_set_name_tree(
-                project, loc_set_name, self.user)
+                project, self.user, loc_set_name)
         msg = "tree: '{}', total in tree: '{}'.".format(tree, len(tree))
         self.assertEqual(len(tree), 5, msg)
         # Try a duplicate record (should fail)
         with self.assertRaises(ValueError) as cm:
             tree = LocationSetName.objects.clone_set_name_tree(
-                project, loc_set_name, self.user)
+                project, self.user, loc_set_name)
 
     def test_delete_set_name_tree(self):
         #self.skipTest("Temporarily skipped")

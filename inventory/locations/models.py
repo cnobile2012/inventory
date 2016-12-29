@@ -35,7 +35,7 @@ log = logging.getLogger('inventory.locations.models')
 #
 class LocationSetNameManager(models.Manager):
 
-    def clone_set_name_tree(self, project, loc_set_name, user):
+    def clone_set_name_tree(self, project, user, loc_set_name):
         """
         Gets and/or creates designated location set name with a new project,
         from the location set name provided, then creates all location formats
@@ -56,13 +56,13 @@ class LocationSetNameManager(models.Manager):
 
             if created:
                 node_list.append(obj)
+                kwargs = {}
+                kwargs['creator'] = user
+                kwargs['updater'] = user
 
                 for fmt_obj in loc_set_name.location_formats.all():
-                    kwargs = {}
                     kwargs['segment_order'] = fmt_obj.segment_order
                     kwargs['description'] = fmt_obj.description
-                    kwargs['creator'] = user
-                    kwargs['updater'] = user
                     node, created = LocationFormat.objects.get_or_create(
                         location_set_name=obj,
                         char_definition=fmt_obj.char_definition,
