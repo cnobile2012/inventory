@@ -5,14 +5,14 @@
 
 from django.conf.urls import include, url
 
-from inventory.categories.api import views
+from .views import category_list, category_detail, category_clone_list
 
 
 urlpatterns = [
-    url(r'categories/$', views.category_list,
+    url(r'categories/$', category_list,
         name="category-list"),
-    url(r'category/(?P<public_id>\w+)/$', views.category_detail,
+    url(r'category/(?P<public_id>\w+)/$', category_detail,
         name="category-detail"),
-    url(r'category-clone/$', views.category_clone_list,
+    url(r'category-clone/$', category_clone_list,
         name='category-clone-list'),
     ]

@@ -68,9 +68,9 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# CloneListSerializer
+# CategoryCloneListSerializer
 #
-class CloneListSerializer(serializers.ListSerializer):
+class CategoryCloneListSerializer(serializers.ListSerializer):
 
     def to_representation(self, data):
         """
@@ -112,7 +112,7 @@ class CategoryItemSerializer(serializers.Serializer):
         model = Category
         fields = ('name', 'path', 'uri',)
         read_only_fields = ('name', 'path', 'uri',)
-        list_serializer_class = CloneListSerializer
+        list_serializer_class = CategoryCloneListSerializer
 
 
 #
