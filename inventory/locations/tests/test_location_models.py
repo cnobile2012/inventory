@@ -249,10 +249,8 @@ class TestLocationSetNameModel(BaseLocation):
             msg = "Created Object: {}".format(obj)
             self.assertFalse(obj, msg)
 
-        msg = "Exception: {}".format(cm.exception)
-        messages = [msg for msg in cm.exception.messages
-                    if "Ensure this value has at most 3 characters " in msg]
-        self.assertTrue(messages, msg)
+        messages = "Ensure this value has at most 3 characters "
+        self.assertTrue(self._has_error(cm.exception, message=message))
 
 
 class TestLocationFormatModel(BaseLocation):
@@ -341,9 +339,7 @@ class TestLocationFormatModel(BaseLocation):
                 msg = "Created object: {}".format(obj)
                 self.assertFalse(obj, msg)
 
-            msg = "Exception: {}".format(cm.exception)
-            messages = [msg for msg in cm.exception.messages if message in msg]
-            self.assertTrue(messages, msg)
+            self.assertTrue(self._has_error(cm.exception, message=message))
 
 
 class TestLocationCodeModel(BaseLocation):
@@ -612,10 +608,8 @@ class TestLocationCodeModel(BaseLocation):
                 msg = "Created object: {}".format(code_0)
                 self.assertFalse(obj, msg)
 
-            msg = "Exception: {}".format(cm.exception)
-            messages = [msg for msg in cm.exception.messages
-                        if "does not conform to" in msg]
-            self.assertTrue(messages, msg)
+            messages = "does not conform to"
+            self.assertTrue(self._has_error(cm.exception, message=message))
 
     def test_segment_not_parent_to_itself(self):
         """
@@ -632,8 +626,8 @@ class TestLocationCodeModel(BaseLocation):
             msg = "Created object: {}".format(code_1)
             self.assertFalse(code_1, msg)
 
-        msg = "Exception: {}".format(cm.exception)
-        self.assertTrue("child to itself." in cm.exception.messages[0], msg)
+        message = "child to itself."
+        self.assertTrue(self._has_error(cm.exception, message=message))
 
     def test_segments_have_same_location_set_name(self):
         """
@@ -665,9 +659,8 @@ class TestLocationCodeModel(BaseLocation):
             msg = "Created object: {}".format(code_1)
             self.assertFalse(code_1, msg)
 
-        msg = "Exception: {}".format(cm.exception)
-        self.assertTrue("same location set name." in cm.exception.messages[0],
-                        msg)
+        message = "same location set name."
+        self.assertTrue(self._has_error(cm.exception, message=message))
 
     def test_number_segments_number_formats(self):
         """
@@ -694,9 +687,8 @@ class TestLocationCodeModel(BaseLocation):
             msg = "Created Object: {}".format(code_2)
             self.assertFalse(code_2, msg)
 
-        msg = "Exception: {}".format(cm.exception)
-        self.assertTrue("There are more segments " in cm.exception.messages[0],
-                        msg)
+        message = "There are more segments "
+        self.assertTrue(self._has_error(cm.exception, message=message))
 
     def test_fix_path_in_children(self):
         """
