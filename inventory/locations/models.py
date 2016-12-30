@@ -117,6 +117,34 @@ class LocationSetNameManager(models.Manager):
 
         return deleted_nodes
 
+    def get_location_set(self, project, set_name, with_set_name=True,
+                         with_root=False):
+        """
+        Return a list of location formats with the location set name is
+        `with_root` is `True`.
+        """
+        if set_name.project != project or not set_name.project.public:
+            msg = _("The location set '{0}' is not in the '{1}' project "
+                    "or the '{0}' project is not public."
+                    ).format(set_name, project)
+            raise ValueError(msg)
+
+        formats = set_name.location_formats.all()
+
+        if not with_root:
+            formats = formats.exclude(char_definition=LocationCode.ROOT_NAME)
+
+        formats = list(formats)
+
+        if with_set_name:
+            nodes = []
+            nodes.append(set_name)
+            nodes.extend(formats)
+        else:
+            nodes = formats
+
+        return nodes
+
 
 @python_2_unicode_compatible
 class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):

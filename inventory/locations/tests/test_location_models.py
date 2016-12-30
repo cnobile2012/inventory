@@ -188,6 +188,51 @@ class TestLocationSetNameModel(BaseLocation):
             code_root, code_0, code_1, code_2)
         self.assertEqual(LocationCode.objects.count(), 0, msg)
 
+    def test_get_location_set(self):
+        """
+        Test that the `get_location_set` returns the correct items.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a location default and tree.
+        name = "Test Location Set Name"
+        desc = "Test description."
+        loc_set_name, fmt_root, fmt_0, fmt_1, fmt_2 = self.setup_set_name_tree(
+            self.project, name, desc, LocationSetName.YES)
+        # Test that there are one set name and three formats.
+        items = LocationSetName.objects.get_location_set(
+            self.project, loc_set_name)
+        msg = "Found {} items, should be 4".format(len(items))
+        self.assertEqual(len(items), 4, msg)
+        # Test that the root format is not included.
+        items = LocationSetName.objects.get_location_set(
+        self.project, loc_set_name, with_root=True)
+        msg = "Found {} items, should be 5".format(len(items))
+        self.assertEqual(len(items), 5, msg)
+        # Test that the set_name is not in items.
+        items = LocationSetName.objects.get_location_set(
+        self.project, loc_set_name, with_set_name=False)
+        msg = "Found {} items, should be 3".format(len(items))
+        self.assertEqual(len(items), 3, msg)
+
+    def test_get_location_set_with_invalid_project(self):
+        """
+        Test that an invalid project cannot access location set items.
+        """
+        # Create a location default and tree.
+        name = "Test Location Set Name"
+        desc = "Test description."
+        loc_set_name, fmt_root, fmt_0, fmt_1, fmt_2 = self.setup_set_name_tree(
+            self.project, name, desc, LocationSetName.YES)
+        # Create another project.
+        project = self._create_project(self.inventory_type,
+                                       name="2nd Test Project")
+        # Test invalid project.
+        with self.assertRaises(ValueError) as cm:
+            LocationSetName.objects.get_location_set(project, loc_set_name)
+
+        message = " is not in the "
+        self.assertTrue(self._has_error(cm.exception, message=message))
+
     def test_length_of_separator(self):
         """
         Test that the length of the separator is not longer than the defined
