@@ -13,6 +13,7 @@ from rest_framework import status
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.locations.models import (
     LocationSetName, LocationFormat, LocationCode)
+from inventory.projects.models import Membership
 
 UserModel = get_user_model()
 
@@ -345,28 +346,6 @@ class TestLocationSetNameAPI(BaseTest):
         self._test_errors(response, tests={
             'separator': "Ensure this field has no more than 3 characters.",
             })
-
-class TestLocationSetNameCloneAPI(BaseTest):
-
-    def __init__(self, name):
-        super(TestLocationSetNameCloneAPI, self).__init__(name)
-
-    def setUp(self):
-        super(TestLocationSetNameCloneAPI, self).setUp()
-        # Create an InventoryType and Project.
-        self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
-        #kwargs = {'public_id': self.project.public_id}
-        #self.project_uri = reverse('project-detail', kwargs=kwargs)
-        self.location_set_name = self._create_location_set_name(self.project)
-        kwargs = {'public_id': self.location_set_name.public_id}
-        self.location_set_name_uri = reverse('location-set-name-detail',
-                                             kwargs=kwargs)
-
-
-
-
-
 
 
 class TestLocationFormatAPI(BaseTest):
@@ -1196,3 +1175,417 @@ class TestLocationCodeAPI(BaseTest):
             'segment': ("Segment is '{}', This is an unalterable root "
                         "location.").format(LocationCode.ROOT_NAME)
             })
+
+
+class TestLocationSetNameCloneAPI(BaseTest):
+
+    def __init__(self, name):
+        super(TestLocationSetNameCloneAPI, self).__init__(name)
+
+    def setUp(self):
+        super(TestLocationSetNameCloneAPI, self).setUp()
+        # Create an InventoryType and Project.
+        self.in_type = self._create_inventory_type()
+        self.project = self._create_project(self.in_type, members=[self.user])
+        #kwargs = {'public_id': self.project.public_id}
+        #self.project_uri = reverse('project-detail', kwargs=kwargs)
+        self.location_set_name = self._create_location_set_name(self.project)
+        kwargs = {'public_id': self.location_set_name.public_id}
+        self.location_set_name_uri = reverse('location-set-name-detail',
+                                             kwargs=kwargs)
+        self.location_format = self._create_location_format(
+            self.location_set_name, 'A\d\d')
+
+    def test_GET_location_clone_with_invalid_permissions(self):
+        """
+        Test the location_clone endpoint fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['location_set_name'] = self.location_set_name.public_id
+        su['project'] = self.project.public_id
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.all()
+        loc_fmts = LocationFormat.objects.all()
+
+    def test_GET_location_clone_with_valid_permissions(self):
+        """
+        Test the location_clone endpoint passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['location_set_name'] = self.location_set_name.public_id
+        su['project'] = self.project.public_id
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_valid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_valid_permissions(
+            uri, method, request_data=data)
+
+    def test_GET_location_clone_with_parameters(self):
+        """
+        Test the location_clone endpoint with various parameters.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        location_code = self._create_location_code(self.location_format, "A01")
+        self.project.process_members([self.user])
+        uri = reverse('location-clone')
+        data = {}
+        data['location_set_name'] = self.location_set_name.public_id
+        data['project'] = self.project.public_id
+        # Test with default arguments.
+        response = self.client.get(uri, data=data, format='json',
+                                   **self._HEADERS)
+        msg = ("data: {}, found '{}' records , should be 2 records"
+               ).format(response.data, len(response.data))
+        self.assertEqual(len(response.data), 2, msg)
+        # Test with with_set_name=False
+        data['with_set_name'] = False
+        response = self.client.get(uri, data=data, format='json',
+                                   **self._HEADERS)
+        msg = ("data: {}, found '{}' records , should be 1 records"
+               ).format(response.data, len(response.data))
+        self.assertEqual(len(response.data), 1, msg)
+        # Test with with_root=True and with_set_name=True
+        data['with_set_name'] = True
+        data['with_root'] = True
+        response = self.client.get(uri, data=data, format='json',
+                                   **self._HEADERS)
+        msg = ("data: {}, found '{}' records , should be 3 records"
+               ).format(response.data, len(response.data))
+        self.assertEqual(len(response.data), 3, msg)
+
+    def test_POST_location_clone_with_invalid_permissions(self):
+        """
+        Test the location_clone endpoint fails with invalid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        project = self._create_project(self.in_type, name="Test Project_1")
+        project.process_members([self.user])
+        uri = reverse('location-clone')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['location_set_name'] = self.location_set_name.public_id
+        su['project'] = project.public_id
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat records, "
+               "should be 0 and 0 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 0
+                        and loc_fmts.count() == 0, msg)
+
+    def test_POST_location_clone_with_valid_permissions_superuser(self):
+        """
+        Test the location_clone endpoint passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        project = self._create_project(self.in_type, name="Test Project_1")
+        project.process_members([self.user])
+        uri = reverse('location-clone')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['location_set_name'] = self.location_set_name.public_id
+        su['project'] = project.public_id
+        self._test_superuser_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 1 and 2 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 1
+                        and loc_fmts.count() == 2, msg)
+
+    def test_POST_location_clone_with_valid_permissions_administrator(self):
+        """
+        Test the location_clone endpoint passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        project = self._create_project(self.in_type, name="Test Project_1")
+        project.process_members([self.user])
+        uri = reverse('location-clone')
+        data = {}
+        ad = data.setdefault('AD', {})
+        ad['location_set_name'] = self.location_set_name.public_id
+        ad['project'] = project.public_id
+        self._test_administrator_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 1 and 2 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 1
+                        and loc_fmts.count() == 2, msg)
+
+    def test_POST_location_clone_with_valid_permissions_project_owner(self):
+        """
+        Test the location_clone endpoint passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        # Create a new user and project
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        project = self._create_project(self.in_type, name="Test Project_1")
+        project.process_members([user])
+        # Test project owner
+        uri = reverse('location-clone')
+        data = {}
+        pow = data.setdefault('POW', {})
+        pow['location_set_name'] = self.location_set_name.public_id
+        pow['project'] = project.public_id
+        self._test_project_owner_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 1 and 2 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 1
+                        and loc_fmts.count() == 2, msg)
+
+    def test_POST_location_clone_with_valid_permissions_project_manager(self):
+        """
+        Test the location_clone endpoint passes with valid permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'post'
+        # Create a new user and project
+        kwargs = self._setup_user_credentials()
+        user, client = self._create_user(**kwargs)
+        project = self._create_project(self.in_type, name="Test Project_1")
+        project.process_members([user])
+        # Test project owner
+        uri = reverse('location-clone')
+        data = {}
+        pma = data.setdefault('PMA', {})
+        pma['location_set_name'] = self.location_set_name.public_id
+        pma['project'] = project.public_id
+        self._test_project_manager_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 1 and 2 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 1
+                        and loc_fmts.count() == 2, msg)
+
+    def test_DELETE_location_clone_with_invalid_permissions(self):
+        """
+        Test the category_clone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['location_set_name'] = self.location_set_name.public_id
+        su['project'] = self.project.public_id
+        data.setdefault('AD', su.copy())
+        data.setdefault('DU', su.copy())
+        self._test_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        data.setdefault('POW', su.copy())
+        data.setdefault('PMA', su.copy())
+        data.setdefault('PDU', su.copy())
+        self._test_project_users_with_invalid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=self.project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=self.project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 1 and 2 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 1
+                        and loc_fmts.count() == 2, msg)
+
+    def test_DELETE_location_clone_with_valid_permissions_superuser(self):
+        """
+        Test the category_clone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        su = data.setdefault('SU', {})
+        su['location_set_name'] = self.location_set_name.public_id
+        su['project'] = self.project.public_id
+        self._test_superuser_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=self.project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=self.project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 0 and 0 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 0
+                        and loc_fmts.count() == 0, msg)
+
+    def test_DELETE_location_clone_with_valid_permissions_administrator(self):
+        """
+        Test the category_clone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        ad = data.setdefault('AD', {})
+        ad['location_set_name'] = self.location_set_name.public_id
+        ad['project'] = self.project.public_id
+        self._test_administrator_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=self.project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=self.project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 0 and 0 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 0
+                        and loc_fmts.count() == 0, msg)
+
+    def test_DELETE_location_clone_with_valid_permissions_project_owner(self):
+        """
+        Test the category_clone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        pow = data.setdefault('POW', {})
+        pow['location_set_name'] = self.location_set_name.public_id
+        pow['project'] = self.project.public_id
+        self._test_project_owner_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=self.project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=self.project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 0 and 0 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 0
+                        and loc_fmts.count() == 0, msg)
+
+    def test_DELETE_location_clone_with_valid_permissions_project_manager(self):
+        """
+        Test the category_clone_list endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'delete'
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        pma = data.setdefault('PMA', {})
+        pma['location_set_name'] = self.location_set_name.public_id
+        pma['project'] = self.project.public_id
+        self._test_project_manager_with_valid_permissions(
+            uri, method, request_data=data)
+        loc_set_name = LocationSetName.objects.filter(project=self.project)
+        loc_fmts = LocationFormat.objects.filter(
+            location_set_name__project=self.project)
+        msg = ("Found '{}' LocationSetName, and '{}' LocationFormat "
+               "records, should be 0 and 0 records").format(
+                   loc_set_name.count(), loc_fmts.count())
+        self.assertTrue(loc_set_name.count() == 0
+                        and loc_fmts.count() == 0, msg)
+
+    def test_location_clone_serializer_validation_errors_on_project(self):
+        """
+        Test that invalid data causes validation errors.
+        """
+        #self.skipTest("Temporarily skipped")
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        data['location_set_name'] = self.location_set_name.public_id
+        data['project'] = 'junk'
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.PROJECT_USER)
+        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response, error_key='project'), msg)
+        self._test_errors(response, tests={
+            'project': "A project with the public_id 'junk' does not exist.",
+            })
+
+    def test_location_clone_serializer_validation_errors_on_location_set(self):
+        """
+        Test that invalid data causes validation errors.
+        """
+        #self.skipTest("Temporarily skipped")
+        location_code = self._create_location_code(self.location_format, "A01")
+        uri = reverse('location-clone')
+        data = {}
+        data['location_set_name'] = 'junk'
+        data['project'] = self.project.public_id
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.process_members([self.user, user])
+        self.project.set_role(user, Membership.PROJECT_USER)
+        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(
+            response, error_key='location_set_name'), msg)
+        self._test_errors(response, tests={
+            'location_set_name': "Location set name 'junk' could not be found."
+            })
+
+

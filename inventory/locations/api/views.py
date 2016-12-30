@@ -7,11 +7,13 @@ import logging
 
 from django.contrib.auth import get_user_model
 
+from rest_framework import status
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView)
+from rest_framework.mixins import DestroyModelMixin, CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers
-
+from rest_framework.response import Response
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -26,7 +28,8 @@ from ..models import LocationSetName, LocationFormat, LocationCode
 
 from .serializers import (
     LocationSetNameSerializer, LocationFormatSerializer,
-    LocationCodeSerializer)
+    LocationCodeSerializer, LocationCloneSerializer,
+    LocationSetNameItemSerializer, LocationFormatItemSerializer)
 
 log = logging.getLogger('api.locations.views')
 UserModel = get_user_model()
@@ -228,3 +231,96 @@ class LocationCodeDetail(LocationCodeAuthorizationMixin,
     lookup_field = 'public_id'
 
 location_code_detail = LocationCodeDetail.as_view()
+
+
+#
+# LocationClone
+#
+class LocationClone(TrapDjangoValidationErrorCreateMixin,
+                    CreateModelMixin,
+                    DestroyModelMixin,
+                    GenericAPIView):
+    """
+    Retrives, clones, and deletes location sets.
+    """
+    serializer_class = LocationCloneSerializer
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               IsProjectOwner,
+               IsProjectManager,
+               And(IsProjectDefaultUser, IsReadOnly)
+               ),
+            ),
+        )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        input_serializer = self.get_serializer(data=request.query_params)
+        input_serializer.is_valid(raise_exception=True)
+        queryset = self.get_queryset(**input_serializer.validated_data)
+        result = []
+
+        for instance in queryset:
+            if isinstance(instance, LocationSetName):
+                serializer = LocationSetNameItemSerializer(
+                    instance, many=False, context={'request': request})
+                result.append(serializer.data)
+            else:
+                serializer = LocationFormatItemSerializer(
+                    instance, many=False, context={'request': request})
+                result.append(serializer.data)
+
+        return Response(result)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        input_serializer = self.get_serializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        # Create the object tree
+        data_list = input_serializer.create(input_serializer.validated_data)
+        result = []
+
+        for instance in data_list:
+            if isinstance(instance, LocationSetName):
+                serializer = LocationSetNameItemSerializer(
+                    instance, many=False, context={'request': request})
+            else:
+                serializer = LocationFormatItemSerializer(
+                    instance, many=False, context={'request': request})
+                result.append(serializer.data)
+
+        headers = self.get_success_headers(result)
+        return Response(result, status=status.HTTP_201_CREATED,
+                        headers=headers)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        input_serializer = self.get_serializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        input_serializer.validated_data['with_set_name'] = True
+        input_serializer.validated_data['with_root'] = True
+        queryset = self.get_queryset(**input_serializer.validated_data)
+
+        for instance in queryset:
+            self.perform_destroy(instance)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_queryset(self, **kwargs):
+        project = kwargs.get('project')
+        location_set_name = kwargs.get('location_set_name')
+        with_set_name = kwargs.get('with_set_name')
+        with_root = kwargs.get('with_root')
+        return LocationSetName.objects.get_location_set(
+            project, location_set_name, with_set_name=with_set_name,
+            with_root=with_root)
+
+location_clone = LocationClone.as_view()

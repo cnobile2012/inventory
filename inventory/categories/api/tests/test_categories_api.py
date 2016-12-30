@@ -637,7 +637,7 @@ class TestCategoryCloneAPI(BaseTest):
             categories, categories.count())
         self.assertEqual(categories.count(), 0, msg)
 
-    def test_serializer_validation_errors_on_project(self):
+    def test_category_clone_serializer_validation_errors_on_project(self):
         """
         Test that invalid data causes validation errors.
         """
@@ -667,7 +667,7 @@ class TestCategoryCloneAPI(BaseTest):
             'project': "A project with the public_id 'junk' does not exist.",
             })
 
-    def test_serializer_validation_errors_on_categories(self):
+    def test_category_clone_serializer_validation_errors_on_categories(self):
         """
         Test that invalid data causes validation errors.
         """

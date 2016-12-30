@@ -171,3 +171,78 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
                   'updated', 'uri',)
         read_only_fields = ('id', 'path', 'level', 'items', 'creator',
                             'created', 'updater', 'updated',)
+
+
+#
+# LocationSetNameItemSerializer
+#
+class LocationSetNameItemSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    description = serializers.CharField(max_length=1000)
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='location-set-name-detail', lookup_field='public_id')
+
+    class Meta:
+        model =  LocationSetName
+        fields = ('name', 'description', 'uri',)
+        read_only_fields = ('name', 'description', 'uri',)
+
+
+#
+# LocationFormatItemSerializer
+#
+class LocationFormatItemSerializer(serializers.Serializer):
+    char_definition = serializers.CharField(max_length=250)
+    description = serializers.CharField(max_length=1000)
+    uri = serializers.HyperlinkedIdentityField(
+        view_name='location-format-detail', lookup_field='public_id')
+
+    class Meta:
+        model =  LocationSetName
+        fields = ('char_definition', 'description', 'uri',)
+        read_only_fields = ('char_definition', 'description', 'uri',)
+
+
+#
+# LocationCloneSerializer
+#
+class LocationCloneSerializer(SerializerMixin, serializers.Serializer):
+    project = serializers.CharField(max_length=30)
+    location_set_name = serializers.CharField(max_length=250)
+    with_set_name = serializers.BooleanField(default=True)
+    with_root = serializers.BooleanField(default=False)
+
+    def validate_project(self, value):
+        try:
+            project = Project.objects.get(public_id=value)
+        except Project.DoesNotExist:
+            msg = _("A project with the {} '{}' does not exist.").format(
+                "public_id", value)
+            raise serializers.ValidationError(msg)
+        else:
+            return project
+
+    def validate(self, data):
+        project = data.get('project')
+        location_set_name = data.get('location_set_name')
+        request = self.get_request()
+
+        try:
+            data['location_set_name'] = LocationSetName.objects.get(
+                public_id=location_set_name)
+        except LocationSetName.DoesNotExist:
+            msg = _("Location set name '{}' could not be found.").format(
+                location_set_name)
+            raise serializers.ValidationError({'location_set_name': msg})
+
+        return data
+
+    def create(self, validated_data):
+        user = self.get_user_object()
+        project = validated_data.get('project')
+        location_set_name = validated_data.get('location_set_name')
+        return LocationSetName.objects.clone_set_name_tree(
+            project, user, location_set_name)
+
+    class Meta:
+        fields = ('project', 'location_set_name',)

@@ -92,6 +92,8 @@ def api_root(request, format=None):
         'location-format-list', request=request, format=format)
     locations['location-code'] = reverse(
         'location-code-list', request=request, format=format)
+    locations['location-clone'] = reverse(
+        'location-clone', request=request, format=format)
     # Projects
     projects = items.setdefault('projects', OrderedDict())
     projects['inventory-type-list'] = reverse(

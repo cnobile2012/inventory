@@ -249,7 +249,7 @@ class TestLocationSetNameModel(BaseLocation):
             msg = "Created Object: {}".format(obj)
             self.assertFalse(obj, msg)
 
-        messages = "Ensure this value has at most 3 characters "
+        message = "Ensure this value has at most 3 characters "
         self.assertTrue(self._has_error(cm.exception, message=message))
 
 
@@ -601,6 +601,7 @@ class TestLocationCodeModel(BaseLocation):
         """
         #self.skipTest("Temporarily skipped")
         segments = ('T:01', 'S01')
+        message = "does not conform to"
 
         for segment in segments:
             with self.assertRaises(ValidationError) as cm:
@@ -608,7 +609,6 @@ class TestLocationCodeModel(BaseLocation):
                 msg = "Created object: {}".format(code_0)
                 self.assertFalse(obj, msg)
 
-            messages = "does not conform to"
             self.assertTrue(self._has_error(cm.exception, message=message))
 
     def test_segment_not_parent_to_itself(self):

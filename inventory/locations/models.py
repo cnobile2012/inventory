@@ -35,7 +35,7 @@ log = logging.getLogger('inventory.locations.models')
 #
 class LocationSetNameManager(models.Manager):
 
-    def clone_set_name_tree(self, project, user, loc_set_name):
+    def clone_set_name_tree(self, project, user, loc_set):
         """
         Gets and/or creates designated location set name with a new project,
         from the location set name provided, then creates all location formats
@@ -44,15 +44,16 @@ class LocationSetNameManager(models.Manager):
         """
         node_list = []
 
-        if loc_set_name.shared and project.has_authority(user):
+        # loc_set is cloned object and project is the clone to object.
+        if loc_set.shared and project.has_authority(user):
             kwargs = {}
-            kwargs['description'] = loc_set_name.description
-            kwargs['shared'] = loc_set_name.shared
-            kwargs['separator'] = loc_set_name.separator
+            kwargs['description'] = loc_set.description
+            kwargs['shared'] = loc_set.shared
+            kwargs['separator'] = loc_set.separator
             kwargs['creator'] = user
             kwargs['updater'] = user
             obj, created = self.get_or_create(
-                project=project, name=loc_set_name.name, defaults=kwargs)
+                project=project, name=loc_set.name, defaults=kwargs)
 
             if created:
                 node_list.append(obj)
@@ -60,7 +61,7 @@ class LocationSetNameManager(models.Manager):
                 kwargs['creator'] = user
                 kwargs['updater'] = user
 
-                for fmt_obj in loc_set_name.location_formats.all():
+                for fmt_obj in loc_set.location_formats.all():
                     kwargs['segment_order'] = fmt_obj.segment_order
                     kwargs['description'] = fmt_obj.description
                     node, created = LocationFormat.objects.get_or_create(
@@ -76,13 +77,13 @@ class LocationSetNameManager(models.Manager):
         else:
             msg = _("To clone the '{}' location objects they must be shared "
                     "and the user must have authority."
-                    ).format(loc_set_name.name)
+                    ).format(loc_set.name)
             log.error(msg)
             raise ValueError(msg)
 
         return node_list
 
-    def delete_set_name_tree(self, project, loc_set_name, user):
+    def delete_set_name_tree(self, project, loc_set, user):
         """
         Deletes the set name tree starting with any location code objects,
         continuing with location format objects, then deleting the location
@@ -91,7 +92,7 @@ class LocationSetNameManager(models.Manager):
         """
         deleted_nodes = []
 
-        for fmt in loc_set_name.location_formats.all():
+        for fmt in loc_set.location_formats.all():
             child_nodes = []
 
             for code in fmt.location_codes.all():
@@ -101,8 +102,8 @@ class LocationSetNameManager(models.Manager):
             fmt.delete()
             deleted_nodes.append(fmt_obj)
 
-        deleted_nodes.insert(0, loc_set_name.name)
-        loc_set_name.delete()
+        deleted_nodes.insert(0, loc_set.name)
+        loc_set.delete()
         return deleted_nodes
 
     def _recurse_children(self, child):
@@ -229,16 +230,16 @@ def set_root_objects(sender, **kwargs):
 #
 class LocationFormatManager(models.Manager):
 
-    def get_root_format(self, loc_set_name):
+    def get_root_format(self, loc_set):
         """
         Returnds the auto generated root LocationFormat object.
         """
         try:
-            return self.get(location_set_name=loc_set_name,
+            return self.get(location_set_name=loc_set,
                             char_definition=LocationCode.ROOT_NAME)
         except self.model.DoesNotExist:
             msg = _("Root format does not exist for set name '{}'."
-                    ).format(loc_set_name)
+                    ).format(loc_set)
             log.error(msg)
             raise self.model.DoesNotExist(msg)
 
@@ -318,11 +319,11 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
 #
 class LocationCodeManager(models.Manager):
 
-    def get_root_code(self, loc_set_name):
+    def get_root_code(self, loc_set):
         """
         Returns the auto generated root LocationFormat object.
         """
-        loc_fmt = LocationFormat.objects.get_root_format(loc_set_name)
+        loc_fmt = LocationFormat.objects.get_root_format(loc_set)
         return loc_fmt.location_codes.get(segment=self.model.ROOT_NAME)
 
     def get_parents(self, project, code):

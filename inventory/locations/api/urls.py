@@ -7,7 +7,7 @@ from django.conf.urls import include, url
 
 from .views import (location_set_name_list, location_set_name_detail,
                     location_format_list, location_format_detail,
-                    location_code_list, location_code_detail)
+                    location_code_list, location_code_detail, location_clone)
 
 
 urlpatterns = [
@@ -23,4 +23,5 @@ urlpatterns = [
         name='location-code-list'),
     url(r'location-code/(?P<public_id>\w+)/$', location_code_detail,
         name='location-code-detail'),
+    url(r'location-clone/$', location_clone, name='location-clone'),
     ]
