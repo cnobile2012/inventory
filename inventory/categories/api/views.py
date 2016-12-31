@@ -99,10 +99,10 @@ category_detail = CategoryDetail.as_view()
 #
 # CategoryClone
 #
-class CategoryCloneList(TrapDjangoValidationErrorCreateMixin,
-                        CreateModelMixin,
-                        DestroyModelMixin,
-                        GenericAPIView):
+class CategoryClone(TrapDjangoValidationErrorCreateMixin,
+                    CreateModelMixin,
+                    DestroyModelMixin,
+                    GenericAPIView):
     """
     Retrives, clones, and deletes lists of categories.
     """
@@ -185,6 +185,8 @@ class CategoryCloneList(TrapDjangoValidationErrorCreateMixin,
     def get_queryset(self, **kwargs):
         project = kwargs.get('project')
         categories = kwargs.get('categories')
-        return Category.objects.get_child_tree_from_list(project, categories)
+        with_root = kwargs.get('with_root')
+        return Category.objects.get_child_tree_from_list(
+            project, categories, with_root=with_root)
 
-category_clone_list = CategoryCloneList.as_view()
+category_clone = CategoryClone.as_view()

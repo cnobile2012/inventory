@@ -478,14 +478,29 @@ class TestCategoryCloneAPI(BaseTest):
         kwargs = {'public_id': self.project.public_id}
         self.project_uri = reverse('project-detail', kwargs=kwargs)
 
-    def test_GET_category_clone_list_with_invalid_permissions(self):
+    def flatten(self, items):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Given a list, possibly nested to any level, return it flattened.
+        http://code.activestate.com/recipes/578948-flattening-an-arbitrarily-nested-list-in-python/
+        """
+        flattened = []
+
+        for item in items:
+            if isinstance(item, list):
+                flattened.extend(self.flatten(item))
+            else:
+                flattened.append(item)
+
+        return flattened
+
+    def test_GET_category_clone_with_invalid_permissions(self):
+        """
+        Test the category_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
         category = self._create_category(self.project, "Test Root Category")
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
         su['categories'] = [category.public_id]
@@ -500,9 +515,9 @@ class TestCategoryCloneAPI(BaseTest):
         self._test_project_users_with_invalid_permissions(
             uri, method, request_data=data)
 
-    def test_GET_category_clone_list_with_valid_permissions(self):
+    def test_GET_category_clone_with_valid_permissions(self):
         """
-        Test the category_clone_list endpoint with valid permissions.
+        Test the category_clone endpoint with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -510,7 +525,7 @@ class TestCategoryCloneAPI(BaseTest):
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
         su['categories'] = [categories[0][0].public_id] # 'TestLevel-0'
@@ -525,15 +540,45 @@ class TestCategoryCloneAPI(BaseTest):
         self._test_project_users_with_valid_permissions(
             uri, method, request_data=data)
 
-    def test_POST_category_clone_list_with_invalid_permissions(self):
+    def test_GET_category_clone_with_parameters(self):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Test the location_clone endpoint with various parameters.
+        """
+        #self.skipTest("Temporarily skipped")
+        method = 'get'
+        create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
+                                        ('TestLevel-1a', 'TestLevel-2a',))]]
+        categories = Category.objects.create_category_tree(
+            self.project, self.user, create_list)
+        uri = reverse('category-clone')
+        data = {}
+        data['categories'] = [categories[0][0].public_id] # 'TestLevel-0'
+        data['project'] = self.project.public_id
+        # Test with default arguments.
+        response = self.client.get(uri, data=data, format='json',
+                                   **self._HEADERS)
+        res_data = self.flatten(response.data)
+        msg = ("data: {}, found '{}' records , should be 5 records"
+               ).format(res_data, len(res_data))
+        self.assertEqual(len(res_data), 5, msg)
+        # Test with with_root=False
+        data['with_root'] = False
+        response = self.client.get(uri, data=data, format='json',
+                                   **self._HEADERS)
+        res_data = self.flatten(response.data)
+        msg = ("data: {}, found '{}' records , should be 4 records"
+               ).format(res_data, len(res_data))
+        self.assertEqual(len(res_data), 4, msg)
+
+    def test_POST_category_clone_with_invalid_permissions(self):
+        """
+        Test the category_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
         su['categories'] = create_list
@@ -552,15 +597,15 @@ class TestCategoryCloneAPI(BaseTest):
             categories, categories.count())
         self.assertEqual(categories.count(), 0, msg)
 
-    def test_POST_category_clone_list_with_valid_permissions(self):
+    def test_POST_category_clone_with_valid_permissions(self):
         """
-        Test the category_clone_list endpoint with valid permissions.
+        Test the category_clone endpoint with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
         su['categories'] = create_list
@@ -579,9 +624,9 @@ class TestCategoryCloneAPI(BaseTest):
             categories, categories.count())
         self.assertEqual(categories.count(), 5, msg)
 
-    def test_DELETE_category_clone_list_with_invalid_permissions(self):
+    def test_DELETE_category_clone_with_invalid_permissions(self):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Test the category_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -589,7 +634,7 @@ class TestCategoryCloneAPI(BaseTest):
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
         su['categories'] = [categories[0][0].public_id]
@@ -608,9 +653,9 @@ class TestCategoryCloneAPI(BaseTest):
             categories, categories.count())
         self.assertEqual(categories.count(), 5, msg)
 
-    def test_DELETE_category_clone_list_with_valid_permissions(self):
+    def test_DELETE_category_clone_with_valid_permissions(self):
         """
-        Test the category_clone_list endpoint with valid permissions.
+        Test the category_clone endpoint with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -618,7 +663,7 @@ class TestCategoryCloneAPI(BaseTest):
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
         su['categories'] = [categories[0][0].public_id]
@@ -646,7 +691,7 @@ class TestCategoryCloneAPI(BaseTest):
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         data['categories'] = [categories[0][0].public_id]
         data['project'] = 'junk'
@@ -676,7 +721,7 @@ class TestCategoryCloneAPI(BaseTest):
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
             self.project, self.user, create_list)
-        uri = reverse('category-clone-list')
+        uri = reverse('category-clone')
         data = {}
         data['categories'] = []
         data['project'] = self.project.public_id

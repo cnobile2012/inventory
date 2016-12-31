@@ -121,6 +121,7 @@ class CategoryItemSerializer(serializers.Serializer):
 class CategoryCloneSerializer(SerializerMixin, serializers.Serializer):
     project = serializers.CharField(max_length=30)
     categories = serializers.ListField()
+    with_root = serializers.BooleanField(default=True)
 
     def validate_project(self, value):
         try:

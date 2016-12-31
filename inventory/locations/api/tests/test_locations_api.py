@@ -1413,7 +1413,7 @@ class TestLocationSetNameCloneAPI(BaseTest):
 
     def test_DELETE_location_clone_with_invalid_permissions(self):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Test the location_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -1443,7 +1443,7 @@ class TestLocationSetNameCloneAPI(BaseTest):
 
     def test_DELETE_location_clone_with_valid_permissions_superuser(self):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Test the location_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -1466,7 +1466,7 @@ class TestLocationSetNameCloneAPI(BaseTest):
 
     def test_DELETE_location_clone_with_valid_permissions_administrator(self):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Test the location_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -1489,7 +1489,7 @@ class TestLocationSetNameCloneAPI(BaseTest):
 
     def test_DELETE_location_clone_with_valid_permissions_project_owner(self):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Test the location_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -1512,7 +1512,7 @@ class TestLocationSetNameCloneAPI(BaseTest):
 
     def test_DELETE_location_clone_with_valid_permissions_project_manager(self):
         """
-        Test the category_clone_list endpoint with no permissions.
+        Test the location_clone endpoint with no permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'

@@ -73,7 +73,7 @@ def api_root(request, format=None):
     categories['categories'] = reverse(
         'category-list', request=request, format=format)
     categories['category-clone'] = reverse(
-        'category-clone-list', request=request, format=format)
+        'category-clone', request=request, format=format)
     # Invoices
     invoices = items.setdefault('invoices', OrderedDict())
     invoices['conditions'] = reverse(

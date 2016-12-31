@@ -5,7 +5,7 @@
 
 from django.conf.urls import include, url
 
-from .views import category_list, category_detail, category_clone_list
+from .views import category_list, category_detail, category_clone
 
 
 urlpatterns = [
@@ -13,6 +13,5 @@ urlpatterns = [
         name="category-list"),
     url(r'category/(?P<public_id>\w+)/$', category_detail,
         name="category-detail"),
-    url(r'category-clone/$', category_clone_list,
-        name='category-clone-list'),
+    url(r'category-clone/$', category_clone, name='category-clone'),
     ]
