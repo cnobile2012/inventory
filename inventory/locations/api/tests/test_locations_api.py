@@ -1587,5 +1587,3 @@ class TestLocationSetNameCloneAPI(BaseTest):
         self._test_errors(response, tests={
             'location_set_name': "Location set name 'junk' could not be found."
             })
-
-
