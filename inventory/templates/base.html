@@ -1,5 +1,4 @@
 {% load static %}
-{% load buster %}
 <!DOCTYPE HTML>
 <html>
   <head>
@@ -8,8 +7,9 @@
     <script src="{% static 'js/vender/lodash.min.js' %}"></script>
     <script src="{% static 'js/vender/jquery-3.1.1.min.js' %}"></script>
     <script src="{% static 'js/vender/backbone-min.js' %}"></script>
-    {% js_buster 'js/main.js' %}
-    {% css_buster 'css/common.css' %}
+    <script src="{% static 'js/main.js' %}"></script>
+    <link href="{% static 'css/common.css' %}" type="text/css" media="all"
+          rel="stylesheet" />
 {% block styles %}{% endblock %}
   </head>
   <body>

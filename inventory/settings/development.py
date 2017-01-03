@@ -9,6 +9,9 @@ from .base import *
 
 DEBUG = True
 
+ALLOWED_HOSTS.append('localhost')
+ALLOWED_HOSTS.append('192.168.1.107')
+
 DATABASES = {
     'default': {
         # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or

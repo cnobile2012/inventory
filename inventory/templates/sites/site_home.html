@@ -1,8 +1,10 @@
 {% extends "base.html" %}
-{% load buster %}
+{% load static %}
 {% block styles %}
-    {% css_buster 'css/site_header.css' %}
-    {% css_buster 'css/site_footer.css' %}
+    <link href="{% static 'css/site_header.css' %}" type="text/css" media="all"
+          rel="stylesheet" />
+    <link href="{% static 'css/site_footer.css' %}" type="text/css" media="all"
+          rel="stylesheet" />
 {% endblock %}
 {% block header %}{% include "includes/_header_site.html" %}{% endblock %}
 {% block content %}
