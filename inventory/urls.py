@@ -20,9 +20,6 @@ urlpatterns = [
     # Django Admin
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
-    # Web Site
-    url(r'^', include('inventory.sites.urls')),
-
     # API Site
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^dcolumns/', include('dcolumn.dcolumns.urls')),
@@ -34,6 +31,8 @@ urlpatterns = [
     url(r'^api/projects/', include('inventory.projects.api.urls')),
     url(r'^api/regions/', include('inventory.regions.api.urls')),
     url(r'^api/suppliers/', include('inventory.suppliers.api.urls')),
+    # Web Site
+    url(r'^', include('inventory.sites.urls')),
     ]
 
 if settings.DEBUG:
