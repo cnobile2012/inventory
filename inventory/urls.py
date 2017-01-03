@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
     # Web Site
+    url(r'^', include('inventory.sites.urls')),
 
     # API Site
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),

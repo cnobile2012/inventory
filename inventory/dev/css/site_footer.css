@@ -1,0 +1,23 @@
+#site-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 10px;
+  border: 1px solid;
+  padding: 2px;
+  height: 100px;
+}
+
+#site-footer div.site-footer-ct {
+  display: flex;
+  flex-direction: row;
+  margin: auto 0;
+}
+
+#site-footer div#footer-space {
+  width: 100px;
+}
+
+#site-footer div.site-footer-ct div {
+  margin: 4px;
+}

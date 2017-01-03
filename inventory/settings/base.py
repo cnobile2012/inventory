@@ -131,6 +131,7 @@ WSGI_APPLICATION = 'inventory.wsgi.application'
 AUTH_USER_MODEL = 'accounts.User'
 
 INSTALLED_APPS = [
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.admindocs',
@@ -139,16 +140,20 @@ INSTALLED_APPS = [
     #'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Plugins
     'dcolumn.dcolumns',
     'rest_framework',
     #'guardian',
+
+    # Apps
     'inventory.accounts',
     'inventory.categories',
-    #'inventory.dynamic_columns',
     'inventory.invoices',
     'inventory.locations',
     'inventory.projects',
     'inventory.regions',
+    'inventory.sites',
     'inventory.suppliers',
     ]
 

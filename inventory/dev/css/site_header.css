@@ -1,0 +1,35 @@
+#site-header {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  border: 1px solid;
+  padding: 2px;
+  height: 100px;
+}
+
+#site-header img {
+  display: block;
+}
+
+#site-header div#site-header-title {
+  width: 100%;
+  text-align: center;
+  font-family: 'Noto Sans';
+  font-weight: bold;
+  font-size: 300%;
+  font-size-adjust: 0.517;
+  /*font-stretch: condensed;*/
+  margin: auto;
+}
+
+#site-header div#login-info {
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+  min-width: 100px;
+}
+
+#site-header div#login-info div {
+  margin: auto 0 auto 0;
+}
+

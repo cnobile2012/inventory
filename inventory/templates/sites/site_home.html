@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load buster %}
+{% block styles %}
+    {% css_buster 'css/site_header.css' %}
+    {% css_buster 'css/site_footer.css' %}
+{% endblock %}
+{% block header %}{% include "includes/_header_site.html" %}{% endblock %}
+{% block content %}
+    <div id="content">
+    </div>
+{% endblock %}
+{% block footer %}{% include "includes/_footer_site.html" %}{% endblock %}
