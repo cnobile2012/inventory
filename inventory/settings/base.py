@@ -80,6 +80,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
     )
 
 # Make this unique, and don't share it with anybody.
@@ -142,6 +143,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Plugins
+    'compressor',
     'dcolumn.dcolumns',
     'rest_framework',
     #'guardian',
@@ -246,6 +248,10 @@ dcolumn_manager.register_css_containers(
         ('location_10', 'location-10'),
         ('location_11', 'location-11'),
         ))
+
+# django-compressor
+COMPRESS_ENABLED = True
+# End django-compressor
 
 # A sample logging configuration. The only tangible logging performed by this
 # configuration is to send an email to the site admins on every HTTP 500 error
