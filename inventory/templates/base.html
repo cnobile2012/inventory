@@ -1,4 +1,5 @@
 {% load static %}
+{% load compress %}
 <!DOCTYPE HTML>
 <html>
   <head>
@@ -7,10 +8,15 @@
     <script src="{% static 'js/vender/lodash.min.js' %}"></script>
     <script src="{% static 'js/vender/jquery-3.1.1.min.js' %}"></script>
     <script src="{% static 'js/vender/backbone-min.js' %}"></script>
+{% compress js %}
     <script src="{% static 'js/main.js' %}"></script>
+{% block js-extras %}{% endblock %}
+{% endcompress %}
+{% compress css %}
     <link href="{% static 'css/common.css' %}" type="text/css" media="all"
           rel="stylesheet" />
-{% block styles %}{% endblock %}
+{% block css-extras %}{% endblock %}
+{% endcompress %}
   </head>
   <body>
 {% block header %}{% endblock %}

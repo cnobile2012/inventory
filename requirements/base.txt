@@ -1,4 +1,5 @@
 django
+django-compressor
 django-dcolumns
 #django-filter
 #django-guardian
@@ -8,6 +9,7 @@ djangorestframework
 djangorestframework-xml
 djangorestframework-yaml
 
+csscompressor
 docutils
 dateutils
 python-dateutil

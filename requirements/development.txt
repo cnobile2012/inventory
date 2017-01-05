@@ -6,5 +6,4 @@ django_debug_toolbar
 django-extensions
 IPy
 
-slimit
 Sphinx
