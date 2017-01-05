@@ -63,6 +63,10 @@ DEBUG_TOOLBAR_CONFIG = {
     'DEBUG_TOOLBAR_PATCH_SETTINGS': False,
     }
 
+# django-compressor
+COMPRESS_ENABLED = False
+# End django-compressor
+
 # email settings
 EMAIL_HOST = 'localhost'
 EMAIL_HOST_USER = ''
