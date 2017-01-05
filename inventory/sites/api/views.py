@@ -1,5 +1,5 @@
 #
-# inventory/common/api/views.py
+# inventory/sites/api/views.py
 #
 
 from collections import OrderedDict
@@ -39,7 +39,7 @@ def api_root(request, format=None):
       5. `/?page=1`
         * Returns the first page of 25 items.
       6. `/?page=3&page_size=100`
-        * Returns 100 items in the third page.
+        * Returns the third page of 100 items.
 
     ## Notes:
       1. When access is done through a non-browser client use the `Accept`
