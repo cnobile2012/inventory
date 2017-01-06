@@ -1,12 +1,7 @@
 /*
- * login.js
+ * Inventory Login
  *
- * CVS/SVN Keywords
- *------------------------------
- * $Author: cnobile $
- * $Date: 2011-11-10 20:29:49 -0500 (Thu, 10 Nov 2011) $
- * $Revision: 54 $
- *------------------------------
+ * js/login.js
  */
 
 var Login = function() {
@@ -103,7 +98,6 @@ Login.prototype = {
 };
 
 
-$(document).ready(function() {
-  extend(Login, AjaxBase);
+if(!IS_AUTHENTICATED) {
   new Login();
-});
+}

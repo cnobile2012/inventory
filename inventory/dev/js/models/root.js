@@ -8,8 +8,9 @@ var RootModel = Backbone.Model.extend({
   mutators: {
     collection: {
       set: function(key, value, options, set) {
-         var self = this;
-         _.forEach(value, function(value, key) {
+        var self = this;
+        _.forEach(value, function(value, key) {
+
           if(key === 'items') {
             _.forEach(value, function(value, key) {
               self.set(key, value, options);
@@ -25,13 +26,16 @@ var RootModel = Backbone.Model.extend({
 
 App.rootModel = new RootModel();
 
-App.rootModel.fetch({
-  //  success: function(collection, response, options) {
+var getAPIRoot = function() {
+  App.rootModel.fetch({
+    error: function(collection, response, options) {
+      $('#messages').text("Error: Could not get data from API root.");
+      $('#messages').show();
+    }
+  });
+};
 
-  //this.set(response.collection);
-  //  },
-  error:function(collection, response, options) {
-    alert('error!');
-  }
-});
 
+if(IS_AUTHENTICATED) {
+  getAPIRoot();
+}

@@ -3,7 +3,7 @@
   flex-direction: row;
   justify-content: center;
   margin: 5px 10px 10px 10px;
-  border: 1px solid;
+  border: 1px solid rgba(72, 48, 24, 1);
   border-radius: 0 0 10px 10px;
   padding: 2px;
   height: 50px;

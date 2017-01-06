@@ -1,5 +1,7 @@
 /*
  * Inventory main entry point.
+ *
+ * js/main.js
  */
 
 var appConfig = {

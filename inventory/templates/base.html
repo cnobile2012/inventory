@@ -1,15 +1,22 @@
 {% load static %}
 {% load compress %}
+{% load i18n %}
 <!DOCTYPE HTML>
 <html>
   <head>
     <meta charset="utf-8" />
     <title>Project Based Parts Management Service</title>
-    <script src="{% static 'js/vender/lodash.min.js' %}"></script>
-    <script src="{% static 'js/vender/jquery-3.1.1.min.js' %}"></script>
-    <script src="{% static 'js/vender/backbone-min.js' %}"></script>
-    <script src="{% static 'js/vender/backbone.mutators.min.js' %}"></script>
+{% include "modals/_login.html" %}
+    <script src="{% static 'vender/lodash.min.js' %}"></script>
+    <script src="{% static 'vender/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'vender/backbone-min.js' %}"></script>
+    <script src="{% static 'vender/backbone.mutators.min.js' %}"></script>
+    <script src="{% static 'vender/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+    <script>
+      var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
+    </script>
 {% compress js %}
+    <script src="{% static 'js/template-loader.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/models/root.js' defer %}"></script>
 {% block js-extras %}{% endblock %}
@@ -21,6 +28,7 @@
   </head>
   <body>
 {% block header %}{% endblock %}
+    <div id="messages"></div>
 {% block content %}{% endblock %}
 {% block footer %}{% endblock %}
   </body>
