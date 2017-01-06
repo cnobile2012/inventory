@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 {% block css-extras %}
-    <link href="{% static 'css/site_header.css' %}" type="text/css" media="all"
-          rel="stylesheet" />
-    <link href="{% static 'css/site_footer.css' %}" type="text/css" media="all"
-          rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/site_header.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/site_footer.css' %}" />
 {% endblock %}
 {% block header %}{% include "includes/_header_site.html" %}{% endblock %}
 {% block content %}

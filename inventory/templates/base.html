@@ -8,13 +8,14 @@
     <script src="{% static 'js/vender/lodash.min.js' %}"></script>
     <script src="{% static 'js/vender/jquery-3.1.1.min.js' %}"></script>
     <script src="{% static 'js/vender/backbone-min.js' %}"></script>
+    <script src="{% static 'js/vender/backbone.mutators.min.js' %}"></script>
 {% compress js %}
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/models/root.js' defer %}"></script>
 {% block js-extras %}{% endblock %}
 {% endcompress %}
 {% compress css %}
-    <link href="{% static 'css/common.css' %}" type="text/css" media="all"
-          rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/common.css' %}" />
 {% block css-extras %}{% endblock %}
 {% endcompress %}
   </head>
