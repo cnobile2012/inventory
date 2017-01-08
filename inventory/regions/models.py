@@ -100,7 +100,7 @@ class LanguageManager(StatusModelManagerMixin, models.Manager):
 
 
 @python_2_unicode_compatible
-class Language(StatusModelMixin, ValidateOnSaveMixin):
+class Language(StatusModelMixin, ValidateOnSaveMixin, models.Model):
     """
     This model implements language codes.
     """

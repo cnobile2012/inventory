@@ -226,7 +226,8 @@ class CategoryManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+               models.Model):
     DEFAULT_SEPARATOR = '>'
 
     public_id = models.CharField(

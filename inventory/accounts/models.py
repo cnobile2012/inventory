@@ -84,7 +84,7 @@ class UserManager(BaseUserManager):
 
 
 @python_2_unicode_compatible
-class User(AbstractUser, ValidateOnSaveMixin):
+class User(AbstractUser, ValidateOnSaveMixin, models.Model):
     DEFAULT_USER = 0
     ADMINISTRATOR = 1
     ROLE = (
@@ -266,7 +266,7 @@ class QuestionManager(StatusModelManagerMixin, models.Manager):
 
 @python_2_unicode_compatible
 class Question(TimeModelMixin, UserModelMixin, StatusModelMixin,
-               ValidateOnSaveMixin):
+               ValidateOnSaveMixin, models.Model):
 
     public_id = models.CharField(
         verbose_name=_("Public Question ID"), max_length=30, unique=True,
@@ -303,7 +303,8 @@ class AnswerManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+             models.Model):
     ANSWER_SALT = "inventory.accounts.models.Answer.clean"
 
     public_id = models.CharField(

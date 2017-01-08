@@ -34,7 +34,8 @@ class InventoryTypeManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+                    models.Model):
     public_id = models.CharField(
         verbose_name=_("Public Inventory Type ID"), max_length=30, unique=True,
         blank=True,
@@ -74,7 +75,7 @@ class ProjectManager(StatusModelManagerMixin, models.Manager):
 
 @python_2_unicode_compatible
 class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
-              ValidateOnSaveMixin):
+              ValidateOnSaveMixin, models.Model):
     """
     This model implements project functionality.
     """
@@ -192,7 +193,7 @@ class MembershipManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Membership(ValidateOnSaveMixin):
+class Membership(ValidateOnSaveMixin, models.Model):
     PROJECT_USER = 0
     PROJECT_OWNER = 1
     PROJECT_MANAGER = 2

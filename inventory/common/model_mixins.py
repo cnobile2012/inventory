@@ -181,10 +181,7 @@ class StatusModelMixin(models.Model):
 #
 # ValidateOnSaveMixin
 #
-class ValidateOnSaveMixin(models.Model):
-
-    class Meta:
-        abstract = True
+class ValidateOnSaveMixin(object):
 
     def save(self, *args, **kwargs):
         """

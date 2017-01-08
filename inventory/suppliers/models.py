@@ -31,7 +31,7 @@ class SupplierManager(StatusModelManagerMixin, models.Manager):
 
 @python_2_unicode_compatible
 class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
-               ValidateOnSaveMixin):
+               ValidateOnSaveMixin, models.Model):
     """
     Supplier, can be either a manufacturer or a distributor based on the `type`
     field.

@@ -83,7 +83,7 @@ class ItemManager(CollectionBaseManager, StatusModelManagerMixin):
 
 
 @python_2_unicode_compatible
-class Item(CollectionBase, ValidateOnSaveMixin):
+class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
     YES = True
     NO = False
     YES_NO = (
@@ -231,7 +231,8 @@ class InvoiceManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin):
+class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,
+              models.Model):
 
     public_id = models.CharField(
         verbose_name=_("Public Invoice ID"), max_length=30, unique=True,
@@ -298,7 +299,7 @@ class InvoiceItemManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class InvoiceItem(ValidateOnSaveMixin):
+class InvoiceItem(ValidateOnSaveMixin, models.Model):
     YES = True
     NO = False
     YES_NO = (
