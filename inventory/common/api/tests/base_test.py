@@ -30,10 +30,11 @@ class BaseTest(RecordCreation, APITestCase):
     _TEST_USERNAME = 'TestUser'
     _TEST_PASSWORD = 'TestPassword_007'
     _ERROR_MESSAGES = {
-        'credentials': u'Authentication credentials were not provided.',
-        'permission': u'You do not have permission to perform this action.',
-        'not_found': u'Not found.',
-        'delete': u'Method "DELETE" not allowed.',
+        'credentials': 'Authentication credentials were not provided.',
+        'permission': 'You do not have permission to perform this action.',
+        'not_found': 'Not found.',
+        'delete': 'Method "DELETE" not allowed.',
+        'get':  'Method "GET" not allowed.',
         }
     _HEADERS = {'HTTP_ACCEPT': 'application/json',}
 
@@ -56,7 +57,7 @@ class BaseTest(RecordCreation, APITestCase):
         """
         kwargs = {}
         kwargs['username'] = 'Normal_User'
-        kwargs['password'] = '123456'
+        kwargs['password'] = 'XX_123456'
         return kwargs
 
     def __get_request_data(self, key, request_data):
@@ -133,13 +134,18 @@ class BaseTest(RecordCreation, APITestCase):
                 data = self.__get_request_data('DU', request_data)
                 response = getattr(client, method)(
                     uri, data=data, format='json', **self._HEADERS)
+                method = response.request.get('REQUEST_METHOD')
 
                 if response.status_code == HTTP_403_FORBIDDEN:
                     code = HTTP_403_FORBIDDEN
                     message = 'permission'
                 elif response.status_code == HTTP_405_METHOD_NOT_ALLOWED:
                     code = HTTP_405_METHOD_NOT_ALLOWED
-                    message = 'delete'
+
+                    if method == "DELETE":
+                        message = 'delete'
+                    elif method == "GET":
+                        message = 'get'
                 else:
                     code = 0
                     message = ''
@@ -262,6 +268,7 @@ class BaseTest(RecordCreation, APITestCase):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)
+        #print(response.data)
 
     def _test_administrator_with_valid_permissions(self, uri, method,
                                                    request_data=None):
@@ -376,7 +383,7 @@ class BaseTest(RecordCreation, APITestCase):
     # Setup user
     def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
                      **kwargs):
-        kwargs['password'] = password
+        kwargs['password'] = 'dummy'
         role = kwargs.pop('role', UserModel.DEFAULT_USER)
         login = kwargs.pop('login', True)
         user, created = UserModel.objects.get_or_create(
@@ -388,18 +395,17 @@ class BaseTest(RecordCreation, APITestCase):
             user.is_staff = kwargs.get('is_staff', True)
             user.is_superuser = kwargs.get('is_superuser', False)
             user.role = role
-            user.save()
         else:
             # role is a property, so isn't there when created.
             if user.role != role:
                 user.role = role
-                user.save()
 
+        user.set_password(password)
+        user.save()
         client = APIClient()
 
         if login:
             client.force_authenticate(user=user)
-            #client.login(username=username, password=password)
 
         return user, client
 
