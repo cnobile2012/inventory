@@ -1,3 +1,8 @@
+/*
+ * Template loading utility as found in "Backbone.js Cookbook"
+ * by: Vadim Mirgorod -- PACKT Publishing
+ */
+
 (function($) {
   $(document).ready(function () {
     // Store variable within global jQuery object.
