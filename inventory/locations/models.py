@@ -148,7 +148,8 @@ class LocationSetNameManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+                      models.Model):
     YES = True
     NO = False
     YES_NO = (
@@ -258,7 +259,8 @@ class LocationFormatManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+                     models.Model):
 
     public_id = models.CharField(
         verbose_name=_("Public Location Format ID"), max_length=30,
@@ -365,7 +367,8 @@ class LocationCodeManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin):
+class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+                   models.Model):
     ROOT_NAME = '#'
 
     public_id = models.CharField(

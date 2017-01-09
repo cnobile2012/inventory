@@ -66,6 +66,8 @@ def api_root(request, format=None):
         'question-list', request=request, format=format)
     accounts['users'] = reverse(
         'user-list', request=request, format=format)
+    accounts['login'] = reverse(
+        'login', request=request, format=format)
     #accounts['user-groups'] = reverse(
     #    'group-list', request=request, format=format)
     # Categories

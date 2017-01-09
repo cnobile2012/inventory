@@ -25,4 +25,5 @@ urlpatterns = [
         name='answer-list'),
     url(r'answer/(?P<public_id>\w+)/$', views.answer_detail,
         name='answer-detail'),
+    url(r'login/$', views.login_view, name='login'),
     ]

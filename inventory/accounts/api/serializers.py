@@ -10,7 +10,7 @@ __docformat__ = "restructuredtext en"
 import logging
 
 from django.contrib.auth.models import Group
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
@@ -214,3 +214,26 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
         read_only_fields = ('id', 'public_id', 'creator', 'created', 'updater',
                             'updated',)
         extra_kwargs = {'answer': {'write_only': True}}
+
+
+#
+# Login
+#
+class LoginSerializer(SerializerMixin, serializers.Serializer):
+    username = serializers.CharField(max_length=150, write_only=True)
+    password = serializers.CharField(max_length=50, write_only=True)
+
+    def validate(self, data):
+        username = data.get('username')
+        password = data.get('password')
+        user = authenticate(username=username, password=password)
+
+        if not user:
+            msg = _("The username or password was invalid.")
+            raise serializers.ValidationError(msg)
+
+        data['user'] = user
+        return data
+
+    class Meta:
+        fields = ('username', 'password',)

@@ -837,3 +837,63 @@ class TestAnswerAPI(BaseAccount):
         uri = reverse('answer-detail',
                       kwargs={'public_id': answer.public_id})
         self._test_users_with_valid_permissions(uri, method)
+
+
+class TestLoginAPI(BaseAccount):
+
+    def __init__(self, name):
+        super(TestLoginAPI, self).__init__(name)
+
+    def setUp(self):
+        super(TestLoginAPI, self).setUp()
+
+    def test_GET_login_with_invalid_method(self):
+        """
+        Test the login endpoint with invalid method.
+        """
+        #self.skipTest("Temporarily skipped")
+        uri = reverse('login')
+        response = self.client.get(uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED,
+            response.data)
+        self.assertEqual(
+            response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES['get'],
+            })
+
+    def test_POST_login_no_permissions(self):
+        """
+        Test the login endpoint with no permissions.
+        """
+        #self.skipTest("Temporarily skipped")
+        uri = reverse('login')
+        kwargs = self._setup_user_credentials()
+        data = dict(kwargs)
+        kwargs['login'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        response = client.post(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+
+    def test_POST_login_invalid_credentials(self):
+        """
+        Test the login endpoint with invalid credentials.
+        """
+        #self.skipTest("Temporarily skipped")
+        uri = reverse('login')
+        data = {}
+        data['username'] = 'Bogus_username'
+        data['password'] = 'Bogus_password'
+        response = self.client.post(uri, data=data, format='json',
+                                    **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+
+

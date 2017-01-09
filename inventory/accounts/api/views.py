@@ -6,11 +6,14 @@
 import logging
 
 from django.contrib.auth.models import Group
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 
 from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView)
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView,
+    GenericAPIView)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -24,7 +27,7 @@ from inventory.common.api.view_mixins import (
 
 from ..models import Question, Answer
 from .serializers import (
-    UserSerializer, QuestionSerializer, AnswerSerializer)
+    UserSerializer, QuestionSerializer, AnswerSerializer, LoginSerializer)
 
 log = logging.getLogger('api.accounts.views')
 UserModel = get_user_model()
@@ -232,3 +235,25 @@ class AnswerDetail(TrapDjangoValidationErrorUpdateMixin,
     lookup_field = 'public_id'
 
 answer_detail = AnswerDetail.as_view()
+
+
+#
+# Login
+#
+class LoginView(GenericAPIView):
+    serializer_class = LoginSerializer
+    permission_classes = ()
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data.get('user')
+        login(request, user)
+        result = {}
+        result['fullname'] = user.get_full_name()
+        result['href'] = reverse(
+            'user-detail', kwargs={'public_id': user.public_id},
+            request=request)
+        return Response(result)
+
+login_view = LoginView.as_view()
