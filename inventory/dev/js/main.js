@@ -5,7 +5,8 @@
  */
 
 var appConfig = {
-  baseURL: location.protocol + '//' + location.host + '/api/'
+  baseURL: location.protocol + '//' + location.host + '/api/',
+  loginURL: location.protocol + '//' + location.host + '/api/login/'
 };
 
 var App = {
@@ -13,5 +14,6 @@ var App = {
   Collections: {},
   Views: {},
   Router: {},
-  rootModel: null
+  rootModel: null,
+  loginView: null
 };

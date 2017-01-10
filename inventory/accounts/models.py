@@ -190,8 +190,16 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
     def role(self, value):
         self._role = value
 
+    def get_full_name_or_username(self):
+        result = self.get_full_name()
+
+        if result.strip() == '':
+            result = self.username
+
+        return result
+
     def get_full_name_reversed(self):
-        result = None
+        result = ''
 
         if self.last_name or self.first_name:
             result = "{}, {}".format(self.last_name, self.first_name)

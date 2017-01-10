@@ -7,11 +7,11 @@
     <meta charset="utf-8" />
     <title>Project Based Parts Management Service</title>
 {% include "modals/_login.html" %}
-    <script src="{% static 'vender/lodash.min.js' %}"></script>
     <script src="{% static 'vender/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'vender/lodash.min.js' %}"></script>
     <script src="{% static 'vender/backbone-min.js' %}"></script>
     <script src="{% static 'vender/backbone.mutators.min.js' %}"></script>
-    <script src="{% static 'vender/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vender/backbone.model-1.1.5/js/backbone.modal-min.js' %}"></script>
     <script>
       var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
     </script>
@@ -19,8 +19,13 @@
     <script src="{% static 'js/template-loader.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/models/root.js' defer %}"></script>
+    <script src="{% static 'js/views/login.js' defer %}"></script>
 {% block js-extras %}{% endblock %}
 {% endcompress %}
+    <link rel="stylesheet"
+	  href="{% static 'vender/backbone.model-1.1.5/css/backbone.modal.css' %}" />
+    <link rel="stylesheet"
+	  href="{% static 'vender/backbone.model-1.1.5/css/backbone.modal.theme.css' %}" />
 {% compress css %}
     <link rel="stylesheet" href="{% static 'css/common.css' %}" />
 {% block css-extras %}{% endblock %}
