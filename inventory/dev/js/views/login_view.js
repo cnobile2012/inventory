@@ -1,7 +1,7 @@
 /*
  * Inventory Login
  *
- * js/views/login.js
+ * js/views/login_view.js
  */
 
 jQuery(function($) {

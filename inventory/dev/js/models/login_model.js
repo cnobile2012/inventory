@@ -1,7 +1,7 @@
 /*
  * Inventory Login Model
  *
- * js/models/login.js
+ * js/models/login_model.js
  */
 
 var LoginModel = Backbone.Model.extend({

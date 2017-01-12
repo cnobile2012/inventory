@@ -12,22 +12,22 @@
     <script src="{% static 'vender/lodash.min.js' %}"></script>
     <script src="{% static 'vender/backbone-min.js' %}"></script>
     <script src="{% static 'vender/backbone.mutators.min.js' %}"></script>
-    <script src="{% static 'vender/backbone.model-1.1.5/js/backbone.modal-min.js' %}"></script>
+    <script src="{% static 'vender/backbone.modal-1.1.5/js/backbone.modal-min.js' %}"></script>
     <script>
       var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
     </script>
 {% compress js %}
     <script src="{% static 'js/template-loader.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/models/root.js' defer %}"></script>
-    <script src="{% static 'js/models/login.js' defer %}"></script>
-    <script src="{% static 'js/views/login.js' defer %}"></script>
+    <script src="{% static 'js/models/root_model.js' defer %}"></script>
+    <script src="{% static 'js/models/login_model.js' defer %}"></script>
+    <script src="{% static 'js/views/login_view.js' defer %}"></script>
 {% block js-extras %}{% endblock %}
 {% endcompress %}
     <link rel="stylesheet"
-	  href="{% static 'vender/backbone.model-1.1.5/css/backbone.modal.css' %}" />
+	  href="{% static 'vender/backbone.modal-1.1.5/css/backbone.modal.css' %}" />
     <link rel="stylesheet"
-	  href="{% static 'vender/backbone.model-1.1.5/css/backbone.modal.theme.css' %}" />
+	  href="{% static 'vender/backbone.modal-1.1.5/css/backbone.modal.theme.css' %}" />
 {% compress css %}
     <link rel="stylesheet" href="{% static 'css/common.css' %}" />
 {% block css-extras %}{% endblock %}

@@ -1,5 +1,7 @@
 /*
  * API root model
+ *
+ * js/models/root_model.js
  */
 
 var RootModel = Backbone.Model.extend({
