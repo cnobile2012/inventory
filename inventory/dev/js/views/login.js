@@ -33,11 +33,11 @@ jQuery(function($) {
             getAPIRoot();
           },
           error: function(jqXHR, textStatus, errorThrown) {
-            var $error = self.$el.find('.all-error');
-            var error = textStatus.responseJSON.non_field_errors[0];
-            $('<div>' + error + '</div>').appendTo($error);
-            $error.show();
-            console.log(error);
+            var $elm = self.$el.find('.all-error');
+            var errors = textStatus.responseJSON;
+            mimicDjangoErrors($elm, errors);
+            $elm.show();
+            //console.log(errors);
           }
         });
       }

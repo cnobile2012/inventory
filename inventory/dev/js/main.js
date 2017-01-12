@@ -36,3 +36,32 @@ var setHeader = function() {
     }
   });
 };
+
+
+var mimicDjangoErrors = function(elm, data) {
+  // Mimic Django error messages.
+  var ul = '<ul class="errorlist"></ul>';
+  var li = '<li></li>';
+  var $tag = null, $errorUl = null, $errorLi = null;
+  $('ul.errorlist').remove();
+
+  for(var key in data) {
+    $tag = $('select[name=' + key + '], input[name=' + key +
+      '], textarea[name=' + key + ']');
+    $errorUl = $(ul);
+
+    if($tag.prev().prop('tagName') === 'LABEL') {
+      $tag = $tag.prev();
+      $errorUl.insertBefore($tag);
+    } else if($tag.length === 0) {
+      $tag = $(elm);
+      $errorUl.appendTo($tag);
+    }
+
+    for(let i = 0; i < data[key].length; i++) {
+      $errorLi = $(li);
+      $errorLi.html(data[key][i]);
+      $errorLi.appendTo($errorUl);
+    }
+  }
+};
