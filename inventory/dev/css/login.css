@@ -10,6 +10,7 @@
 
 #login-modal .bbm-modal__topbar {
   display: flex;
+  margin-bottom: 10px;
 }
 
 #login-modal .bbm-modal__topbar .bbm-modal__title {
@@ -30,12 +31,23 @@
 }
 
 #login-modal .all-error ul.errorlist {
-  margin: 0 22px;
+  margin: 0 10px;
   font-size: 80%;
+}
+
+#login-modal .all-error {
+  width: 90%;
+  margin: auto;
+  font-size: 120%;
+  color: rgba(255, 100, 0, 1);
 }
 
 #login-modal .all-error span {
   margin-left: 4px;
+}
+
+#login-modal .bbm-modal__section form {
+  margin-top: 20px;
 }
 
 #login-modal .form-fields {

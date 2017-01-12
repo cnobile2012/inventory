@@ -229,7 +229,7 @@ class LoginSerializer(SerializerMixin, serializers.Serializer):
         user = authenticate(username=username, password=password)
 
         if not user:
-            msg = _("The username or password was invalid.")
+            msg = _("The entered username and/or password is invalid.")
             raise serializers.ValidationError(msg)
 
         data['user'] = user
