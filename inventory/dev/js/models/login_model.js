@@ -7,8 +7,8 @@
 var LoginModel = Backbone.Model.extend({
   urlRoot: appConfig.loginURL,
   defaults: {
-    username: '',
-    password: '',
+    username: 'X',
+    password: 'X',
     fullname: '',
     href: ''
   },

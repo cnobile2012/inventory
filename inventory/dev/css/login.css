@@ -30,16 +30,16 @@
   color: rgba(72, 48, 24, 1);
 }
 
-#login-modal .all-error ul.errorlist {
-  margin: 0 10px;
-  font-size: 80%;
-}
-
 #login-modal .all-error {
   width: 90%;
   margin: auto;
   font-size: 120%;
   color: rgba(255, 100, 0, 1);
+}
+
+#login-modal .all-error ul.errorlist {
+  margin: 0 10px;
+  font-size: 80%;
 }
 
 #login-modal .all-error span {
@@ -53,6 +53,12 @@
 #login-modal .form-fields {
   width: 60%;
   margin: auto;
+}
+
+#login-modal .form-fields ul {
+  margin: 0;
+  font-size: 80%;
+  color: rgba(255, 100, 0, 1);
 }
 
 #login-modal .form-fields label {
