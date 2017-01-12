@@ -22,6 +22,7 @@
   margin: 0;
   padding: 20px 5px;
   text-align: right;
+  font-size: 80%;
 }
 
 #login-modal .bbm-modal__section {
@@ -69,9 +70,10 @@
 
 #login-modal .bbm-modal__bottombar div div {
   width: 100%;
-  margin: 0;
+  margin: 1px 0;
   padding: 0 10px !important;
   text-align: left;
+  font-size: 80%;
 }
 
 #login-modal .bbm-button {

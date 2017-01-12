@@ -12,7 +12,8 @@
           <div class="all-error" hidden>
             <span>Error:</span>
           </div>
-          <form name="login" role="form" method="post" action="">
+          <form id="login-form" name="login" role="form" method="post"
+		action="">
             {% csrf_token %}
             <div class="form-fields">
               <label for="username">Username</label>
@@ -31,7 +32,7 @@
           </div>
 	  <div>
             <button type="button" name="login-submit"
-                    class="bbm-button">Login</button>
+                    class="bbm-button" form="login-form">Login</button>
 	  </div>
         </div>
       </div>

@@ -8,6 +8,7 @@
     <title>Project Based Parts Management Service</title>
 {% include "modals/_login.html" %}
     <script src="{% static 'vender/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'vender/js.cookie-2.0.4.min.js' %}"></script>
     <script src="{% static 'vender/lodash.min.js' %}"></script>
     <script src="{% static 'vender/backbone-min.js' %}"></script>
     <script src="{% static 'vender/backbone.mutators.min.js' %}"></script>
@@ -19,6 +20,7 @@
     <script src="{% static 'js/template-loader.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/models/root.js' defer %}"></script>
+    <script src="{% static 'js/models/login.js' defer %}"></script>
     <script src="{% static 'js/views/login.js' defer %}"></script>
 {% block js-extras %}{% endblock %}
 {% endcompress %}
