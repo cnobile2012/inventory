@@ -1,39 +1,41 @@
-{% load static %}
-{% block css-extras %}
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-{% endblock %}
+{% load i18n %}
     <script type="text/html" class="template" id="login_template">
-      <div id="login-modal">
-        <div class="bbm-modal__topbar">
-          <h3 class="bbm-modal__title">Login</h3>
-	  <div class="create-account">Create Account</div>
-        </div>
-        <div class="bbm-modal__section">
-          <div class="all-error" hidden>
-            <span>Error(s):</span>
-          </div>
-          <form id="login-form" name="login" role="form" method="post"
-		action="">
-            {% csrf_token %}
-            <div class="form-fields">
-              <label for="username">Username</label>
-              <input type="text" name="username" />
+      <div id="login-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title">{% trans "Login" %}</h3>
+              <div class="create-account">{% trans "Create Account" %}</div>
             </div>
-            <div class="form-fields">
-              <label for="password">Password</label>
-              <input type="password" name="password" />
+            <div class="modal-body">
+              <div class="all-error" hidden="hidden">
+                <span>Error(s):</span>
+              </div>
+              <form id="login-form" name="login" role="form" method="post"
+                    action="">
+                {% csrf_token %}
+                <div class="form-fields">
+                  <label for="username">{% trans "Username" %}</label>
+                  <input type="text" name="username" />
+                </div>
+                <div class="form-fields">
+                  <label for="password">{% trans "Password" %}</label>
+                  <input type="password" name="password" />
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
-        <div class="bbm-modal__bottombar">
-          <div>
-	    <div class="recover-username">Recover Username</div>
-	    <div class="reset-password">Reset Password</div>
+            <div class="modal-footer">
+              <div>
+                <div class="recover-username">
+                  {% trans "Recover Username" %}
+                </div>
+                <div class="reset-password">{% trans "Reset Password" %}</div>
+              </div>
+              <div>
+                <button type="button" name="login-submit" form="login-form"
+			class="btn btn-primary">{% trans "Login" %}</button>
+            </div>
           </div>
-	  <div>
-            <button type="button" name="login-submit"
-                    class="bbm-button" form="login-form">Login</button>
-	  </div>
         </div>
       </div>
     </script>

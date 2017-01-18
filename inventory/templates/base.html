@@ -7,29 +7,37 @@
     <meta charset="utf-8" />
     <title>Project Based Parts Management Service</title>
 {% include "modals/_login.html" %}
-    <script src="{% static 'vender/jquery-3.1.1.min.js' %}"></script>
-    <script src="{% static 'vender/js.cookie-2.0.4.min.js' %}"></script>
-    <script src="{% static 'vender/lodash.min.js' %}"></script>
-    <script src="{% static 'vender/backbone-min.js' %}"></script>
-    <script src="{% static 'vender/backbone.mutators.min.js' %}"></script>
-    <script src="{% static 'vender/backbone.modal-1.1.5/js/backbone.modal-min.js' %}"></script>
+{% include "modals/_logout.html" %}
+    <script src="{% static 'vendor/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'vendor/js.cookie-2.0.4.min.js' %}"></script>
+    <script src="{% static 'vendor/lodash.min.js' %}"></script>
+    <script src="{% static 'vendor/backbone-min.js' %}"></script>
+    <script src="{% static 'vendor/backbone.mutators.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
     <script>
       var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
     </script>
 {% compress js %}
     <script src="{% static 'js/template-loader.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/models/root_model.js' defer %}"></script>
-    <script src="{% static 'js/models/login_model.js' defer %}"></script>
-    <script src="{% static 'js/views/login_view.js' defer %}"></script>
+    <script src="{% static 'js/models/root_model.js' %}"></script>
+    <script src="{% static 'js/models/login_model.js' %}"></script>
+    <script src="{% static 'js/models/logout_model.js' %}"></script>
+    <script src="{% static 'js/views/base_modal_view.js' %}"></script>
+    <script src="{% static 'js/views/login_view.js' %}"></script>
+    <script src="{% static 'js/views/logout_view.js' %}"></script>
 {% block js-extras %}{% endblock %}
+    <link rel="stylesheet"
+	  href="{% static 'vendor/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" />
 {% endcompress %}
     <link rel="stylesheet"
-	  href="{% static 'vender/backbone.modal-1.1.5/css/backbone.modal.css' %}" />
+	  href="{% static 'vendor/backbone.modal-1.1.5/css/backbone.modal.css' %}" />
     <link rel="stylesheet"
-	  href="{% static 'vender/backbone.modal-1.1.5/css/backbone.modal.theme.css' %}" />
+	  href="{% static 'vendor/backbone.modal-1.1.5/css/backbone.modal.theme.css' %}" />
 {% compress css %}
     <link rel="stylesheet" href="{% static 'css/common.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/logout.css' %}" />
 {% block css-extras %}{% endblock %}
 {% endcompress %}
   </head>

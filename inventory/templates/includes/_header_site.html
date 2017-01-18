@@ -3,7 +3,8 @@
      <img src="{% static 'img/tetrasys-logo-grey-100x100.png' %}" />
      <div id="site-header-title">Project Based Parts Management Service</div>
      <div id="login-info">
-       <div id="logout-button">Logout</div>
+       <div id="logout-button" data-toggle="modal"
+	    data-target="#logout-modal">Logout</div>
        <div id="user-fullname">{{ user.get_full_name_or_username }}</div>
      </div>
    </div> <!- #site-header -->

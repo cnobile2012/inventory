@@ -31,4 +31,16 @@
 
 #site-header div#login-info div {
   margin: auto 0 auto 0;
+  padding: 2px;
+}
+
+#site-header div#logout-button {
+  display: block;
+  width: 60%;
+}
+
+#site-header div#logout-button:hover {
+  background-color: rgba(240, 200, 170, 1);
+  border: 1px solid rgba(72, 48, 24, 1);
+  border-radius: 4px;
 }

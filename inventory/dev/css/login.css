@@ -4,29 +4,25 @@
  * css/login.css
  */
 
-#login-modal .bbm-modal {
-  color: rgba(72, 48, 24, 1);
-}
-
-#login-modal .bbm-modal__topbar {
+#login-modal .modal-header {
   display: flex;
   margin-bottom: 10px;
 }
 
-#login-modal .bbm-modal__topbar .bbm-modal__title {
+#login-modal .modal-header .modal-title {
   width: 50%;
   color: rgba(72, 48, 24, 1);
 }
 
-#login-modal .bbm-modal__topbar .create-account {
+#login-modal .modal-header .create-account {
   width: 50%;
   margin: 0;
-  padding: 20px 5px;
+  padding: 8px 5px;
   text-align: right;
   font-size: 80%;
 }
 
-#login-modal .bbm-modal__section {
+#login-modal .modal-body {
   color: rgba(72, 48, 24, 1);
 }
 
@@ -46,7 +42,7 @@
   margin-left: 4px;
 }
 
-#login-modal .bbm-modal__section form {
+#login-modal .modal-body form {
   margin-top: 20px;
 }
 
@@ -73,27 +69,27 @@
   width: 55%;
 }
 
-#login-modal .bbm-modal__bottombar {
+#login-modal .modal-footer {
   display: flex;
 }
 
-#login-modal .bbm-modal__bottombar div {
+#login-modal .modal-footer div {
   width: 50%;
 }
 
-#login-modal .bbm-modal__bottombar div:nth-child(2) {
+#login-modal .modal-footer div:nth-child(2) {
   margin: 0;
   padding: 0 15px;
 }
 
-#login-modal .bbm-modal__bottombar div div {
+#login-modal .modal-footer div div {
   width: 100%;
-  margin: 1px 0;
   padding: 0 10px !important;
   text-align: left;
   font-size: 80%;
 }
 
-#login-modal .bbm-button {
+#login-modal button[name=login-submit] {
+  background-color: rgba(255, 190, 145, 1);
   color: rgba(72, 48, 24, 1);
 }

@@ -4,10 +4,13 @@
  * js/main.js
  */
 
+"use strict";
+
 var appConfig = {
   baseURL: location.protocol + '//' + location.host + '/api/',
   loginURL: location.protocol + '//' + location.host + '/api/accounts/login/'
 };
+
 
 var App = {
   Models: {},
@@ -16,7 +19,7 @@ var App = {
   Router: {},
   rootModel: null,
   loginModel: null,
-  loginView: null
+  logoutModel: null
 };
 
 

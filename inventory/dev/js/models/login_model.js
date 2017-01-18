@@ -14,4 +14,6 @@ var LoginModel = Backbone.Model.extend({
   },
 });
 
-App.loginModel = new LoginModel();
+jQuery(function($) {
+  App.loginModel = new LoginModel();
+});

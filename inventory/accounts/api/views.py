@@ -6,7 +6,8 @@
 import logging
 
 from django.contrib.auth.models import Group
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, logout
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView,
@@ -14,6 +15,8 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
+from rest_framework.views import APIView
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -241,6 +244,11 @@ answer_detail = AnswerDetail.as_view()
 # Login
 #
 class LoginView(GenericAPIView):
+    """
+    Login view. Performs a login on a POST and provides the user's full
+    name and the href to the user's endpoint. Credentials are required to
+    login.
+    """
     serializer_class = LoginSerializer
     permission_classes = ()
 
@@ -257,3 +265,29 @@ class LoginView(GenericAPIView):
         return Response(result)
 
 login_view = LoginView.as_view()
+
+
+#
+# Logout
+#
+class LogoutView(APIView):
+    """
+    Logout view. Performs the logout on a POST. No POST data is required
+    to logout.
+    """
+
+    def post(self, request, *args, **kwargs):
+        result = {}
+
+        if request.user.is_authenticated():
+            logout(request)
+            status = HTTP_200_OK
+            result['message'] = _("Logout was successful.")
+        else:
+            status = HTTP_401_UNAUTHORIZED
+            result['message'] = _("The user was not logged in so logout is "
+                                  "not possible.")
+
+        return Response(result, status=status)
+
+logout_view = LogoutView.as_view()

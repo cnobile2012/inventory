@@ -11,6 +11,7 @@ var RootModel = Backbone.Model.extend({
     collection: {
       set: function(key, value, options, set) {
         var self = this;
+
         _.forEach(value, function(value, key) {
           if(key === 'items') {
             _.forEach(value, function(value, key) {
@@ -25,18 +26,21 @@ var RootModel = Backbone.Model.extend({
   }
 });
 
-App.rootModel = new RootModel();
 
-var getAPIRoot = function() {
-  App.rootModel.fetch({
-    error: function(collection, response, options) {
-      $('#messages').text("Error: Could not get data from API root.");
-      $('#messages').show();
-    }
-  });
-};
+jQuery(function($) {
+  App.rootModel = new RootModel();
+
+  window.getAPIRoot = function() {
+    App.rootModel.fetch({
+      error: function(collection, response, options) {
+        $('#messages').text("Error: Could not get data from API root.");
+        $('#messages').show();
+      }
+    });
+  };
 
 
-if(IS_AUTHENTICATED) {
-  getAPIRoot();
-}
+  if(IS_AUTHENTICATED) {
+    window.getAPIRoot();
+  }
+});
