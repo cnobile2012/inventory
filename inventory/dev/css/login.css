@@ -4,6 +4,17 @@
  * css/login.css
  */
 
+#login-modal.modal {
+  position: absolute;
+  top: 130px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  overflow: auto;
+  overflow-y: auto;
+}
+
 #login-modal .modal-header {
   display: flex;
   margin-bottom: 10px;
@@ -24,6 +35,7 @@
 
 #login-modal .modal-body {
   color: rgba(72, 48, 24, 1);
+  padding: 0 15px 15px 15px;
 }
 
 #login-modal .all-error {

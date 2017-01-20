@@ -5,41 +5,55 @@
  */
 
 var BaseModalView = Backbone.View.extend({
-    template: '',
+  template: '',
 
-    initialize: function() {
-      _.bindAll(this, 'show', 'render', 'close', 'submit', 'keydownHandler');
-      this.render();
-    },
+  initialize: function() {
+    _.bindAll(this, 'show', 'render', 'close', 'submit', 'keydownHandler');
+    this.render();
+  },
 
-    show: function(options) {
-      this.$el.modal(options);
-    },
+  show: function(options) {
+    var self = this;
+    $(this.$el).off('hide.bs.modal');
+    $(this.$el).on('hide.bs.modal', function() {
+      self.close();
+    });
 
-    render: function() {
-      this.$el = $(this.template);
-      this.delegateEvents(this.events);
-      return this;
-    },
-
-    close: function() {
-      this.remove();
-      $('.modal-backdrop').remove();
-      $('#hiddenlpsubmitdiv').remove();
-      $('#_lpinvis').remove();
-    },
-
-    submit: function() {},
-
-    keydownHandler: function (e) {
-      switch (e.which) {
-        // esc
-        case 27:
-          this.close();
-          break;
-        case 13:
-          this.submit();
-          break;
-      }
+    if(options === undefined) {
+      options = {};
     }
+
+    this.options = options;
+    this.$el.modal(options);
+  },
+
+  render: function() {
+    this.$el = $(this.template);
+    this.delegateEvents(this.events);
+    return this;
+  },
+
+  close: function() {
+    this.remove();
+    $('.modal-backdrop').remove();
+    $('#hiddenlpsubmitdiv').remove();
+    $('#_lpinvis').remove();
+  },
+
+  submit: function() {},
+
+  keydownHandler: function (e) {
+    switch (e.which) {
+      // esc
+      case 27:
+        if(!(this.options.hasOwnProperty('keyboard'))) {
+          this.close();
+        }
+
+        break;
+      case 13:
+        this.submit();
+        break;
+    }
+  }
 });

@@ -5,64 +5,69 @@
  */
 
 jQuery(function($) {
-  var options = {
-    backdrop: 'static',
-    keyboard: false
-  };
+  // Create a modal view class
+  var LoginModalView = BaseModalView.extend({
+    model: App.loginModel,
+    el: $("#login-modal"),
+    template: $.tpl.login_template(),
 
-  if(!IS_AUTHENTICATED) {
-    // Create a modal view class
-    var LoginModalView = BaseModalView.extend({
-      model: App.loginModel,
-      el: $("#login-modal"),
-      template: $.tpl.login_template(),
+    events: {
+      'click button[name=login-submit]': 'submit',
+      'keydown': 'keydownHandler'
+    },
 
-      events: {
-        'click button[name=login-submit]': 'submit',
-        'keydown': 'keydownHandler'
-      },
+    submit: function() {
+      var self = this;
+      var username = this.$el.find('input[type=text]').val();
+      var password = this.$el.find('input[type=password]').val();
 
-      submit: function() {
-        var self = this;
-        var username = this.$el.find('input[type=text]').val();
-        var password = this.$el.find('input[type=password]').val();
+      // Prevent multiple requests when there are no changes.
+      if(this.model.get('username') !== username
+          || this.model.get('password') !== password) {
+        this.model.set('username', username);
+        this.model.set('password', password);
+        var data = {
+          username: username,
+          password: password
+        };
+        setHeader();
 
-        // Prevent multiple requests when there are no changes.
-        if(this.model.get('username') !== username
-           || this.model.get('password') !== password) {
-          this.model.set('username', username);
-          this.model.set('password', password);
-          var data = {
-            username: username,
-            password: password
-          };
+        this.model.save(data, {
+          success: function(data, status, jqXHR) {
+            self.model.set('fullname', status.fullname);
+            self.model.set('href', status.href);
+            $('#user-fullname').text(status.fullname);
+            self.close();
+            self.model.set('username', 'X');
+            self.model.set('password', 'X');
+            var $messages = $('#messages');
+            $messages.empty();
+            $messages.hide();
+            IS_AUTHENTICATED = true;
+            window.getAPIRoot();
+          },
 
-          setHeader();
-          this.model.save(data, {
-            success: function(data, status, jqXHR) {
-              self.model.set('fullname', status.fullname);
-              self.model.set('href', status.href);
-              $('#user-fullname').text(status.fullname);
-              self.close();
-              window.getAPIRoot();
-            },
-
-            error: function(jqXHR, textStatus, errorThrown) {
-              var $elm = self.$el.find('.all-error');
-              var errors = textStatus.responseJSON;
-              mimicDjangoErrors($elm, errors);
-              $elm.show();
-              //console.log(errors);
-            }
-          });
-        }
+          error: function(jqXHR, textStatus, errorThrown) {
+            var $elm = self.$el.find('.all-error');
+            var errors = textStatus.responseJSON;
+            mimicDjangoErrors($elm, errors);
+            $elm.show();
+            //console.log(errors);
+          }
+        });
       }
-    });
+    }
+  });
 
-    new LoginModalView().show(options);
-  } else {
-    $('#login-button').on('click', function() {
+  window.setLogin = function() {
+    if(!IS_AUTHENTICATED) {
+      var options = {
+        backdrop: 'static',
+        keyboard: false
+      };
       new LoginModalView().show(options);
-    });
+    }
   }
+
+  window.setLogin();
 });

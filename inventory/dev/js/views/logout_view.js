@@ -21,9 +21,11 @@ jQuery(function($) {
       setHeader();
       this.model.save({}, {
         success: function(data, status, jqXHR) {
-          var $message = $('#messages');
-          $message.text(status.message);
-          $message.show();
+          var $messages = $('#messages');
+          $messages.text(status.message);
+          $messages.show();
+          IS_AUTHENTICATED = false;
+          window.setTimeout(window.setLogin(), 200);
         },
         error: function(jqXHR, textStatus, errorThrown) {
           console.log(textStatus);
@@ -35,6 +37,6 @@ jQuery(function($) {
   });
 
   $('#logout-button').on('click', function() {
-    new LogoutModalView().show({backdrop: 'static'});
+    new LogoutModalView().show({show: true});
   });
 });

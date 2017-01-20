@@ -19,7 +19,7 @@ var App = {
   Router: {},
   rootModel: null,
   loginModel: null,
-  logoutModel: null
+  logoutModel: null,
 };
 
 
