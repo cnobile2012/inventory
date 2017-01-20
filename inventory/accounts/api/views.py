@@ -282,11 +282,7 @@ class LogoutView(APIView):
         if request.user.is_authenticated():
             logout(request)
             status = HTTP_200_OK
-            result['message'] = _("Logout was successful.")
-        else:
-            status = HTTP_401_UNAUTHORIZED
-            result['message'] = _("The user was not logged in so logout is "
-                                  "not possible.")
+            result['detail'] = _("Logout was successful.")
 
         return Response(result, status=status)
 

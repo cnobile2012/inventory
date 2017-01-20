@@ -45,6 +45,7 @@ jQuery(function($) {
             $messages.hide();
             IS_AUTHENTICATED = true;
             window.getAPIRoot();
+            _fetchUser();
           },
 
           error: function(jqXHR, textStatus, errorThrown) {
@@ -59,6 +60,20 @@ jQuery(function($) {
     }
   });
 
+  var _fetchUser = function() {
+    if(App.userModel === null) {
+      App.userModel = new UserModel();
+    }
+
+    App.userModel.fetch({
+      error: function(collection, response, options) {
+        $('#messages').text("Error: Could not get data user '" + USERNAME +
+          "' from API.");
+        $('#messages').show();
+      }
+    });
+  };
+
   window.setLogin = function() {
     if(!IS_AUTHENTICATED) {
       var options = {
@@ -66,6 +81,10 @@ jQuery(function($) {
         keyboard: false
       };
       new LoginModalView().show(options);
+    } else {
+      App.loginModel.set(
+        'href', location.protocol + '//' + location.host + USER_HREF);
+      _fetchUser();
     }
   }
 

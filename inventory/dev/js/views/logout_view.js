@@ -22,9 +22,10 @@ jQuery(function($) {
       this.model.save({}, {
         success: function(data, status, jqXHR) {
           var $messages = $('#messages');
-          $messages.text(status.message);
+          $messages.text(status.detail);
           $messages.show();
           IS_AUTHENTICATED = false;
+          window.destroyApp();
           window.setTimeout(window.setLogin(), 200);
         },
         error: function(jqXHR, textStatus, errorThrown) {

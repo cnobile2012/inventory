@@ -4,6 +4,7 @@
 #
 
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext
 
 from rest_framework.reverse import reverse
 from rest_framework import status
@@ -896,4 +897,32 @@ class TestLoginAPI(BaseAccount):
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
-
+    def test_POST_logout(self):
+        """
+        Test that the user can logout or return an error message indicating
+        they were never logged in.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Test that user can logout.
+        uri = reverse('logout')
+        kwargs = self._setup_user_credentials()
+        data = dict(kwargs)
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        response = client.post(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertTrue("Logout was successful." ==
+                        ugettext(response.data.get('detail')), msg)
+        # Test not logged in.
+        kwargs['login'] = False
+        user, client = self._create_user(**kwargs)
+        response = client.post(uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue("Authentication credentials were not provided." ==
+                        ugettext(response.data.get('detail')), msg)

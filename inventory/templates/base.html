@@ -5,7 +5,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Project Based Parts Management Service</title>
+    <title>{% trans "Project Based Parts Management Service" %}</title>
 {% include "modals/_login.html" %}
 {% include "modals/_logout.html" %}
     <script src="{% static 'vendor/jquery-3.1.1.min.js' %}"></script>
@@ -16,6 +16,8 @@
     <script src="{% static 'vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
     <script>
       var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
+      var USER_HREF = "{{ user.get_absolute_url }}"
+      var USERNAME = "{{ user.username }}"
     </script>
 {% compress js %}
     <script src="{% static 'js/template-loader.js' %}"></script>
@@ -23,6 +25,7 @@
     <script src="{% static 'js/models/root_model.js' %}"></script>
     <script src="{% static 'js/models/login_model.js' %}"></script>
     <script src="{% static 'js/models/logout_model.js' %}"></script>
+    <script src="{% static 'js/models/accounts_model.js' %}"></script>
     <script src="{% static 'js/views/base_modal_view.js' %}"></script>
     <script src="{% static 'js/views/login_view.js' %}"></script>
     <script src="{% static 'js/views/logout_view.js' %}"></script>

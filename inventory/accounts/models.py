@@ -17,6 +17,7 @@ from django.db import models
 from django.contrib.auth.hashers import get_hasher
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -207,6 +208,9 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
             result = self.username
 
         return result
+
+    def get_absolute_url(self):
+        return reverse('user-detail', args=[self.public_id])
 
     def process_projects(self, projects):
         """

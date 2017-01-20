@@ -2,8 +2,6 @@
 #
 # inventory/accounts/tests/test_accounts.py
 #
-# Run ./manage.py test -k # Keep the DB, don't rebuild.
-#
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -98,6 +96,26 @@ class TestUser(BaseAccountModels):
         msg = "Found: {}".format(cm.exception)
         self.assertTrue(" is not a valid choice." in str(cm.exception), msg)
 
+    def test_get_full_name_or_username(self):
+        """
+        Test that the users full name is returned or the username.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Test the full name.
+        name = self.user.get_full_name_or_username()
+        msg = "Username: {}, First Name: {}, Last Name: {}".format(
+            self.user.username, self.user.first_name, self.user.last_name)
+        fullname = "{} {}".format(self.user.first_name, self.user.last_name)
+        self.assertEqual(name, fullname, msg)
+        # Test the username.
+        username = "TestCreateUser"
+        email = "TCU@example.com"
+        password = "{TCU_999}"
+        user = UserModel.objects.create_user(username, email, password)
+        name = user.get_full_name_or_username()
+        msg = "name: {}, username: {}".format(name, username)
+        self.assertTrue(name == username, msg)
+
     def test_get_full_name_reversed(self):
         """
         Test that the users name gets reversed so last name is first.
@@ -118,6 +136,15 @@ class TestUser(BaseAccountModels):
         name = user.get_full_name_reversed()
         msg = "name: {}, username: {}".format(name, username)
         self.assertTrue(name == username, msg)
+
+    def test_get_absolute_url(self):
+        """
+        Test that the users API uri is returned.
+        """
+        #self.skipTest("Temporarily skipped")
+        uri = self.user.get_absolute_url()
+        msg = "URI: {}, public_id: {}".format(uri, self.user.public_id)
+        self.assertTrue(self.user.public_id in uri, msg)
 
     def test_process_projects(self):
         """
