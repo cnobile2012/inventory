@@ -27,7 +27,6 @@
   font-size: 80%;
 }
 
-#logout-modal .modal-footer button[name=login-submit] {
-  background-color: rgba(255, 190, 145, 1);
+#logout-modal .modal-footer button[name=logout-cancel] {
   color: rgba(72, 48, 24, 1);
 }
