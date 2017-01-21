@@ -258,7 +258,7 @@ class LoginView(GenericAPIView):
         user = serializer.validated_data.get('user')
         login(request, user)
         result = {}
-        result['fullname'] = user.get_full_name()
+        result['fullname'] = user.get_full_name_or_username()
         result['href'] = reverse(
             'user-detail', kwargs={'public_id': user.public_id},
             request=request)

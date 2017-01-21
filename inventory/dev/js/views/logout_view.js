@@ -25,6 +25,7 @@ jQuery(function($) {
           $messages.text(status.detail);
           $messages.show();
           IS_AUTHENTICATED = false;
+          $('#user-fullname').empty();
           window.destroyApp();
           window.setTimeout(window.setLogin(), 200);
         },
