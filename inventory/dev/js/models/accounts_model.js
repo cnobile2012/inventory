@@ -34,6 +34,26 @@ var UserModel = Backbone.Model.extend({
     uri: ''
   },
 
+  mutators: {
+    projects: {
+      set: function(key, value, options, set) {
+        var data = [];
+
+        _.forEach(value, function(value, key) {
+          var project = new ProjectModel();
+
+          _.forEach(value, function(value, key) {
+            project.set(key, value, options);
+          });
+
+          data[key] = project;
+        });
+
+        set(key, data, options);
+      }
+    }
+  },
+
   url: function() {
     if (_.isUndefined(this.uri)) {
       return App.loginModel.get('href');
