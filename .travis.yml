@@ -9,7 +9,7 @@ python:
 sudo: false
 
 # Command to install dependencies
-install: "pip install -r requirements/travis.txt"
+install: "pip install --upgrade -r requirements/travis.txt"
 
 # Command to setup Django, database, and run tests
 script:
