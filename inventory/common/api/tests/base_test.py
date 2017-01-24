@@ -58,6 +58,10 @@ class BaseTest(RecordCreation, APITestCase):
         kwargs = {}
         kwargs['username'] = 'Normal_User'
         kwargs['password'] = 'XX_123456'
+        kwargs['is_active'] = True
+        kwargs['is_staff'] = False
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
         return kwargs
 
     def __get_request_data(self, key, request_data):

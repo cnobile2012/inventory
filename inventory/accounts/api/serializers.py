@@ -29,7 +29,10 @@ UserModel = get_user_model()
 #
 # User
 #
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(SerializerMixin, serializers.ModelSerializer):
+    message = _("You do not have permissions to change the '{}' field.")
+
+    role = serializers.IntegerField(source='user.role', required=False)
     subdivision = serializers.HyperlinkedRelatedField(
         view_name='subdivision-detail', queryset=Subdivision.objects.all(),
         default=None, label=_("State"))
@@ -49,6 +52,44 @@ class UserSerializer(serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))
+
+    def validate(self, data):
+        request = self.get_request()
+        is_active = data.get('is_active')
+        is_staff = data.get('is_staff')
+        is_superuser = data.get('is_superuser')
+        role = self.initial_data.get('role')
+        if role: data['role'] = role
+
+        if request.method in ('PUT', 'PATCH'):
+            if (is_active is not None
+                and self.instance.is_active != is_active and not
+                (self.instance.is_superuser or
+                 self.instance.role == UserModel.ADMINISTRATOR)):
+                raise serializers.ValidationError(
+                    {'detail': self.message.format('is_active')})
+
+            if (is_staff is not None
+                and self.instance.is_staff != is_staff and not
+                (self.instance.is_superuser or
+                 self.instance.role == UserModel.ADMINISTRATOR)):
+                raise serializers.ValidationError(
+                    {'detail': self.message.format('is_staff')})
+
+            if (is_superuser is not None
+                and self.instance.is_superuser != is_superuser
+                and not self.instance.is_superuser):
+                raise serializers.ValidationError(
+                    {'detail': self.message.format('is_superuser')})
+
+            if (role is not None
+                and self.instance.role != role and not
+                (self.instance.is_superuser or
+                 self.instance.role == UserModel.ADMINISTRATOR)):
+                raise serializers.ValidationError(
+                    {'detail': self.message.format('role')})
+
+        return data
 
     def create(self, validated_data):
         username = validated_data.pop('username', '')

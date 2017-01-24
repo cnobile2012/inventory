@@ -37,6 +37,67 @@ class TestUserAPI(BaseAccount):
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
 
+    def _test_writable_role(self, method):
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': user.public_id})
+        data = {}
+        data['username'] = kwargs.get('password')
+        data['password'] = kwargs.get('password')
+        # Test writing to is_active.
+        data['is_active'] = False
+        response = getattr(client, method)(
+            uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "have permissions to change the 'is_active' field.",
+            })
+        # Test writing to is_staff.
+        data['is_active'] = True
+        data['is_staff'] = True
+        response = getattr(client, method)(
+            uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "have permissions to change the 'is_staff' field.",
+            })
+        # Test writing to is_superuser
+        data['is_active'] = True
+        data['is_staff'] = False
+        data['is_superuser'] = True
+        response = getattr(client, method)(
+            uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "have permissions to change the 'is_superuser' field.",
+            })
+        # Test writing to role
+        data['is_active'] = True
+        data['is_staff'] = False
+        data['is_superuser'] = False
+        data['role'] = UserModel.ADMINISTRATOR
+        response = getattr(client, method)(
+            uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "have permissions to change the 'role' field.",
+            })
+
     def test_GET_user_list_with_invalid_permissions(self):
         """
         Test the user_list endpoint with no permissions.
@@ -207,6 +268,15 @@ class TestUserAPI(BaseAccount):
         self._test_project_users_with_valid_permissions(
             uri, method, request_data=data)
 
+    def test_PUT_user_detail_writable_role(self):
+        """
+        Test that a PUT to user_detail fails when trying to update the
+        `is_active`, `is_staff`, `is_superuser`, `role` fields with the
+        wrong role.
+        """
+        #self.skipTest("Temporarily skipped")
+        self._test_writable_role('put')
+
     def test_PATCH_user_detail_with_invalid_permissions(self):
         """
         Test that a PATCH to user_detail fails with invalid permissions.
@@ -239,8 +309,8 @@ class TestUserAPI(BaseAccount):
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
-        kwargs['login'] = False
-        kwargs['is_superuser'] = False
+        kwargs['login'] = True
+        kwargs['is_superuser'] = True
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -262,6 +332,15 @@ class TestUserAPI(BaseAccount):
         pdu['password'] = '8765432109'
         self._test_project_users_with_valid_permissions(
             uri, method, request_data=data)
+
+    def test_PATCH_user_detail_writable_role(self):
+        """
+        Test that a PATCH to user_detail fails when trying to update the
+        `is_active`, `is_staff`, `is_superuser`, `role` fields with the
+        wrong role.
+        """
+        #self.skipTest("Temporarily skipped")
+        self._test_writable_role('patch')
 
     def test_DELETE_user_detail_with_invalid_permissions(self):
         """

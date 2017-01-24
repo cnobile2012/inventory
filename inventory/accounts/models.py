@@ -67,11 +67,11 @@ class UserManager(BaseUserManager):
             extra_fields['send_email'] = False
             extra_fields['need_password'] = False
 
-        extra_fields['_role'] = role
         user = self.model(username=username, email=email, is_staff=is_staff,
                           is_active=True, is_superuser=is_superuser,
                           date_joined=now, **extra_fields)
         user.set_password(password)
+        user.role = role
         user.save(using=self._db)
         return user
 
