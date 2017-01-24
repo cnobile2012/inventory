@@ -34,7 +34,7 @@ DATABASES = {
 #KEY_FUNCTION = 'inventory.common.caching.make_key'
 
 # Add to the MIDDLEWARE here.
-MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+MIDDLEWARE.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 CACHES = {
     'default': {
@@ -60,7 +60,6 @@ INTERNAL_IPS = IPList(['127.0.0.1', '192.168.1.0/24'])
 
 # If it were working, set it to follow redirects by default.
 DEBUG_TOOLBAR_CONFIG = {
-    'DEBUG_TOOLBAR_PATCH_SETTINGS': False,
     }
 
 # django-compressor

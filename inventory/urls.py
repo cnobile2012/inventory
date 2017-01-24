@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^api/regions/', include('inventory.regions.api.urls')),
     url(r'^api/suppliers/', include('inventory.suppliers.api.urls')),
     # Web Site
-    url(r'^', include('inventory.sites.urls')),
+    url(r'^$', include('inventory.sites.urls')),
     ]
 
 if settings.DEBUG:
