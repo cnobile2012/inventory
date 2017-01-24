@@ -5,5 +5,3 @@
 # Test coverage
 coverage
 python-coveralls
-simplegeneric==0.8.1
-six
