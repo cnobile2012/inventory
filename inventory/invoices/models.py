@@ -286,7 +286,7 @@ class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,
 
     class Meta:
         unique_together = ('supplier', 'invoice_number',)
-        ordering = ('invoice_number',)
+        ordering = ('-invoice_date', 'supplier__name')
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
