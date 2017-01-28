@@ -31,8 +31,6 @@ urlpatterns = [
     url(r'^api/projects/', include('inventory.projects.api.urls')),
     url(r'^api/regions/', include('inventory.regions.api.urls')),
     url(r'^api/suppliers/', include('inventory.suppliers.api.urls')),
-    # Web Site
-    url(r'^$', include('inventory.sites.urls')),
     ]
 
 if settings.DEBUG:
@@ -51,3 +49,10 @@ else:
         url(r'^static/(?P<path>.*)$', serve,
             {'document_root': settings.STATIC_URL, 'show_indexes': True}),
         ]
+
+# The root site URL must be at the end or it will cause issues with the
+# Django Debug Toolbar.
+urlpatterns += [
+    # Web Site
+    url(r'^', include('inventory.sites.urls')),
+    ]
