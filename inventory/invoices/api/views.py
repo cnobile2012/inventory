@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import (
     ListAPIView, ListCreateAPIView, RetrieveAPIView,
     RetrieveUpdateDestroyAPIView)
@@ -155,6 +156,17 @@ class ItemList(TrapDjangoValidationErrorCreateMixin,
         )
     pagination_class = SmallResultsSetPagination
     lookup_field = 'public_id'
+    filter_backends = (SearchFilter,)
+    search_fields = ('=project__public_id',
+                     'project__name',
+                     '=manufacturer__public_id',
+                     'manufacturer__name',
+                     '=categories__public_id',
+                     'categories__name',
+                     'categories__path',
+                     '=location_codes__public_id',
+                     'location_codes__path',
+                     '=shared_projects__public_id',)
 
     def perform_create(self, serializer):
         self._check_user(serializer)
@@ -230,6 +242,18 @@ class InvoiceList(TrapDjangoValidationErrorCreateMixin,
         )
     pagination_class = SmallResultsSetPagination
     lookup_field = 'public_id'
+    filter_backends = (SearchFilter,)
+    search_fields = ('=project__public_id',
+                     'project__name',
+                     '=supplier__public_id',
+                     'supplier__name',
+                     'invoice_number',
+                     'invoice_date',
+                     'notes',
+                     '=invoice_items__public_id',
+                     '=invoice_items__item_number',
+                     'invoice_items__description',
+                     '=invoice_items__quantity',)
 
 invoice_list = InvoiceList.as_view()
 

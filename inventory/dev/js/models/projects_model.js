@@ -10,6 +10,8 @@ var ProjectModel = Backbone.Model.extend({
     name: '',
     members: [],
     memberships: [],
+    invoices: '',
+    items: '',
     inventory_type: '',
     public: false,
     active: false,
@@ -27,8 +29,4 @@ var ProjectModel = Backbone.Model.extend({
       return this.uri;
     }
   }
-});
-
-jQuery(function($) {
-  //  App.userModel = new projectModel();
 });
