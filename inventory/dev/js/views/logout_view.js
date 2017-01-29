@@ -29,9 +29,13 @@ jQuery(function($) {
           window.destroyApp();
           window.setTimeout(window.setLogin(), 200);
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.log(textStatus);
-          }
+        error: function(jqXHR, status, errorThrown) {
+          var $messages = $('#messages');
+          var msg = status.responseJSON.detail +
+              " Already logged out please refresh the page.";
+          $messages.text(msg);
+          $messages.show();
+        }
       });
 
       this.close();
