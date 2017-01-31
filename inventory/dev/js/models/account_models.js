@@ -1,7 +1,7 @@
 /*
  * Account models
  *
- * js/models/accounts_model.js
+ * js/models/account_models.js
  */
 
 var UserModel = Backbone.Model.extend({
@@ -43,7 +43,7 @@ var UserModel = Backbone.Model.extend({
           var project = new ProjectModel();
 
           _.forEach(value, function(value, key) {
-            project.set(key, value, options);
+            project.set(key, value);
           });
 
           data[key] = project;
@@ -64,5 +64,7 @@ var UserModel = Backbone.Model.extend({
 });
 
 jQuery(function($) {
-  App.userModel = new UserModel();
+  App.Models.User = UserModel;
+  App.Collections.Users = Backbone.Collection.extend({
+    model: App.Models.User});
 });

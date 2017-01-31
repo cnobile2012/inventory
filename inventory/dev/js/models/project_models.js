@@ -1,7 +1,7 @@
 /*
  * Project models
  *
- * js/models/projects_model.js
+ * js/models/project_models.js
  */
 
 var ProjectModel = Backbone.Model.extend({
@@ -22,6 +22,15 @@ var ProjectModel = Backbone.Model.extend({
     uri: ''
   },
 
+  mutators: {
+    invoices: {
+      set: function(key, value, options, set) {
+        set(key, value, options);
+        window.setTimeout(populateInvoiceCollection(value), 200);
+      }
+    }
+  },
+
   url: function() {
     if (_.isUndefined(this.uri)) {
       return "";
@@ -29,4 +38,10 @@ var ProjectModel = Backbone.Model.extend({
       return this.uri;
     }
   }
+});
+
+jQuery(function($) {
+  App.Models.Project = ProjectModel;
+  App.Collections.Projects = Backbone.Collection.extend({
+    model: App.Models.Project});
 });

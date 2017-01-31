@@ -37,7 +37,6 @@ jQuery(function($) {
             self.model.set('fullname', status.fullname);
             self.model.set('href', status.href);
             $('#user-fullname').text(status.fullname);
-            self.close();
             self.model.set('username', 'X');
             self.model.set('password', 'X');
             var $messages = $('#messages');
@@ -48,27 +47,28 @@ jQuery(function($) {
             _fetchUser();
           },
 
-          error: function(jqXHR, textStatus, errorThrown) {
+          error: function(jqXHR, status, errorThrown) {
             var $elm = self.$el.find('.all-error');
-            var errors = textStatus.responseJSON;
+            var errors = status.responseJSON;
             mimicDjangoErrors($elm, errors);
             $elm.show();
-            //console.log(errors);
           }
         });
+
+        this.close();
       }
     }
   });
 
   var _fetchUser = function() {
     if(App.userModel === null) {
-      App.userModel = new UserModel();
+      App.userModel = new App.Models.User();
     }
 
     App.userModel.fetch({
       error: function(collection, response, options) {
-        $('#messages').text("Error: Could not get data user '" + USERNAME +
-          "' from API.");
+        $('#messages').text("Error: Could not get data for user '" +
+          USERNAME + "' from API.");
         $('#messages').show();
       }
     });
