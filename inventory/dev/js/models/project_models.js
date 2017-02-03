@@ -27,7 +27,10 @@ jQuery(function($) {
       invoices: {
         set: function(key, value, options, set) {
           set(key, value, options);
-          window.setTimeout(populateInvoiceCollection(value), 200);
+
+          if(value.length > 0) {
+            App.picTimeout = setTimeout(populateInvoiceCollection, 200, value);
+          }
         }
       }
     },

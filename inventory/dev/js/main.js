@@ -20,7 +20,8 @@ window.App = {
   rootModel: null,
   loginModel: null,
   logoutModel: null,
-  userModel: null
+  userModel: null,
+  picTimeout: null
 };
 
 
@@ -34,6 +35,7 @@ window.destroyApp = function() {
   App.loginModel.clear().set(App.loginModel.defaults);
   App.logoutModel.clear().set(App.logoutModel.defaults);
   App.userModel.clear().set(App.userModel.defaults);
+  App.picTimeout = null;
 };
 
 

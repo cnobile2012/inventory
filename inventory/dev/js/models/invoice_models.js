@@ -77,6 +77,7 @@ jQuery(function($) {
     model: App.Models.Items});
 
   window.populateInvoiceCollection = function(url) {
+    clearTimeout(App.picTimeout);
     console.log(url);
 
   };
