@@ -37,6 +37,7 @@ jQuery(function($) {
             self.model.set('fullname', status.fullname);
             self.model.set('href', status.href);
             $('#user-fullname').text(status.fullname);
+            self.close();
             self.model.set('username', 'X');
             self.model.set('password', 'X');
             var $messages = $('#messages');
@@ -54,8 +55,6 @@ jQuery(function($) {
             $elm.show();
           }
         });
-
-        this.close();
       }
     }
   });

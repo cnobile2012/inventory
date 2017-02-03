@@ -4,16 +4,17 @@
  * js/models/login_model.js
  */
 
-var LoginModel = Backbone.Model.extend({
-  urlRoot: appConfig.loginURL,
-  defaults: {
-    username: 'X',
-    password: 'X',
-    fullname: '',
-    href: ''
-  },
-});
-
 jQuery(function($) {
-  App.loginModel = new LoginModel();
+  App.Models.Login = Backbone.Model.extend({
+    id: 'LoginModel',
+    urlRoot: appConfig.loginURL,
+    defaults: {
+      username: 'X',
+      password: 'X',
+      fullname: '',
+      href: ''
+    },
+  });
+
+  App.loginModel = new App.Models.Login();
 });

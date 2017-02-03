@@ -5,7 +5,7 @@
  */
 
 jQuery(function($) {
-  var LogoutModel = Backbone.Model.extend({
+  App.Models.Logout = Backbone.Model.extend({
     id: 'LogoutModel',
     url: function() {
       return App.rootModel.get('accounts').logout;
@@ -14,5 +14,5 @@ jQuery(function($) {
   });
 
 
-  App.logoutModel = new LogoutModel();
+  App.logoutModel = new App.Models.Logout();
 });

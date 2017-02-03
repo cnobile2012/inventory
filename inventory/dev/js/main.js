@@ -26,8 +26,8 @@ window.App = {
 
 // Can only run this function after initial load has completed.
 window.destroyApp = function() {
-  App.Models = {};
-  App.Collections = {};
+  //App.Models = {};
+  //App.Collections = {};
   App.Views = {};
   App.Router = {};
   App.rootModel.clear().set(App.rootModel.defaults);
