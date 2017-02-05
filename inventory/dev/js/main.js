@@ -21,20 +21,21 @@ window.App = {
   loginModel: null,
   logoutModel: null,
   userModel: null,
-  picTimeout: null
+  collections: {},
+  invoiceTimeout: null,
+  itemTimeout: null
 };
 
 
 // Can only run this function after initial load has completed.
 window.destroyApp = function() {
-  //App.Models = {};
-  //App.Collections = {};
   App.Views = {};
   App.Router = {};
   App.rootModel.clear().set(App.rootModel.defaults);
   App.loginModel.clear().set(App.loginModel.defaults);
   App.logoutModel.clear().set(App.logoutModel.defaults);
   App.userModel.clear().set(App.userModel.defaults);
+  App.collections = {};
   App.picTimeout = null;
 };
 

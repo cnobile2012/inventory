@@ -48,6 +48,7 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         view_name='project-detail', queryset=Project.objects.all(),
         default=None, lookup_field='public_id')
+    project_public_id = serializers.SerializerMethodField()
     manufacturer = serializers.HyperlinkedRelatedField(
         view_name='supplier-detail', default=None,
         queryset=Supplier.objects.all(), lookup_field='public_id')
@@ -66,6 +67,9 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True, lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
         view_name='item-detail', lookup_field='public_id')
+
+    def get_project_public_id(self, obj):
+        return obj.project.public_id
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -112,10 +116,11 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ('public_id', 'project', 'sku', 'photo', 'item_number',
-                  'item_number_mfg', 'manufacturer', 'description', 'quantity',
-                  'categories', 'location_codes', 'purge', 'shared_projects',
-                  'active', 'creator', 'created', 'updater', 'updated', 'uri',)
+        fields = ('public_id', 'project', 'project_public_id', 'sku', 'photo',
+                  'item_number', 'item_number_mfg', 'manufacturer',
+                  'description', 'quantity', 'categories', 'location_codes',
+                  'purge', 'shared_projects', 'active', 'creator', 'created',
+                  'updater', 'updated', 'uri',)
         read_only_fields = ('public_id', 'sku', 'invoice_items', 'creator',
                             'created', 'updater', 'updated', 'uri',)
 
@@ -130,11 +135,15 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
     invoice = serializers.HyperlinkedRelatedField(
         view_name='invoice-detail', queryset=Invoice.objects.all(),
         lookup_field='public_id')
+    invoice_public_id = serializers.SerializerMethodField()
     item = serializers.HyperlinkedRelatedField(
         view_name='item-detail', read_only=True, default=None,
         lookup_field='public_id')
     uri = serializers.HyperlinkedIdentityField(
         view_name='invoice-item-detail', lookup_field='public_id')
+
+    def get_invoice_public_id(self, obj):
+        return obj.invoice.public_id
 
     def create(self, validated_data):
         return InvoiceItem.objects.create(**validated_data)
@@ -155,8 +164,8 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = InvoiceItem
-        fields = ('invoice', 'item_number', 'description', 'quantity',
-                  'unit_price', 'process', 'item', 'uri',)
+        fields = ('invoice', 'invoice_public_id', 'item_number', 'description',
+                  'quantity', 'unit_price', 'process', 'item', 'uri',)
         read_only_fields = ('invoice',)
 
 
@@ -170,6 +179,7 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         view_name='project-detail', queryset=Project.objects.all(),
         default=None, lookup_field='public_id')
+    project_public_id = serializers.SerializerMethodField()
     currency = serializers.HyperlinkedRelatedField(
         view_name='currency-detail', default=None,
         queryset=Currency.objects.all())
@@ -179,6 +189,9 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
     invoice_items = InvoiceItemSerializer(many=True, read_only=True)
     uri = serializers.HyperlinkedIdentityField(
         view_name='invoice-detail', lookup_field='public_id')
+
+    def get_project_public_id(self, obj):
+        return obj.project.public_id
 
     def create(self, validated_data):
         user = self.get_user_object()
@@ -213,9 +226,9 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
-        fields = ('public_id', 'project', 'currency', 'supplier',
-                  'invoice_number', 'invoice_date', 'credit', 'shipping',
-                  'other', 'tax', 'notes', 'invoice_items', 'creator',
-                  'created', 'updater', 'updated', 'uri',)
+        fields = ('public_id', 'project', 'project_public_id', 'currency',
+                  'supplier', 'invoice_number', 'invoice_date', 'credit',
+                  'shipping', 'other', 'tax', 'notes', 'invoice_items',
+                  'creator', 'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
                             'updated', 'uri',)

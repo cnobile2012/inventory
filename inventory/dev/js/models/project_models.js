@@ -29,10 +29,21 @@ jQuery(function($) {
           set(key, value, options);
 
           if(value.length > 0) {
-            App.picTimeout = setTimeout(populateInvoiceCollection, 200, value);
+            App.invoiceTimeout = setTimeout(populateInvoiceCollection, 200,
+                                            value);
           }
         }
-      }
+      },
+
+      items: {
+        set: function(key, value, options, set) {
+          set(key, value, options);
+
+          if(value.length > 0) {
+            App.itemTimeout = setTimeout(populateItemCollection, 200, value);
+          }
+        }
+      },
     },
 
     url: function() {
