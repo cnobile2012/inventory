@@ -32,13 +32,13 @@ def api_root(request, format=None):
         * Returns items in JSON format.
       3. `/?format=xml`
         * Returns items in XML format.
-      3. `/?format=yaml`
+      4. `/?format=yaml`
         * Returns items in YAML format.
-      4. `/`
+      5. `/`
         * Returns the first page of 25 items.
-      5. `/?page=1`
+      6. `/?page=1`
         * Returns the first page of 25 items.
-      6. `/?page=3&page_size=100`
+      7. `/?page=3&page_size=100`
         * Returns the third page of 100 items.
 
     ## Notes:

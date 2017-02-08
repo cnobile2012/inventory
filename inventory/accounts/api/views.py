@@ -275,15 +275,17 @@ class LogoutView(APIView):
     Logout view. Performs the logout on a POST. No POST data is required
     to logout.
     """
+    permission_classes = (
+        And(IsUserActive, #IsAuthenticated,
+            Or(IsAnyUser,
+               IsAnyProjectUser)
+            ),
+        )
 
     def post(self, request, *args, **kwargs):
-        result = {}
-
-        if request.user.is_authenticated():
-            logout(request)
-            status = HTTP_200_OK
-            result['detail'] = _("Logout was successful.")
-
+        logout(request)
+        status = HTTP_200_OK
+        result = {'detail': _("Logout was successful.")}
         return Response(result, status=status)
 
 logout_view = LogoutView.as_view()
