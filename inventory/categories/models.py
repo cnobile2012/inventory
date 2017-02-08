@@ -259,33 +259,36 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
         if self.pk is None and not self.public_id:
             self.public_id = generate_public_key()
 
-        self.path = self._get_category_path()
-        self.level = self.path.count(self.DEFAULT_SEPARATOR)
-        delimiter = self.DEFAULT_SEPARATOR
+        if hasattr(self, 'project'):
+            self.path = self._get_category_path()
+            self.level = self.path.count(self.DEFAULT_SEPARATOR)
+            delimiter = self.DEFAULT_SEPARATOR
 
-        # Check that the separator is not in the name.
-        if delimiter in self.name:
-            raise ValidationError(
-                {'name': _("A category name cannot contain the category "
-                           "delimiter '{}'.").format(delimiter)})
+            # Check that the separator is not in the name.
+            if delimiter in self.name:
+                raise ValidationError(
+                    {'name': _("A category name cannot contain the category "
+                               "delimiter '{}'.").format(delimiter)})
 
-        if self.parent:
-            # Check that this category is not a parent.
-            parents = Category.objects.get_parents(self.project, self.parent)
-            parents.append(self.parent)
+            if self.parent:
+                # Check that this category is not a parent.
+                parents = Category.objects.get_parents(
+                    self.project, self.parent)
+                parents.append(self.parent)
 
-            for parent in parents:
-                if parent.name == self.name:
-                    raise ValidationError(
-                        {'name': _("A category in this tree with name [{}] "
-                                   "already exists.").format(self.name)})
-        # Check that a root level name does not already exist for this project
-        # on a create only.
-        elif self.pk is None and Category.objects.filter(
-            name=self.name, project=self.project, level=0).count():
-            raise ValidationError(
-                {'name': _("A root level category name [{}] already exists."
-                           ).format(self.name)})
+                for parent in parents:
+                    if parent.name == self.name:
+                        raise ValidationError(
+                            {'name': _("A category in this tree with name "
+                                       "[{}] already exists.").format(
+                                 self.name)})
+            # Check that a root level name does not already exist for this
+            # project on a create only.
+            elif self.pk is None and Category.objects.filter(
+                name=self.name, project=self.project, level=0).count():
+                raise ValidationError(
+                    {'name': _("A root level category name [{}] already exists."
+                               ).format(self.name)})
 
     def _get_category_path(self, current=True):
         parents = Category.objects.get_parents(self.project, self)
