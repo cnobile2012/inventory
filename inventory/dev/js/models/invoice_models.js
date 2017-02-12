@@ -34,7 +34,7 @@ jQuery(function($) {
     }
   });
 
-  App.Models.InvoiceMeta = Backbone.Model.extend({
+  App.Models.InvoicesMeta = Backbone.Model.extend({
     defaults: {
       project_public_id: '',
       count: 0,
@@ -67,11 +67,7 @@ jQuery(function($) {
     },
 
     url: function() {
-      if (_.isUndefined(this.uri)) {
-        return "";
-      } else {
-        return this.uri;
-      }
+      return this.uri;
     }
   });
 
@@ -85,11 +81,6 @@ jQuery(function($) {
   });
 
 
-  // InvoiceMeta
-  App.Collections.InvoiceMeta = Backbone.Collection.extend({
-    name: "InvoiceMeta"
-  });
-
   // Invoices
   App.Collections.Invoices = Backbone.Collection.extend({
     name: "Invoices",
@@ -98,11 +89,11 @@ jQuery(function($) {
     parse: function(response, options) {
       var models = response.results;
       var project_public_id = models[0].project_public_id;
-      App.collections.invoiceMeta = new App.Models.ItemsMeta({
+      App.models.invoicesMeta = new App.Models.InvoicesMeta({
         project_public_id: project_public_id,
         count: response.count,
         next: response.next,
-        previous:response.previous
+        previous: response.previous
       })
       return models;
     }
@@ -110,18 +101,35 @@ jQuery(function($) {
 
   // InvoiceItems
 
+
+
+
+
   // Items
   App.Collections.Items = Backbone.Collection.extend({
     name: "Items",
     model: App.Models.Items,
+
+    parse: function(response, options) {
+      var models = response.results;
+      var project_public_id = models[0].project_public_id;
+      App.models.itemsMeta = new App.Models.ItemsMeta({
+        project_public_id: project_public_id,
+        count: response.count,
+        next: response.next,
+        previous: response.previous
+      })
+      return models;
+    }
   });
 
   // Fetch Invoices
-  window.populateInvoiceCollection = function(url) {
+  window.populateInvoiceCollection = function(url, project) {
     clearTimeout(App.invoiceTimeout);
-    App.collections.invoices = new App.Collections.Invoices();
-    App.collections.invoices.url = url;
-    App.collections.invoices.fetch({
+    var invoices = new App.Collections.Invoices();
+    project.set('invoices', invoices);
+    invoices.url = url;
+    invoices.fetch({
       success: function(collection, response, options) {
         console.log(response);
       },
@@ -133,11 +141,12 @@ jQuery(function($) {
   };
 
   // Fetch Items
-  window.populateItemCollection = function(url) {
+  window.populateItemCollection = function(url, project) {
     clearTimeout(App.itemTimeout);
-    App.collections.items = new App.Collections.Items();
-    App.collections.items.url = url;
-    App.collections.items.fetch({
+    var items = new App.Collections.Items();
+    project.set('items', items);
+    items.url = url;
+    items.fetch({
       success: function(collection, response, options) {
         console.log(response);
       },

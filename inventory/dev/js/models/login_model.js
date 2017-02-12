@@ -16,5 +16,6 @@ jQuery(function($) {
     },
   });
 
-  App.loginModel = new App.Models.Login();
+
+  App.models.loginModel = new App.Models.Login();
 });

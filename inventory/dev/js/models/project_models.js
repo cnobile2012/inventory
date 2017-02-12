@@ -11,8 +11,10 @@ jQuery(function($) {
       name: '',
       members: [],
       memberships: [],
-      invoices: '',
-      items: '',
+      invoices: [],
+      invoices_href: '',
+      items: [],
+      items_href: '',
       inventory_type: '',
       public: false,
       active: false,
@@ -20,41 +22,39 @@ jQuery(function($) {
       created: '',
       updater: '',
       updated: '',
-      uri: ''
+      href: ''
     },
 
     mutators: {
-      invoices: {
+      invoices_href: {
         set: function(key, value, options, set) {
           set(key, value, options);
 
           if(value.length > 0) {
             App.invoiceTimeout = setTimeout(populateInvoiceCollection, 200,
-                                            value);
+                                            value, this);
           }
         }
       },
 
-      items: {
+      items_href: {
         set: function(key, value, options, set) {
           set(key, value, options);
 
           if(value.length > 0) {
-            App.itemTimeout = setTimeout(populateItemCollection, 200, value);
+            App.itemTimeout = setTimeout(populateItemCollection, 200,
+                                         value, this);
           }
         }
       },
     },
 
     url: function() {
-      if (_.isUndefined(this.uri)) {
-        return "";
-      } else {
-        return this.uri;
-      }
+      return this.uri;
     }
   });
 
   App.Collections.Projects = Backbone.Collection.extend({
+    name: "Projects",
     model: App.Models.Project});
 });

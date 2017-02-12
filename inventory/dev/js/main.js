@@ -17,11 +17,9 @@ window.App = {
   Collections: {},
   Views: {},
   Router: {},
-  rootModel: null,
-  loginModel: null,
-  logoutModel: null,
-  userModel: null,
+  models: {},
   collections: {},
+  views: {},
   invoiceTimeout: null,
   itemTimeout: null
 };
@@ -31,10 +29,10 @@ window.App = {
 window.destroyApp = function() {
   App.Views = {};
   App.Router = {};
-  App.rootModel.clear().set(App.rootModel.defaults);
-  App.loginModel.clear().set(App.loginModel.defaults);
-  App.logoutModel.clear().set(App.logoutModel.defaults);
-  App.userModel.clear().set(App.userModel.defaults);
+  App.models.rootModel.clear().set(App.models.rootModel.defaults);
+  App.models.loginModel.clear().set(App.models.loginModel.defaults);
+  App.models.logoutModel.clear().set(App.models.logoutModel.defaults);
+  App.models.userModel.clear().set(App.models.userModel.defaults);
   App.collections = {};
   App.picTimeout = null;
 };

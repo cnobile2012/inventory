@@ -31,7 +31,7 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
     projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', read_only=True, many=True,
         lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='inventory-type-detail', lookup_field='public_id')
 
     def create(self, validated_data):
@@ -53,7 +53,7 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
         fields = ('public_id', 'name', 'description', 'projects', 'creator',
                   'created', 'updater', 'updated', 'uri',)
         read_only_fields = ('projects', 'creator', 'created', 'updater',
-                            'updated', 'uri',)
+                            'updated', 'href',)
 
 
 #
@@ -82,16 +82,16 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         label=_("Role"), write_only=True, required=False,
         help_text=_("Set the role of the user in this project."))
     memberships = MembershipSerializer(many=True, read_only=True)
-    items = HyperlinkedSearchField(
+    items_href = HyperlinkedSearchField(
         view_name='item-list', read_only=True, lookup_field='public_id')
-    invoices = HyperlinkedSearchField(
+    invoices_href = HyperlinkedSearchField(
        view_name='invoice-list', read_only=True, lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id',
         help_text=_("The user who created this project."))
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='project-detail', lookup_field='public_id')
 
     def validate(self, data):
@@ -154,7 +154,8 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('public_id', 'name', 'members', 'role', 'memberships',
-                  'inventory_type', 'items', 'invoices', 'public', 'active',
-                  'creator', 'created', 'updater', 'updated', 'uri',)
+                  'inventory_type', 'items_href', 'invoices_href', 'public',
+                  'active', 'creator', 'created', 'updater', 'updated',
+                  'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
-                            'updated', 'uri',)
+                            'updated', 'href',)

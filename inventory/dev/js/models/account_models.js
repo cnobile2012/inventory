@@ -38,31 +38,25 @@ jQuery(function($) {
     mutators: {
       projects: {
         set: function(key, value, options, set) {
-          var data = [];
+          var projects = new App.Collections.Projects();
+          set(key, projects, options);
 
           _.forEach(value, function(value, key) {
-            var project = new App.Models.Project();
-
-            _.forEach(value, function(value, key) {
-              project.set(key, value);
-            });
-
-            data[key] = project;
+            projects.add(value);
           });
-
-          set(key, data, options);
         }
       }
     },
 
     url: function() {
       if (_.isUndefined(this.uri)) {
-        return App.loginModel.get('href');
+        return App.models.loginModel.get('href');
       } else {
         return this.uri;
       }
     }
   });
+
 
   App.Collections.Users = Backbone.Collection.extend({
     model: App.Models.User});

@@ -5,7 +5,7 @@
  */
 
 jQuery(function($) {
-  var RootModel = Backbone.Model.extend({
+  App.Models.RootModel = Backbone.Model.extend({
     urlRoot: appConfig.baseURL,
     defaults: {},
     mutators: {
@@ -27,10 +27,11 @@ jQuery(function($) {
     }
   });
 
-  App.rootModel = new RootModel();
+
+  App.models.rootModel = new App.Models.RootModel();
 
   window.getAPIRoot = function() {
-    App.rootModel.fetch({
+    App.models.rootModel.fetch({
       error: function(collection, response, options) {
         $('#messages').text("Error: Could not get data from API root.");
         $('#messages').show();

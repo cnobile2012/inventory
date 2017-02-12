@@ -7,7 +7,7 @@
 jQuery(function($) {
   // Create a modal view class
   var LoginModalView = BaseModalView.extend({
-    model: App.loginModel,
+    model: App.models.loginModel,
     el: $("#login-modal"),
     template: $.tpl.login_template(),
 
@@ -60,11 +60,11 @@ jQuery(function($) {
   });
 
   var _fetchUser = function() {
-    if(App.userModel === null) {
-      App.userModel = new App.Models.User();
+    if(App.models.userModel === (void 0)) {
+      App.models.userModel = new App.Models.User();
     }
 
-    App.userModel.fetch({
+    App.models.userModel.fetch({
       error: function(collection, response, options) {
         $('#messages').text("Error: Could not get data for user '" +
           USERNAME + "' from API.");
@@ -81,7 +81,7 @@ jQuery(function($) {
       };
       new LoginModalView().show(options);
     } else {
-      App.loginModel.set(
+      App.models.loginModel.set(
         'href', location.protocol + '//' + location.host + USER_HREF);
       _fetchUser();
     }
