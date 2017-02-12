@@ -51,9 +51,9 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = InventoryType
         fields = ('public_id', 'name', 'description', 'projects', 'creator',
-                  'created', 'updater', 'updated', 'uri',)
+                  'created', 'updater', 'updated', 'href',)
         read_only_fields = ('projects', 'creator', 'created', 'updater',
-                            'updated', 'href',)
+                            'updated',)
 
 
 #
@@ -158,4 +158,4 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
                   'active', 'creator', 'created', 'updater', 'updated',
                   'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
-                            'updated', 'href',)
+                            'updated',)

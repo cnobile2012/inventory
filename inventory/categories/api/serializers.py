@@ -41,7 +41,7 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='category-detail', lookup_field='public_id')
 
     def create(self, validated_data):
@@ -61,9 +61,9 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('public_id', 'project', 'name', 'parent', 'path', 'level',
-                  'creator', 'created', 'updater', 'updated', 'uri',)
+                  'creator', 'created', 'updater', 'updated', 'href',)
         read_only_fields = ('public_id', 'path', 'level', 'creator', 'created',
-                            'updater', 'updated', 'uri',)
+                            'updater', 'updated',)
         extra_kwargs = {'level': {'default': 0}}
 
 
@@ -105,13 +105,13 @@ class CategoryCloneListSerializer(serializers.ListSerializer):
 class CategoryItemSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=250)
     path = serializers.CharField(max_length=250)
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='category-detail', lookup_field='public_id')
 
     class Meta:
         model = Category
-        fields = ('name', 'path', 'uri',)
-        read_only_fields = ('name', 'path', 'uri',)
+        fields = ('name', 'path', 'href',)
+        read_only_fields = ('name', 'path',)
         list_serializer_class = CategoryCloneListSerializer
 
 

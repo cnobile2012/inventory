@@ -49,7 +49,7 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='answer-detail', many=True, read_only=True,
         label=_("Security answers"), lookup_field='public_id')
     projects = ProjectSerializer(many=True, required=False)
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))
 
@@ -156,8 +156,8 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
                   'country', 'language', 'timezone', 'dob', 'email', 'role',
                   'projects', 'project_default', 'answers', 'is_active',
                   'is_staff', 'is_superuser', 'last_login', 'date_joined',
-                  'uri',)
-        read_only_fields = ('public_id', 'last_login', 'date_joined', 'uri',)
+                  'href',)
+        read_only_fields = ('public_id', 'last_login', 'date_joined',)
         extra_kwargs = {'password': {'write_only': True}}
 
 
@@ -167,7 +167,7 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
 ## class GroupSerializer(serializers.ModelSerializer):
 ##     user_set = serializers.HyperlinkedRelatedField(
 ##         many=True, read_only=True, view_name='user-detail')
-##     uri = serializers.HyperlinkedIdentityField(view_name='group-detail')
+##     href = serializers.HyperlinkedIdentityField(view_name='group-detail')
 
 ##     def create(self, validated_data):
 ##         return Group.objects.create(**validated_data)
@@ -180,7 +180,7 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
 
 ##     class Meta:
 ##         model = Group
-##         fields = ('id', 'name', 'user_set', 'uri',)
+##         fields = ('id', 'name', 'user_set', 'href',)
 ##         read_only_fields = ('id',)
 
 
@@ -192,7 +192,7 @@ class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='question-detail', lookup_field='public_id')
 
     def create(self, validated_data):
@@ -211,7 +211,7 @@ class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ('public_id', 'question', 'active', 'creator', 'created',
-                  'updater', 'updated', 'uri',)
+                  'updater', 'updated', 'href',)
         read_only_fields = ('id', 'public_id', 'creator', 'created', 'updater',
                             'updated',)
 
@@ -230,7 +230,7 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='answer-detail', lookup_field='public_id')
 
     def create(self, validated_data):
@@ -251,7 +251,7 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ('public_id', 'user', 'question', 'answer', 'creator',
-                  'created', 'updater', 'updated', 'uri',)
+                  'created', 'updater', 'updated', 'href',)
         read_only_fields = ('id', 'public_id', 'creator', 'created', 'updater',
                             'updated',)
         extra_kwargs = {'answer': {'write_only': True}}

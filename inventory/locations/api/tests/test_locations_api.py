@@ -1090,7 +1090,7 @@ class TestLocationCodeAPI(BaseTest):
         data = {
             'location_format': self.location_format_uri,
             'segment': 'A11',
-            'parent': response.data.get('uri')
+            'parent': response.data.get('href')
             }
         response = self.client.post(
             uri, data=data, format='json', **self._HEADERS)
@@ -1137,7 +1137,7 @@ class TestLocationCodeAPI(BaseTest):
         data = {
             'location_format': lf1_uri,
             'segment': 'C01R01',
-            'parent': response.data.get('uri')
+            'parent': response.data.get('href')
             }
         response = self.client.post(
             uri, data=data, format='json', **self._HEADERS)

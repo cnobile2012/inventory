@@ -41,7 +41,7 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='supplier-detail', lookup_field='public_id')
 
     def create(self, validated_data):
@@ -88,6 +88,6 @@ class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
         fields = ('public_id', 'name', 'address_01', 'address_02', 'city',
                   'subdivision', 'postal_code', 'country', 'language',
                   'timezone', 'phone', 'fax', 'email', 'stype', 'project',
-                  'creator', 'created', 'updater', 'updated', 'uri',)
+                  'creator', 'created', 'updater', 'updated', 'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
-                            'updated', 'uri',)
+                            'updated',)

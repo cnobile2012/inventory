@@ -27,7 +27,7 @@ from ..models import Condition, Item, Invoice, InvoiceItem
 class ConditionSerializer(DynamicFieldsSerializer):
     pk = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
-    uri = HyperlinkedCustomIdentityField(view_name='condition-detail')
+    href = HyperlinkedCustomIdentityField(view_name='condition-detail')
 
     def __init__(self, *args, **kwargs):
         fields=('pk', 'name', 'uri',)
@@ -35,7 +35,7 @@ class ConditionSerializer(DynamicFieldsSerializer):
             *args, fields=fields, **kwargs)
 
     class Meta:
-        fields = ('pk', 'name', 'uri',)
+        fields = ('pk', 'name', 'href',)
 
 
 #
@@ -65,7 +65,7 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='item-detail', lookup_field='public_id')
 
     def get_project_public_id(self, obj):
@@ -120,9 +120,9 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
                   'item_number', 'item_number_mfg', 'manufacturer',
                   'description', 'quantity', 'categories', 'location_codes',
                   'purge', 'shared_projects', 'active', 'creator', 'created',
-                  'updater', 'updated', 'uri',)
+                  'updater', 'updated', 'href',)
         read_only_fields = ('public_id', 'sku', 'invoice_items', 'creator',
-                            'created', 'updater', 'updated', 'uri',)
+                            'created', 'updater', 'updated',)
 
 
 #
@@ -139,7 +139,7 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
     item = serializers.HyperlinkedRelatedField(
         view_name='item-detail', read_only=True, default=None,
         lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='invoice-item-detail', lookup_field='public_id')
 
     def get_invoice_public_id(self, obj):
@@ -165,7 +165,7 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = InvoiceItem
         fields = ('invoice', 'invoice_public_id', 'item_number', 'description',
-                  'quantity', 'unit_price', 'process', 'item', 'uri',)
+                  'quantity', 'unit_price', 'process', 'item', 'href',)
         read_only_fields = ('invoice',)
 
 
@@ -187,7 +187,7 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='supplier-detail', default=None,
         queryset=Supplier.objects.all(), lookup_field='public_id')
     invoice_items = InvoiceItemSerializer(many=True, read_only=True)
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='invoice-detail', lookup_field='public_id')
 
     def get_project_public_id(self, obj):
@@ -229,6 +229,6 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
         fields = ('public_id', 'project', 'project_public_id', 'currency',
                   'supplier', 'invoice_number', 'invoice_date', 'credit',
                   'shipping', 'other', 'tax', 'notes', 'invoice_items',
-                  'creator', 'created', 'updater', 'updated', 'uri',)
+                  'creator', 'created', 'updater', 'updated', 'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
-                            'updated', 'uri',)
+                            'updated',)

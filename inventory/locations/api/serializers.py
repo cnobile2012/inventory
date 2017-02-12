@@ -38,7 +38,7 @@ class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
     location_formats = serializers.HyperlinkedRelatedField(
         view_name='location-format-detail', many=True, read_only=True,
         lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='location-set-name-detail', lookup_field='public_id')
 
     def create(self, validated_data):
@@ -63,7 +63,7 @@ class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
         model = LocationSetName
         fields = ('id', 'project', 'name', 'description', 'shared',
                   'separator', 'location_formats', 'creator', 'created',
-                  'updater', 'updated', 'uri',)
+                  'updater', 'updated', 'href',)
         read_only_fields = ('id', 'creator', 'created', 'updater', 'updated',)
 
 
@@ -81,7 +81,7 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
     location_codes = serializers.HyperlinkedRelatedField(
         view_name='location-code-detail', many=True, read_only=True,
         lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='location-format-detail', lookup_field='public_id')
 
     def create(self, validated_data):
@@ -108,7 +108,7 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
         fields = ('id', 'location_set_name', 'char_definition',
                   'segment_order', 'segment_length', 'description',
                   'location_codes', 'creator', 'created', 'updater',
-                  'updated', 'uri',)
+                  'updated', 'href',)
         read_only_fields = ('id', 'segment_length', 'creator', 'created',
                             'updater', 'updated',)
 
@@ -130,7 +130,7 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
     items = serializers.HyperlinkedRelatedField(
         view_name='item-detail', many=True, read_only=True,
         lookup_field='public_id')
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='location-code-detail', lookup_field='public_id')
 
     def validate_segment(self, value):
@@ -168,7 +168,7 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
         model = LocationCode
         fields = ('id', 'location_format', 'segment', 'parent', 'path',
                   'level', 'items', 'creator', 'created', 'updater',
-                  'updated', 'uri',)
+                  'updated', 'href',)
         read_only_fields = ('id', 'path', 'level', 'items', 'creator',
                             'created', 'updater', 'updated',)
 
@@ -179,13 +179,13 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
 class LocationSetNameItemSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     description = serializers.CharField(max_length=1000)
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='location-set-name-detail', lookup_field='public_id')
 
     class Meta:
         model =  LocationSetName
-        fields = ('name', 'description', 'uri',)
-        read_only_fields = ('name', 'description', 'uri',)
+        fields = ('name', 'description', 'href',)
+        read_only_fields = ('name', 'description',)
 
 
 #
@@ -194,13 +194,13 @@ class LocationSetNameItemSerializer(serializers.Serializer):
 class LocationFormatItemSerializer(serializers.Serializer):
     char_definition = serializers.CharField(max_length=250)
     description = serializers.CharField(max_length=1000)
-    uri = serializers.HyperlinkedIdentityField(
+    href = serializers.HyperlinkedIdentityField(
         view_name='location-format-detail', lookup_field='public_id')
 
     class Meta:
         model =  LocationSetName
-        fields = ('char_definition', 'description', 'uri',)
-        read_only_fields = ('char_definition', 'description', 'uri',)
+        fields = ('char_definition', 'description', 'href',)
+        read_only_fields = ('char_definition', 'description',)
 
 
 #

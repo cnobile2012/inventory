@@ -333,7 +333,7 @@ class TestCategoryAPI(BaseTest):
             response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
         # Create Category two.
-        parent_uri = response.data.get('uri')
+        parent_uri = response.data.get('href')
         uri = reverse('category-list')
         new_data = {'name': 'TestCategory-2',
                     'parent': parent_uri,
