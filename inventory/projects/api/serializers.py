@@ -96,7 +96,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Pops out the role values and validates them, then added the user
+        Pops out the role values and validates them, then adds the user
         and role back into the data.
         """
         role_data = data.pop('role', {})

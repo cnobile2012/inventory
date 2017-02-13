@@ -32,7 +32,7 @@ jQuery(function($) {
       is_superuser: false,
       last_login: '',
       date_joined: '',
-      uri: ''
+      href: ''
     },
 
     mutators: {
@@ -52,7 +52,7 @@ jQuery(function($) {
       if (_.isUndefined(this.uri)) {
         return App.models.loginModel.get('href');
       } else {
-        return this.uri;
+        return this.href;
       }
     }
   });

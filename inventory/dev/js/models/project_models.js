@@ -50,7 +50,7 @@ jQuery(function($) {
     },
 
     url: function() {
-      return this.uri;
+      return this.href;
     }
   });
 

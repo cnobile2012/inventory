@@ -5,7 +5,8 @@
  */
 
 jQuery(function($) {
-   App.Models.Invoices = Backbone.Model.extend({
+  // Invoices
+  App.Models.Invoices = Backbone.Model.extend({
     defaults: {
       public_id: '',
       project: null,
@@ -22,15 +23,24 @@ jQuery(function($) {
       created: '',
       updater: '',
       updated: '',
-      uri: ''
+      href: ''
+    },
+
+    mutators: {
+      invoice_items: {
+        set: function(key, value, options, set) {
+          var invoice_items = new App.Collections.InvoiceItems();
+          set(key, invoice_items, options);
+
+          _.forEach(value, function(value, key) {
+            invoice_items.add(value);
+          });
+        }
+      }
     },
 
     url: function() {
-      if (_.isUndefined(this.uri)) {
-        return "";
-      } else {
-        return this.uri;
-      }
+      return this.href;
     }
   });
 
@@ -41,9 +51,61 @@ jQuery(function($) {
       next: null,
       previous: null,
       options: {}
-    },
+    }
   });
 
+  App.Collections.Invoices = Backbone.Collection.extend({
+    name: "Invoices",
+    model: App.Models.Invoices,
+
+    parse: function(response, options) {
+      var models = response.results;
+      var project_public_id = models[0].project_public_id;
+      App.models.invoicesMeta = new App.Models.InvoicesMeta({
+        project_public_id: project_public_id,
+        count: response.count,
+        next: response.next,
+        previous: response.previous
+      })
+      return models;
+    }
+  });
+
+  // InvoiceItems
+  App.Models.InvoiceItems = Backbone.Model.extend({
+    defaults: {
+      invoice: '',
+      invoice_public_id: '',
+      item_number: '',
+      description: '',
+      quantity: 0,
+      unit_price: '',
+      process: true,
+      item: '',
+      href: ''
+    },
+
+    url: function() {
+      return this.href;
+    }
+  });
+
+  App.Models.InvoiceItemsMeta = Backbone.Model.extend({
+    defaults: {
+      invoice_public_id: '',
+      count: 0,
+      next: null,
+      previous: null,
+      options: {}
+    }
+  });
+
+  App.Collections.InvoiceItems = Backbone.Collection.extend({
+    name: "InvoiceItems",
+    model: App.Models.InvoiceItems
+  });
+
+  // Items
   App.Models.Items = Backbone.Model.extend({
     defaults: {
       public_id: '',
@@ -63,11 +125,11 @@ jQuery(function($) {
       created: '',
       updater: '',
       updated: '',
-      uri: ''
+      href: ''
     },
 
     url: function() {
-      return this.uri;
+      return this.href;
     }
   });
 
@@ -80,32 +142,6 @@ jQuery(function($) {
     },
   });
 
-
-  // Invoices
-  App.Collections.Invoices = Backbone.Collection.extend({
-    name: "Invoices",
-    model: App.Models.Invoices,
-
-    parse: function(response, options) {
-      var models = response.results;
-      var project_public_id = models[0].project_public_id;
-      App.models.invoicesMeta = new App.Models.InvoicesMeta({
-        project_public_id: project_public_id,
-        count: response.count,
-        next: response.next,
-        previous: response.previous
-      })
-      return models;
-    }
-  });
-
-  // InvoiceItems
-
-
-
-
-
-  // Items
   App.Collections.Items = Backbone.Collection.extend({
     name: "Items",
     model: App.Models.Items,
@@ -123,6 +159,7 @@ jQuery(function($) {
     }
   });
 
+
   // Fetch Invoices
   window.populateInvoiceCollection = function(url, project) {
     clearTimeout(App.invoiceTimeout);
@@ -139,6 +176,7 @@ jQuery(function($) {
       }
     });
   };
+
 
   // Fetch Items
   window.populateItemCollection = function(url, project) {
