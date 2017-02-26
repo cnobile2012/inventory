@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/categories/api/tests/test_category_api.py
+# inventory/common/api/tests/test_permissions.py
 #
 
 from rest_framework import status

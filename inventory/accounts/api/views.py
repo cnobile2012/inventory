@@ -18,7 +18,7 @@ from rest_framework.reverse import reverse
 from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
 from rest_framework.views import APIView
 
-from rest_condition import ConditionalPermission, C, And, Or, Not
+from rest_condition import C, And, Or, Not
 
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser, IsReadOnly,

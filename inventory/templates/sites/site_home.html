@@ -7,6 +7,68 @@
 {% block header %}{% include "includes/_header_site.html" %}{% endblock %}
 {% block content %}
     <div id="content">
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a href="#account" aria-controls="account" role="tab"
+             data-toggle="tab">
+            User Account
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#projects" aria-controls="projects" role="tab"
+             data-toggle="tab">
+            Projects
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#invoices" aria-controls="invoices" role="tab"
+             data-toggle="tab">
+            Invoices
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#invoice-items" aria-controls="invoice-items" role="tab"
+             data-toggle="tab">
+            Invoice Items
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#items" aria-controls="items" role="tab"
+             data-toggle="tab">
+            Items
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#suppliers" aria-controls="suppliers" role="tab"
+             data-toggle="tab">
+            Suppliers
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#categories" aria-controls="categories" role="tab"
+             data-toggle="tab">
+            Categories
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#locations" aria-controls="locations" role="tab"
+             data-toggle="tab">
+            Locations
+          </a>
+        </li>
+      </ul>
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="account">Tab 1</div>
+        <div role="tabpanel" class="tab-pane" id="projects">Tab 2</div>
+        <div role="tabpanel" class="tab-pane" id="invoices">Tab 3</div>
+        <div role="tabpanel" class="tab-pane" id="invoice-items">Tab 4</div>
+        <div role="tabpanel" class="tab-pane" id="items">Tab 5</div>
+        <div role="tabpanel" class="tab-pane" id="suppliers">Tab 6</div>
+        <div role="tabpanel" class="tab-pane" id="categories">Tab 7</div>
+        <div role="tabpanel" class="tab-pane" id="locations">Tab 8</div>
+      </div>
     </div>
 {% endblock %}
 {% block footer %}{% include "includes/_footer_site.html" %}{% endblock %}
