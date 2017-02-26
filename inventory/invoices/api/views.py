@@ -14,6 +14,9 @@ from django.db.models import Q
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
+from django_filters import filters, CharFilter, NumberFilter, DateFilter
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import (
     ListAPIView, ListCreateAPIView, RetrieveAPIView,
@@ -40,6 +43,21 @@ from .serializers import (
 
 log = logging.getLogger('api.invoices.views')
 UserModel = get_user_model()
+
+filters.LOOKUP_TYPES = [
+    ('', '---------'),
+    ('exact', _('Is equal to')),
+    ('not_exact', _('Is not equal to')),
+    ('lt', _('Lesser than')),
+    ('gt', _('Greater than')),
+    ('gte', _('Greater than or equal to')),
+    ('lte', _('Lesser than or equal to')),
+    ('startswith', _('Starts with')),
+    ('endswith', _('Ends with')),
+    ('contains', _('Contains')),
+    ('icontains', _('Contains (case agnostic)')),
+    ('not_contains', _('Does not contain')),
+    ]
 
 
 #
@@ -137,6 +155,47 @@ class ItemAuthorizationMixin(object):
                 })
 
 
+class ItemFilter(FilterSet):
+    public_id = CharFilter(
+        name='public_id', label=_("Public Id"), lookup_expr='exact')
+    project = CharFilter(
+        name='project__public_id', label=_("Project Public Id"),
+        lookup_expr='exact')
+    project_name = CharFilter(
+        name='project__name', label=_("Project Name"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    mfg = CharFilter(
+        name='manufacturer__public_id', label=_("Manufacturer Public Id"),
+        lookup_expr='exact')
+    mfg_name = CharFilter(
+        name='manufacturer__name', label=_("Manufacturer Name"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    category = CharFilter(
+        name='category__public_id', label=_("Category Public Id"),
+        lookup_expr='exact')
+    category_name = CharFilter(
+        name='category__name', label=_("Category Name"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    category_path = CharFilter(
+        name='category__path', label=_("Category Path"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    location = CharFilter(
+        name='location__public_id', label=_("Location Public Id"),
+        lookup_expr='exact')
+    location_path = CharFilter(
+        name='location__path', label=_("Location Path"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    shared_projects = CharFilter(
+        name='shared_projects__public_id', label=_("Shared Project Public Id"),
+        lookup_expr='exact')
+
+    class Meta:
+        model = Item
+        fields = ('public_id', 'project', 'project_name', 'mfg', 'mfg_name',
+                  'category', 'category_name', 'category_path', 'location',
+                  'location_path', 'shared_projects',)
+
+
 class ItemList(TrapDjangoValidationErrorCreateMixin,
                ItemAuthorizationMixin,
                ListCreateAPIView):
@@ -156,17 +215,8 @@ class ItemList(TrapDjangoValidationErrorCreateMixin,
         )
     pagination_class = SmallResultsSetPagination
     lookup_field = 'public_id'
-    filter_backends = (SearchFilter,)
-    search_fields = ('=project__public_id',
-                     'project__name',
-                     '=manufacturer__public_id',
-                     'manufacturer__name',
-                     '=categories__public_id',
-                     'categories__name',
-                     'categories__path',
-                     '=location_codes__public_id',
-                     'location_codes__path',
-                     '=shared_projects__public_id',)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = ItemFilter
 
     def perform_create(self, serializer):
         self._check_user(serializer)
@@ -223,6 +273,48 @@ class InvoiceAuthorizationMixin(object):
         return result
 
 
+class InvoiceFilter(FilterSet):
+    public_id = CharFilter(
+        name='public_id', label=_("Public Id"), lookup_expr='exact')
+    invoive_number = CharFilter(
+        name='invoice_number', label=_("Invoice Number"), lookup_expr='exact')
+    invoive_date = DateFilter(
+        name='invoice_data', label=_("Invoice Data"), lookup_expr='icontains')
+    notes = CharFilter(
+        name='notes', label=_("Notes"), lookup_expr='icontains')
+    project = CharFilter(
+        name='project__public_id', label=_("Project Public Id"),
+        lookup_expr='exact')
+    project_name = CharFilter(
+        name='project__name', label=_("Project Name"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    supplier = CharFilter(
+        name='supplier__public_id', label=_("Supplier Public Id"),
+        lookup_expr='exact')
+    supplier_name = CharFilter(
+        name='supplier__name', label=_("Supplier Name"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    invoice_item = CharFilter(
+        name='invoice_item__public_id', label=_("Invoice Item Public Id"),
+        lookup_expr='exact')
+    invoice_item_number = CharFilter(
+        name='invoice_item__item_number', label=_("Invoice Item Number"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    invoice_item_desc = CharFilter(
+        name='invoice_item__description', label=_("Invoice Item Description"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    invoice_item_quantity = NumberFilter(
+        name='invoice_item__description', label=_("Invoice Item Quantity"),
+        lookup_expr=['startswith', 'icontains', 'not_contains',])
+
+    class Meta:
+        model = Invoice
+        fields = ('public_id', 'invoive_number', 'invoive_date', 'notes',
+                  'project', 'project_name', 'supplier', 'supplier_name',
+                  'invoice_item', 'invoice_item_number', 'invoice_item_desc',
+                  'invoice_item_quantity',)
+
+
 class InvoiceList(TrapDjangoValidationErrorCreateMixin,
                   InvoiceAuthorizationMixin,
                   ListCreateAPIView):
@@ -242,18 +334,8 @@ class InvoiceList(TrapDjangoValidationErrorCreateMixin,
         )
     pagination_class = SmallResultsSetPagination
     lookup_field = 'public_id'
-    filter_backends = (SearchFilter,)
-    search_fields = ('=project__public_id',
-                     'project__name',
-                     '=supplier__public_id',
-                     'supplier__name',
-                     'invoice_number',
-                     'invoice_date',
-                     'notes',
-                     '=invoice_items__public_id',
-                     '=invoice_items__item_number',
-                     'invoice_items__description',
-                     '=invoice_items__quantity',)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = InvoiceFilter
 
 invoice_list = InvoiceList.as_view()
 

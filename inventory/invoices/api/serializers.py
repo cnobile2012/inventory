@@ -30,7 +30,7 @@ class ConditionSerializer(DynamicFieldsSerializer):
     href = HyperlinkedCustomIdentityField(view_name='condition-detail')
 
     def __init__(self, *args, **kwargs):
-        fields=('pk', 'name', 'uri',)
+        fields=('pk', 'name', 'href',)
         super(ConditionSerializer, self).__init__(
             *args, fields=fields, **kwargs)
 

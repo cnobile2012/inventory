@@ -11,7 +11,7 @@ from django.utils import six
 
 from rest_framework import serializers
 
-from inventory.common.api.fields import HyperlinkedSearchField
+from inventory.common.api.fields import HyperlinkedFilterField
 from inventory.common.api.serializer_mixin import SerializerMixin
 
 from ..models import InventoryType, Project, Membership
@@ -73,8 +73,8 @@ class MembershipSerializer(SerializerMixin, serializers.ModelSerializer):
 #
 class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     inventory_type = serializers.HyperlinkedRelatedField(
-        view_name='inventory-type-detail', queryset=InventoryType.objects.all(),
-        lookup_field='public_id')
+        view_name='inventory-type-detail',
+        queryset=InventoryType.objects.all(), lookup_field='public_id')
     members = serializers.HyperlinkedRelatedField(
         view_name='user-detail', many=True, queryset=UserModel.objects.all(),
         default=None, lookup_field='public_id')
@@ -82,10 +82,12 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         label=_("Role"), write_only=True, required=False,
         help_text=_("Set the role of the user in this project."))
     memberships = MembershipSerializer(many=True, read_only=True)
-    items_href = HyperlinkedSearchField(
-        view_name='item-list', read_only=True, lookup_field='public_id')
-    invoices_href = HyperlinkedSearchField(
-       view_name='invoice-list', read_only=True, lookup_field='public_id')
+    items_href = HyperlinkedFilterField(
+        view_name='item-list', query_name='project', read_only=True,
+        lookup_field='public_id')
+    invoices_href = HyperlinkedFilterField(
+       view_name='invoice-list', query_name='project', read_only=True,
+        lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id',
         help_text=_("The user who created this project."))
