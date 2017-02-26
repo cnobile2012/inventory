@@ -46,3 +46,28 @@ body {
   padding: 2px;
   min-height: 500px;
 }
+
+.nav-tabs>li {
+  margin: 0 2px 0 0;
+  border-radius: 12px 12px 0 0;
+}
+
+.nav-tabs>li>a {
+  margin-right: 0;
+  padding: 6px 10px;
+  border-radius: 12px 12px 0 0;
+  background-color: rgba(218, 131, 44, 1); /* 183, 124, 65*/
+  color: rgba(255, 255, 255, 1);
+}
+
+.nav-tabs>li>a:hover,
+.nav-tabs>li.active>a:hover {
+  background-color: rgba(255, 160, 60, 1);
+  color: rgba(255, 255, 255, 1);
+}
+
+.nav-tabs>li.active>a,
+.nav-tabs>li.active>a:focus {
+  background-color: rgba(230, 190, 150, 1);
+  color: rgba(72, 48, 24, 1);
+}
