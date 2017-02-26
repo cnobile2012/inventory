@@ -65,7 +65,8 @@ class TestConditionAPI(BaseTest):
 
     def test_GET_condition_detail_with_invalid_permissions(self):
         """
-        Test that a GET on the condition_detail fails with invalid permissions.
+        Test that a GET on the condition_detail fails with invalid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -140,7 +141,8 @@ class TestItemAPI(BaseTest):
         item_number = "NE555"
         item = self._create_item(self.project, self.collection, item_number)
         uri = reverse('item-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(uri, method,
+                                                default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_item_list_with_invalid_permissions(self):
@@ -420,7 +422,8 @@ class TestItemAPI(BaseTest):
         # Test that second project cannot read default project's item.
         response = client.get(uri, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_404_NOT_FOUND, response.data, uri)
+            response.status_code, status.HTTP_404_NOT_FOUND, response.data,
+            uri)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
@@ -451,7 +454,8 @@ class TestItemAPI(BaseTest):
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST,
             response.data, uri)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+                         msg)
         self.assertTrue(self._has_error(response, 'project'), msg)
         self._test_errors(response, tests={
             'project': " does not belong to project ",
@@ -471,7 +475,8 @@ class TestItemAPI(BaseTest):
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST,
             response.data, uri)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+                         msg)
         self.assertTrue(self._has_error(response, 'project'), msg)
         self._test_errors(response, tests={
             'project': " does not belong to project ",
@@ -490,7 +495,8 @@ class TestItemAPI(BaseTest):
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST,
             response.data, uri)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+                         msg)
         self.assertTrue(self._has_error(response, 'project'), msg)
         self._test_errors(response, tests={
             'project': " does not belong to project ",
@@ -507,8 +513,8 @@ class TestInvoiceAPI(BaseTest):
         # Create an InventoryType and Project.
         in_type = self._create_inventory_type()
         self.project = self._create_project(in_type, members=[self.user])
-        self.project_uri = reverse('project-detail',
-                                   kwargs={'public_id': self.project.public_id})
+        self.project_uri = reverse(
+            'project-detail', kwargs={'public_id': self.project.public_id})
         # Create regions
         self.country = self._create_country()
         self.currency = self._create_currency(
@@ -542,7 +548,8 @@ class TestInvoiceAPI(BaseTest):
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
         uri = reverse('invoice-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(
+            uri, method, default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_invoice_list_with_invalid_permissions(self):
@@ -623,7 +630,8 @@ class TestInvoiceAPI(BaseTest):
         invoice_number = "TEST12345"
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         method = 'get'
         self._test_users_with_invalid_permissions(uri, method)
         self._test_project_users_with_invalid_permissions(uri, method)
@@ -636,7 +644,8 @@ class TestInvoiceAPI(BaseTest):
         invoice_number = "TEST12345"
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         method = 'get'
         self._test_users_with_valid_permissions(uri, method)
         self._test_project_users_with_valid_permissions(uri, method)
@@ -649,7 +658,8 @@ class TestInvoiceAPI(BaseTest):
         invoice_number = "TEST12345"
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         method = 'put'
         data = {}
         su = data.setdefault('SU', {})
@@ -675,7 +685,8 @@ class TestInvoiceAPI(BaseTest):
         invoice_number = "TEST1234567"
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         method = 'put'
         data = {}
         su = data.setdefault('SU', {})
@@ -706,7 +717,8 @@ class TestInvoiceAPI(BaseTest):
         invoice_number = "TEST1234567"
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         method = 'patch'
         data = {}
         su = data.setdefault('SU', {})
@@ -730,7 +742,8 @@ class TestInvoiceAPI(BaseTest):
         invoice_number = "TEST1234567"
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         method = 'patch'
         data = {}
         su = data.setdefault('SU', {})
@@ -759,7 +772,8 @@ class TestInvoiceAPI(BaseTest):
         method = 'delete'
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         self._test_users_with_invalid_permissions(uri, method)
         self._test_project_users_with_invalid_permissions(uri, method)
 
@@ -773,13 +787,15 @@ class TestInvoiceAPI(BaseTest):
         # Test SUPERUSER
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         self._test_superuser_with_valid_permissions(uri, method)
         self._test_valid_GET_with_errors(uri)
         # Test ADMINISTRATOR
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         self._test_administrator_with_valid_permissions(uri, method)
         self._test_valid_GET_with_errors(uri)
         # Test DEFAULT_USER
@@ -787,13 +803,15 @@ class TestInvoiceAPI(BaseTest):
         # Test PROJECT_OWNER
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         self._test_project_owner_with_valid_permissions(uri, method)
         self._test_valid_GET_with_errors(uri)
         # Test PROJECT_MANAGER
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         self._test_project_manager_with_valid_permissions(uri, method)
         self._test_valid_GET_with_errors(uri)
         # Test PROJECT_USER
@@ -808,7 +826,8 @@ class TestInvoiceAPI(BaseTest):
         method = 'options'
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         self._test_users_with_invalid_permissions(uri, method)
         self._test_project_users_with_invalid_permissions(uri, method)
 
@@ -821,7 +840,8 @@ class TestInvoiceAPI(BaseTest):
         method = 'options'
         invoice = self._create_invoice(
             self.project, self.currency, self.supplier, invoice_number)
-        uri = reverse('invoice-detail', kwargs={'public_id': invoice.public_id})
+        uri = reverse('invoice-detail',
+                      kwargs={'public_id': invoice.public_id})
         self._test_users_with_valid_permissions(uri, method)
         self._test_project_users_with_valid_permissions(uri, method)
 
@@ -876,7 +896,8 @@ class TestInvoiceItemAPI(BaseTest):
         invoice_item = self._create_invoice_item(
             self.invoice, item_number, 5, '1.50')
         uri = reverse('invoice-item-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(uri, method,
+                                                default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_invoice_item_list_with_invalid_permissions(self):
@@ -1039,7 +1060,8 @@ class TestInvoiceItemAPI(BaseTest):
 
     def test_PATCH_invoice_item_detail_with_invalid_permissions(self):
         """
-        Test that a PATCH to invoice_item_detail fails with invalid permissions.
+        Test that a PATCH to invoice_item_detail fails with invalid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         item_number = "TEST1234567"
@@ -1066,7 +1088,8 @@ class TestInvoiceItemAPI(BaseTest):
 
     def test_PATCH_invoice_item_detail_with_valid_permissions(self):
         """
-        Test that a PATCH to invoice_item_detail passes with valid permissions.
+        Test that a PATCH to invoice_item_detail passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         item_number = "TEST1234567"
@@ -1110,7 +1133,8 @@ class TestInvoiceItemAPI(BaseTest):
 
     def test_DELETE_invoice_item_detail_with_valid_permissions(self):
         """
-        Test that a DELETE to invoice_item_detail pass' with valid permissions.
+        Test that a DELETE to invoice_item_detail pass' with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         item_number = "TEST1234567"
