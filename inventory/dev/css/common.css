@@ -26,7 +26,8 @@ body {
   font-family: 'Noto Sans';
   margin: 0;
   padding: 0;
-  background-color: rgba(210, 210, 210, 1);
+  /* yellow rgba(255, 250, 215, 1) gray rgba(211, 211, 211, 1) */
+  background-color: rgba(211, 211, 211, 1);
   font-size: medium;
   color: rgba(72, 48, 24, 1);
 }
@@ -45,8 +46,10 @@ body {
   border: 1px solid;
   padding: 2px;
   min-height: 500px;
+  background-color: rgba(246, 242, 214, 1); /*rgba(255, 250, 215, 1);*/
 }
 
+/* NAVIGATION */
 .nav-tabs>li {
   margin: 0 2px 0 0;
   border-radius: 12px 12px 0 0;
@@ -70,4 +73,13 @@ body {
 .nav-tabs>li.active>a:focus {
   background-color: rgba(230, 190, 150, 1);
   color: rgba(72, 48, 24, 1);
+}
+
+/* ACCOUNT */
+.tab-pane {
+  min-height: 456px;
+  margin: -1px 1px 1px;
+  padding: 0 4px 4px;
+  border: 1px solid rgba(72, 48, 24, 0.5);
+  background-color: rgba(233, 231, 213, 1); /*rgba(255, 250, 215, .5);*/
 }
