@@ -13,7 +13,7 @@ The contents of the ``populate.conf`` config file::
   --timezone-file
   zone1970.tab
   --currency-file
-  codes-all.csv
+  currency-codes-all.csv
 
 All the arguments are in the config file, however one can execute any one or
 all of them by added the correct parameters on the command line.
