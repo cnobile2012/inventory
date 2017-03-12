@@ -49,6 +49,8 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='project-detail', queryset=Project.objects.all(),
         default=None, lookup_field='public_id')
     project_public_id = serializers.SerializerMethodField()
+    photo = serializers.ImageField(
+        allow_empty_file=True, use_url=True, required=False)
     manufacturer = serializers.HyperlinkedRelatedField(
         view_name='supplier-detail', default=None,
         queryset=Supplier.objects.all(), lookup_field='public_id')

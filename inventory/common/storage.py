@@ -3,15 +3,17 @@
 # inventory/common/storage.py
 #
 
-import os
-
 from django.core.files.storage import FileSystemStorage
-from django.utils._os import safe_join
+
+
+def create_file_path(instance, filename):
+    return "{}/{}/{}".format(instance._meta.app_label, instance.public_id,
+                             filename)
+
 
 class InventoryFileStorage(FileSystemStorage):
-
-    def path(self, name):
-        if not os.path.isdir(self.location):
-            os.mkdir(self.location, 0o0775)
-
-        return safe_join(self.location, name)
+    """
+    We override `FileSystemStorage` so we can change this later without
+    having to do migrations.
+    """
+    pass

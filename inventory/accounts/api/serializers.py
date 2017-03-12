@@ -33,6 +33,8 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
     message = _("You do not have permissions to change the '{}' field.")
 
     role = serializers.IntegerField(source='user.role', required=False)
+    picture  = serializers.ImageField(
+        allow_empty_file=True, use_url=True, required=False)
     subdivision = serializers.HyperlinkedRelatedField(
         view_name='subdivision-detail', queryset=Subdivision.objects.all(),
         default=None, label=_("State"))
@@ -106,6 +108,8 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
             'username', instance.username)
         instance.set_password(validated_data.get(
             'password', instance.password))
+        instance.picture = validated_data.get(
+            'picture', instance.picture)
         instance.send_email = validated_data.get(
             'send_email', instance.send_email)
         instance.need_password = validated_data.get(
@@ -150,7 +154,7 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ('public_id', 'username', 'password', 'send_email',
+        fields = ('public_id', 'username', 'password', 'picture', 'send_email',
                   'need_password', 'first_name', 'last_name', 'address_01',
                   'address_02', 'city', 'subdivision', 'postal_code',
                   'country', 'language', 'timezone', 'dob', 'email', 'role',

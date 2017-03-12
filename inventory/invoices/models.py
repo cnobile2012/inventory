@@ -29,7 +29,7 @@ from inventory.common import generate_public_key, generate_sku_fragment
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
     ValidateOnSaveMixin)
-from inventory.common.storage import InventoryFileStorage
+from inventory.common.storage import create_file_path, InventoryFileStorage
 from inventory.categories.models import Category
 from inventory.locations.models import LocationCode
 from inventory.projects.models import Project
@@ -103,8 +103,8 @@ class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
         verbose_name=_("Stock Keeping Unit (SKU)"), max_length=20, blank=True,
         help_text=_("Internal part number."))
     photo = models.ImageField(
-        verbose_name=_("Photo"), upload_to='item_photos', null=True,
-        blank=True, storage=InventoryFileStorage(),
+        verbose_name=_("Item Photo"), upload_to=create_file_path,
+        storage=InventoryFileStorage(), null=True, blank=True,
         help_text=_("Picture of item."))
     item_number = models.CharField(
         verbose_name=_("Item Number"), max_length=50, null=True, blank=True,

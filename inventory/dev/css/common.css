@@ -26,8 +26,8 @@ body {
   font-family: 'Noto Sans';
   margin: 0;
   padding: 0;
-  /* yellow rgba(255, 250, 215, 1) gray rgba(211, 211, 211, 1) */
-  background-color: rgba(211, 211, 211, 1);
+  /* green rgba(235, 255, 235, 1) gray rgba(211, 211, 211, 1) */
+  background-color: rgba(235, 255, 235, 1);
   font-size: medium;
   color: rgba(72, 48, 24, 1);
 }

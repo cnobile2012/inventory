@@ -22,6 +22,7 @@ from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
     ValidateOnSaveMixin)
+from inventory.common.storage import create_file_path, InventoryFileStorage
 
 log = logging.getLogger('inventory.projects.models')
 
@@ -101,6 +102,10 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         settings.AUTH_USER_MODEL, verbose_name=_("Project Members"),
         through='Membership', related_name='projects', blank=True,
         help_text=_("The members of this project."))
+    image = models.ImageField(
+        verbose_name=_("Project Image"), upload_to=create_file_path,
+        storage=InventoryFileStorage(), null=True, blank=True,
+        help_text=_("Upload project logo image."))
     public = models.BooleanField(
         verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES,
         help_text=_("Set to YES if this project is public else set to NO."))
@@ -183,6 +188,17 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
                 result = False
 
         return result
+
+    def image_thumb_producer(self):
+        result = _("No Image")
+
+        if self.image:
+            result = ('<img src="{}" alt="{}" width="100" height="100"/>'
+                      ).format(self.image.url, _("Cannot display image" ))
+
+        return result
+    image_thumb_producer.short_description = _("Thumb")
+    image_thumb_producer.allow_tags = True
 
 
 #

@@ -27,7 +27,7 @@ from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
     ValidateOnSaveMixin)
-from inventory.common.storage import InventoryFileStorage
+from inventory.common.storage import create_file_path, InventoryFileStorage
 from inventory.projects.models import Project, Membership
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
@@ -114,8 +114,8 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
         verbose_name=_("Role"), choices=ROLE, default=DEFAULT_USER,
         help_text=_("The role of the user."))
     picture = models.ImageField(
-        verbose_name=_("Picture"), upload_to='user_photos', null=True,
-        blank=True, storage=InventoryFileStorage(),
+        verbose_name=_("Picture"), upload_to=create_file_path,
+        storage=InventoryFileStorage(), null=True, blank=True,
         help_text=_("Photo of the individual."))
     send_email = models.BooleanField(
         verbose_name=_("Send Email"), choices=YES_NO, default=NO,

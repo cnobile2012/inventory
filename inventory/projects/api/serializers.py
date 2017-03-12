@@ -78,6 +78,8 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     members = serializers.HyperlinkedRelatedField(
         view_name='user-detail', many=True, queryset=UserModel.objects.all(),
         default=None, lookup_field='public_id')
+    image = serializers.ImageField(
+        allow_empty_file=True, use_url=True, required=False)
     role = serializers.DictField(
         label=_("Role"), write_only=True, required=False,
         help_text=_("Set the role of the user in this project."))
@@ -145,6 +147,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         return obj
 
     def update(self, instance, validated_data):
+        instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.public = validated_data.get('public', instance.public)
         instance.active = validated_data.get('active', instance.active)
@@ -155,9 +158,9 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('public_id', 'name', 'members', 'role', 'memberships',
-                  'inventory_type', 'items_href', 'invoices_href', 'public',
-                  'active', 'creator', 'created', 'updater', 'updated',
-                  'href',)
+        fields = ('public_id', 'name', 'members', 'image', 'role',
+                  'memberships', 'inventory_type', 'items_href',
+                  'invoices_href', 'public', 'active', 'creator', 'created',
+                  'updater', 'updated', 'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
                             'updated',)
