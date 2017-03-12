@@ -18,7 +18,7 @@ jQuery(function($) {
     },
 
     submit: function() {
-      setHeader();
+      App.utils.setHeader();
       this.model.save({}, {
         success: function(data, status, jqXHR) {
           var $messages = $('#messages');

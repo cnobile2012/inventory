@@ -30,7 +30,7 @@ jQuery(function($) {
           username: username,
           password: password
         };
-        setHeader();
+        App.utils.setHeader();
 
         this.model.save(data, {
           success: function(data, status, jqXHR) {
@@ -51,7 +51,7 @@ jQuery(function($) {
           error: function(jqXHR, status, errorThrown) {
             var $elm = self.$el.find('.all-error');
             var errors = status.responseJSON;
-            mimicDjangoErrors($elm, errors);
+            App.utils.mimicDjangoErrors($elm, errors);
             $elm.show();
           }
         });
