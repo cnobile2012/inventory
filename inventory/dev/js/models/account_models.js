@@ -9,6 +9,7 @@ jQuery(function($) {
     defaults: {
       public_id: '',
       username: '',
+      picture: '',
       send_email: false,
       need_password: false,
       first_name: '',
@@ -49,7 +50,7 @@ jQuery(function($) {
     },
 
     url: function() {
-      if (_.isUndefined(this.uri)) {
+      if(_.isUndefined(this.uri)) {
         return App.models.loginModel.get('href');
       } else {
         return this.href;

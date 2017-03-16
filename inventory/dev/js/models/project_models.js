@@ -54,7 +54,31 @@ jQuery(function($) {
     }
   });
 
+
   App.Collections.Projects = Backbone.Collection.extend({
     name: "Projects",
-    model: App.Models.Project});
+    model: App.Models.Project,
+
+    initialize: function () {
+      // Create project menu
+      this.listenTo(this, 'change', function(model) {
+        $('div#projects div.tab-choice-pane div').empty();
+        var options = [], item = null;
+
+        for(var i = 0; i < this.length; i++) {
+          item = {title: '<a href="#project-' + i + '">'
+                  + this.models[i].get('name') + '</a>'};
+          options[i] = item;
+        };
+
+        App.collections.projectMenu = new App.Collections.MenuItems(options);
+
+        App.views.projectMenu = new App.Views.ProjectMenu({
+          collection: App.collections.projectMenu
+        });
+
+        App.views.projectMenu.render();
+      });
+    }
+  });
 });

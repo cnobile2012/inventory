@@ -10,12 +10,6 @@
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
-          <a href="#account" aria-controls="account" role="tab"
-             data-toggle="tab">
-            User Account
-          </a>
-        </li>
-        <li role="presentation">
           <a href="#projects" aria-controls="projects" role="tab"
              data-toggle="tab">
             Projects
@@ -57,19 +51,27 @@
             Locations
           </a>
         </li>
+        <li role="presentation">
+          <a href="#account" aria-controls="account" role="tab"
+             data-toggle="tab">
+            User Account
+          </a>
+        </li>
       </ul>
       <!-- Tab panes -->
       <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="account">
-{% include "sites/_account.html" %}
+        <div role="tabpanel" class="tab-pane active" id="projects">
+{% include "sites/user/_projects.html" %}
         </div>
-        <div role="tabpanel" class="tab-pane" id="projects">Tab 2</div>
-        <div role="tabpanel" class="tab-pane" id="invoices">Tab 3</div>
-        <div role="tabpanel" class="tab-pane" id="invoice-items">Tab 4</div>
-        <div role="tabpanel" class="tab-pane" id="items">Tab 5</div>
-        <div role="tabpanel" class="tab-pane" id="suppliers">Tab 6</div>
-        <div role="tabpanel" class="tab-pane" id="categories">Tab 7</div>
-        <div role="tabpanel" class="tab-pane" id="locations">Tab 8</div>
+        <div role="tabpanel" class="tab-pane" id="invoices">Tab 2</div>
+        <div role="tabpanel" class="tab-pane" id="invoice-items">Tab 3</div>
+        <div role="tabpanel" class="tab-pane" id="items">Tab 4</div>
+        <div role="tabpanel" class="tab-pane" id="suppliers">Tab 5</div>
+        <div role="tabpanel" class="tab-pane" id="categories">Tab 6</div>
+        <div role="tabpanel" class="tab-pane" id="locations">Tab 7</div>
+        <div role="tabpanel" class="tab-pane" id="account">
+{% include "sites/user/_account.html" %}
+        </div>
       </div>
     </div>
 {% endblock %}

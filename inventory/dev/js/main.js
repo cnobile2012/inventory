@@ -2,6 +2,12 @@
  * Inventory main entry point.
  *
  * js/main.js
+ *
+ * Variables used from HTML
+ * ========================
+ * IS_AUTHENTICATED
+ * USER_HREF
+ * USERNAME
  */
 
 "use strict";
@@ -16,7 +22,7 @@ window.App = {
   Models: {},
   Collections: {},
   Views: {},
-  Router: {},
+  Routers: {},
   models: {},
   collections: {},
   views: {},
@@ -57,10 +63,10 @@ Utilities.prototype = {
     $.ajaxSetup({
       crossDomain: false,
       beforeSend: function(xhr, settings) {
-        if(!_csrfSafeMethod(settings.type)) {
+        if(!this._csrfSafeMethod(settings.type)) {
           xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
         }
-      }
+      }.bind(this)
     });
   },
 
@@ -104,7 +110,7 @@ Utilities.prototype = {
 
     for(var key in data) {
       $tag = $('select[name=' + key + '], input[name=' + key +
-        '], textarea[name=' + key + ']');
+               '], textarea[name=' + key + ']');
       $errorUl = $(ul);
 
       if($tag.prev().prop('tagName') === 'LABEL') {
@@ -120,6 +126,16 @@ Utilities.prototype = {
         $errorLi.html(data[key][i]);
         $errorLi.appendTo($errorUl);
       }
+    }
+  },
+
+  // Set a default value on a key--similar to Python's <dict>.setdefault().
+  setDefault: function(obj, key, value) {
+    if(key in obj) {
+      return obj[key];
+    } else {
+      obj[key] = value;
+      return obj[key];
     }
   }
 };
