@@ -129,7 +129,8 @@ Utilities.prototype = {
     }
   },
 
-  // Set a default value on a key--similar to Python's <dict>.setdefault().
+  // Set a default value on an object key--similar to Python's
+  // <dict>.setdefault(<key>, value).
   setDefault: function(obj, key, value) {
     if(key in obj) {
       return obj[key];
