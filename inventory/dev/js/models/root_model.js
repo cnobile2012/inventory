@@ -28,9 +28,8 @@ App.Models.RootModel = Backbone.Model.extend({
 
 
 jQuery(function($) {
-  App.models.rootModel = new App.Models.RootModel();
-
   window.getAPIRoot = function() {
+    App.models.rootModel = new App.Models.RootModel();
     App.models.rootModel.fetch({
       error: function(collection, response, options) {
         $('#messages').text("Error: Could not get data from API root.");

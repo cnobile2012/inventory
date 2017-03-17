@@ -171,9 +171,7 @@ window.populateInvoiceCollection = function(url, project) {
     },
 
     error: function(collection, response, options) {
-      console.log(collection);
       console.log(response);
-      console.log(options);
     }
   });
 };

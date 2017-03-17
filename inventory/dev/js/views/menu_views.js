@@ -30,7 +30,6 @@ App.Views.MenuItemView = Backbone.View.extend({
   // Highlight ourself and do any othe logic on click
   onClick: function(e) {
     this.highlight();
-    this.doSmthElse();
   },
 
   // If we changed our model's selection property during onClick then
@@ -48,11 +47,6 @@ App.Views.MenuItemView = Backbone.View.extend({
   // Mark our model as selected
   highlight: function() {
     this.model.set('isSelected', true);
-  },
-
-  // Any other logic
-  doSmthElse: function() {
-    // Not implemented yet;
   }
 });
 

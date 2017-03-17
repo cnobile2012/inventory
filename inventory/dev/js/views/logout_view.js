@@ -6,7 +6,7 @@
 
 jQuery(function($) {
   // Create a modal view class
-  var LogoutModalView = App.Views.BaseModalView.extend({
+  App.Views.LogoutModalView = App.Views.BaseModalView.extend({
     model: App.models.logoutModel,
     el: $("#logout-modal"),
     template: $.tpl.logout_template(),
@@ -29,6 +29,7 @@ jQuery(function($) {
           destroyApp();
           setTimeout(setLogin, 200);
         },
+
         error: function(jqXHR, status, errorThrown) {
           var $messages = $('#messages');
           var msg = status.responseJSON.detail +
@@ -43,6 +44,6 @@ jQuery(function($) {
   });
 
   $('#logout-button').on('click', function() {
-    new LogoutModalView().show({show: true});
+    new App.Views.LogoutModalView().show({show: true});
   });
 });

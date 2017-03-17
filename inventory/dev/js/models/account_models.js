@@ -50,7 +50,7 @@ App.Models.User = Backbone.Model.extend({
 
   url: function() {
     if(_.isUndefined(this.uri)) {
-      return App.models.loginModel.get('href');
+      return App.loginModel.get('href');
     } else {
       return this.href;
     }

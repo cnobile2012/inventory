@@ -26,20 +26,21 @@ window.App = {
   models: {},
   collections: {},
   views: {},
+  loginModel: null,
+  utils: null,
   invoiceTimeout: null,
-  itemTimeout: null,
-  utils: null
+  itemTimeout: null
 };
 
 
-// Can only run this function after initial load has completed.
+// This function is run when logout happens, so that all data for the
+// user is removed.
 window.destroyApp = function() {
-  App.models.rootModel.clear().set(App.models.rootModel.defaults);
-  App.models.loginModel.clear().set(App.models.loginModel.defaults);
-  App.models.logoutModel.clear().set(App.models.logoutModel.defaults);
-  App.models.userModel.clear().set(App.models.userModel.defaults);
+  App.models = {};
   App.collections = {};
-  App.picTimeout = null;
+  App.views = {};
+  App.invoiceTimeout = null;
+  App.itemTimeout = null;
   $('div.tab-choice-pane div').empty();
 };
 

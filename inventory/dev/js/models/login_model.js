@@ -12,10 +12,10 @@ App.Models.Login = Backbone.Model.extend({
     password: 'X',
     fullname: '',
     href: ''
-  },
+  }
 });
 
 
 jQuery(function($) {
-  App.models.loginModel = new App.Models.Login();
+  App.loginModel = new App.Models.Login();
 });

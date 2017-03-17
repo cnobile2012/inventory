@@ -6,8 +6,8 @@
 
 jQuery(function($) {
   // Create a modal view class
-  var LoginModalView = App.Views.BaseModalView.extend({
-    model: App.models.loginModel,
+  App.Views.LoginModalView = App.Views.BaseModalView.extend({
+    model: App.loginModel,
     el: $("#login-modal"),
     template: $.tpl.login_template(),
 
@@ -79,9 +79,9 @@ jQuery(function($) {
         backdrop: 'static',
         keyboard: false
       };
-      new LoginModalView().show(options);
+      new App.Views.LoginModalView().show(options);
     } else {
-      App.models.loginModel.set(
+      App.loginModel.set(
         'href', location.protocol + '//' + location.host + USER_HREF);
       _fetchUser();
     }
