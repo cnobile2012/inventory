@@ -99,7 +99,7 @@ body {
 /* PANE NAVIGATION */
 .pane-nav>ul {
   list-style-type: none;
-  margin: 10px;
+  margin: 4px 4px 4px 0;
   padding: 0px;
   width: fit-content;
 }
@@ -128,9 +128,10 @@ body {
 }
 
 /* SUBPANE TABS */
-.tab-subpane {
-  min-height: 456px;
-  margin: -1px 1px 1px;
+.data-pane {
+  min-height: 446px;
+  width: 100%;
+  margin-top: 4px;
   padding: 0 4px 4px;
   border: 1px solid rgba(72, 48, 24, 0.5);
   background-color: rgba(233, 231, 213, 1); /*rgba(255, 250, 215, .5);*/

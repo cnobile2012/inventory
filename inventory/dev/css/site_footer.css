@@ -1,5 +1,12 @@
 #site-footer {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: -moz-box;
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
   display: flex;
+  -webkit-flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -ms-flex-direction: row;
   flex-direction: row;
   justify-content: center;
   margin: 5px 10px 10px 10px;
@@ -16,7 +23,7 @@
 }
 
 #site-footer div#footer-space {
-  width: 100px;
+  margin: 0 6px;
 }
 
 #site-footer div.site-footer-ct div {

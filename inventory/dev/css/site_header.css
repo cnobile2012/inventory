@@ -1,5 +1,12 @@
 #site-header {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: -moz-box;
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
   display: flex;
+  -webkit-flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -ms-flex-direction: row;
   flex-direction: row;
   margin: 10px 10px 5px 10px;
   border: 1px solid rgba(72, 48, 24, 1);
@@ -23,7 +30,14 @@
 }
 
 #site-header div#login-info {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: -moz-box;
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
   display: flex;
+  -webkit-flex-direction: column;
+  -webkit-box-orient: vertical;
+  -ms-flex-direction: column;
   flex-direction: column;
   padding: 2px;
   min-width: 100px;
