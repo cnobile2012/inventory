@@ -6,7 +6,7 @@
 
 jQuery(function($) {
   // Create a modal view class
-  var LogoutModalView = BaseModalView.extend({
+  var LogoutModalView = App.Views.BaseModalView.extend({
     model: App.models.logoutModel,
     el: $("#logout-modal"),
     template: $.tpl.logout_template(),

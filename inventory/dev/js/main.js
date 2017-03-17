@@ -34,14 +34,13 @@ window.App = {
 
 // Can only run this function after initial load has completed.
 window.destroyApp = function() {
-  App.Views = {};
-  App.Router = {};
   App.models.rootModel.clear().set(App.models.rootModel.defaults);
   App.models.loginModel.clear().set(App.models.loginModel.defaults);
   App.models.logoutModel.clear().set(App.models.logoutModel.defaults);
   App.models.userModel.clear().set(App.models.userModel.defaults);
   App.collections = {};
   App.picTimeout = null;
+  $('div.tab-choice-pane div').empty();
 };
 
 

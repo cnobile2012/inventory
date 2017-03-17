@@ -6,7 +6,7 @@
 
 jQuery(function($) {
   // Create a modal view class
-  var LoginModalView = BaseModalView.extend({
+  var LoginModalView = App.Views.BaseModalView.extend({
     model: App.models.loginModel,
     el: $("#login-modal"),
     template: $.tpl.login_template(),

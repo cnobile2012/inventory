@@ -4,30 +4,30 @@
  * js/models/root_model.js
  */
 
-jQuery(function($) {
-  App.Models.RootModel = Backbone.Model.extend({
-    urlRoot: appConfig.baseURL,
-    defaults: {},
-    mutators: {
-      collection: {
-        set: function(key, value, options, set) {
-          var self = this;
+App.Models.RootModel = Backbone.Model.extend({
+  urlRoot: appConfig.baseURL,
+  defaults: {},
+  mutators: {
+    collection: {
+      set: function(key, value, options, set) {
+        var self = this;
 
-          _.forEach(value, function(value, key) {
-            if(key === 'items') {
-              _.forEach(value, function(value, key) {
-                self.set(key, value, options);
-              });
-            } else {
+        _.forEach(value, function(value, key) {
+          if(key === 'items') {
+            _.forEach(value, function(value, key) {
               self.set(key, value, options);
-            }
-          });
-        }
+            });
+          } else {
+            self.set(key, value, options);
+          }
+        });
       }
     }
-  });
+  }
+});
 
 
+jQuery(function($) {
   App.models.rootModel = new App.Models.RootModel();
 
   window.getAPIRoot = function() {
