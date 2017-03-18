@@ -7,6 +7,8 @@
  * http://stackoverflow.com/questions/12908210/click-menu-item-to-highlight-in-backbone-view
  */
 
+"use strict";
+
 // Single menu item view
 App.Views.MenuItemView = Backbone.View.extend({
   tagName: 'li',
@@ -28,8 +30,19 @@ App.Views.MenuItemView = Backbone.View.extend({
   },
 
   // Highlight ourself and do any othe logic on click
-  onClick: function(e) {
+  onClick: function(event) {
     this.highlight();
+    var $choicePane = $('div#projects div.tab-choice-pane');
+    var $dataPane = $('<div class="data-pane"></div>');
+    $dataPane.appendTo($choicePane);
+    var publicId = this.$el.find('a').attr('data');
+    var model = App.models.userModel.get('projects').find(function(model) {
+      return model.get('public_id') === publicId;
+      });
+
+    console.log(model);
+
+
   },
 
   // If we changed our model's selection property during onClick then

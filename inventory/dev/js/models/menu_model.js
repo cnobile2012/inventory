@@ -7,6 +7,8 @@
  * http://stackoverflow.com/questions/12908210/click-menu-item-to-highlight-in-backbone-view
  */
 
+"use strict";
+
 App.Models.MenuItem = Backbone.Model.extend({
   defaults: {
     title: 'Default Title',

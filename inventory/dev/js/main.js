@@ -39,8 +39,10 @@ window.destroyApp = function() {
   App.models = {};
   App.collections = {};
   App.views = {};
+  App.loginModel.clear().set(App.loginModel.defaults);
   App.invoiceTimeout = null;
   App.itemTimeout = null;
+  $('div.tab-choice-pane div').not(':first').remove();
   $('div.tab-choice-pane div').empty();
 };
 

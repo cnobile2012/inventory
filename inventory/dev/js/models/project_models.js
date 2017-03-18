@@ -4,6 +4,8 @@
  * js/models/project_models.js
  */
 
+"use strict";
+
 App.Models.Project = Backbone.Model.extend({
   defaults: {
     public_id: '',
@@ -63,13 +65,14 @@ jQuery(function($) {
       // Create project menu
       this.listenTo(this, 'change', function(model) {
         $('div#projects div.tab-choice-pane div').empty();
-        var options = [], item = null;
+        var options = [], item = null, data = "";
 
         for(var i = 0; i < this.length; i++) {
-          item = {title: '<a href="#project-' + i + '">'
+          data = this.models[i].get('public_id');
+          item = {title: '<a href="#project' + i + '" data="' + data + '" >'
                   + this.models[i].get('name') + '</a>'};
           options[i] = item;
-        };
+        }
 
         App.collections.projectMenu = new App.Collections.MenuItems(options);
 
