@@ -99,12 +99,6 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
         (YES, _("Yes")),
         (NO, _("No")),
         )
-    LAST_USED = 0
-    NONE = 1
-    P_DEFAULTS = (
-        (LAST_USED, _("Last Project Used")),
-        (NONE, _("Always Choose Project")),
-        )
 
     public_id = models.CharField(
         verbose_name=_("Public User ID"), max_length=30, unique=True,
@@ -152,9 +146,9 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
     timezone = models.ForeignKey(
         TimeZone, on_delete=models.CASCADE, verbose_name=_("Timezone"),
         null=True, blank=True, help_text=_("The timezone."))
-    project_default = models.SmallIntegerField(
-        verbose_name=_("Project Default"), choices=P_DEFAULTS,
-        default=LAST_USED, help_text=_("The default project setting."))
+    project_default = models.CharField(
+        verbose_name=_("Project Default"), max_length=30, null=True,
+        blank=True, help_text=_("The default project public_id."))
 
     objects = UserManager()
 
