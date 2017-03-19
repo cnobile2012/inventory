@@ -4,7 +4,7 @@
  * js/views/base_modal_view.js
  */
 
-App.Views.BaseModalView = Backbone.View.extend({
+App.Views.BaseModal = Backbone.View.extend({
   template: '',
 
   initialize: function() {

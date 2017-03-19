@@ -10,7 +10,7 @@
 "use strict";
 
 // Single menu item view
-App.Views.MenuItemView = Backbone.View.extend({
+App.Views.MenuItem = Backbone.View.extend({
   tagName: 'li',
   events: {
     'click': 'onClick'
@@ -29,7 +29,7 @@ App.Views.MenuItemView = Backbone.View.extend({
     return this;
   },
 
-  // Highlight ourself and do any othe logic on click
+  // Highlight ourself and do any other logic on click
   onClick: function(event) {
     this.highlight();
     var $choicePane = $('div#projects div.tab-choice-pane');
@@ -38,10 +38,10 @@ App.Views.MenuItemView = Backbone.View.extend({
     var publicId = this.$el.find('a').attr('data');
     var model = App.models.userModel.get('projects').find(function(model) {
       return model.get('public_id') === publicId;
-      });
+    });
 
     console.log(model);
-
+    //var view = new App.Views.Project({model: model});
 
   },
 
@@ -65,7 +65,7 @@ App.Views.MenuItemView = Backbone.View.extend({
 
 
 // Whole menu view
-App.Views.MenuView = Backbone.View.extend({
+App.Views.Menu = Backbone.View.extend({
   tagName: 'ul',
 
   // Initialize menu items collection here
@@ -80,7 +80,7 @@ App.Views.MenuView = Backbone.View.extend({
     var container = document.createDocumentFragment();
 
     _.forEach(this.collection.models, function(model) {
-      var item = new App.Views.MenuItemView({model: model});
+      var item = new App.Views.MenuItem({model: model});
       container.appendChild(item.render().el);
     });
 
@@ -100,7 +100,7 @@ App.Views.ProjectMenu = Backbone.View.extend({
   },
 
   render: function() {
-    var menu = new App.Views.MenuView({
+    var menu = new App.Views.Menu({
       collection: this.collection
     });
 

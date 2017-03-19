@@ -8,6 +8,7 @@
     <title>{% trans "Project Based Parts Management Service" %}</title>
 {% include "modals/_login.html" %}
 {% include "modals/_logout.html" %}
+{% include "sites/_project.html" %}
     <script src="{% static 'vendor/jquery-3.1.1.min.js' %}"></script>
     <script src="{% static 'vendor/js.cookie-2.0.4.min.js' %}"></script>
     <script src="{% static 'vendor/lodash.min.js' %}"></script>
@@ -20,8 +21,8 @@
       var USERNAME = "{{ user.username }}"
     </script>
 {% compress js %}
-    <script src="{% static 'js/template-loader.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/template-loader.js' %}"></script>
     <script src="{% static 'js/models/account_models.js' %}"></script>
     <script src="{% static 'js/models/invoice_models.js' %}"></script>
     <script src="{% static 'js/models/login_model.js' %}"></script>
@@ -32,6 +33,9 @@
     <script src="{% static 'js/views/base_modal_view.js' %}"></script>
     <script src="{% static 'js/views/login_view.js' %}"></script>
     <script src="{% static 'js/views/logout_view.js' %}"></script>
+    <script src="{% static 'js/views/project_views.js' %}"></script>
+
+    <!-- Add all other views before the menu view. -->
     <script src="{% static 'js/views/menu_views.js' %}"></script>
 {% block js-extras %}{% endblock %}
 {% endcompress %}

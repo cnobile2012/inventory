@@ -6,10 +6,10 @@
 
 jQuery(function($) {
   // Create a modal view class
-  App.Views.LoginModalView = App.Views.BaseModalView.extend({
+  App.Views.LoginModal = App.Views.BaseModal.extend({
     model: App.loginModel,
     el: $("#login-modal"),
-    template: $.tpl.login_template(),
+    template: App.templates.login_template(),
 
     events: {
       'click button[name=login-submit]': 'submit',
@@ -79,7 +79,7 @@ jQuery(function($) {
         backdrop: 'static',
         keyboard: false
       };
-      new App.Views.LoginModalView().show(options);
+      new App.Views.LoginModal().show(options);
     } else {
       App.loginModel.set(
         'href', location.protocol + '//' + location.host + USER_HREF);

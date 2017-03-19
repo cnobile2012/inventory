@@ -4,16 +4,31 @@
  * js/views/project_view.js
  */
 
-jQuery(function($) {
-  App.Views.ProjectView = Backbone.View.extend({
-    tagName: 'ul',
+"use strict";
 
-    render: function() {
-      this.collection.each(function(project) {
-        var view = new 
+// Single project view
+App.Views.Project = Backbone.View.extend({
+  tagName: 'li',
+  template: null,
 
-      });
+  initialize: function(options) {
+    _.bindAll(this, 'render', 'insert');
+    this.template = App.templates.project_template();
 
-    }
-  });
+    //this.$container = options.$container;
+    this.listenTo(this.model, 'change', this.render);
+    this.insert();
+
+  },
+
+  render: function() {
+
+
+    return this;
+  },
+
+  insert: function() {
+
+
+  }
 });

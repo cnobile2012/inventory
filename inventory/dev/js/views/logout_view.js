@@ -6,10 +6,10 @@
 
 jQuery(function($) {
   // Create a modal view class
-  App.Views.LogoutModalView = App.Views.BaseModalView.extend({
+  App.Views.LogoutModal = App.Views.BaseModal.extend({
     model: App.models.logoutModel,
     el: $("#logout-modal"),
-    template: $.tpl.logout_template(),
+    template: App.templates.logout_template(),
 
     events: {
       'click button[name=logout-cancel]': 'close',
@@ -44,6 +44,6 @@ jQuery(function($) {
   });
 
   $('#logout-button').on('click', function() {
-    new App.Views.LogoutModalView().show({show: true});
+    new App.Views.LogoutModal().show({show: true});
   });
 });
