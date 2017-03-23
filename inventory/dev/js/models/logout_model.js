@@ -6,10 +6,10 @@
 
 App.Models.Logout = Backbone.Model.extend({
   id: 'LogoutModel',
-  url: function() {
+  defaults: {},
+  urlRoot: function() {
     return App.models.rootModel.get('accounts').logout;
-  },
-  defaults: {}
+  }
 });
 
 

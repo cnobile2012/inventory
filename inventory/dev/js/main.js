@@ -5,9 +5,9 @@
  *
  * Variables used from HTML
  * ========================
- * IS_AUTHENTICATED
- * USER_HREF
- * USERNAME
+ * IS_AUTHENTICATED -- True if already authenticated on initial page load.
+ * USER_HREF -- Current user's API endpoint.
+ * USERNAME -- Current user's username.
  */
 
 "use strict";
@@ -100,8 +100,8 @@ Utilities.prototype = {
 
   hideMessage: function() {
     var $messages = $('#messages');
-    $messages.html("");
     $messages.hide();
+    $messages.empty();
   },
 
   mimicDjangoErrors: function(elm, data) {
@@ -141,6 +141,67 @@ Utilities.prototype = {
       obj[key] = value;
       return obj[key];
     }
+  },
+
+  setLogin: function() {
+    if(!IS_AUTHENTICATED) {
+      var options = {
+        backdrop: 'static',
+        keyboard: false
+      };
+      new App.Views.LoginModal().show(options);
+    } else {
+      App.loginModel.set(
+        'href', location.protocol + '//' + location.host + USER_HREF);
+      this.fetchData();
+    }
+  },
+
+  fetchData: function() {
+    this.fetchUser();
+    this.fetchRoot();
+    setTimeout(this.fetchPostRootData, 200);
+  },
+
+  fetchUser: function() {
+    if(App.models.userModel === (void 0)) {
+      App.models.userModel = new App.Models.User();
+    }
+
+    return App.models.userModel.fetch({
+      error: function(model, response, options) {
+        App.utils.showMessage("Error: Could not get data for user '" +
+                              USERNAME + "' from API.");
+      }
+    });
+  },
+
+  fetchRoot: function() {
+    if(App.models.rootModel === (void 0)) {
+      App.models.rootModel = new App.Models.RootModel();
+    }
+
+    return App.models.rootModel.fetch({
+      error: function(model, response, options) {
+        App.utils.showMessage("Error: Could not get data from API root.");
+      }
+    });
+  },
+
+  fetchPostRootData: function() {
+    if(App.models.projectMeta === (void 0)) {
+      App.models.projectMeta = new App.Models.ProjectMeta();
+    }
+
+    return App.models.projectMeta.fetch({
+      success: function(model, response, options) {
+        //console.log(model.get('projects').projects);
+      },
+
+      error: function(model, response, options) {
+        App.utils.showMessage(response)
+      }
+    });
   }
 };
 

@@ -40,12 +40,9 @@ jQuery(function($) {
             self.close();
             self.model.set('username', 'X');
             self.model.set('password', 'X');
-            var $messages = $('#messages');
-            $messages.empty();
-            $messages.hide();
+            App.utils.hideMessage();
             IS_AUTHENTICATED = true;
-            window.getAPIRoot();
-            _fetchUser();
+            App.utils.fetchData();
           },
 
           error: function(jqXHR, status, errorThrown) {
@@ -59,33 +56,5 @@ jQuery(function($) {
     }
   });
 
-  var _fetchUser = function() {
-    if(App.models.userModel === (void 0)) {
-      App.models.userModel = new App.Models.User();
-    }
-
-    App.models.userModel.fetch({
-      error: function(collection, response, options) {
-        $('#messages').text("Error: Could not get data for user '" +
-          USERNAME + "' from API.");
-        $('#messages').show();
-      }
-    });
-  };
-
-  window.setLogin = function() {
-    if(!IS_AUTHENTICATED) {
-      var options = {
-        backdrop: 'static',
-        keyboard: false
-      };
-      new App.Views.LoginModal().show(options);
-    } else {
-      App.loginModel.set(
-        'href', location.protocol + '//' + location.host + USER_HREF);
-      _fetchUser();
-    }
-  }
-
-  window.setLogin();
+  App.utils.setLogin();
 });

@@ -42,7 +42,7 @@ App.Models.User = Backbone.Model.extend({
         set(key, projects, options);
 
         _.forEach(value, function(value, key) {
-        projects.add(value);
+          projects.add(value);
         });
       }
     }
@@ -51,8 +51,6 @@ App.Models.User = Backbone.Model.extend({
   url: function() {
     if(_.isUndefined(this.uri)) {
       return App.loginModel.get('href');
-    } else {
-      return this.href;
     }
   }
 });

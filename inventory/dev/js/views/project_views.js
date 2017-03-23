@@ -9,10 +9,10 @@
 // Single project view
 App.Views.Project = Backbone.View.extend({
   tagName: 'li',
-  template: null,
+  template: '',
 
   initialize: function(options) {
-    _.bindAll(this, 'render', 'insert');
+    _.bindAll(this, 'insert');
     this.template = App.templates.project_template();
 
     //this.$container = options.$container;

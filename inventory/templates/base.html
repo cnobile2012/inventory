@@ -14,6 +14,7 @@
     <script src="{% static 'vendor/lodash.min.js' %}"></script>
     <script src="{% static 'vendor/backbone-min.js' %}"></script>
     <script src="{% static 'vendor/backbone.mutators.min.js' %}"></script>
+    <script src="{% static 'vendor/backform.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
     <script>
       var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
@@ -23,13 +24,14 @@
 {% compress js %}
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/template-loader.js' %}"></script>
+    <script src="{% static 'js/models/base_meta_model.js' %}"></script>
     <script src="{% static 'js/models/account_models.js' %}"></script>
     <script src="{% static 'js/models/invoice_models.js' %}"></script>
     <script src="{% static 'js/models/login_model.js' %}"></script>
     <script src="{% static 'js/models/logout_model.js' %}"></script>
     <script src="{% static 'js/models/menu_model.js' %}"></script>
-    <script src="{% static 'js/models/project_models.js' %}"></script>
     <script src="{% static 'js/models/root_model.js' %}"></script>
+    <script src="{% static 'js/models/project_models.js' %}"></script>
     <script src="{% static 'js/views/base_modal_view.js' %}"></script>
     <script src="{% static 'js/views/login_view.js' %}"></script>
     <script src="{% static 'js/views/logout_view.js' %}"></script>

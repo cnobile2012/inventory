@@ -56,6 +56,13 @@ App.Models.Project = Backbone.Model.extend({
 });
 
 
+App.Models.ProjectMeta = App.Models.BaseMetaModel.extend({
+  urlRoot: function() {
+    return App.models.rootModel.get('projects').projects;
+  }
+});
+
+
 jQuery(function($) {
   App.Collections.Projects = Backbone.Collection.extend({
     name: "Projects",

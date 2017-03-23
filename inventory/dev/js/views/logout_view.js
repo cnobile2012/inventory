@@ -21,21 +21,16 @@ jQuery(function($) {
       App.utils.setHeader();
       this.model.save({}, {
         success: function(data, status, jqXHR) {
-          var $messages = $('#messages');
-          $messages.text(status.detail);
-          $messages.show();
+          App.utils.showMessage(status.detail);
           IS_AUTHENTICATED = false;
           $('#user-fullname').empty();
           destroyApp();
-          setTimeout(setLogin, 200);
+          App.utils.setLogin();
         },
 
         error: function(jqXHR, status, errorThrown) {
-          var $messages = $('#messages');
-          var msg = status.responseJSON.detail +
-              " Already logged out please refresh the page.";
-          $messages.text(msg);
-          $messages.show();
+          App.utils.showMessage(status.responseJSON.detail +
+            " Already logged out please refresh the page.");
         }
       });
 
