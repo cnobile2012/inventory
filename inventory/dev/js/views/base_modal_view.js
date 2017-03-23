@@ -14,12 +14,12 @@ App.Views.BaseModal = Backbone.View.extend({
 
   show: function(options) {
     var self = this;
-    $(this.$el).off('hide.bs.modal');
-    $(this.$el).on('hide.bs.modal', function() {
+    this.$el.off('hide.bs.modal');
+    this.$el.on('hide.bs.modal', function() {
       self.close();
     });
 
-    if(options === undefined) {
+    if(options === (void 0)) {
       options = {};
     }
 
@@ -36,8 +36,7 @@ App.Views.BaseModal = Backbone.View.extend({
   close: function() {
     this.remove();
     $('.modal-backdrop').remove();
-    $('#hiddenlpsubmitdiv').remove();
-    $('#_lpinvis').remove();
+    $('body').removeClass('modal-open');
   },
 
   submit: function() {},
