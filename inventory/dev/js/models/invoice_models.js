@@ -4,6 +4,9 @@
  * js/models/invoice_models.js
  */
 
+"use strict";
+
+
 // Invoices
 App.Models.Invoices = Backbone.Model.extend({
   defaults: {
@@ -39,9 +42,10 @@ App.Models.Invoices = Backbone.Model.extend({
   },
 
   url: function() {
-    return this.href;
+    return this.get('href');
   }
 });
+
 
 App.Models.InvoicesMeta = Backbone.Model.extend({
   defaults: {
@@ -52,6 +56,7 @@ App.Models.InvoicesMeta = Backbone.Model.extend({
     options: {}
   }
 });
+
 
 App.Collections.Invoices = Backbone.Collection.extend({
   name: "Invoices",
@@ -70,6 +75,7 @@ App.Collections.Invoices = Backbone.Collection.extend({
   }
 });
 
+
 // InvoiceItems
 App.Models.InvoiceItems = Backbone.Model.extend({
   defaults: {
@@ -85,9 +91,10 @@ App.Models.InvoiceItems = Backbone.Model.extend({
   },
 
   url: function() {
-    return this.href;
+    return this.get('href');
   }
 });
+
 
 App.Models.InvoiceItemsMeta = Backbone.Model.extend({
   defaults: {
@@ -99,10 +106,12 @@ App.Models.InvoiceItemsMeta = Backbone.Model.extend({
   }
 });
 
+
 App.Collections.InvoiceItems = Backbone.Collection.extend({
   name: "InvoiceItems",
   model: App.Models.InvoiceItems
 });
+
 
 // Items
 App.Models.Items = Backbone.Model.extend({
@@ -128,9 +137,10 @@ App.Models.Items = Backbone.Model.extend({
   },
 
   url: function() {
-    return this.href;
+    return this.get('href');
   }
 });
+
 
 App.Models.ItemsMeta = Backbone.Model.extend({
   defaults: {
@@ -140,6 +150,7 @@ App.Models.ItemsMeta = Backbone.Model.extend({
     options: {}
   },
 });
+
 
 App.Collections.Items = Backbone.Collection.extend({
   name: "Items",

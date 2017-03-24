@@ -70,13 +70,13 @@ def api_root(request, format=None):
         'login', request=request, format=format)
     accounts['logout'] = reverse(
         'logout', request=request, format=format)
-    #accounts['user-groups'] = reverse(
+    #accounts['user_groups'] = reverse(
     #    'group-list', request=request, format=format)
     # Categories
     categories = items.setdefault('categories', OrderedDict())
     categories['categories'] = reverse(
         'category-list', request=request, format=format)
-    categories['category-clone'] = reverse(
+    categories['category_clone'] = reverse(
         'category-clone', request=request, format=format)
     # Invoices
     invoices = items.setdefault('invoices', OrderedDict())
@@ -86,21 +86,21 @@ def api_root(request, format=None):
         'item-list', request=request, format=format)
     invoices['invoices'] = reverse(
         'invoice-list', request=request, format=format)
-    invoices['invoice-items'] = reverse(
+    invoices['invoice_items'] = reverse(
         'invoice-item-list', request=request, format=format)
     # Maintenance
     locations = items.setdefault('locations', OrderedDict())
-    locations['location-set-name'] = reverse(
+    locations['location_set_name'] = reverse(
         'location-set-name-list', request=request, format=format)
-    locations['location-format'] = reverse(
+    locations['location_format'] = reverse(
         'location-format-list', request=request, format=format)
-    locations['location-code'] = reverse(
+    locations['location_code'] = reverse(
         'location-code-list', request=request, format=format)
-    locations['location-clone'] = reverse(
+    locations['location_clone'] = reverse(
         'location-clone', request=request, format=format)
     # Projects
     projects = items.setdefault('projects', OrderedDict())
-    projects['inventory-type-list'] = reverse(
+    projects['inventory_type_list'] = reverse(
         'inventory-type-list', request=request, format=format)
     projects['projects'] = reverse(
         'project-list', request=request, format=format)

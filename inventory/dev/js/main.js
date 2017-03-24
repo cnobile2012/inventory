@@ -160,7 +160,6 @@ Utilities.prototype = {
   fetchData: function() {
     this.fetchUser();
     this.fetchRoot();
-    setTimeout(this.fetchPostRootData, 200);
   },
 
   fetchUser: function() {
@@ -182,13 +181,20 @@ Utilities.prototype = {
     }
 
     return App.models.rootModel.fetch({
+      success: function(model, response, options) {
+        //console.log(model.get('projects').projects);
+        App.utils.fetchProjectMeta();
+        App.utils.fetchInventoryType();
+        App.utils.fetchInventoryTypeMeta();
+      },
+
       error: function(model, response, options) {
         App.utils.showMessage("Error: Could not get data from API root.");
       }
     });
   },
 
-  fetchPostRootData: function() {
+  fetchProjectMeta: function() {
     if(App.models.projectMeta === (void 0)) {
       App.models.projectMeta = new App.Models.ProjectMeta();
     }
@@ -199,7 +205,39 @@ Utilities.prototype = {
       },
 
       error: function(model, response, options) {
-        App.utils.showMessage(response)
+        App.utils.showMessage(options.textStatus + " " + options.errorThrown);
+      }
+    });
+  },
+
+  fetchInventoryType: function() {
+    if(App.models.inventoryType === (void 0)) {
+      App.models.inventoryType = new App.Models.InventoryType();
+    }
+
+    return App.models.inventoryType.fetch({
+      success: function(model, response, options) {
+        //console.log(model.get('projects').projects);
+      },
+
+      error: function(model, response, options) {
+        App.utils.showMessage(options.textStatus + " " + options.errorThrown);
+      }
+    });
+  },
+
+  fetchInventoryTypeMeta: function() {
+    if(App.models.inventoryTypeMeta === (void 0)) {
+      App.models.inventoryTypeMeta = new App.Models.InventoryTypeMeta();
+    }
+
+    return App.models.inventoryTypeMeta.fetch({
+      success: function(model, response, options) {
+        //console.log(model.get('projects').projects);
+      },
+
+      error: function(model, response, options) {
+        App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
   }

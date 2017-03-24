@@ -6,6 +6,21 @@
 
 "use strict";
 
+
+App.Models.InventoryType = Backbone.Model.extend({
+  urlRoot: function() {
+    return App.models.rootModel.get('projects').inventory_type_list;
+  }
+});
+
+
+App.Models.InventoryTypeMeta = App.Models.BaseMetaModel.extend({
+  urlRoot: function() {
+    return App.models.rootModel.get('projects').inventory_type_list;
+  }
+});
+
+
 App.Models.Project = Backbone.Model.extend({
   defaults: {
     public_id: '',
@@ -50,8 +65,8 @@ App.Models.Project = Backbone.Model.extend({
     },
   },
 
-  url: function() {
-    return this.href;
+  urlRoot: function() {
+    return this.get('href');
   }
 });
 

@@ -4,6 +4,9 @@
  * js/models/account_models.js
  */
 
+"use strict";
+
+
 App.Models.User = Backbone.Model.extend({
   defaults: {
     public_id: '',
@@ -49,9 +52,13 @@ App.Models.User = Backbone.Model.extend({
   },
 
   url: function() {
-    if(_.isUndefined(this.uri)) {
-      return App.loginModel.get('href');
+    var url = this.get('href');
+
+    if(url === '') {
+      url = App.loginModel.get('href');
     }
+
+    return url;
   }
 });
 

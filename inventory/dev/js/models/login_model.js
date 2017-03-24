@@ -4,6 +4,9 @@
  * js/models/login_model.js
  */
 
+"use strict";
+
+
 App.Models.Login = Backbone.Model.extend({
   id: 'LoginModel',
   urlRoot: appConfig.loginURL,

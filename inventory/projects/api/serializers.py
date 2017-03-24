@@ -52,8 +52,8 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
         model = InventoryType
         fields = ('public_id', 'name', 'description', 'projects', 'creator',
                   'created', 'updater', 'updated', 'href',)
-        read_only_fields = ('projects', 'creator', 'created', 'updater',
-                            'updated',)
+        read_only_fields = ('public_id', 'projects', 'creator', 'created',
+                            'updater', 'updated',)
 
 
 #

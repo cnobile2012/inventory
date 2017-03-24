@@ -4,6 +4,9 @@
  * js/models/root_model.js
  */
 
+"use strict";
+
+
 App.Models.RootModel = Backbone.Model.extend({
   urlRoot: appConfig.baseURL,
   defaults: {},

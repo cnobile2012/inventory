@@ -4,6 +4,9 @@
  * js/models/logout_model.js
  */
 
+"use strict";
+
+
 App.Models.Logout = Backbone.Model.extend({
   id: 'LogoutModel',
   defaults: {},
