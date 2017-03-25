@@ -70,7 +70,7 @@ App.Collections.Invoices = Backbone.Collection.extend({
       count: response.count,
       next: response.next,
       previous: response.previous
-    })
+    });
     return models;
   }
 });

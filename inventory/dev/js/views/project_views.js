@@ -18,6 +18,7 @@ App.Views.Project = Backform.Form.extend({
   }
 });
 
+// Test object, if it works then call it in the project menu.
 var projectForm = function(model) {
   return new App.Views.Project({
     model: model,
@@ -31,12 +32,19 @@ var projectForm = function(model) {
       {name: 'inventory_type',
        label: App.models.projectMeta.get('inventory_type').label,
        control: 'select',
-       options: [
-
-       ]
+       options: getOptions()
       },
     ],
 
+    getOptions: function() {
+      var options = [], name = "", label = "";
+
+      _.forEach(App.collections.inventoryType, function(value, key) {
+        name = App.collections.inventoryType.at(key).get('name');
+        label = App.models.inventoryTypeMeta.get('name').label;
+        option.push({label: label, value: name});
+      });
+    }
 
   });
 };

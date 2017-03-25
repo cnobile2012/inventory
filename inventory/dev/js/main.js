@@ -12,6 +12,7 @@
 
 "use strict";
 
+
 var appConfig = {
   baseURL: location.protocol + '//' + location.host + '/api/',
   loginURL: location.protocol + '//' + location.host + '/api/accounts/login/'
@@ -211,11 +212,11 @@ Utilities.prototype = {
   },
 
   fetchInventoryType: function() {
-    if(App.models.inventoryType === (void 0)) {
-      App.models.inventoryType = new App.Models.InventoryType();
+    if(App.collections.inventoryType === (void 0)) {
+      App.collections.inventoryType = new App.Collections.InventoryType();
     }
 
-    return App.models.inventoryType.fetch({
+    return App.collections.inventoryType.fetch({
       success: function(model, response, options) {
         //console.log(model.get('projects').projects);
       },
