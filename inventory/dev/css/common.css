@@ -132,7 +132,61 @@ body {
   min-height: 446px;
   width: 100%;
   margin: 4px 0 0 2px;
-  padding: 0 4px 4px;
+  padding: 8px 4px 8px;
   border: 1px solid rgba(72, 48, 24, 0.5);
   background-color: rgba(233, 231, 213, 1); /*rgba(255, 250, 215, .5);*/
+}
+
+.data-pane form {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: -moz-box;
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
+  display: flex;
+  -webkit-flex-direction: column;
+  -webkit-box-orient: vertical;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.data-pane label {
+  max-width: 175px;
+  margin: 0;
+  padding: 0;
+}
+
+.data-pane span,
+.data-pane input,
+.data-pane select {
+  max-width: 250px;
+  height: 30px;
+  margin: 0;
+  padding: 0 2px;
+  color: inherit;
+}
+
+.data-pane span {
+  margin: 2px 0 0;
+  background-color: inherit;
+  border: none;
+  border-color: transparent;
+}
+
+.data-pane select {
+  padding: 0;
+}
+
+.data-pane div.checkbox {
+  margin: 0;
+}
+
+.data-pane .form-group {
+  margin-bottom: 4px;
+}
+
+.data-pane span.help-block {
+  margin: 0 0 2px;
+  height: 20px;
+  max-width: 350px;
+  font-size: 75%;
 }

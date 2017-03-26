@@ -27,6 +27,7 @@ window.App = {
   models: {},
   collections: {},
   views: {},
+  forms: {},
   templates: null,
   loginModel: null,
   utils: null,
@@ -41,6 +42,7 @@ window.destroyApp = function() {
   App.models = {};
   App.collections = {};
   App.views = {};
+  App.forms = {};
   App.loginModel.clear().set(App.loginModel.defaults);
   App.invoiceTimeout = null;
   App.itemTimeout = null;

@@ -31,18 +31,22 @@ App.Views.MenuItem = Backbone.View.extend({
 
   // Highlight ourself and do any other logic on click
   onClick: function(event) {
-    this.highlight();
-    var $choicePane = $('div#projects div.tab-choice-pane');
-    var $dataPane = $('<div class="data-pane"></div>');
-    $dataPane.appendTo($choicePane);
     var publicId = this.$el.find('a').attr('data');
     var model = App.models.userModel.get('projects').find(function(model) {
       return model.get('public_id') === publicId;
     });
 
-    console.log(model);
-    //var view = new App.Views.Project({model: model});
+    // Only display pane once.
+    if($('#' + publicId).length <= 0) {
+      this.highlight();
+      var $choicePane = $('div#projects div.tab-choice-pane');
+      var $dataPane = $('<div class="data-pane"></div>');
+      $dataPane.appendTo($choicePane);
 
+      // This works, but needs to called in a callback from a project specific
+      // class.
+      App.forms.projectForm(model);
+    }
   },
 
   // If we changed our model's selection property during onClick then
@@ -90,7 +94,7 @@ App.Views.Menu = Backbone.View.extend({
 });
 
 
-// MENU ENTRY POINT VIEWS
+// MENU ENTRY POINT--VIEWS
 // Project entry point view
 App.Views.ProjectMenu = Backbone.View.extend({
   el: 'div#projects div.tab-choice-pane div.pane-nav',
@@ -105,5 +109,6 @@ App.Views.ProjectMenu = Backbone.View.extend({
     });
 
     this.$el.append(menu.render().el);
+    //App.forms.projectForm(this.model);
   }
 });
