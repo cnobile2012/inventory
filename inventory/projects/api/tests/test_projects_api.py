@@ -674,6 +674,58 @@ class TestProject(BaseTest):
         self._test_project_users_with_valid_permissions(
             self.project_uri, method)
 
+    def test_special_case_project_inventory_type(self):
+        """
+        Test the special case where either inventory_type (HREF) or
+        inventory_type_public_id (public_id) must be used.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        method = 'put'
+        # Test populating inventory_type with a URI.
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'Test Project 01'
+        su['inventory_type'] = self.in_type_uri
+        self._test_superuser_with_valid_permissions(
+            self.project_uri, method, request_data=data)
+        # Test populating inventory_type_public_id with a public ID.
+        data = {}
+        su = data.setdefault('SU', {})
+        su['name'] = 'Test Project 01'
+        su['inventory_type_public_id'] = self.in_type.public_id
+        self._test_superuser_with_valid_permissions(
+            self.project_uri, method, request_data=data)
+        # Test invalid inventory_type_public_id.
+        data = {}
+        data['name'] = 'Test Project 01'
+        data['inventory_type_public_id'] = "qwertyuiop"
+        response = getattr(self.client, method)(
+            self.project_uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        error_key = 'inventory_type_public_id'
+        msg = "Should have error with key '{}'".format(error_key)
+        self.assertTrue(self._has_error(response, error_key=error_key), msg)
+        self._test_errors(response, tests={
+            error_key: "Could not find InventoryType with public_id"
+            })
+        # Test missing inventory_type or inventory_type_public_id.
+        data = {}
+        data['name'] = 'Test Project 01'
+        response = getattr(self.client, method)(
+            self.project_uri, data=data, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        error_key = 'non_field_errors'
+        msg = "Should have error with key '{}'".format(error_key)
+        #self.assertTrue(self._has_error(response, error_key=error_key), msg)
+        self._test_errors(response, tests={
+            error_key: "Must choose a valid "
+            })
+
     def test_set_user(self):
         """
         Test that an invalid user raises an validation exception.

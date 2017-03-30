@@ -63,6 +63,7 @@ class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
         return self.name
 
     class Meta:
+        ordering = ('name',)
         verbose_name = _("InventoryType")
         verbose_name_plural = _("InventoryTypes")
 

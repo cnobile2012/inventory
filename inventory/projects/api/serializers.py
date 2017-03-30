@@ -74,7 +74,10 @@ class MembershipSerializer(SerializerMixin, serializers.ModelSerializer):
 class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     inventory_type = serializers.HyperlinkedRelatedField(
         view_name='inventory-type-detail',
-        queryset=InventoryType.objects.all(), lookup_field='public_id')
+        queryset=InventoryType.objects.all(), lookup_field='public_id',
+        required=False)
+    inventory_type_public_id = serializers.CharField(
+        source='inventory_type.public_id', required=False)
     members = serializers.HyperlinkedRelatedField(
         view_name='user-detail', many=True, queryset=UserModel.objects.all(),
         default=None, lookup_field='public_id')
@@ -98,12 +101,31 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     href = serializers.HyperlinkedIdentityField(
         view_name='project-detail', lookup_field='public_id')
 
+    def validate_inventory_type_public_id(self, value):
+        try:
+            obj = InventoryType.objects.get(public_id=value)
+        except InventoryType.DoesNotExist:
+            msg = _("Could not find {} with {} '{}'").format(
+                'InventoryType', 'public_id', value)
+            raise serializers.ValidationError(msg)
+
+        return obj
+
     def validate(self, data):
         """
         Pops out the role values and validates them, then adds the user
         and role back into the data.
         """
+        obj = data.get('inventory_type')
         role_data = data.pop('role', {})
+
+        if not obj:
+            obj = data.get('inventory_type_public_id', None)
+
+            if not obj:
+                if not self.partial:
+                    msg = _("Must choose a valid ").format("Inventory Type")
+                    raise serializers.ValidationError(msg)
 
         if role_data and ('user' in role_data and 'role' in role_data):
             username = role_data.get('user')
@@ -159,8 +181,8 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('public_id', 'name', 'members', 'image', 'role',
-                  'memberships', 'inventory_type', 'items_href',
-                  'invoices_href', 'public', 'active', 'creator', 'created',
-                  'updater', 'updated', 'href',)
+                  'memberships', 'inventory_type', 'inventory_type_public_id',
+                  'items_href', 'invoices_href', 'public', 'active', 'creator',
+                  'created', 'updater', 'updated', 'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
                             'updated',)
