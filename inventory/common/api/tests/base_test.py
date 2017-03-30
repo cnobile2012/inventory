@@ -454,63 +454,46 @@ class BaseTest(RecordCreation, APITestCase):
         if (hasattr(response, 'context_data') and
             hasattr(response.context_data, 'form')):
             errors = dict(response.context_data.get('form').errors)
-
-            for key, value in tests.items():
-                if key in exclude_keys:
-                    errors.pop(key, None)
-                    continue
-
-                err_msg = errors.pop(key, None)
-                self.assertTrue(err_msg, "Could not find key: {}".format(key))
-                err_msg = err_msg.as_text()
-                msg = "For key '{}' value '{}' not found in '{}'".format(
-                    key, value, err_msg)
-                self.assertTrue(value and value in err_msg, msg)
+            self._find_tests(errors, tests, exclude_keys, is_context_data=True)
         elif hasattr(response, 'data'):
             errors = response.data
-
-            for key, value in tests.items():
-                if key in exclude_keys:
-                    errors.pop(key, None)
-                    continue
-
-                err_msg = errors.pop(key, None)
-                self.assertTrue(err_msg, "Could not find key: {}".format(key))
-                msg = "More than one error for key '{}', error: {}".format(
-                    key, err_msg)
-                self.assertTrue(len(err_msg), msg)
-                msg = "For key '{}' value '{}' not found in '{}'".format(
-                    key, value, err_msg)
-
-                if isinstance(err_msg, (list, tuple)):
-                    err_msg = err_msg[0]
-                elif isinstance(err_msg, dict):
-                    err_msg = err_msg.get(key)
-
-                self.assertTrue(value and value in err_msg, msg)
+            self._find_tests(errors, tests, exclude_keys)
         elif hasattr(response, 'content'):
             errors = json.loads(response.content.decode('utf-8'))
-
-            for key, value in tests.items():
-                if key in exclude_keys:
-                    errors.pop(key, None)
-                    continue
-
-                err_msg = errors.pop(key, None)
-                self.assertTrue(err_msg, "Could not find key: {}".format(key))
-                msg = "More than one error for key '{}', error: {}".format(
-                    key, err_msg)
-                self.assertTrue(len(err_msg), msg)
-                msg = "For key '{}' value '{}' not found in '{}'".format(
-                    key, value, err_msg)
-
-                if isinstance(err_msg, (list, tuple)):
-                    err_msg = err_msg[0]
-
-                self.assertTrue(value and value in err_msg, msg)
+            self._find_tests(errors, tests, exclude_keys)
         else:
             msg = "No data found."
             self.assertTrue(False, msg)
 
         msg = "Unaccounted for errors: {}".format(errors)
         self.assertFalse(len(errors) != 0 and True or False, msg)
+
+    def _find_tests(self, errors, tests, exclude_keys, is_context_data=False):
+        msg = "All errors: {}".format(errors)
+
+        for key, value in tests.items():
+            if key in exclude_keys:
+                errors.pop(key, None)
+                continue
+
+            err_msg = errors.pop(key, None)
+            self.assertTrue(
+                err_msg, "Could not find key: {}. {}".format(key, msg))
+
+            if is_context_data:
+                err_msg = err_msg.as_text()
+            else:
+                msg = "More than one error for key '{}', error: {}".format(
+                    key, err_msg)
+                self.assertTrue(len(err_msg), msg)
+
+            msg = "For key '{}' value '{}' not found in '{}'".format(
+                key, value, err_msg)
+
+            if not is_context_data:
+                if isinstance(err_msg, (list, tuple)):
+                    err_msg = err_msg[0]
+                elif isinstance(err_msg, dict):
+                    err_msg = err_msg.get(key)
+
+            self.assertTrue(value and value in err_msg, msg)
