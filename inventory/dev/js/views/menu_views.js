@@ -19,7 +19,7 @@ App.Views.MenuItem = Backbone.View.extend({
   // Binding to model's selection change event
   // Thus having ability to update view state
   initialize: function() {
-    _.bindAll(this);
+    _.bindAll(this, 'onClickCallback');
     this.model.on('change:isSelected', this.onSelectedChange.bind(this));
   },
 
@@ -42,10 +42,7 @@ App.Views.MenuItem = Backbone.View.extend({
       var $choicePane = $('div#projects div.tab-choice-pane');
       var $dataPane = $('<div class="data-pane"></div>');
       $dataPane.appendTo($choicePane);
-
-      // This works, but needs to called in a callback from a project specific
-      // class.
-      App.forms.projectForm(model);
+      this.onClickCallback(model);
     }
   },
 
@@ -74,17 +71,18 @@ App.Views.Menu = Backbone.View.extend({
 
   // Initialize menu items collection here
   initialize: function() {
-    _.bindAll(this);
+    _.bindAll(this, 'renderCallback');
   },
 
   // Render each menu item by creating the appropriate view calling its
   // render method and appending the resulting element.
   render: function() {
+    var self = this;
     this.$el.empty();
     var container = document.createDocumentFragment();
 
     _.forEach(this.collection.models, function(model) {
-      var item = new App.Views.MenuItem({model: model});
+      var item = self.renderCallback(model);
       container.appendChild(item.render().el);
     });
 
@@ -95,7 +93,21 @@ App.Views.Menu = Backbone.View.extend({
 
 
 // MENU ENTRY POINT--VIEWS
-// Project entry point view
+// Project entry points
+App.Views.ProjectItemMenu = App.Views.MenuItem.extend({
+  onClickCallback: function(model) {
+    App.Forms.Project(model);
+  }
+});
+
+
+App.Views.ProjectParentMenu = App.Views.Menu.extend({
+  renderCallback: function(model) {
+    return new App.Views.ProjectItemMenu({model: model});
+  }
+});
+
+
 App.Views.ProjectMenu = Backbone.View.extend({
   el: 'div#projects div.tab-choice-pane div.pane-nav',
 
@@ -104,11 +116,10 @@ App.Views.ProjectMenu = Backbone.View.extend({
   },
 
   render: function() {
-    var menu = new App.Views.Menu({
+    var menu = new App.Views.ProjectParentMenu({
       collection: this.collection
     });
 
     this.$el.append(menu.render().el);
-    //App.forms.projectForm(this.model);
   }
 });

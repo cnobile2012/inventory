@@ -132,7 +132,7 @@ body {
   min-height: 446px;
   width: 100%;
   margin: 4px 0 0 2px;
-  padding: 8px 4px 8px;
+  padding: 8px;
   border: 1px solid rgba(72, 48, 24, 0.5);
   background-color: rgba(233, 231, 213, 1); /*rgba(255, 250, 215, .5);*/
 }

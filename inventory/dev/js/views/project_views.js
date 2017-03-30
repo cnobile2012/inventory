@@ -12,7 +12,7 @@ App.Views.Project = Backform.Form.extend();
 
 
 // Test object, if it works then call it in the project menu.
-App.forms.projectForm = function(model) {
+App.Forms.Project = function(model) {
   var fields = [
     {name: 'public_id',
      label: App.models.projectMeta.get('public_id').label,
@@ -20,9 +20,9 @@ App.forms.projectForm = function(model) {
      control: 'uneditable-input',
      helpMessage: App.models.projectMeta.get('public_id').help_text
     },
-    {name: 'inventory_type',
+    {name: 'inventory_type_public_id',
      label: App.models.projectMeta.get('inventory_type').label,
-     required: App.models.projectMeta.get('inventory_type').required,
+     required: true, // Force true--the endpoint has two ways of doing this.
      control: 'select',
      options: [],
      helpMessage: App.models.projectMeta.get('inventory_type').help_text
@@ -60,7 +60,7 @@ App.forms.projectForm = function(model) {
   ];
 
   _.forEach(fields, function(value, key) {
-    if(value.name === 'inventory_type') {
+    if(value.name === 'inventory_type_public_id') {
       var name = "", label = "", field = value;
 
       _.forEach(App.collections.inventoryType, function(value, key) {
