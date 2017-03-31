@@ -22,7 +22,7 @@ all	: tar
 #----------------------------------------------------------------------
 tar	: clean
 	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz --exclude=".git" \
-          --exclude="example_site/static" $(PACKAGE_DIR))
+          --exclude="inventory/static" $(PACKAGE_DIR))
 
 .PHONY	: coverage
 coverage: clean
