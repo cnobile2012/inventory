@@ -20,7 +20,7 @@ App.Models.MenuItem = Backbone.Model.extend({
 App.Collections.MenuItems = Backbone.Collection.extend({
   model: App.Models.MenuItem,
 
-  // Bind to any model's isSelected change event
+  // Listen to any model's isSelected change event
   initialize: function() {
     this.listenTo(this, 'change:isSelected', this.onSelectedChanged);
   },
@@ -28,7 +28,7 @@ App.Collections.MenuItems = Backbone.Collection.extend({
   // If any model changes it's selection property to true go through
   // each model in collection, checking if it has isSelected property
   // equal to true and not being changed during this change event if
-  // found any - reset it's isSelected property to false
+  // found any--reset it's isSelected property to false
   onSelectedChanged: function(currentModel, value) {
     // Only check if `isSelected` is `true`.
     if(value === true) {

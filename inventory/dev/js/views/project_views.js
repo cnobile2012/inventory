@@ -56,6 +56,22 @@ App.Forms.Project = function(model) {
      required: App.models.projectMeta.get('active').required,
      control: 'checkbox',
      helpMessage: App.models.projectMeta.get('active').help_text
+    },
+    {name: 'creator',
+     label: App.models.projectMeta.get('creator').label,
+     control: 'uneditable-input'
+    },
+    {name: 'created',
+     label: App.models.projectMeta.get('created').label,
+     control: 'uneditable-input'
+    },
+    {name: 'updater',
+     label: App.models.projectMeta.get('updater').label,
+     control: 'uneditable-input'
+    },
+    {name: 'updated',
+     label: App.models.projectMeta.get('updated').label,
+     control: 'uneditable-input'
     }
   ];
 
@@ -73,12 +89,11 @@ App.Forms.Project = function(model) {
 
   var publicId = model.get('public_id');
   var $template = $(App.templates.project_template());
-  $template.attr('id', publicId);
-  $template.appendTo($('#projects div.data-pane'));
+  $template.appendTo($('#projects #' + publicId));
   var options = {
     template: $template[0],
     model: model,
-    el: $("#" + publicId),
+    el: $("#" + publicId + ' form'),
     fields: fields,
     showRequiredAsAsterisk: true
   };

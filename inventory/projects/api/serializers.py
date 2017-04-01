@@ -73,7 +73,7 @@ class MembershipSerializer(SerializerMixin, serializers.ModelSerializer):
 #
 class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     inventory_type = serializers.HyperlinkedRelatedField(
-        view_name='inventory-type-detail',
+        view_name='inventory-type-detail', label=_("Inventory Type"),
         queryset=InventoryType.objects.all(), lookup_field='public_id',
         required=False)
     inventory_type_public_id = serializers.CharField(

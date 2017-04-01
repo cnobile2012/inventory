@@ -137,6 +137,13 @@ body {
   background-color: rgba(233, 231, 213, 1); /*rgba(255, 250, 215, .5);*/
 }
 
+.data-pane .pane-close {
+  float: right;
+  margin-top: -5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .data-pane form {
   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
   display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */

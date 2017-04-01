@@ -9,6 +9,7 @@
 
 "use strict";
 
+
 // Single menu item view
 App.Views.MenuItem = Backbone.View.extend({
   tagName: 'li',
@@ -20,7 +21,7 @@ App.Views.MenuItem = Backbone.View.extend({
   // Thus having ability to update view state
   initialize: function() {
     _.bindAll(this, 'onClickCallback');
-    this.model.on('change:isSelected', this.onSelectedChange.bind(this));
+    this.listenTo(this.model, 'change:isSelected', this.onSelectedChange);
   },
 
   // Simple render override
@@ -36,12 +37,21 @@ App.Views.MenuItem = Backbone.View.extend({
       return model.get('public_id') === publicId;
     });
 
-    // Only display pane once.
+    // Only display pane once while active.
     if($('#' + publicId).length <= 0) {
       this.highlight();
       var $choicePane = $('div#projects div.tab-choice-pane');
-      var $dataPane = $('<div class="data-pane"></div>');
+      var $dataPane = $('<div id="' + publicId + '" class="data-pane"></div>');
+      var $closePane = $('<div class="pane-close">X</div>');
+      $closePane.appendTo($dataPane);
       $dataPane.appendTo($choicePane);
+      var self = this;
+
+      $closePane.on('click', function() {
+        $dataPane.remove();
+        self.$el.removeClass('active');
+      });
+
       this.onClickCallback(model);
     }
   },
@@ -92,7 +102,7 @@ App.Views.Menu = Backbone.View.extend({
 });
 
 
-// MENU ENTRY POINT--VIEWS
+// MENU VIEW ENTRY POINT
 // Project entry points
 App.Views.ProjectItemMenu = App.Views.MenuItem.extend({
   onClickCallback: function(model) {
