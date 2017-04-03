@@ -30,7 +30,8 @@ from inventory.common.api.view_mixins import (
 
 from ..models import Question, Answer
 from .serializers import (
-    UserSerializer, QuestionSerializer, AnswerSerializer, LoginSerializer)
+    UserSerializer, PublicUserSerializer, QuestionSerializer, AnswerSerializer,
+    LoginSerializer)
 
 log = logging.getLogger('api.accounts.views')
 UserModel = get_user_model()
@@ -40,15 +41,25 @@ UserModel = get_user_model()
 # User
 #
 class UserAuthorizationMixin(object):
+    serializers = {
+        'default': UserSerializer,
+        'public': PublicUserSerializer
+        }
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if (self.request.user.is_superuser
+            or self.request.user.role == UserModel.ADMINISTRATOR
+            or (self.kwargs and self.request.user == self.get_object())):
+            serializer = self.serializers.get('default')
+        else:
+            serializer = self.serializers.get('public')
+
+        return serializer
 
     def get_queryset(self):
-        if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
-            result = UserModel.objects.all()
-        else:
-            result = UserModel.objects.filter(pk=self.request.user.pk)
-
-        return result
+        return UserModel.objects.all()
 
 
 class UserList(TrapDjangoValidationErrorCreateMixin,
@@ -57,9 +68,8 @@ class UserList(TrapDjangoValidationErrorCreateMixin,
     """
     User list endpoint.
     """
-    serializer_class = UserSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly,
@@ -78,11 +88,13 @@ user_list = UserList.as_view()
 class UserDetail(TrapDjangoValidationErrorUpdateMixin,
                  UserAuthorizationMixin,
                  RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
-            Or(IsAnyUser,
-               IsAnyProjectUser
+        And(IsUserActive, IsAuthenticated,
+            Or(IsAdminSuperUser,
+               IsAdministrator,
+               Or(IsAnyUser,
+                  IsAnyProjectUser
+                  )
                )
             ),
         )
@@ -151,7 +163,7 @@ class QuestionList(TrapDjangoValidationErrorCreateMixin,
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly, Or(IsDefaultUser,
@@ -174,7 +186,7 @@ class QuestionDetail(TrapDjangoValidationErrorUpdateMixin,
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = (
-         And(IsUserActive, #IsAuthenticated,
+         And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly, Or(IsDefaultUser,
@@ -211,7 +223,7 @@ class AnswerList(TrapDjangoValidationErrorCreateMixin,
     """
     serializer_class = AnswerSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAnyUser,
                IsAnyProjectUser)
             ),
@@ -230,7 +242,7 @@ class AnswerDetail(TrapDjangoValidationErrorUpdateMixin,
     """
     serializer_class = AnswerSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAnyUser,
                IsAnyProjectUser)
             ),
@@ -276,7 +288,7 @@ class LogoutView(APIView):
     to logout.
     """
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAnyUser,
                IsAnyProjectUser)
             ),

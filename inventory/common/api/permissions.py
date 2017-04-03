@@ -249,9 +249,25 @@ class IsUserActive(permissions.BasePermission):
         if user and user.is_active:
             result = True
 
-        #if request.method != 'GET': raise Exception('test')
         log.debug("IsUserActive: %s, method: %s", result, request.method)
         return result
+
+
+## class IsUserRecord(permissions.BasePermission):
+##     """
+##     Disallows writing to non-user-own record.
+##     """
+
+##     def has_permission(self, request, view):
+##         result = False
+##         user = get_user(request)
+##         instance = view.get_object()
+
+##         if user == instance:
+##             result = True
+
+##         log.debug("IsUserRecord: %s", result)
+##         return result
 
 
 class CannotDelete(permissions.BasePermission):

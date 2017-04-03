@@ -54,9 +54,9 @@ class TestUserAPI(BaseAccount):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(self._has_error(response), msg)
+        self.assertTrue(self._has_error(response, error_key='is_active'), msg)
         self._test_errors(response, tests={
-            'detail': "have permissions to change the 'is_active' field.",
+            'is_active': "have permission to change the 'is_active' field.",
             })
         # Test writing to is_staff.
         data['is_active'] = True
@@ -66,9 +66,9 @@ class TestUserAPI(BaseAccount):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(self._has_error(response), msg)
+        self.assertTrue(self._has_error(response, error_key='is_staff'), msg)
         self._test_errors(response, tests={
-            'detail': "have permissions to change the 'is_staff' field.",
+            'is_staff': "have permission to change the 'is_staff' field.",
             })
         # Test writing to role
         data['is_active'] = True
@@ -80,9 +80,10 @@ class TestUserAPI(BaseAccount):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(self._has_error(response), msg)
+        self.assertTrue(
+            self._has_error(response, error_key='role'), msg)
         self._test_errors(response, tests={
-            'detail': "have permissions to change the 'role' field.",
+            'role': "have permission to change the 'role' field.",
             })
         # Test writing to is_superuser
         data['is_active'] = True
@@ -94,9 +95,10 @@ class TestUserAPI(BaseAccount):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        self.assertTrue(self._has_error(response), msg)
+        self.assertTrue(
+            self._has_error(response, error_key='is_superuser'), msg)
         self._test_errors(response, tests={
-            'detail': "have permissions to change the 'is_superuser' field.",
+            'is_superuser': "permission to change the 'is_superuser' field.",
             })
 
     def _test_writable_role_no_errors(self, method):
@@ -172,8 +174,27 @@ class TestUserAPI(BaseAccount):
         method = 'get'
         uri = reverse('user-list')
         self._test_users_with_valid_permissions(uri, method)
-        self._test_project_users_with_valid_permissions(
-            uri, method, project_user=False)
+        self._test_project_users_with_valid_permissions(uri, method)
+
+    def test_GET_user_list_read_only_serializer(self):
+        """
+        Test that a non superuser or administrator will only use the read only
+        serializer.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-list')
+        method = 'get'
+        response = getattr(client, method)(uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEqual(response.data.get('count'), 2, msg)
+        self.assertEqual(len(response.data.get('results')[0]), 8, msg)
 
     def test_POST_user_list_with_invalid_permissions(self):
         """
@@ -251,9 +272,9 @@ class TestUserAPI(BaseAccount):
             uri, method, default_user=False)
         self._test_project_users_with_invalid_permissions(uri, method)
 
-    def test_GET_category_detail_with_valid_permissions(self):
+    def test_GET_user_detail_with_valid_permissions(self):
         """
-        Test that a GET to category_detail passes with valid permissions.
+        Test that a GET to user_detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -265,6 +286,25 @@ class TestUserAPI(BaseAccount):
         method = 'get'
         self._test_users_with_valid_permissions(uri, method)
         self._test_project_users_with_valid_permissions(uri, method)
+
+    def test_GET_user_detail_read_only_serializer(self):
+        """
+        Test that a non superuser or administrator will only use the read only
+        serializer when using GET on another user.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
+        method = 'get'
+        response = getattr(client, method)(uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        self.assertEqual(len(response.data), 8, msg)
 
     def test_PUT_user_detail_with_invalid_permissions(self):
         """
@@ -340,6 +380,30 @@ class TestUserAPI(BaseAccount):
         """
         #self.skipTest("Temporarily skipped")
         self._test_writable_role_no_errors('put')
+
+    def test_PUT_user_detail_read_only_serializer(self):
+        """
+        Test that a non superuser or administrator cannot PUT to a detail
+        endpoint.
+        """
+        #self.skipTest("Temporarily skipped")
+        kwargs = self._setup_user_credentials()
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
+        method = 'put'
+        response = getattr(client, method)(uri, format='json', **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertTrue(
+            self._has_error(response, error_key='non_field_errors'), msg)
+        self._test_errors(response, tests={
+            'non_field_errors': "You cannot update a user account on this ",
+            })
 
     def test_PATCH_user_detail_with_invalid_permissions(self):
         """

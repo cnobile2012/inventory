@@ -14,6 +14,7 @@ from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
+from rest_framework.permissions import SAFE_METHODS
 
 from inventory.common.api.serializer_mixin import SerializerMixin
 from inventory.projects.api.serializers import ProjectSerializer
@@ -30,7 +31,7 @@ UserModel = get_user_model()
 # User
 #
 class UserSerializer(SerializerMixin, serializers.ModelSerializer):
-    message = _("You do not have permissions to change the '{}' field.")
+    MESSAGE = _("You do not have permission to change the '{}' field.")
 
     role = serializers.IntegerField(source='user.role', required=False)
     picture  = serializers.ImageField(
@@ -69,27 +70,27 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
                 (self.instance.is_superuser or
                  self.instance.role == UserModel.ADMINISTRATOR)):
                 raise serializers.ValidationError(
-                    {'detail': self.message.format('is_active')})
+                    {'is_active': self.MESSAGE.format('is_active')})
 
             if (is_staff is not None
                 and self.instance.is_staff != is_staff and not
                 (self.instance.is_superuser or
                  self.instance.role == UserModel.ADMINISTRATOR)):
                 raise serializers.ValidationError(
-                    {'detail': self.message.format('is_staff')})
+                    {'is_staff': self.MESSAGE.format('is_staff')})
 
             if (is_superuser is not None
                 and self.instance.is_superuser != is_superuser
                 and not self.instance.is_superuser):
                 raise serializers.ValidationError(
-                    {'detail': self.message.format('is_superuser')})
+                    {'is_superuser': self.MESSAGE.format('is_superuser')})
 
             if (role is not None
                 and self.instance.role != role and not
                 (self.instance.is_superuser or
                  self.instance.role == UserModel.ADMINISTRATOR)):
                 raise serializers.ValidationError(
-                    {'detail': self.message.format('role')})
+                    {'role': self.MESSAGE.format('role')})
 
         return data
 
@@ -163,6 +164,23 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
                   'href',)
         read_only_fields = ('public_id', 'last_login', 'date_joined',)
         extra_kwargs = {'password': {'write_only': True}}
+
+
+class PublicUserSerializer(SerializerMixin, serializers.ModelSerializer):
+    href = serializers.HyperlinkedIdentityField(
+        view_name='user-detail', lookup_field='public_id',
+        label=_("Identity URI"))
+
+    def validate(self, data):
+        msg = _("You cannot update a user account on this endpoint.")
+        raise serializers.ValidationError(msg)
+
+    class Meta:
+        model = UserModel
+        fields = ('public_id', 'username', 'picture', 'first_name',
+                  'last_name', 'email', 'is_active', 'href',)
+        read_only_fields = ('public_id', 'username', 'picture', 'first_name',
+                            'last_name', 'email', 'is_active',)
 
 
 #
