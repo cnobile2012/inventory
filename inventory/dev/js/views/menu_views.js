@@ -16,6 +16,7 @@ App.Views.MenuItem = Backbone.View.extend({
   events: {
     'click': 'onClick'
   },
+  toggle: true, // Set to `false` if you don't want the menu items to toggle.
 
   // Binding to model's selection change event
   // Thus having ability to update view state
@@ -63,7 +64,7 @@ App.Views.MenuItem = Backbone.View.extend({
   onSelectedChange: function() {
     if(this.model.get('isSelected') === true) {
       this.$el.addClass('active');
-    } else {
+    } else if(this.toggle) {
       this.$el.removeClass('active');
     }
   },
@@ -105,6 +106,8 @@ App.Views.Menu = Backbone.View.extend({
 // MENU VIEW ENTRY POINT
 // Project entry points
 App.Views.ProjectItemMenu = App.Views.MenuItem.extend({
+  toggle: false,
+
   onClickCallback: function(model) {
     App.Forms.Project(model);
   }

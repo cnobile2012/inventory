@@ -88,6 +88,16 @@ App.Models.Project = Backbone.Model.extend({
         }
       }
     },
+
+    created: function() {
+      return new Date(this.attributes.created).toLocaleString();
+    },
+
+    updated: {
+      get: function() {
+        return new Date(this.attributes.updated).toLocaleString();
+      }
+    }
   },
 
   urlRoot: function() {
