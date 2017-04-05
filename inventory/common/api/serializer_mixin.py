@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/common/api/serializer_mixin.py
 #
@@ -9,6 +10,9 @@ from rest_framework import serializers
 UserModel = get_user_model()
 
 
+#
+# SerializerMixin
+#
 class SerializerMixin(object):
 
     def get_request(self):

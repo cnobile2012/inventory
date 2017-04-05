@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # inventory/common/api/pagination.py
 #

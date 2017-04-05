@@ -166,7 +166,7 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
 
-class PublicUserSerializer(SerializerMixin, serializers.ModelSerializer):
+class PublicUserSerializer(serializers.ModelSerializer):
     href = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))
@@ -282,7 +282,7 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
 #
 # Login
 #
-class LoginSerializer(SerializerMixin, serializers.Serializer):
+class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150, write_only=True)
     password = serializers.CharField(max_length=50, write_only=True)
 
