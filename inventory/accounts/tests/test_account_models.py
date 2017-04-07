@@ -238,7 +238,7 @@ class TestUser(BaseAccountModels):
         image = self.user.image_url_producer()
         msg = "Image: {}".format(image)
         self.assertEqual(image, "No Image URL", msg)
-        self.user.picture = "Test Image"
+        self.user.picture.name = "BogusImage.jpg"
         self.user.save()
         image = self.user.image_url_producer()
         msg = "Image: {}".format(image)
@@ -252,7 +252,7 @@ class TestUser(BaseAccountModels):
         image = self.user.image_thumb_producer()
         msg = "Image: {}".format(image)
         self.assertEqual(image, "No Image", msg)
-        self.user.picture = "Test Image"
+        self.user.picture.name = "BogusImage.jpg"
         self.user.save()
         image = self.user.image_thumb_producer()
         msg = "Image: {}".format(image)

@@ -164,6 +164,23 @@ class TestProject(BaseTest):
             user, self.project)
         self.assertTrue(self.project.has_authority(user), msg)
 
+    def test_image_thumb_producer(self):
+        """
+        Test that the image thumb producer works properly.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Test no image
+        thumb = self.project.image_thumb_producer()
+        msg = "Invalid result '{}', should be 'No Image'".format(thumb)
+        self.assertEqual(self.project.image_thumb_producer(), "No Image", msg)
+        # Test with image
+        self.project.image.name = "T0-92.jpg"
+        self.project.save()
+        filename = "/media/T0-92.jpg"
+        thumb = self.project.image_thumb_producer()
+        msg = "Invalid filename '{}', should be {}".format(thumb, filename)
+        self.assertTrue(filename in thumb, msg)
+
 
 class TestMembership(BaseTest):
 
