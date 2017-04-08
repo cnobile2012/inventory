@@ -33,6 +33,7 @@ UserModel = get_user_model()
 class UserSerializer(SerializerMixin, serializers.ModelSerializer):
     MESSAGE = _("You do not have permission to change the '{}' field.")
 
+    full_name = serializers.SerializerMethodField()
     role = serializers.IntegerField(source='user.role', required=False)
     picture  = serializers.ImageField(
         allow_empty_file=True, use_url=True, required=False)
@@ -55,6 +56,9 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
     href = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))
+
+    def get_full_name(self, obj):
+        return obj.get_full_name_or_username()
 
     def validate(self, data):
         request = self.get_request()
@@ -155,13 +159,13 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ('public_id', 'username', 'password', 'picture', 'send_email',
-                  'need_password', 'first_name', 'last_name', 'address_01',
-                  'address_02', 'city', 'subdivision', 'postal_code',
-                  'country', 'language', 'timezone', 'dob', 'email', 'role',
-                  'projects', 'project_default', 'answers', 'is_active',
-                  'is_staff', 'is_superuser', 'last_login', 'date_joined',
-                  'href',)
+        fields = ('public_id', 'username', 'password', 'full_name', 'picture',
+                  'send_email', 'need_password', 'first_name', 'last_name',
+                  'address_01', 'address_02', 'city', 'subdivision',
+                  'postal_code', 'country', 'language', 'timezone', 'dob',
+                  'email', 'role', 'projects', 'project_default', 'answers',
+                  'is_active', 'is_staff', 'is_superuser', 'last_login',
+                  'date_joined', 'href',)
         read_only_fields = ('public_id', 'last_login', 'date_joined',)
         extra_kwargs = {'password': {'write_only': True}}
 

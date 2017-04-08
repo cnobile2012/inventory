@@ -89,8 +89,38 @@ App.Models.Project = Backbone.Model.extend({
       }
     },
 
+    creator: function() {
+      var name = "Not Found";
+      var href = this.attributes.creator;
+      var userHREF = App.models.userModel.get('href');
+
+      // Check if it's the current user first.
+      if(href === userHREF) {
+        name = App.models.userModel.get('full_name');
+      } else {
+        // Get the creator with the 'href'.
+      }
+
+      return name;
+    },
+
     created: function() {
       return new Date(this.attributes.created).toLocaleString();
+    },
+
+    updater: function() {
+      var name = "Not Found";
+      var href = this.attributes.updater;
+      var userHREF = App.models.userModel.get('href');
+
+      // Check if it's the current user first.
+      if(href === userHREF) {
+        name = App.models.userModel.get('full_name');
+      } else {
+        // Get the updater with the 'href'.
+      }
+
+      return name;
     },
 
     updated: {
