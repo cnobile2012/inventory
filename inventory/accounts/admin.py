@@ -46,10 +46,10 @@ class UserAdmin(DjangoUserAdmin):
     search_fields = ('username', 'last_name', 'email', 'public_id',)
     filter_horizontal = ('groups', 'user_permissions',)
 
-    class Media:
-        js = ('js/js.cookie-2.0.4.min.js',
-              'js/inheritance.js',
-              'js/regions.js',)
+    ## class Media:
+    ##     js = ('js/js.cookie-2.0.4.min.js',
+    ##           'js/inheritance.js',
+    ##           'js/regions.js',)
 
 admin.site.register(get_user_model(), UserAdmin)
 
