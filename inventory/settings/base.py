@@ -146,6 +146,7 @@ INSTALLED_APPS = [
     'compressor',
     'dcolumn.dcolumns',
     'rest_framework',
+    'django_filters',
     #'guardian',
 
     # Apps
