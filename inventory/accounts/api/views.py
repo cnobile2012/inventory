@@ -9,6 +9,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model, login, logout
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView,
     GenericAPIView)
@@ -80,6 +81,8 @@ class UserList(TrapDjangoValidationErrorCreateMixin,
             ),
         )
     pagination_class = SmallResultsSetPagination
+    filter_backends = (SearchFilter,)
+    search_fields = ('username', 'first_name', 'last_name', 'email',)
     lookup_field = 'public_id'
 
 user_list = UserList.as_view()
