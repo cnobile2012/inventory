@@ -171,9 +171,14 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 class PublicUserSerializer(serializers.ModelSerializer):
+
+    full_name = serializers.SerializerMethodField()
     href = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))
+
+    def get_full_name(self, obj):
+        return obj.get_full_name_or_username()
 
     def validate(self, data):
         msg = _("You cannot update a user account on this endpoint.")
@@ -181,8 +186,8 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ('public_id', 'username', 'picture', 'first_name',
-                  'last_name', 'email', 'is_active', 'href',)
+        fields = ('public_id', 'username', 'picture', 'full_name',
+                  'first_name', 'last_name', 'email', 'is_active', 'href',)
         read_only_fields = ('public_id', 'username', 'picture', 'first_name',
                             'last_name', 'email', 'is_active',)
 
