@@ -194,7 +194,7 @@ class TestUserAPI(BaseAccount):
             response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(response.data.get('count'), 2, msg)
-        self.assertEqual(len(response.data.get('results')[0]), 8, msg)
+        self.assertEqual(len(response.data.get('results')[0]), 9, msg)
 
     def test_POST_user_list_with_invalid_permissions(self):
         """
@@ -304,7 +304,7 @@ class TestUserAPI(BaseAccount):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(len(response.data), 8, msg)
+        self.assertEqual(len(response.data), 9, msg)
 
     def test_PUT_user_detail_with_invalid_permissions(self):
         """
