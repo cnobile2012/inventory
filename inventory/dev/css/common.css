@@ -134,7 +134,7 @@ body {
   margin: 4px 0 0 2px;
   padding: 8px;
   border: 1px solid rgba(72, 48, 24, 0.5);
-  background-color: rgba(233, 231, 213, 1); /*rgba(255, 250, 215, .5);*/
+  background-color: rgba(233, 231, 213, 1);
 }
 
 .data-pane .pane-close {
@@ -176,23 +176,33 @@ body {
   margin: 0;
 }
 
+.data-pane .below-help {
+  margin-top: -4px;
+}
+
+.data-pane .side-help {
+  margin: 0 0 18px;
+}
+
 .data-pane label {
   width: 175px;
-  margin: 2px 0 0;
+  margin: 0;
   padding: 0;
 }
 
 .data-pane span,
 .data-pane input,
 .data-pane select {
-  height: 28px;
+  height: 25px;
   padding: 0 2px;
   color: inherit;
   font-size: 90%;
 }
 
 .data-pane input {
-  width: 250px;
+  width: 280px;
+  background-color: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 .data-pane span {
@@ -204,7 +214,6 @@ body {
 .data-pane select {
   margin: 0;
   padding: 0;
-  height: 25px;
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 6px;
   background-color: rgba(255, 245, 160, 1);
@@ -236,6 +245,7 @@ body {
 }
 
 .data-pane button {
+  height: 25px;
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 6px;
   background-color: rgba(255, 245, 160, 1);
