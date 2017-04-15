@@ -8,7 +8,7 @@
 
 
 App.Models.RootModel = Backbone.Model.extend({
-  urlRoot: appConfig.baseURL,
+  urlRoot: API_ROOT,
   defaults: {},
   mutators: {
     collection: {

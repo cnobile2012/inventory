@@ -5,6 +5,8 @@
  *
  * Variables used from HTML
  * ========================
+ * API_LOGIN -- URI to the login endpoint.
+ * API_ROOT -- URI to the root of the REST API.
  * IS_AUTHENTICATED -- True if already authenticated on initial page load.
  * USER_HREF -- Current user's API endpoint.
  * USERNAME -- Current user's username.
@@ -13,21 +15,16 @@
 "use strict";
 
 
-var appConfig = {
-  baseURL: location.protocol + '//' + location.host + '/api/',
-  loginURL: location.protocol + '//' + location.host + '/api/accounts/login/'
-};
-
-
 window.App = {
   Models: {},
   Collections: {},
   Views: {},
-  Forms: {},
+  //Forms: {},
   // Routers: {},
   models: {},
   collections: {},
-  views: {},
+  views: {}, // Use for persistent single views.
+  viewFunctions: {}, // Use for functions that call ephemeral views.
   templates: null,
   loginModel: null,
   utils: null,
@@ -184,7 +181,6 @@ Utilities.prototype = {
 
     return App.models.rootModel.fetch({
       success: function(model, response, options) {
-        //console.log(model.get('projects').projects);
         App.utils.fetchProjectMeta();
         App.utils.fetchInventoryType();
         App.utils.fetchInventoryTypeMeta();
@@ -242,6 +238,65 @@ Utilities.prototype = {
         App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
+  },
+
+  // SEARCH ENDPOINTS
+  searchEndpoint: function(event) {
+    var self = event.data.self;
+    var uri = event.data.endpoint;
+    // ex. App.models.rootModel.get('accounts').users
+    var search = encodeURI($(this).val().trim());
+
+    if(search !== "") {
+      var options = {
+        url: uri + '?search=' + search,
+        cache: true,
+        type: 'GET',
+        contentType: false,
+        processData: false,
+        timeout: 10000, // 10 seconds
+        error: self.errorCB.bind(self),
+        success: self.searchRequestCB.bind(self)
+      };
+      $.ajax(options);
+    } else {
+      var $input = $(event.data.input);
+      $input.prop('data', 0);
+      $input.empty();
+    }
+  },
+
+  searchRequestCB: function(data, status, jqXHR) {
+    if(data.count > 0) {
+      var result = null;
+      var $listUl = $('#model-choice');
+      var li = '<li></li>';
+      var $li = null;
+      $ul.empty();
+      var options = {
+        self: this,
+        $listUi: $listUi
+      };
+
+      for(var i = 0; i < data.results.length; i++) {
+        result = data.results[i];
+        $li = $(li);
+        $li.text('' + result.year + ' ' + result.make + ' ' + result.model);
+        $li.prop('data', result.pk);
+        $li.on('click', options, this.chooseItem);
+        $li.appendTo($ul);
+      }
+
+      $ul.show();
+    }
+  },
+
+  chooseItem: function(event) {
+    var self = event.data.self;
+    var $input = $(event.data.input);
+    $input.prop('data', $(this).prop('data'));
+    $input.val($(this).text());
+    event.data.$listUl.hide();
   }
 };
 

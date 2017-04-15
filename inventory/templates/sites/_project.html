@@ -1,6 +1,122 @@
 {% load i18n %}
     <script type="text/html" class="template" id="project_template">
+      {% csrf_token %}
       <form>
-        {% csrf_token %}
+        <div class="item project-public-id">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <span class="value"></span>
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-inventory-type">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <select class="value"></select>
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-name">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <input type="text" class="value" />
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-image">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <button type="submit" name="item-file project-logo">
+              {% trans "Add Images" %}
+            </button>
+            <span id="project-filename"></span>
+            <input type="file" hidden="hidden" accept=".jpg,.jpeg,.png" />
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-membership">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <input type="text" name="membership-search" />
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-public">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <select class="value"></select>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-active">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <select class="value"></select>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-creator">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <span class="value"></span>
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-created">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <span class="value"></span>
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-updater">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <span class="value"></span>
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-updated">
+          <div class="value-container">
+            <label class="value-label"></label>
+            <span class="value"></span>
+          </div>
+          <div class="value-container">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"></span>
+          </div>
+        </div>
+        <div class="item project-submit">
+          <div class="value-container">
+            <label class="value-label">&nbsp;</label>
+            <button type="submit" class="form-submit">
+              {% trans "Save" %}
+            </button>
+          </div>
+        </div>
       </form>
     </script>

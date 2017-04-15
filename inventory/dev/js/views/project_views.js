@@ -8,85 +8,144 @@
 
 
 // Single project view
-App.Views.Project = Backform.Form.extend();
+App.Views.Project = Backbone.View.extend({
+  events: {
+    'submit [name~="project-save"]': function(event) {
+      event.preventDefault();
+      this.model.save()
+        .done(function(result) {
+          console.log(result);
+        })
+        .fail(function(error) {
+          App.utils.showMessage(error.responseJSON.detail);
+        });
 
-
-// Test object, if it works then call it in the project menu.
-App.Forms.Project = function(model) {
-  var fields = [
-    {name: 'public_id',
-     label: App.models.projectMeta.get('public_id').label,
-     required: App.models.projectMeta.get('public_id').required,
-     control: 'uneditable-input',
-     helpMessage: App.models.projectMeta.get('public_id').help_text
-    },
-    {name: 'inventory_type_public_id',
-     label: App.models.projectMeta.get('inventory_type').label,
-     required: true, // Force true--the endpoint has two ways of doing this.
-     control: 'select',
-     options: [],
-     helpMessage: App.models.projectMeta.get('inventory_type').help_text
-    },
-    {name: 'name',
-     label: App.models.projectMeta.get('name').label,
-     required: App.models.projectMeta.get('name').required,
-     control: 'input',
-     helpMessage: App.models.projectMeta.get('name').help_text
-    },
-    {name: 'image',
-     label: App.models.projectMeta.get('image').label,
-     required: App.models.projectMeta.get('image').required,
-     control: 'input',
-     helpMessage: App.models.projectMeta.get('image').help_text
-    },
-    {name: 'memberships',
-     label: App.models.projectMeta.get('memberships').label,
-     required: App.models.projectMeta.get('memberships').required,
-     control: 'input',
-     helpMessage: App.models.projectMeta.get('memberships').help_text
-    },
-    {name: 'public',
-     label: App.models.projectMeta.get('public').label,
-     required: App.models.projectMeta.get('public').required,
-     control: 'checkbox',
-     helpMessage: App.models.projectMeta.get('public').help_text
-    },
-    {name: 'active',
-     label: App.models.projectMeta.get('active').label,
-     required: App.models.projectMeta.get('active').required,
-     control: 'checkbox',
-     helpMessage: App.models.projectMeta.get('active').help_text
-    },
-    {name: 'creator',
-     label: App.models.projectMeta.get('creator').label,
-     control: 'uneditable-input'
-    },
-    {name: 'created',
-     label: App.models.projectMeta.get('created').label,
-     control: 'uneditable-input'
-    },
-    {name: 'updater',
-     label: App.models.projectMeta.get('updater').label,
-     control: 'uneditable-input'
-    },
-    {name: 'updated',
-     label: App.models.projectMeta.get('updated').label,
-     control: 'uneditable-input'
+      return false;
     }
-  ];
+  },
 
-  _.forEach(fields, function(value, key) {
-    if(value.name === 'inventory_type_public_id') {
-      var name = "", label = "", field = value;
+  render: function() {
+    // public_id
+    this.$el.find('.project-public-id label.value-label').html(
+      App.models.projectMeta.get('public_id').label);
+    this.$el.find('.project-public-id span.value').html(
+      this.model.get('public_id'));
+    this.$el.find('.project-public-id span.help').html(
+      App.models.projectMeta.get('public_id').help_text);
+    // inventory_type
+    this.$el.find('.project-inventory-type label.value-label').html(
+      App.models.projectMeta.get('inventory_type').label);
+    this.getInventoryTypes();
+    this.$el.find('.project-inventory-type span.help').html(
+      App.models.projectMeta.get('inventory_type').help_text);
+    // name
+    this.$el.find('.project-name label.value-label').html(
+      App.models.projectMeta.get('name').label);
+    this.$el.find('.project-name input.value').val(this.model.get('name'));
+    this.$el.find('.project-name span.help').html(
+      App.models.projectMeta.get('name').help_text);
+    // image
+    this.$el.find('.project-image label.value-label').html(
+      App.models.projectMeta.get('image').label);
+    //this.$el.find('.project-image button[type="project-logo"]');
+    this.$el.find('.project-image span').html(this.model.get('image'));
+    this.$el.find('.project-image span.help').html(
+      App.models.projectMeta.get('image').help_text);
+    // membership
+    this.$el.find('.project-membership label.value-label').html(
+      App.models.projectMeta.get('memberships').label);
+    this.$el.find('.project-membership span.help').html(
+      App.models.projectMeta.get('memberships').help_text);
+    // public
+    this.$el.find('.project-public label.value-label').html(
+      App.models.projectMeta.get('public').label);
+    this.$el.find('.project-public input.value').val(this.model.get('public'));
+    this.getYesNo('public', '.project-public select.value');
+    this.$el.find('.project-public span.help').html(
+      App.models.projectMeta.get('public').help_text);
+    // active
+    this.$el.find('.project-active label.value-label').html(
+      App.models.projectMeta.get('active').label);
+    this.$el.find('.project-active input.value').val(this.model.get('active'));
+    this.getYesNo('active', '.project-active select.value');
+    this.$el.find('.project-active span.help').html(
+      App.models.projectMeta.get('active').help_text);
+    // creator
+    this.$el.find('.project-creator label.value-label').html(
+      App.models.projectMeta.get('creator').label);
+    this.$el.find('.project-creator span.value').html(
+      this.model.get('creator'));
+    //this.$el.find('.project-creator span.help').html(
+    //  App.models.projectMeta.get('creator').help_text);
+    // created
+    this.$el.find('.project-created label.value-label').html(
+      App.models.projectMeta.get('created').label);
+    this.$el.find('.project-created span.value').html(
+      this.model.get('created'));
+    //this.$el.find('.project-created span.help').html(
+    //  App.models.projectMeta.get('created').help_text);
+    // updater
+    this.$el.find('.project-updater label.value-label').html(
+      App.models.projectMeta.get('updater').label);
+    this.$el.find('.project-updater span.value').html(
+      this.model.get('updater'));
+    //this.$el.find('.project-updater span.help').html(
+    // App.models.projectMeta.get('updater').help_text);
+    // updated
+    this.$el.find('.project-updated label.value-label').html(
+      App.models.projectMeta.get('updated').label);
+    this.$el.find('.project-updated span.value').html(
+      this.model.get('updated'));
+    //this.$el.find('.project-updated span.help').html(
+    //  App.models.projectMeta.get('updated').help_text);
 
-      _.forEach(App.collections.inventoryType, function(value, key) {
-        label = App.collections.inventoryType.at(key).get('name');
-        value = App.collections.inventoryType.at(key).get('public_id');
-        field.options.push({label: label, value: value});
-      })
-    }
-  })
 
+  },
+
+  getInventoryTypes: function() {
+    var option = "<option></option>";
+    var $select = this.$el.find('.project-inventory-type select.value');
+    var $option = null, optionPublicId = '';
+    var publicId = this.model.get('inventory_type_public_id');
+
+    _.forEach(App.collections.inventoryType, function(value, key) {
+      $option = $(option);
+      optionPublicId = App.collections.inventoryType.at(key).get('public_id');
+
+      if(publicId === optionPublicId) {
+        $option.prop('selected', true);
+      }
+
+      $option.val(optionPublicId);
+      $option.text(App.collections.inventoryType.at(key).get('name'));
+      $option.appendTo($select);
+    });
+  },
+
+  getYesNo: function(field, select) {
+    var option = "<option></option>";
+    var $option = null;
+    var optionValue = this.model.get(field);
+    var $select = this.$el.find(select);
+
+    // Use the `public` meta values for all booleans.
+    _.forEach(App.models.projectMeta.get('public').choices,
+      function(value, key) {
+      $option = $(option);
+
+      if(value.value === optionValue) {
+        $option.prop('selected', true);
+      }
+
+      $option.val(value.value);
+      $option.text(value.display_name);
+      $option.appendTo($select);
+    });
+  }
+});
+
+
+App.viewFunctions.project = function(model) {
   var publicId = model.get('public_id');
   var $template = $(App.templates.project_template());
   $template.appendTo($('#projects #' + publicId));
@@ -94,8 +153,6 @@ App.Forms.Project = function(model) {
     template: $template[0],
     model: model,
     el: $("#" + publicId + ' form'),
-    fields: fields,
-    showRequiredAsAsterisk: true
   };
 
   new App.Views.Project(options).render();

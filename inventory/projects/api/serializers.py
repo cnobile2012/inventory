@@ -75,18 +75,20 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     inventory_type = serializers.HyperlinkedRelatedField(
         view_name='inventory-type-detail', label=_("Inventory Type"),
         queryset=InventoryType.objects.all(), lookup_field='public_id',
-        required=False)
+        required=False, help_text=_("Choose an inventory type."))
     inventory_type_public_id = serializers.CharField(
         source='inventory_type.public_id', required=False)
     members = serializers.HyperlinkedRelatedField(
         view_name='user-detail', many=True, queryset=UserModel.objects.all(),
         default=None, lookup_field='public_id')
     image = serializers.ImageField(
-        allow_empty_file=True, use_url=True, required=False)
+        allow_empty_file=True, use_url=True, required=False,
+        help_text=_("Upload project logo image."))
     role = serializers.DictField(
         label=_("Role"), write_only=True, required=False,
         help_text=_("Set the role of the user in this project."))
-    memberships = MembershipSerializer(many=True, read_only=True)
+    memberships = MembershipSerializer(
+        many=True, read_only=True, help_text=_("Members of this project."))
     items_href = HyperlinkedFilterField(
         view_name='item-list', query_name='project', read_only=True,
         lookup_field='public_id')

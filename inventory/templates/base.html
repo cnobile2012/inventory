@@ -14,9 +14,10 @@
     <script src="{% static 'vendor/lodash.min.js' %}"></script>
     <script src="{% static 'vendor/backbone-min.js' %}"></script>
     <script src="{% static 'vendor/backbone.mutators.min.js' %}"></script>
-    <script src="{% static 'vendor/backform.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
     <script>
+      var API_LOGIN = "{% url 'login' %}";
+      var API_ROOT = "{% url 'api-root' %}";
       var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
       var USER_HREF = "{{ user.get_absolute_url }}"
       var USERNAME = "{{ user.username }}"

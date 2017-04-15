@@ -156,44 +156,95 @@ body {
   flex-direction: column;
 }
 
-.data-pane label {
-  max-width: 175px;
+.data-pane form div.item {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: -moz-box;
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
+  display: flex;
+  -webkit-flex-direction: column;
+  -webkit-box-orient: vertical;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.data-pane .item {
+  margin: 4px 0 0;
+}
+
+.data-pane .value-container {
   margin: 0;
+}
+
+.data-pane label {
+  width: 175px;
+  margin: 2px 0 0;
   padding: 0;
 }
 
 .data-pane span,
 .data-pane input,
 .data-pane select {
-  max-width: 250px;
-  height: 30px;
-  margin: 0;
+  height: 28px;
   padding: 0 2px;
   color: inherit;
+  font-size: 90%;
+}
+
+.data-pane input {
+  width: 250px;
 }
 
 .data-pane span {
-  margin: 2px 0 0;
   background-color: inherit;
   border: none;
   border-color: transparent;
 }
 
 .data-pane select {
+  margin: 0;
   padding: 0;
+  height: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  background-color: rgba(255, 245, 160, 1);
 }
 
-.data-pane div.checkbox {
-  margin: 0;
+.data-pane select option {
+  background-color: white;
+}
+
+.data-pane input[type="file"] {
+  display: none;
+  height: 25px;
+}
+
+.data-pane button.item-file {
+/*  display: inline-block;*/
 }
 
 .data-pane .form-group {
   margin-bottom: 4px;
 }
 
-.data-pane span.help-block {
-  margin: 0 0 2px;
+.data-pane span.help {
+  margin: 0 0 0 2px;
+  padding: 0;
   height: 20px;
   max-width: 350px;
   font-size: 75%;
+}
+
+.data-pane button {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  background-color: rgba(255, 245, 160, 1);
+  color: inherit;
+  font-size: 90%;
+}
+
+.data-pane .form-submit {
+  width: 60px;
+  height: 30px;
+  font-size: 100%;
 }

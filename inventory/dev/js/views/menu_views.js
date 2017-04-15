@@ -48,7 +48,7 @@ App.Views.MenuItem = Backbone.View.extend({
       $dataPane.appendTo($choicePane);
       var self = this;
 
-      $closePane.on('click', function() {
+      $closePane.one('click', function() {
         $dataPane.remove();
         self.$el.removeClass('active');
       });
@@ -109,7 +109,7 @@ App.Views.ProjectItemMenu = App.Views.MenuItem.extend({
   toggle: false,
 
   onClickCallback: function(model) {
-    App.Forms.Project(model);
+    App.viewFunctions.project(model);
   }
 });
 
