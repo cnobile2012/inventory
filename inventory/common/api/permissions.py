@@ -270,18 +270,18 @@ class IsUserActive(permissions.BasePermission):
 ##         return result
 
 
-class CannotDelete(permissions.BasePermission):
+class CanDelete(permissions.BasePermission):
     """
-    Disallows deletion of records.
+    Allows deletion of records.
     """
 
     def has_permission(self, request, view):
         result = False
 
-        if request.method != 'DELETE':
+        if request.method == 'DELETE':
             result = True
 
-        log.debug("CannotDelete: %s", result)
+        log.debug("CanDelete: %s", result)
         return result
 
 

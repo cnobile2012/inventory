@@ -428,40 +428,47 @@ class TestCategoryAPI(BaseTest):
         project does not have access to another project's objects.
         """
         #self.skipTest("Temporarily skipped")
-        # Create a category
-        name = "Test Category 1"
-        category = self._create_category(self.project, name=name)
-        # Create a new user and project
+        # Create new user
         user, client = self._create_user(
             username="SecondUser", password="0987654321")
-        project = self._create_project(self.in_type, name="Test Project_1")
-        project.process_members([user])
+        # Create a new project
+        p_name = "Test Project_1"
+        project = self._create_project(self.in_type, name=p_name)
+        # Create a category
+        c_name = "Test Category 1"
+        category = self._create_category(project, name=c_name)
+        # GET category on the API
         uri = reverse('category-list')
         response = client.get(uri, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
-        self.assertEqual(response.data.get('count'), 0, msg)
-        # Test GET on a specific category
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "You do not have permission to perform this action.",
+            })
+        # Test GET on a category detail
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         response = client.get(uri, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_404_NOT_FOUND, response.data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': "Not found.",
+            'detail': "You do not have permission to perform this action.",
             })
         # Test PUT to a specific category
         data = {'name': 'Changed Category'}
         response = client.patch(uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_404_NOT_FOUND, response.data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
+        msg = ("Response: {} should be {}, content: {}, user: {}, "
+               "project creator: {}").format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data,
+            user, project.creator)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'detail': "Not found.",
+            'detail': "You do not have permission to perform this action.",
             })
 
 

@@ -15,6 +15,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -115,8 +117,12 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
 
     def clean(self):
         # Populate the public_id on record creation only.
-        if self.pk is None and not self.public_id:
-            self.public_id = generate_public_key()
+        if self.pk is None:
+            if not self.public_id:
+                self.public_id = generate_public_key()
+
+            # Set the projrvt active when first created
+            self.active = True
 
     def save(self, *args, **kwargs):
         super(Project, self).save(*args, **kwargs)
@@ -130,6 +136,20 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         verbose_name_plural = _("Projects")
 
     def get_role(self, user):
+        obj = self._get_through_object(user)
+        return obj.role
+
+    def set_role(self, user, role):
+        """
+        Set the role for the given user.
+        """
+        # objs.update(role=role) does not work since it does not call save
+        # skipping all validation on the model.
+        obj = self._get_through_object(user)
+        obj.role = role
+        obj.save()
+
+    def _get_through_object(self, user):
         try:
             obj = Membership.objects.get(user=user, project=self)
         except Membership.DoesNotExist:
@@ -137,23 +157,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
             log.error(ugettext(msg))
             raise Membership.DoesNotExist(msg)
 
-        return obj.role
-
-    def set_role(self, user, role):
-        """
-        Set the role for the given user.
-        """
-        try:
-            obj = Membership.objects.get(user=user, project=self)
-        except Membership.DoesNotExist as e:
-            msg = _("Invalid user '{}'.").format(user)
-            log.error(ugettext(msg))
-            raise Membership.DoesNotExist(msg)
-
-        # objs.update(role=role) does not work since it does not call save
-        # skipping all validation on the model.
-        obj.role = role
-        obj.save()
+        return obj
 
     def process_members(self, members):
         """
@@ -202,6 +206,19 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
     image_thumb_producer.allow_tags = True
 
 
+@receiver(post_save, sender=Project)
+def add_creator_to_membership(sender, **kwargs):
+    instance = kwargs.get('instance')
+    created = kwargs.get('created', False)
+
+    if created:
+        kwargs = {}
+        kwargs['user'] = instance.creator
+        kwargs['project'] = instance
+        kwargs['role'] = Membership.PROJECT_OWNER
+        obj = Membership.objects.create(**kwargs)
+
+
 #
 # Membership
 #
@@ -235,9 +252,7 @@ class Membership(ValidateOnSaveMixin, models.Model):
     objects = MembershipManager()
 
     def clean(self):
-        if self.pk is None:
-            self.role = self.PROJECT_OWNER
-        elif self.role not in self.ROLE_MAP:
+        if self.role not in self.ROLE_MAP:
             msg = _("Invalid project role, must be one of {}.").format(
                 self.ROLE_MAP.values())
             log.error(msg)

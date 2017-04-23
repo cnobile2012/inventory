@@ -18,7 +18,7 @@ from rest_condition import C, And, Or, Not
 from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser,
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
-    IsReadOnly, IsUserActive, CannotDelete)
+    IsReadOnly, IsUserActive, CanDelete)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
@@ -43,7 +43,7 @@ class InventoryTypeList(TrapDjangoValidationErrorCreateMixin,
     queryset = InventoryType.objects.all()
     serializer_class = InventoryTypeSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly, IsAnyProjectUser)
@@ -64,7 +64,7 @@ class InventoryTypeDetail(TrapDjangoValidationErrorUpdateMixin,
     queryset = InventoryType.objects.all()
     serializer_class = InventoryTypeSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly, IsAnyProjectUser)
@@ -99,7 +99,7 @@ class ProjectList(TrapDjangoValidationErrorCreateMixin,
     """
     serializer_class = ProjectSerializer
     permission_classes = (
-        And(IsUserActive, IsAnyUser, #IsAuthenticated,
+        And(IsUserActive, IsAnyUser, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsDefaultUser, Not(IsReadOnly)),
@@ -123,11 +123,11 @@ class ProjectDetail(TrapDjangoValidationErrorUpdateMixin,
     """
     serializer_class = ProjectSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
-               And(IsProjectManager, CannotDelete),
+               And(IsProjectManager, Not(CanDelete)),
                And(IsProjectDefaultUser, IsReadOnly)
                ),
             ),

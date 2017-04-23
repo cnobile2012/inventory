@@ -452,13 +452,11 @@ class TestItemAPI(BaseTest):
                                   kwargs={'public_id': project_0.public_id})
         response = client.put(uri, data=data, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST,
-            response.data, uri)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
-                         msg)
-        self.assertTrue(self._has_error(response, 'project'), msg)
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data, uri)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'project': " does not belong to project ",
+            'detail': "You do not have permission to perform this action.",
             })
 
     def test_invalid_PATCH_shared_projects(self):
@@ -473,13 +471,11 @@ class TestItemAPI(BaseTest):
         data = {'item_number': 'NE556N'}
         response = client.patch(uri, data=data, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST,
-            response.data, uri)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
-                         msg)
-        self.assertTrue(self._has_error(response, 'project'), msg)
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data, uri)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'project': " does not belong to project ",
+            'detail': "You do not have permission to perform this action.",
             })
 
     def test_invalid_DELETE_shared_projects(self):
@@ -493,13 +489,11 @@ class TestItemAPI(BaseTest):
         # project user.
         response = client.delete(uri, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST,
-            response.data, uri)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
-                         msg)
-        self.assertTrue(self._has_error(response, 'project'), msg)
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data, uri)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
-            'project': " does not belong to project ",
+            'detail': "You do not have permission to perform this action.",
             })
 
 

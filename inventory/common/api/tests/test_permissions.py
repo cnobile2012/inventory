@@ -19,7 +19,7 @@ from inventory.projects.models import Membership
 from ..permissions import (
     IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser, IsReadOnly,
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
-    IsUserActive, CannotDelete, IsPostOnly)
+    IsUserActive, CanDelete, IsPostOnly)
 
 UserModel = get_user_model()
 
@@ -136,13 +136,15 @@ class TestPermissions(BaseTest):
         Test that a project owner has access.
         """
         #self.skipTest("Temporarily skipped")
-        # Create an InventoryType and a Project
+        # Create an InventoryType
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type)
+        # Create a user
         kwargs = {'username': 'Test_IsProjectOwner',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        # Create a project
+        project = self._create_project(in_type)
         # Test that a non-project user does not have access.
         factory = APIRequestFactory()
         request = factory.get('project-list')
@@ -157,6 +159,7 @@ class TestPermissions(BaseTest):
         self.assertFalse(auth.has_permission(request, project_list), msg)
         # Add the user to the project's membership list.
         project.process_members([user])
+        project.set_role(user, Membership.PROJECT_OWNER)
         # Test that an PROJECT_OWNER role has access.
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
@@ -170,13 +173,15 @@ class TestPermissions(BaseTest):
         Test that a project owner has access.
         """
         #self.skipTest("Temporarily skipped")
-        # Create an InventoryType and a Project
+        # Create an InventoryType
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type)
+        # Create the user
         kwargs = {'username': 'Test_IsProjectOwner',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        # Create the project
+        project = self._create_project(in_type)
         # Test that a non-project user does not have access.
         uri = reverse('project-detail',
                       kwargs={'public_id': project.public_id})
@@ -194,6 +199,7 @@ class TestPermissions(BaseTest):
             request, project_detail, project), msg)
         # Add the user to the project's membership list.
         project.process_members([user])
+        project.set_role(user, Membership.PROJECT_OWNER)
         # Test that an PROJECT_OWNER role has access.
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
@@ -542,13 +548,13 @@ class TestPermissions(BaseTest):
         msg = "User: {}".format(user)
         self.assertFalse(auth.has_permission(request, inventory_type_list), msg)
 
-    def test_CannotDelete(self):
+    def test_CanDelete(self):
         """
-        Test that a user cannot DELETE on the endpoint.
+        Test that a user can DELETE on the endpoint.
         """
         #self.skipTest("Temporarily skipped")
         # Create an InventoryType, a Project, and a user
-        kwargs = {'username': 'Test_CannotDelete',
+        kwargs = {'username': 'Test_CanDelete',
                   'password': '1234567890',
                   'email': 'test@example.org',
                   'role': UserModel.DEFAULT_USER}
@@ -563,19 +569,19 @@ class TestPermissions(BaseTest):
         request = factory.delete(uri)
         request.user = user
         force_authenticate(request, user=user)
-        auth = CannotDelete()
+        auth = CanDelete()
         # Test that an active PROJECT_USER cannot delete
         msg = "User: {}".format(user)
-        self.assertFalse(auth.has_permission(request, project_detail), msg)
+        self.assertTrue(auth.has_permission(request, project_detail), msg)
         # Setup for passing DELETE request
         project.set_role(user, Membership.PROJECT_MANAGER)
         request = factory.get(uri)
         request.user = user
         force_authenticate(request, user=user)
-        auth = CannotDelete()
-        # Test that an active PROJECT_MANAGER can delete
+        auth = CanDelete()
+        # Test that an active PROJECT_MANAGER cannot delete
         msg = "User: {}".format(user)
-        self.assertTrue(auth.has_permission(request, project_detail), msg)
+        self.assertFalse(auth.has_permission(request, project_detail), msg)
 
     def test_IsPostOnly(self):
         """

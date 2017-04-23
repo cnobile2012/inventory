@@ -21,15 +21,3 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         exclude = []
-
-    def clean(self):
-        cleaned_data = super(ProjectForm, self).clean()
-        members = cleaned_data.get('members')
-
-        # Set the project active only if there are members assigned to it.
-        if members:
-            cleaned_data['active'] = True
-        else:
-            cleaned_data['active'] = False
-
-        return cleaned_data

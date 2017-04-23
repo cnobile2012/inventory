@@ -59,7 +59,7 @@ class CategoryList(CategoryAuthorizationMixin,
     """
     serializer_class = CategorySerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -82,7 +82,7 @@ class CategoryDetail(CategoryAuthorizationMixin,
     """
     serializer_class = CategorySerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -108,7 +108,7 @@ class CategoryClone(TrapDjangoValidationErrorCreateMixin,
     """
     serializer_class = CategoryCloneSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,

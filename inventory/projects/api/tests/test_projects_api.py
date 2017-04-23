@@ -540,7 +540,7 @@ class TestProject(BaseTest):
         du = data.setdefault('DU', su.copy())
         du['name'] = 'Test Project 03'
         self._test_users_with_valid_permissions(
-            self.project_uri, method, request_data=data)
+            self.project_uri, method, default_user=False, request_data=data)
         pow = data.setdefault('POW', su.copy())
         pow['name'] = 'Test Project 04'
         pma = data.setdefault('PMA', su.copy())
@@ -645,12 +645,7 @@ class TestProject(BaseTest):
         self._test_project_owner_with_valid_permissions(uri, method)
         self._test_valid_GET_with_errors(uri)
         # Test project MANAGER
-        project = self._create_project(self.in_type, name="Test Project 04",
-                                       members=[user,])
-        uri = reverse('project-detail',
-                      kwargs={'public_id': project.public_id})
-        self._test_project_manager_with_valid_permissions(uri, method)
-        self._test_valid_GET_with_errors(uri)
+        ## This is an invalid test since the PROJECT_MANAGER cannot delete.
         # Test project PROJECT_USER
         ## This is an invalid test since the PROJECT_USER has no access.
 

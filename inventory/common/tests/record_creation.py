@@ -19,26 +19,29 @@ class RecordCreation(object):
     PROJECT_NAME = "My Test Project"
     LOCATION_SET_NAME = "Test Location Set Name"
 
-    def _create_inventory_type(self, name=INV_TYPE_NAME):
+    def _create_inventory_type(self, name=INV_TYPE_NAME, user=None):
         kwargs = {}
         kwargs['name'] = name
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        if not user: user = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         return InventoryType.objects.create(**kwargs)
 
     def _create_project(self, i_type, name=PROJECT_NAME, members=[],
-                        public=Project.YES):
+                        public=Project.YES, user=None):
         kwargs = {}
         kwargs['name'] = name
         kwargs['inventory_type']= i_type
         kwargs['public'] = public
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        if not user: user = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         obj, created = Project.objects.get_or_create(name=name, defaults=kwargs)
-        obj.process_members(members)
+        if members: obj.process_members(members)
         return obj
 
-    def _create_category(self, project, name, parent=None, **kwargs):
+    def _create_category(self, project, name, parent=None, user=None,
+                         **kwargs):
         """
         The kwargs can pass an updated segment.
         """
@@ -50,8 +53,9 @@ class RecordCreation(object):
             kwargs['project'] = project
             kwargs['name'] = name
             kwargs['parent'] = parent
-            kwargs['creator'] = self.user
-            kwargs['updater'] = self.user
+            if not user: user = self.user
+            kwargs['creator'] = user
+            kwargs['updater'] = user
             obj = Category.objects.create(**kwargs)
         else:
             name = kwargs.get('update_name')
@@ -62,7 +66,7 @@ class RecordCreation(object):
 
         return obj
 
-    def _create_supplier(self, project, name='Test Supplier',
+    def _create_supplier(self, project, name='Test Supplier', user=None,
                          stype=Supplier.BOTH_MFG_DIS, **kwargs):
         try:
             obj = Supplier.objects.get(project=project, name=name)
@@ -70,8 +74,9 @@ class RecordCreation(object):
             kwargs['project'] = project
             kwargs['name'] = name
             kwargs['stype'] = stype
-            kwargs['creator'] = self.user
-            kwargs['updater'] = self.user
+            if not user: user = self.user
+            kwargs['creator'] = user
+            kwargs['updater'] = user
             obj = Supplier.objects.create(**kwargs)
         else:
             for key, value in kwargs.items():
@@ -82,23 +87,25 @@ class RecordCreation(object):
         return obj
 
     def _create_location_set_name(self, project, name=LOCATION_SET_NAME,
-                                 **kwargs):
+                                  user=None, **kwargs):
         kwargs['project'] = project
         kwargs['name'] = name
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        if not user: user = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         return LocationSetName.objects.create(**kwargs)
 
     def _create_location_format(self, location_set_name, char_definition,
-                                **kwargs):
+                                user=None, **kwargs):
         kwargs['location_set_name'] = location_set_name
         kwargs['char_definition'] = char_definition
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        if not user: user = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         return LocationFormat.objects.create(**kwargs)
 
     def _create_location_code(self, location_format, segment, parent=None,
-                              **kwargs):
+                              user=None, **kwargs):
         """
         The kwargs can pass an updated segment.
         """
@@ -111,8 +118,9 @@ class RecordCreation(object):
             kwargs['location_format'] = location_format
             kwargs['parent'] = parent
             kwargs['segment'] = segment
-            kwargs['creator'] = self.user
-            kwargs['updater'] = self.user
+            if not user: user = self.user
+            kwargs['creator'] = user
+            kwargs['updater'] = user
             obj = LocationCode.objects.create(**kwargs)
         else:
             segment = kwargs.get('update_segment')
@@ -155,12 +163,13 @@ class RecordCreation(object):
         kwargs['country'] = country
         return Currency.objects.create(**kwargs)
 
-    def _create_question(self, question, active=True):
+    def _create_question(self, question, active=True, user=None):
         kwargs = {}
         kwargs['question'] = question
         kwargs['active'] = active
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        if not user: user = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         return Question.objects.create(**kwargs)
 
     def _create_answer(self, question, answer, user):
@@ -168,14 +177,16 @@ class RecordCreation(object):
         kwargs['question'] = question
         kwargs['answer'] = answer
         kwargs['user'] = user
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         return Answer.objects.create(**kwargs)
 
-    def _create_item(self, project, column_collection, item_number, **kwargs):
+    def _create_item(self, project, column_collection, item_number, user=None,
+                     **kwargs):
         kwargs['column_collection'] = column_collection
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        if not user: user = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         obj, created = Item.objects.get_or_create(
             project=project, item_number=item_number, defaults=kwargs)
 
@@ -188,13 +199,14 @@ class RecordCreation(object):
         return obj
 
     def _create_invoice(self, project, currency, supplier, invoice_number,
-                        **kwargs):
+                        user=None, **kwargs):
         kwargs['project'] = project
         kwargs['currency'] = currency
         kwargs['supplier'] = supplier
         kwargs['invoice_number'] = invoice_number
-        kwargs['creator'] = self.user
-        kwargs['updater'] = self.user
+        if not user: user = self.user
+        kwargs['creator'] = user
+        kwargs['updater'] = user
         return Invoice.objects.create(**kwargs)
 
     def _create_invoice_item(self, invoice, item_number, quantity, unit_price,

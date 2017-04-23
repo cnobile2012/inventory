@@ -56,11 +56,7 @@ class TestProject(BaseTest):
         user_1 = self._create_user(username=username_1,
                                    password='1234567',
                                    is_superuser=False)
-        # Test that there are no members.
-        msg = "Members: {}".format(self.project.members.all())
-        self.assertEqual(self.project.members.count(), 0, msg)
         # Test that there is one members.
-        self.project.process_members([user_0])
         msg = "Members: {}".format(self.project.members.all())
         self.assertEqual(self.project.members.count(), 1, msg)
         # Test that there are two members.
@@ -80,15 +76,22 @@ class TestProject(BaseTest):
         model.
         """
         #self.skipTest("Temporarily skipped")
+        # Create a new user
+        kwargs = {}
+        kwargs['username'] = "AnotherTestUser"
+        kwargs['password'] = "AVeryBadPassword"
+        user = self._create_user(**kwargs)
         # Test that the user is not a member.
         with self.assertRaises(Membership.DoesNotExist) as cm:
-            self.project.get_role(self.user)
+            self.project.get_role(user)
 
         # Add user to membership.
-        self.project.process_members([self.user])
+        self.project.process_members([user])
+        # Change the user's role.
+        self.project.set_role(user, Membership.PROJECT_OWNER)
+        role = self.project.get_role(user)
         # Test that the member has a role.
-        role = self.project.get_role(self.user)
-        msg = "This user has role {} which does not conform to '{}'.".format(
+        msg = "This user has role '{}' which does not conform to '{}'.".format(
             Membership.ROLE_MAP.get(role),
             Membership.ROLE_MAP.get(Membership.PROJECT_OWNER))
         self.assertEqual(role, Membership.PROJECT_OWNER, msg)
@@ -97,24 +100,29 @@ class TestProject(BaseTest):
         """
         Test that set_role sets the correct role on the Membership model.
         """
+        # Create a new user
+        kwargs = {}
+        kwargs['username'] = "AnotherTestUser"
+        kwargs['password'] = "AVeryBadPassword"
+        user = self._create_user(**kwargs)
         # Test that Membership.DoesNotExist is raised.
         with self.assertRaises(Membership.DoesNotExist) as cm:
-            self.project.set_role(self.user, Membership.PROJECT_MANAGER)
+            self.project.set_role(user, Membership.PROJECT_MANAGER)
 
         # Add user to membership.
-        self.project.process_members([self.user])
+        self.project.process_members([user])
         # Change the user's role.
-        self.project.set_role(self.user, Membership.PROJECT_MANAGER)
-        role = self.project.get_role(self.user)
+        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        role = self.project.get_role(user)
         msg = "This user has role {} which does not conform to '{}'.".format(
             Membership.ROLE_MAP.get(role),
             Membership.ROLE_MAP.get(Membership.PROJECT_MANAGER))
-        role = self.project.get_role(self.user)
+        role = self.project.get_role(user)
         self.assertEqual(role, Membership.PROJECT_MANAGER, msg)
 
         # Test clean on the Membership model for the proper exception.
         with self.assertRaises(ValidationError) as cm:
-            self.project.set_role(self.user, 100)
+            self.project.set_role(user, 100)
 
     def test_superuser_has_authority(self):
         """
