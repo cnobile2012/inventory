@@ -10,8 +10,9 @@ __docformat__ = "restructuredtext en"
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from dcolumn.common.admin_mixins import UserAdminMixin
 from dcolumn.dcolumns.admin import KeyValueInline
+
+from inventory.common.admin_mixins import UserAdminMixin, UpdaterFilter
 
 from .models import Item, Invoice, InvoiceItem
 from .forms import ItemForm, InvoiceItemForm
@@ -66,7 +67,7 @@ class InvoiceAdmin(UserAdminMixin, admin.ModelAdmin):
                     'updater_producer', 'updated',)
     inlines = (InvoiceItemInvoiceInline,)
     search_fields = ('invoice_number', 'supplier__name',)
-    list_filter = ('project__name', 'updater__username',)
+    list_filter = ('project__name', UpdaterFilter,)
     date_hierarchy = 'created'
 
 
@@ -96,7 +97,7 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
                      'project__name', 'description', 'categories__path',
                      'manufacturer__name',)
     list_filter = ('active', 'purge', 'project__name', 'manufacturer',
-                   'updater__username',)
+                   UpdaterFilter,)
     filter_horizontal = ('categories', 'location_codes', 'shared_projects',)
     inlines = (InvoiceItemItemInline, KeyValueInline,)
     date_hierarchy = 'created'

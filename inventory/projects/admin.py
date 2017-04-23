@@ -6,7 +6,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from inventory.common.admin_mixins import UserAdminMixin
+from inventory.common.admin_mixins import UserAdminMixin, UpdaterFilter
 
 from .models import InventoryType, Project, Membership
 from .forms import ProjectForm
@@ -27,7 +27,7 @@ class InventoryTypeAdmin(UserAdminMixin, admin.ModelAdmin):
                        'updated',)
     list_display = ('name', 'public_id', 'updater_producer', 'updated',)
     search_fields = ('name', 'description', 'projects__name',)
-    list_filter = ('projects__name', 'updater__username',)
+    list_filter = ('projects__name', UpdaterFilter,)
 
 
 #
@@ -36,7 +36,7 @@ class InventoryTypeAdmin(UserAdminMixin, admin.ModelAdmin):
 class MembershipInline(admin.TabularInline):
     fields = ('user', 'role',)
     extra = 0
-    can_delete = False
+    can_delete = True
     model = Membership
 
 
@@ -59,6 +59,6 @@ class ProjectAdmin(UserAdminMixin, admin.ModelAdmin):
     list_editable = ('active',)
     search_fields = ('name', 'memberships__user__username', 'public_id',)
     list_filter = ('public', 'active', 'memberships__role',
-                   'updater__username',)
+                   UpdaterFilter,)
     inlines = (MembershipInline,)
     form = ProjectForm

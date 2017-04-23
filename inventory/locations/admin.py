@@ -6,7 +6,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from inventory.common.admin_mixins import UserAdminMixin
+from inventory.common.admin_mixins import UserAdminMixin, UpdaterFilter
 
 from .models import LocationSetName, LocationFormat, LocationCode
 from .forms import LocationSetNameForm, LocationFormatForm, LocationCodeForm
@@ -26,7 +26,7 @@ class LocationSetNameAdmin(UserAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'separator', 'shared','project',
                     'updater_producer', 'updated',)
     list_editable = ('separator', 'shared',)
-    list_filter = ('project__name', 'updater__username')
+    list_filter = ('project__name', UpdaterFilter,)
     form = LocationSetNameForm
 
 
@@ -45,7 +45,7 @@ class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
                     'description', 'segment_length', 'updater_producer',
                     'updated',)
     list_editable = ('segment_order',)
-    list_filter = ('location_set_name__project__name', 'updater__username')
+    list_filter = ('location_set_name__project__name', UpdaterFilter,)
     form = LocationFormatForm
 
 
@@ -64,8 +64,8 @@ class LocationCodeAdmin(UserAdminMixin, admin.ModelAdmin):
                     'char_def_producer', 'level', 'updater_producer',
                     'updated',)
     search_fields = ('segment', 'path',)
-    list_filter = ('level',)
-    list_filter = ('location_format__location_set_name__project__name',
-                   'updater__username')
+    list_filter = ('level',
+                   'location_format__location_set_name__project__name',
+                   UpdaterFilter,)
     ordering = ('path',)
     form = LocationCodeForm

@@ -6,7 +6,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from inventory.common.admin_mixins import UserAdminMixin
+from inventory.common.admin_mixins import UserAdminMixin, UpdaterFilter
 
 from .models import Supplier
 
@@ -32,7 +32,7 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     list_editable = ('stype', 'active',)
     search_fields = ('project__name', 'country__country', 'city',
                      'region__region', 'region__region_code',)
-    list_filter = ('stype', 'active', 'project__name', 'updater__username',)
+    list_filter = ('stype', 'active', 'project__name', UpdaterFilter,)
     ordering = ('name',)
 
     class Media:

@@ -6,7 +6,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from inventory.common.admin_mixins import UserAdminMixin
+from inventory.common.admin_mixins import UserAdminMixin, UpdaterFilter
 
 from .forms import CategoryForm
 from .models import Category
@@ -29,6 +29,6 @@ class CategoryAdmin(UserAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'parents_producer', 'path', 'level', 'project',
                     'updater_producer',)
     search_fields = ('name', 'project__name',)
-    list_filter = ('level', 'project__name', 'updater__username',)
+    list_filter = ('level', 'project__name', UpdaterFilter,)
     ordering = ('project__name', 'path',)
     form = CategoryForm
