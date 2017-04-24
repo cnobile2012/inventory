@@ -57,8 +57,8 @@ class CreatorFilter(SimpleListFilter):
         """
         Must be overridden to return a list of tuples (value, verbose value)
         """
-        return set([(obj.id, obj.creator_producer())
-                        for obj in model_admin.model.objects.all()])
+        return set([(obj.creator.id, obj.creator_producer())
+                    for obj in model_admin.model.objects.all()])
 
     def queryset(self, request, queryset):
         result = queryset
@@ -66,7 +66,7 @@ class CreatorFilter(SimpleListFilter):
         if self.value():
             result = queryset.filter(creator__id__exact=self.value())
 
-        return queryset
+        return result
 
 
 #
@@ -82,8 +82,8 @@ class UpdaterFilter(SimpleListFilter):
         """
         Must be overridden to return a list of tuples (value, verbose value)
         """
-        return set([(obj.id, obj.updater_producer())
-                        for obj in model_admin.model.objects.all()])
+        return set([(obj.updater.id, obj.updater_producer())
+                    for obj in model_admin.model.objects.all()])
 
     def queryset(self, request, queryset):
         result = queryset
@@ -91,4 +91,4 @@ class UpdaterFilter(SimpleListFilter):
         if self.value():
             result = queryset.filter(creator__id__exact=self.value())
 
-        return queryset
+        return result
