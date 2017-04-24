@@ -1249,7 +1249,6 @@ class TestLocationSetNameCloneAPI(BaseTest):
         #self.skipTest("Temporarily skipped")
         method = 'get'
         location_code = self._create_location_code(self.location_format, "A01")
-        self.project.process_members([self.user])
         uri = reverse('location-clone')
         data = {}
         data['location_set_name'] = self.location_set_name.public_id
@@ -1283,7 +1282,6 @@ class TestLocationSetNameCloneAPI(BaseTest):
         #self.skipTest("Temporarily skipped")
         method = 'post'
         project = self._create_project(self.in_type, name="Test Project_1")
-        project.process_members([self.user])
         uri = reverse('location-clone')
         data = {}
         su = data.setdefault('SU', {})
@@ -1314,7 +1312,6 @@ class TestLocationSetNameCloneAPI(BaseTest):
         #self.skipTest("Temporarily skipped")
         method = 'post'
         project = self._create_project(self.in_type, name="Test Project_1")
-        project.process_members([self.user])
         uri = reverse('location-clone')
         data = {}
         su = data.setdefault('SU', {})
@@ -1338,7 +1335,6 @@ class TestLocationSetNameCloneAPI(BaseTest):
         #self.skipTest("Temporarily skipped")
         method = 'post'
         project = self._create_project(self.in_type, name="Test Project_1")
-        project.process_members([self.user])
         uri = reverse('location-clone')
         data = {}
         ad = data.setdefault('AD', {})
@@ -1392,8 +1388,8 @@ class TestLocationSetNameCloneAPI(BaseTest):
         # Create a new user and project
         kwargs = self._setup_user_credentials()
         user, client = self._create_user(**kwargs)
-        project = self._create_project(self.in_type, name="Test Project_1")
-        project.process_members([user])
+        project = self._create_project(self.in_type, name="Test Project_1",
+                                       user=user)
         # Test project owner
         uri = reverse('location-clone')
         data = {}

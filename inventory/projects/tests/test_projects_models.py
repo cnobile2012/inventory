@@ -205,7 +205,6 @@ class TestMembership(BaseTest):
         Test that __str__ on the class returns the record's name.
         """
         #self.skipTest("Temporarily skipped")
-        self.project.process_members([self.user])
         membership = Membership.objects.get(
             user=self.user, project=self.project)
         result = str(membership)

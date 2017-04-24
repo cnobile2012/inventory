@@ -396,7 +396,6 @@ class TestItemAPI(BaseTest):
 
     def _create_shared_project_objects(self):
         # Add the default user to the default project and create an item
-        self.project.process_members([self.user])
         item_number = "LM7805"
         item = self._create_item(self.project, self.collection, item_number)
         uri = reverse('item-detail', kwargs={'public_id': item.public_id})
