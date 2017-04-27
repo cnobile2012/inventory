@@ -221,7 +221,7 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
             # Add new members.
             add_pks = list(set(wanted_pks) - set(old_pks))
 
-            for project in Project.objects.filter(pk__in=add_pks):
+            for project in [obj for obj in projects if obj.pk in add_pks]:
                 Membership.objects.create(user=self, project=project)
 
     def get_unused_questions(self):

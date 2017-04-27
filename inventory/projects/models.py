@@ -175,7 +175,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
             # Add new members.
             add_pks = list(set(wanted_pks) - set(old_pks))
 
-            for user in UserModel.objects.filter(pk__in=add_pks):
+            for user in [obj for obj in members if obj.pk in add_pks]:
                 Membership.objects.create(project=self, user=user)
 
     def has_authority(self, user):

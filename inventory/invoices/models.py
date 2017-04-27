@@ -185,7 +185,7 @@ class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
             self.location_codes.remove(*unwanted)
             # Add new location_codes.
             add_pks = list(set(wanted_pks) - set(old_pks))
-            wanted = LocationCode.objects.filter(pk__in=add_pks)
+            wanted = [obj for obj in location_codes if obj.pk in add_pks]
             self.location_codes.add(*wanted)
 
     def process_categories(self, categories):
@@ -201,7 +201,7 @@ class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
             self.categories.remove(*unwanted)
             # Add new categories.
             add_pks = list(set(wanted_pks) - set(old_pks))
-            wanted = Category.objects.filter(pk__in=add_pks)
+            wanted = [obj for obj in categories if obj.pk in add_pks]
             self.categories.add(*wanted)
 
     def process_shared_projects(self, shared_projects):
@@ -217,7 +217,7 @@ class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
             self.shared_projects.remove(*unwanted)
             # Add new shared projects.
             add_pks = list(set(wanted_pks) - set(old_pks))
-            wanted = Project.objects.filter(pk__in=add_pks)
+            wanted = [obj for obj in shared_projects if obj.pk in add_pks]
             self.shared_projects.add(*wanted)
 
 dcolumn_manager.register_choice(Item, 2, 'sku')
