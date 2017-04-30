@@ -72,8 +72,8 @@ App.Models.Project = Backbone.Model.extend({
         set(key, value, options);
 
         if(value.length > 0) {
-          App.invoiceTimeout = setTimeout(populateInvoiceCollection, 200,
-                                          value, this);
+          App.invoiceTimeout = setTimeout(App.utils.populateInvoiceCollection,
+                                          200, value, this);
         }
       }
     },
@@ -83,8 +83,8 @@ App.Models.Project = Backbone.Model.extend({
         set(key, value, options);
 
         if(value.length > 0) {
-          App.itemTimeout = setTimeout(populateItemCollection, 200,
-                                       value, this);
+          App.itemTimeout = setTimeout(App.utils.populateItemCollection,
+                                       200, value, this);
         }
       }
     },

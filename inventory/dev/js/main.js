@@ -72,21 +72,6 @@ Utilities.prototype = {
     });
   },
 
-  errorCB: function(jqXHR, status, errorThrown) {
-    try {
-      var json = $.parseJSON(jqXHR.responseText);
-      var msg = '';
-
-      for(var key in json) {
-        msg += key + ": " + json[key] + "<br />";
-      }
-
-      this.showMessage(msg);
-    } catch (e) {
-      this.showMessage(jqXHR.statusText + ": " + jqXHR.status);
-    }
-  },
-
   showMessage: function(message, fade) {
     var $messages = $('#messages');
     $messages.html(message);
@@ -240,6 +225,40 @@ Utilities.prototype = {
     });
   },
 
+  // Fetch Invoices
+  populateInvoiceCollection: function(url, project) {
+    clearTimeout(App.invoiceTimeout);
+    var invoices = new App.Collections.Invoices();
+    project.set('invoices', invoices);
+    invoices.url = url;
+    invoices.fetch({
+      success: function(collection, response, options) {
+        console.log(response);
+      },
+
+      error: function(collection, response, options) {
+        console.log(response);
+      }
+    });
+  },
+
+  // Fetch Items
+  populateItemCollection: function(url, project) {
+    clearTimeout(App.itemTimeout);
+    var items = new App.Collections.Items();
+    project.set('items', items);
+    items.url = url;
+    items.fetch({
+      success: function(collection, response, options) {
+        console.log(response);
+      },
+
+      error: function(collection, response, options) {
+        console.log(response);
+      }
+    });
+  },
+
   // SEARCH ENDPOINTS
   searchEndpoint: function(event) {
     var self = event.data.self;
@@ -288,6 +307,21 @@ Utilities.prototype = {
       }
 
       $ul.show();
+    }
+  },
+
+  errorCB: function(jqXHR, status, errorThrown) {
+    try {
+      var json = $.parseJSON(jqXHR.responseText);
+      var msg = '';
+
+      for(var key in json) {
+        msg += key + ": " + json[key] + "<br />";
+      }
+
+      this.showMessage(msg);
+    } catch (e) {
+      this.showMessage(jqXHR.statusText + ": " + jqXHR.status);
     }
   },
 

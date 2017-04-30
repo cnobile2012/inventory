@@ -58,19 +58,34 @@ App.Models.InvoicesMeta = Backbone.Model.extend({
 });
 
 
+App.Collections.InvoicesMeta = Backbone.Collection.extend({
+  name: "InvoicesMeta",
+  model: App.Models.InvoicesMeta
+});
+
+
 App.Collections.Invoices = Backbone.Collection.extend({
   name: "Invoices",
   model: App.Models.Invoices,
 
   parse: function(response, options) {
     var models = response.results;
-    var project_public_id = models[0].project_public_id;
-    App.models.invoicesMeta = new App.Models.InvoicesMeta({
-      project_public_id: project_public_id,
-      count: response.count,
-      next: response.next,
-      previous: response.previous
-    });
+
+    if(App.collections.invoicesMeta === (void 0)) {
+      App.collections.invoicesMeta = new App.Collections.InvoicesMeta();
+    }
+
+    if(response.count > 0) {
+      var project_public_id = models[0].project_public_id;
+      var invoicesMeta = new App.Models.InvoicesMeta({
+        project_public_id: project_public_id,
+        count: response.count,
+        next: response.next,
+        previous: response.previous
+      });
+      App.collections.invoicesMeta.add(invoicesMeta);
+    }
+
     return models;
   }
 });
@@ -104,6 +119,12 @@ App.Models.InvoiceItemsMeta = Backbone.Model.extend({
     previous: null,
     options: {}
   }
+});
+
+
+App.Collections.InvoiceItemsMeta = Backbone.Collection.extend({
+  name: "InvoiceItemsMeta",
+  model: App.Models.InvoiceItemsMeta
 });
 
 
@@ -152,55 +173,35 @@ App.Models.ItemsMeta = Backbone.Model.extend({
 });
 
 
+App.Collections.ItemsMeta = Backbone.Collection.extend({
+  name: "ItemsMeta",
+  model: App.Models.ItemsMeta
+});
+
+
 App.Collections.Items = Backbone.Collection.extend({
   name: "Items",
   model: App.Models.Items,
 
   parse: function(response, options) {
     var models = response.results;
-    var project_public_id = models[0].project_public_id;
-    App.models.itemsMeta = new App.Models.ItemsMeta({
-      project_public_id: project_public_id,
-      count: response.count,
-      next: response.next,
-      previous: response.previous
-    })
+
+    if(App.collections.itemsMeta === (void 0)) {
+      App.collections.itemsMeta = new App.Collections.ItemsMeta();
+    }
+
+    if(response.count > 0) {
+      var project_public_id = models[0].project_public_id;
+      var itemsMeta = new App.Models.ItemsMeta({
+        project_public_id: project_public_id,
+        count: response.count,
+        next: response.next,
+        previous: response.previous
+      });
+
+      App.collections.itemsMeta.add(itemsMeta);
+    }
+
     return models;
   }
 });
-
-
-// Fetch Invoices
-window.populateInvoiceCollection = function(url, project) {
-  clearTimeout(App.invoiceTimeout);
-  var invoices = new App.Collections.Invoices();
-  project.set('invoices', invoices);
-  invoices.url = url;
-  invoices.fetch({
-    success: function(collection, response, options) {
-      console.log(response);
-    },
-
-    error: function(collection, response, options) {
-      console.log(response);
-    }
-  });
-};
-
-
-// Fetch Items
-window.populateItemCollection = function(url, project) {
-  clearTimeout(App.itemTimeout);
-  var items = new App.Collections.Items();
-  project.set('items', items);
-  items.url = url;
-  items.fetch({
-    success: function(collection, response, options) {
-      console.log(response);
-    },
-
-    error: function(collection, response, options) {
-      console.log(response);
-    }
-  });
-};

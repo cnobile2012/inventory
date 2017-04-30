@@ -9,27 +9,25 @@
 
 // Single project view
 App.Views.Project = Backbone.View.extend({
-  events: {
-    'submit [name~="project-save"]': function(event) {
-      event.preventDefault();
-      this.model.save()
-        .done(function(result) {
-          console.log(result);
-        })
-        .fail(function(error) {
-          App.utils.showMessage(error.responseJSON.detail);
-        });
 
-      return false;
-    }
-  },
+  /* events: function() { */
+  /*   var publicId = this.model.get('public_id'); */
+  /*   var base = '#projects #' + publicId; */
+  /*   var file = 'click ' + base + ' button[name="project-logo"]'; */
+  /*   var save = 'click ' + base + ' button[name="project-save"]'; */
+  /*   var eventObjs = {}; */
+  /*   eventObjs[file] = this.openFileBox; */
+  /*   eventObjs[save] = this.saveModel; */
+  /*   return eventObjs; */
+  /* }, */
 
   render: function() {
+    // Get this model's public_id
+    var publicId = this.model.get('public_id');
     // public_id
     this.$el.find('.project-public-id label.value-label').html(
       App.models.projectMeta.get('public_id').label);
-    this.$el.find('.project-public-id span.value').html(
-      this.model.get('public_id'));
+    this.$el.find('.project-public-id span.value').html(publicId);
     this.$el.find('.project-public-id span.help').html(
       App.models.projectMeta.get('public_id').help_text);
     // inventory_type
@@ -47,7 +45,7 @@ App.Views.Project = Backbone.View.extend({
     // image
     this.$el.find('.project-image label.value-label').html(
       App.models.projectMeta.get('image').label);
-    //this.$el.find('.project-image button[type="project-logo"]');
+    //this.$el.find('.project-image button[name="project-logo"]');
     this.$el.find('.project-image span').html(this.model.get('image'));
     this.$el.find('.project-image span.help').html(
       App.models.projectMeta.get('image').help_text);
@@ -99,8 +97,15 @@ App.Views.Project = Backbone.View.extend({
     //this.$el.find('.project-updated span.help').html(
     //  App.models.projectMeta.get('updated').help_text);
 
+    // Setup some events
+    var base = '#projects #' + publicId;
+    var file = base + ' button[name="project-logo"]';
+    var save = base + ' button[name="project-save"]';
+    //this.listenTo($(file), 'click', this.openFileBox);
 
-  },
+    $(file).on('click', this.openFileBox.bind(this));
+    $(save).on('click', this.saveModel.bind(this));
+    },
 
   getInventoryTypes: function() {
     var option = "<option></option>";
@@ -141,6 +146,29 @@ App.Views.Project = Backbone.View.extend({
       $option.text(value.display_name);
       $option.appendTo($select);
     });
+  },
+
+  openFileBox: function(event) {
+    var $fi = this.$el.find('input[type="file"]');
+    // Clear out previous images.
+    $fi.val('');
+    $fi.attr('type', '');
+    $fi.attr('type', 'file');
+    $fi.trigger('click');
+  },
+
+  saveModel: function(event) {
+    event.preventDefault();
+    App.utils.setLogin();
+    this.model.save()
+      .done(function(result) {
+        console.log(result);
+      })
+      .fail(function(error) {
+        App.utils.showMessage(error.responseJSON.detail);
+      });
+
+    return false;
   }
 });
 
@@ -152,7 +180,7 @@ App.viewFunctions.project = function(model) {
   var options = {
     template: $template[0],
     model: model,
-    el: $("#" + publicId + ' form'),
+    el: "#" + publicId
   };
 
   new App.Views.Project(options).render();
