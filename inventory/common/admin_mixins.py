@@ -18,8 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class UserAdminMixin(object):
     """
-    Admin mixin that should be used in any model implimented with dynamic
-    columns.
+    This mixin should be placed in the MRO of an admin class.
     """
     def save_model(self, request, obj, form, change):
         """
@@ -42,6 +41,23 @@ class UserAdminMixin(object):
 
         obj.updater = request.user
         super(UserAdminMixin, self).save_model(request, obj, form, change)
+
+
+class UserInlineAdminMixin(object):
+    """
+    This mixin shopuld be placed in the MRO of the parent admin class not
+    the inline classes.
+    """
+
+    def save_formset(self, request, form, formset, change):
+        for i_form in formset.forms:
+            if not change or i_form.instance.pk is None:
+                i_form.instance.creator = request.user
+
+            i_form.instance.updater = request.user
+
+        super(UserInlineAdminMixin, self).save_formset(
+            request, form, formset, change)
 
 
 #
