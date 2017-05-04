@@ -22,8 +22,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # API Site
     url(r'^dcolumns/', include('dcolumn.dcolumns.urls')),
-    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include('inventory.sites.api.urls')),
+    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/accounts/', include('inventory.accounts.api.urls')),
     url(r'^api/categories/', include('inventory.categories.api.urls')),
     url(r'^api/invoices/', include('inventory.invoices.api.urls')),

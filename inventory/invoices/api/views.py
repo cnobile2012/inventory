@@ -11,7 +11,6 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from django_filters import filters, CharFilter, NumberFilter, DateFilter
@@ -22,7 +21,6 @@ from rest_framework.generics import (
     ListAPIView, ListCreateAPIView, RetrieveAPIView,
     RetrieveUpdateDestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from rest_condition import C, And, Or, Not

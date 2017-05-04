@@ -26,7 +26,7 @@ log = logging.getLogger('api.common.fields')
 #
 class HyperlinkedCustomIdentityField(serializers.HyperlinkedIdentityField):
     """
-    This field creates the a proper URI as an identity field on a non
+    This field creates a proper URI as an identity field on a non
     model serializer. This field is used on dcolumn meta models.
     """
 

@@ -9,5 +9,5 @@ from inventory.sites.views import site_home_view
 
 
 urlpatterns = [
-    url(r'', site_home_view, name='site-home'),
+    url(r'^$', site_home_view, name='site-home'),
     ]
