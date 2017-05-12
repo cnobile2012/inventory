@@ -45,7 +45,7 @@ class TestUserAPI(BaseAccount):
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         data = {}
-        data['username'] = kwargs.get('password')
+        data['username'] = kwargs.get('username')
         data['password'] = kwargs.get('password')
         # Test writing to is_active.
         data['is_active'] = False
@@ -109,7 +109,7 @@ class TestUserAPI(BaseAccount):
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         data = {}
-        data['username'] = kwargs.get('password')
+        data['username'] = kwargs.get('username')
         data['password'] = kwargs.get('password')
         # Test writing to is_active.
         data['is_active'] = False
