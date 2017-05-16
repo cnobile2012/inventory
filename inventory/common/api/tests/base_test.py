@@ -78,8 +78,21 @@ class BaseTest(RecordCreation, APITestCase):
         return code
 
     def _test_users_with_invalid_permissions(self, uri, method,
-                                             default_user=True,
-                                             request_data=None):
+                                             request_data=None,
+                                             default_user=True):
+        self._test_superuser_with_invalid_permissions(
+            uri, method, request_data=request_data)
+        self._test_administrator_with_invalid_permissions(
+            uri, method, request_data=request_data)
+        self._test_default_user_with_invalid_permissions(
+            uri, method, request_data=request_data)
+
+        if default_user:
+            self._test_default_user_with_invalid_permissions_login(
+                uri, method, request_data=request_data)
+
+    def _test_superuser_with_invalid_permissions(self, uri, method,
+                                                 request_data=None):
         kwargs = self._setup_user_credentials()
         # Test that an unauthenticated superuser has no permissions.
         kwargs['login'] = False
@@ -96,6 +109,10 @@ class BaseTest(RecordCreation, APITestCase):
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
+
+    def _test_administrator_with_invalid_permissions(self, uri, method,
+                                                     request_data=None):
+        kwargs = self._setup_user_credentials()
         # Test that an unauthenticated ADMINISTRATOR has no permissions.
         kwargs['login'] = False
         kwargs['is_superuser'] = False
@@ -111,6 +128,10 @@ class BaseTest(RecordCreation, APITestCase):
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
+
+    def _test_default_user_with_invalid_permissions(self, uri, method,
+                                                    request_data=None):
+        kwargs = self._setup_user_credentials()
         # Test that a DEFAULT_USER has no permissions.
         kwargs['login'] = False
         kwargs['is_superuser'] = False
@@ -127,43 +148,53 @@ class BaseTest(RecordCreation, APITestCase):
             'detail': self._ERROR_MESSAGES['credentials'],
             })
 
+    def _test_default_user_with_invalid_permissions_login(self, uri, method,
+                                                          request_data=None):
+        kwargs = self._setup_user_credentials()
         # Test that a DEFAULT_USER has no permissions even if logged in.
-        if default_user:
-            kwargs['login'] = True
-            kwargs['is_superuser'] = False
-            kwargs['role'] = UserModel.DEFAULT_USER
-            user, client = self._create_user(**kwargs)
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
 
-            if user.projects.all().count() == 0:
-                data = self.__get_request_data('DU', request_data)
-                response = getattr(client, method)(
-                    uri, data=data, format='json', **self._HEADERS)
-                method = response.request.get('REQUEST_METHOD')
+        if user.projects.all().count() == 0:
+            data = self.__get_request_data('DU', request_data)
+            response = getattr(client, method)(
+                uri, data=data, format='json', **self._HEADERS)
 
-                if response.status_code == HTTP_403_FORBIDDEN:
-                    code = HTTP_403_FORBIDDEN
-                    message = 'permission'
-                elif response.status_code == HTTP_405_METHOD_NOT_ALLOWED:
-                    code = HTTP_405_METHOD_NOT_ALLOWED
+            if response.status_code == HTTP_403_FORBIDDEN:
+                code = HTTP_403_FORBIDDEN
+                message = 'permission'
+            elif response.status_code == HTTP_405_METHOD_NOT_ALLOWED:
+                code = HTTP_405_METHOD_NOT_ALLOWED
+                message = method
+            else:
+                code = 0
+                message = ''
 
-                    if method == "DELETE":
-                        message = 'delete'
-                    elif method == "GET":
-                        message = 'get'
-                else:
-                    code = 0
-                    message = ''
-
-                msg = "Response: {} should be {}, content: {}".format(
-                    response.status_code, code, response.data)
-                self.assertEqual(response.status_code, code, msg)
-                self.assertTrue(self._has_error(response), msg)
-                self._test_errors(response, tests={
-                    'detail': self._ERROR_MESSAGES[message],
-                    })
+            msg = "Response: {} should be {}, content: {}".format(
+                response.status_code, code, response.data)
+            self.assertEqual(response.status_code, code, msg)
+            self.assertTrue(self._has_error(response), msg)
+            self._test_errors(response, tests={
+                'detail': self._ERROR_MESSAGES[message],
+                })
 
     def _test_project_users_with_invalid_permissions(self, uri, method,
-                                                     project_user=True,
+                                                     request_data=None,
+                                                     project_user=True):
+        self._test_project_owner_with_invalid_permissions(
+            uri, method, request_data=request_data)
+        self._test_project_manager_with_invalid_permissions(
+            uri, method, request_data=request_data)
+        self._test_project_user_with_invalid_permissions(
+            uri, method, request_data=request_data)
+
+        if method.upper() not in permissions.SAFE_METHODS and project_user:
+            self._test_project_user_with_invalid_permissions_login(
+                uri, method, request_data=request_data)
+
+    def _test_project_owner_with_invalid_permissions(self, uri, method,
                                                      request_data=None):
         kwargs = self._setup_user_credentials()
         # Test that a PROJECT_OWNER has no permissions.
@@ -183,6 +214,10 @@ class BaseTest(RecordCreation, APITestCase):
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
+
+    def _test_project_manager_with_invalid_permissions(self, uri, method,
+                                                       request_data=None):
+        kwargs = self._setup_user_credentials()
         # Test that a PROJECT_MANAGER has no permissions.
         kwargs['login'] = False
         kwargs['is_superuser'] = False
@@ -199,6 +234,10 @@ class BaseTest(RecordCreation, APITestCase):
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
+
+    def _test_project_user_with_invalid_permissions(self, uri, method,
+                                                    request_data=None):
+        kwargs = self._setup_user_credentials()
         # Test that a PROJECT_USER has no access.
         kwargs['login'] = False
         kwargs['is_superuser'] = False
@@ -216,34 +255,36 @@ class BaseTest(RecordCreation, APITestCase):
             'detail': self._ERROR_MESSAGES['credentials'],
             })
 
+    def _test_project_user_with_invalid_permissions_login(self, uri, method,
+                                                          request_data=None):
+        kwargs = self._setup_user_credentials()
         # Test that a PROJECT_USER has no access even when logged in.
-        if method.upper() not in permissions.SAFE_METHODS and project_user:
-            kwargs['login'] = True
-            kwargs['is_superuser'] = False
-            kwargs['role'] = UserModel.DEFAULT_USER
-            user, client = self._create_user(**kwargs)
-            self.project.set_role(user, Membership.PROJECT_USER)
-            data = self.__get_request_data('PDU', request_data)
-            response = getattr(client, method)(
-                uri, data=data, format='json', **self._HEADERS)
+        kwargs['login'] = True
+        kwargs['is_superuser'] = False
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        self.project.set_role(user, Membership.PROJECT_USER)
+        data = self.__get_request_data('PDU', request_data)
+        response = getattr(client, method)(
+            uri, data=data, format='json', **self._HEADERS)
 
-            if response.status_code == HTTP_403_FORBIDDEN:
-                code = HTTP_403_FORBIDDEN
-                message = 'permission'
-            elif response.status_code == HTTP_405_METHOD_NOT_ALLOWED:
-                code = HTTP_405_METHOD_NOT_ALLOWED
-                message = 'delete'
-            else:
-                code = 0
-                message = ''
+        if response.status_code == HTTP_403_FORBIDDEN:
+            code = HTTP_403_FORBIDDEN
+            message = 'permission'
+        elif response.status_code == HTTP_405_METHOD_NOT_ALLOWED:
+            code = HTTP_405_METHOD_NOT_ALLOWED
+            message = 'delete'
+        else:
+            code = 0
+            message = ''
 
-            msg = "Response: {} should be {}, content: {}".format(
-                response.status_code, code, response.data)
-            self.assertEqual(response.status_code, code, msg)
-            self.assertTrue(self._has_error(response), msg)
-            self._test_errors(response, tests={
-                'detail': self._ERROR_MESSAGES[message],
-                })
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, code, response.data)
+        self.assertEqual(response.status_code, code, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': self._ERROR_MESSAGES[message],
+            })
 
     def _test_users_with_valid_permissions(self, uri, method,
                                            default_user=True,
