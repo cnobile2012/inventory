@@ -43,9 +43,9 @@ class KeyGenerator(object):
         """
         try:
             rand = random.SystemRandom()
-        except NotImplementedError:
-            log.warn("Using the pseudo number generator.")
-            rand = random
+        except NotImplementedError: # pragma: no cover
+            log.warn("Using the pseudo number generator.") # pragma: no cover
+            rand = random # pragma: no cover
 
         return rand
 
