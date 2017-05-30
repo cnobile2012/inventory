@@ -61,7 +61,7 @@ class UserInlineAdminMixin(object):
 
 
 #
-# CreatorFilter
+# Filters
 #
 class CreatorFilter(SimpleListFilter):
     # Human-readable title to appear in the right sidebar.
@@ -73,8 +73,9 @@ class CreatorFilter(SimpleListFilter):
         """
         Must be overridden to return a list of tuples (value, verbose value)
         """
-        return set([(obj.creator.id, obj.creator_producer())
-                    for obj in model_admin.model.objects.all()])
+        return [(obj.creator.id, obj.creator_producer())
+                for obj in model_admin.model.objects.select_related(
+                    'creator').order_by('creator_id').distinct('creator_id')]
 
     def queryset(self, request, queryset):
         result = queryset
@@ -85,9 +86,6 @@ class CreatorFilter(SimpleListFilter):
         return result
 
 
-#
-# UpdaterFilter
-#
 class UpdaterFilter(SimpleListFilter):
     # Human-readable title to appear in the right sidebar.
     title = _("Updater")
@@ -98,8 +96,9 @@ class UpdaterFilter(SimpleListFilter):
         """
         Must be overridden to return a list of tuples (value, verbose value)
         """
-        return set([(obj.updater.id, obj.updater_producer())
-                    for obj in model_admin.model.objects.all()])
+        return [(obj.updater.id, obj.updater_producer())
+                for obj in model_admin.model.objects.select_related(
+                    'updater').order_by('updater_id').distinct('updater_id')]
 
     def queryset(self, request, queryset):
         result = queryset
