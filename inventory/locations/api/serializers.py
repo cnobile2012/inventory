@@ -45,7 +45,9 @@ class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return LocationSetName.objects.create(**validated_data)
+        obj = LocationSetName(**validated_data)
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -88,7 +90,9 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return LocationFormat.objects.create(**validated_data)
+        obj = LocationFormat(**validated_data)
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         instance.char_definition = validated_data.get(
@@ -151,7 +155,9 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return LocationCode.objects.create(**validated_data)
+        obj = LocationCode(**validated_data)
+        obj.save
+        return obj
 
     def update(self, instance, validated_data):
         instance.location_format = validated_data.get(

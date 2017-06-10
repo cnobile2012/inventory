@@ -174,7 +174,8 @@ class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
                     "for."))
     shared = models.BooleanField(
         verbose_name=_("Shared"), choices=YES_NO, default=YES,
-        help_text=_("If you would like others to make a copy of your formats."))
+        help_text=_("If you would like others to make a copy of your "
+                    "formats."))
     separator = models.CharField(
         verbose_name=_("Segment Separator"), max_length=3, default=':',
         help_text=_("The separator to use between segments. Defaults to a "
@@ -274,7 +275,7 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
         verbose_name=_("Segment Length"), editable=False, default=0,
         help_text=_("The length of this character definition."))
     char_definition = models.CharField(
-        verbose_name=_("Format"), max_length=250, db_index=True,
+        verbose_name=_("Format"), max_length=250,
         help_text=_("Determine the character position definition where "
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
                     "any hard coded character. ex. \\a\\d\\d\\d could be "

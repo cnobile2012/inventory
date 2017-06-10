@@ -38,7 +38,9 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return InventoryType.objects.create(**validated_data)
+        obj = InventoryType(**validated_data)
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -165,7 +167,8 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         members = validated_data.pop('members', [])
         role_user = validated_data.pop('user', None)
         role = validated_data.pop('role', {})
-        obj = Project.objects.create(**validated_data)
+        obj = Project(**validated_data)
+        obj.save()
         obj.process_members(members)
         obj.set_role(role_user, role)
         return obj

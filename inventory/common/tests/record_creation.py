@@ -25,7 +25,9 @@ class RecordCreation(object):
         if not user: user = self.user
         kwargs['creator'] = user
         kwargs['updater'] = user
-        return InventoryType.objects.create(**kwargs)
+        obj = InventoryType(**kwargs)
+        obj.save()
+        return obj
 
     def _create_project(self, i_type, name=PROJECT_NAME, members=[],
                         public=Project.YES, user=None):
@@ -36,7 +38,8 @@ class RecordCreation(object):
         if not user: user = self.user
         kwargs['creator'] = user
         kwargs['updater'] = user
-        obj, created = Project.objects.get_or_create(name=name, defaults=kwargs)
+        obj, created = Project.objects.get_or_create(
+            name=name, defaults=kwargs)
         if members: obj.process_members(members)
         return obj
 
@@ -56,7 +59,8 @@ class RecordCreation(object):
             if not user: user = self.user
             kwargs['creator'] = user
             kwargs['updater'] = user
-            obj = Category.objects.create(**kwargs)
+            obj = Category(**kwargs)
+            obj.save()
         else:
             name = kwargs.get('update_name')
 
@@ -77,7 +81,8 @@ class RecordCreation(object):
             if not user: user = self.user
             kwargs['creator'] = user
             kwargs['updater'] = user
-            obj = Supplier.objects.create(**kwargs)
+            obj = Supplier(**kwargs)
+            obj.save()
         else:
             for key, value in kwargs.items():
                 setattr(obj, key, value)
@@ -93,7 +98,9 @@ class RecordCreation(object):
         if not user: user = self.user
         kwargs['creator'] = user
         kwargs['updater'] = user
-        return LocationSetName.objects.create(**kwargs)
+        obj = LocationSetName(**kwargs)
+        obj.save()
+        return obj
 
     def _create_location_format(self, location_set_name, char_definition,
                                 user=None, **kwargs):
@@ -102,7 +109,9 @@ class RecordCreation(object):
         if not user: user = self.user
         kwargs['creator'] = user
         kwargs['updater'] = user
-        return LocationFormat.objects.create(**kwargs)
+        obj = LocationFormat(**kwargs)
+        obj.save()
+        return obj
 
     def _create_location_code(self, location_format, segment, parent=None,
                               user=None, **kwargs):
@@ -121,7 +130,8 @@ class RecordCreation(object):
             if not user: user = self.user
             kwargs['creator'] = user
             kwargs['updater'] = user
-            obj = LocationCode.objects.create(**kwargs)
+            obj = LocationCode(**kwargs)
+            obj.save()
         else:
             segment = kwargs.get('update_segment')
 
@@ -134,25 +144,33 @@ class RecordCreation(object):
     def _create_country(self, country='United States', code='US'):
         kwargs = {'country': country,
                   'code': code,}
-        return Country.objects.create(**kwargs)
+        obj = Country(**kwargs)
+        obj.save()
+        return obj
 
     def _create_subdivision(self, country, subdivision_name='New York',
                             code='US-NY'):
         kwargs = {'subdivision_name': subdivision_name,
                   'code': code,
                   'country': country}
-        return Subdivision.objects.create(**kwargs)
+        obj = Subdivision(**kwargs)
+        obj.save()
+        return obj
 
     def _create_language(self, country, code):
         kwargs = {'code': code,
                   'country': country}
-        return Language.objects.create(**kwargs)
+        obj = Language(**kwargs)
+        obj.save()
+        return obj
 
     def _create_timezone(self, country, zone, coordinates):
         kwargs = {'zone': zone,
                   'coordinates': coordinates,
                   'country': country}
-        return TimeZone.objects.create(**kwargs)
+        obj = TimeZone(**kwargs)
+        obj.save()
+        return obj
 
     def _create_currency(self, country, currency, alphabetic_code,
                          numeric_code, minor_unit, **kwargs):
@@ -161,7 +179,9 @@ class RecordCreation(object):
         kwargs['numeric_code'] = numeric_code
         kwargs['minor_unit'] = minor_unit
         kwargs['country'] = country
-        return Currency.objects.create(**kwargs)
+        obj = Currency(**kwargs)
+        obj.save()
+        return obj
 
     def _create_question(self, question, active=True, user=None):
         kwargs = {}
@@ -170,7 +190,9 @@ class RecordCreation(object):
         if not user: user = self.user
         kwargs['creator'] = user
         kwargs['updater'] = user
-        return Question.objects.create(**kwargs)
+        obj = Question(**kwargs)
+        obj.save()
+        return obj
 
     def _create_answer(self, question, answer, user):
         kwargs = {}
@@ -179,7 +201,9 @@ class RecordCreation(object):
         kwargs['user'] = user
         kwargs['creator'] = user
         kwargs['updater'] = user
-        return Answer.objects.create(**kwargs)
+        obj = Answer(**kwargs)
+        obj.save()
+        return obj
 
     def _create_item(self, project, column_collection, item_number, user=None,
                      **kwargs):
@@ -207,7 +231,9 @@ class RecordCreation(object):
         if not user: user = self.user
         kwargs['creator'] = user
         kwargs['updater'] = user
-        return Invoice.objects.create(**kwargs)
+        obj = Invoice(**kwargs)
+        obj.save()
+        return obj
 
     def _create_invoice_item(self, invoice, item_number, quantity, unit_price,
                              **kwargs):
@@ -215,4 +241,6 @@ class RecordCreation(object):
         kwargs['item_number'] = item_number
         kwargs['quantity'] = quantity
         kwargs['unit_price'] = unit_price
-        return InvoiceItem.objects.create(**kwargs)
+        obj = InvoiceItem(**kwargs)
+        obj.save()
+        return obj

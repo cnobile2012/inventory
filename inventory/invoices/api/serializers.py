@@ -82,7 +82,8 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
         categories = validated_data.pop('categories', [])
         location_codes = validated_data.pop('location_codes', [])
         shared_projects = validated_data.pop('shared_projects', [])
-        obj = Item.objects.create(**validated_data)
+        obj = Item(**validated_data)
+        obj.save()
         obj.process_categories(categories)
         obj.process_location_codes(location_codes)
         obj.process_shared_projects(shared_projects)
@@ -148,7 +149,9 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
         return obj.invoice.public_id
 
     def create(self, validated_data):
-        return InvoiceItem.objects.create(**validated_data)
+        obj = InvoiceItem(**validated_data)
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         instance.item_number = validated_data.get(
@@ -199,7 +202,9 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return Invoice.objects.create(**validated_data)
+        obj = Invoice(**validated_data)
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         instance.project = validated_data.get(

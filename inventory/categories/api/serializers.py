@@ -48,7 +48,9 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return Category.objects.create(**validated_data)
+        obj = Category(**validated_data)
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
