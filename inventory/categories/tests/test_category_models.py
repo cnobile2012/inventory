@@ -329,10 +329,12 @@ class TestCategoryModel(BaseTest):
         kwargs['parent'] = None
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        parent = Category.objects.create(**kwargs)
+        parent = Category(**kwargs)
+        parent.save()
 
         with self.assertRaises(ValidationError):
-            parent = Category.objects.create(**kwargs)
+            parent = Category(**kwargs)
+            parent.save()
 
     def test_parents_producer(self):
         """

@@ -118,7 +118,8 @@ class TestItemAPI(BaseTest):
         kwargs['related_model'] = 'item'
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        self.collection = ColumnCollection.objects.create(**kwargs)
+        self.collection = ColumnCollection(**kwargs)
+        self.collection.save()
 
     def test_GET_item_list_with_invalid_permissions(self):
         """
@@ -864,7 +865,8 @@ class TestInvoiceItemAPI(BaseTest):
         kwargs['related_model'] = 'item'
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        self.collection = ColumnCollection.objects.create(**kwargs)
+        self.collection = ColumnCollection(**kwargs)
+        self.collection.save()
 
     def test_GET_invoice_item_list_with_invalid_permissions(self):
         """

@@ -385,7 +385,8 @@ def create_item_post_save(sender, **kwargs):
                     kwargs['quantity'] = instance.quantity
                     kwargs['creator'] = instance.invoice.creator
                     kwargs['updater'] = instance.invoice.updater
-                    item = Item.objects.create(**kwargs)
+                    item = Item(**kwargs)
+                    item.save()
                     instance.item = item
                     instance.save()
         else:

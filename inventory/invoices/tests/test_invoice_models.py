@@ -49,7 +49,8 @@ class BaseInvoice(BaseTest):
         kwargs['related_model'] = 'item'
         kwargs['creator'] = self.user
         kwargs['updater'] = self.user
-        self.collection = ColumnCollection.objects.create(**kwargs)
+        self.collection = ColumnCollection(**kwargs)
+        self.collection.save()
 
     def setup_locations(self):
         # Create a location set name

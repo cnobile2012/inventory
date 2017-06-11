@@ -201,7 +201,8 @@ class PublicUserSerializer(serializers.ModelSerializer):
 ##     href = serializers.HyperlinkedIdentityField(view_name='group-detail')
 
 ##     def create(self, validated_data):
-##         return Group.objects.create(**validated_data)
+##         obj = Group**validated_data)
+##         obj.save()
 
 ##     def update(self, instance, validated_data):
 ##         instance.name = validated_data.get('name', instance.name)
@@ -230,7 +231,9 @@ class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        return Question.objects.create(**validated_data)
+        obj = Question(**validated_data)
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         instance.question = validated_data.get('question', instance.question)
@@ -268,7 +271,8 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        obj = Answer.objects.create(**validated_data)
+        obj = Answer(**validated_data)
+        obj.save()
         return obj
 
     def update(self, instance, validated_data):

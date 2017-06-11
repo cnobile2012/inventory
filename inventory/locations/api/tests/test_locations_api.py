@@ -50,9 +50,9 @@ class TestLocationSetNameAPI(BaseTest):
         method = 'get'
         location_set_name = self._create_location_set_name(self.project)
         uri = reverse('location-set-name-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(uri, method,
+                                                default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
-
 
     def test_POST_location_set_name_list_with_invalid_permissions(self):
         """
@@ -332,7 +332,6 @@ class TestLocationSetNameAPI(BaseTest):
         length of the database column.
         """
         #self.skipTest("Temporarily skipped")
-        method = 'post'
         uri = reverse('location-set-name-list')
         data = {}
         data['name'] = 'Test Location Set Name 01'
@@ -341,11 +340,42 @@ class TestLocationSetNameAPI(BaseTest):
         response = self.client.post(uri, data=data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='separator'), msg)
         self._test_errors(response, tests={
             'separator': "Ensure this field has no more than 3 characters.",
             })
+
+    def test_POST_creates_root_format_and_code(self):
+        """
+        Test that both a ROOT format and a ROOT code are created when a
+        set name is created.
+        """
+        #self.skipTest("Temporarily skipped")
+        uri = reverse('location-set-name-list')
+        data = {}
+        data['name'] = 'Test Location Set Name 01'
+        data['description'] = "Test ROOTS for format and code."
+        data['project'] = self.project_uri
+        response = self.client.post(uri, data=data, format='json')
+        msg = "Response: {} should be {}, content: {}".format(
+            response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        # Test that the ROOT format now exists.
+        lf_uris = response.data.get('location_formats')
+        self.assertTrue(len(lf_uris) > 0, msg)
+        response = self.client.get(lf_uris[0], format='json')
+        msg = "data: {}".format(response.data)
+        self.assertEqual(response.data.get('char_definition'),
+                         LocationCode.ROOT_NAME, msg)
+        # Test that the ROOT code now exists.
+        lc_uris = response.data.get('location_codes')
+        self.assertTrue(len(lc_uris) > 0, msg)
+        response = self.client.get(lc_uris[0], format='json')
+        msg = "data: {}".format(response.data)
+        self.assertEqual(response.data.get('segment'),
+                         LocationCode.ROOT_NAME, msg)
 
 
 class TestLocationFormatAPI(BaseTest):
@@ -384,7 +414,8 @@ class TestLocationFormatAPI(BaseTest):
         location_format = self._create_location_format(
             self.location_set_name, "T\d\d")
         uri = reverse('location-format-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(uri, method,
+                                                default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_location_format_list_with_invalid_permissions(self):
@@ -1096,7 +1127,8 @@ class TestLocationCodeAPI(BaseTest):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         msg = "Avaliable items are: {}".format(response.data.items())
         self.assertTrue(self._has_error(response, error_key='parent'), msg)
         self._test_errors(response, tests={
@@ -1117,15 +1149,14 @@ class TestLocationCodeAPI(BaseTest):
                           kwargs={'public_id': lf0.public_id})
         # Create second set of location set_name and format objects.
         ld1 = self._create_location_set_name(
-            self.project, name="This one fails")
-        lf1 = self._create_location_format(ld1, char_definition=r'C\d\dR\d\d',
-                                           segment_order=1)
+            self.project, name="This one causes it to break")
+        lf1 = self._create_location_format(ld1, r'C\d\dR\d\d', segment_order=1)
         lf1_uri = reverse('location-format-detail',
                           kwargs={'public_id': lf1.public_id})
         # Create first location code.
         data = {
             'location_format': lf0_uri,
-            'segment': 'T01'
+            'segment': 'T01',
             }
         uri = reverse('location-code-list')
         response = self.client.post(
@@ -1133,6 +1164,8 @@ class TestLocationCodeAPI(BaseTest):
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
+        self.assertTrue(response.data.get('parent'), msg)
+        self.assertTrue(response.data.get('href'), msg)
         # Create second location code.
         data = {
             'location_format': lf1_uri,
@@ -1143,7 +1176,8 @@ class TestLocationCodeAPI(BaseTest):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         msg = "Avaliable items are: {}".format(response.data.items())
         self.assertTrue(self._has_error(
             response, error_key='location_set_name'), msg)
@@ -1169,7 +1203,8 @@ class TestLocationCodeAPI(BaseTest):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(response.status_code,
+                         status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='segment'), msg)
         self._test_errors(response, tests={
             'segment': ("Segment is '{}', This is an unalterable root "

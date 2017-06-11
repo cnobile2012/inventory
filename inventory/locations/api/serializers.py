@@ -156,7 +156,7 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
         validated_data['creator'] = user
         validated_data['updater'] = user
         obj = LocationCode(**validated_data)
-        obj.save
+        obj.save()
         return obj
 
     def update(self, instance, validated_data):

@@ -176,7 +176,8 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
             add_pks = list(set(wanted_pks) - set(old_pks))
 
             for user in [obj for obj in members if obj.pk in add_pks]:
-                Membership.objects.create(project=self, user=user)
+                obj = Membership(project=self, user=user)
+                obj.save()
 
     def has_authority(self, user):
         """
@@ -216,7 +217,8 @@ def add_creator_to_membership(sender, **kwargs):
         kwargs['user'] = instance.creator
         kwargs['project'] = instance
         kwargs['role'] = Membership.PROJECT_OWNER
-        obj = Membership.objects.create(**kwargs)
+        obj = Membership(**kwargs)
+        obj.save()
 
 
 #

@@ -161,7 +161,8 @@ class TestLocationSetNameModel(BaseLocation):
         code_1 = self._create_location_code(fmt_1, "X01", parent=code_0)
         code_1a = self._create_location_code(fmt_1, "X02", parent=code_0)
         code_2 = self._create_location_code(fmt_2, "B01C01R01", parent=code_1)
-        code_2a = self._create_location_code(fmt_2, "B01C01R01", parent=code_1a)
+        code_2a = self._create_location_code(fmt_2, "B01C01R01",
+                                             parent=code_1a)
         # Test for correct number of objects.
         count = LocationSetName.objects.count()
         msg = "Location Set Name: {}, count: {}".format(loc_set_name, count)

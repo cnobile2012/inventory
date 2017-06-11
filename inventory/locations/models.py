@@ -223,9 +223,9 @@ def set_root_objects(sender, **kwargs):
 
         if created:
             kwargs.pop('description', None)
-            LocationCode.objects.create(
-                location_format=lf, segment=LocationCode.ROOT_NAME, **kwargs)
-
+            obj = LocationCode(location_format=lf,
+                               segment=LocationCode.ROOT_NAME, **kwargs)
+            obj.save()
 
 #
 # LocationFormat
@@ -234,7 +234,7 @@ class LocationFormatManager(models.Manager):
 
     def get_root_format(self, loc_set):
         """
-        Returnds the auto generated root LocationFormat object.
+        Returns the auto generated root LocationFormat object.
         """
         try:
             return self.get(location_set_name=loc_set,
@@ -481,6 +481,10 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
 
 @receiver(pre_save, sender=LocationCode)
 def create_parent(sender, **kwargs):
+    """
+    Creates a parent for a level 1 code only, all others need to have the
+    `parent` set.
+    """
     instance = kwargs.get('instance')
 
     if (instance and instance.parent is None and

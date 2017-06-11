@@ -363,7 +363,8 @@ class TestProject(BaseTest):
     ##     kwargs['password'] = password
     ##     kwargs['is_superuser'] = True
     ##     kwargs['is_active'] = True
-    ##     user = UserModel.objects.create(**kwargs)
+    ##     user = UserModel(**kwargs)
+    ##     user.save()
     ##     client = APIClient()
     ##     client.force_authenticate(user=user)
     ##     response = client.get(
