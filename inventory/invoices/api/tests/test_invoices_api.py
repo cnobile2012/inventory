@@ -452,7 +452,8 @@ class TestItemAPI(BaseTest):
                                   kwargs={'public_id': project_0.public_id})
         response = client.put(uri, data=data, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_403_FORBIDDEN, response.data, uri)
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data,
+            uri)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
@@ -471,7 +472,8 @@ class TestItemAPI(BaseTest):
         data = {'item_number': 'NE556N'}
         response = client.patch(uri, data=data, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_403_FORBIDDEN, response.data, uri)
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data,
+            uri)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
@@ -489,11 +491,38 @@ class TestItemAPI(BaseTest):
         # project user.
         response = client.delete(uri, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_403_FORBIDDEN, response.data, uri)
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data,
+            uri)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
             'detail': "You do not have permission to perform this action.",
+            })
+
+    def test_check_user(self):
+        """
+        Test that a user is not authorized to access a project.
+        """
+        #self.skipTest("Temporarily skipped")
+        # Create a 2nd user
+        kwargs = {}
+        kwargs['username'] = 'Second_User'
+        kwargs['password'] = 'ykwQ37Ea'
+        kwargs['is_active'] = True
+        kwargs['is_staff'] = False
+        kwargs['login'] = False
+        kwargs['is_superuser'] = True
+        kwargs['role'] = UserModel.DEFAULT_USER
+        user, client = self._create_user(**kwargs)
+        # Try to delete a project
+        response = client.delete(self.project_uri, **self._HEADERS)
+        msg = "Response: {} should be {}, content: {}, uri: {}".format(
+            response.status_code, status.HTTP_403_FORBIDDEN, response.data,
+            self.project_uri)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        self.assertTrue(self._has_error(response), msg)
+        self._test_errors(response, tests={
+            'detail': "Authentication credentials were not provided.",
             })
 
 

@@ -130,28 +130,6 @@ class ItemAuthorizationMixin(object):
 
         return result
 
-    def _check_user(self, object):
-        project = None
-
-        # This works for creating a record.
-        if hasattr(object, 'validated_data'):
-            project = object.validated_data.get('project')
-
-        # This works for updating a record.
-        if project is None and hasattr(object, 'instance'):
-            project = object.instance.project
-
-        # This works for deleting a record.
-        if project is None and hasattr(object, 'project'):
-            project = object.project
-
-        # Check that a project will permit access.
-        if project and not project.has_authority(self.request.user):
-            raise ValidationError({
-                'project': _("User '{}' does not belong to "
-                             "project '{}'").format(self.request.user, project)
-                })
-
 
 class ItemFilter(FilterSet):
     public_id = CharFilter(
@@ -216,10 +194,6 @@ class ItemList(TrapDjangoValidationErrorCreateMixin,
     filter_backends = (DjangoFilterBackend,)
     filter_class = ItemFilter
 
-    def perform_create(self, serializer):
-        self._check_user(serializer)
-        super(ItemList, self).perform_create(serializer)
-
 item_list = ItemList.as_view()
 
 
@@ -241,15 +215,6 @@ class ItemDetail(TrapDjangoValidationErrorUpdateMixin,
             ),
         )
     lookup_field = 'public_id'
-
-    def perform_update(self, serializer):
-        self._check_user(serializer)
-        super(ItemDetail, self).perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        self._check_user(instance)
-        super(ItemDetail, self).perform_destroy(instance)
-
 
 item_detail = ItemDetail.as_view()
 
