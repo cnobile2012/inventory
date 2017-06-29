@@ -11,17 +11,17 @@ from .views import (location_set_name_list, location_set_name_detail,
 
 
 urlpatterns = [
-    url(r'location-set-name/$', location_set_name_list,
+    url(r'location-set-names/$', location_set_name_list,
         name='location-set-name-list'),
-    url(r'location-set-name/(?P<public_id>\w+)/$', location_set_name_detail,
+    url(r'location-set-names/(?P<public_id>\w+)/$', location_set_name_detail,
         name='location-set-name-detail'),
     url(r'location-formats/$', location_format_list,
         name='location-format-list'),
-    url(r'location-format/(?P<public_id>\w+)/$', location_format_detail,
+    url(r'location-formats/(?P<public_id>\w+)/$', location_format_detail,
         name='location-format-detail'),
     url(r'location-codes/$', location_code_list,
         name='location-code-list'),
-    url(r'location-code/(?P<public_id>\w+)/$', location_code_detail,
+    url(r'location-codes/(?P<public_id>\w+)/$', location_code_detail,
         name='location-code-detail'),
     url(r'location-clone/$', location_clone, name='location-clone'),
     ]

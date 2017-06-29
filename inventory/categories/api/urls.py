@@ -11,7 +11,7 @@ from .views import category_list, category_detail, category_clone
 urlpatterns = [
     url(r'categories/$', category_list,
         name="category-list"),
-    url(r'category/(?P<public_id>\w+)/$', category_detail,
+    url(r'categories/(?P<public_id>\w+)/$', category_detail,
         name="category-detail"),
     url(r'category-clone/$', category_clone, name='category-clone'),
     ]
