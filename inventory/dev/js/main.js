@@ -88,7 +88,7 @@ Utilities.prototype = {
     $messages.empty();
   },
 
-  mimicDjangoErrors: function(elm, data) {
+  mimicDjangoErrors: function(data, elm) {
     // Mimic Django error messages.
     var ul = '<ul class="errorlist"></ul>';
     var li = '<li></li>';
@@ -108,7 +108,7 @@ Utilities.prototype = {
         $errorUl.appendTo($tag);
       }
 
-      for(let i = 0; i < data[key].length; i++) {
+      for(var i = 0; i < data[key].length; i++) {
         $errorLi = $(li);
         $errorLi.html(data[key][i]);
         $errorLi.appendTo($errorUl);
@@ -226,7 +226,7 @@ Utilities.prototype = {
   },
 
   // Fetch Invoices
-  populateInvoiceCollection: function(url, project) {
+  fetchInvoiceCollection: function(url, project) {
     clearTimeout(App.invoiceTimeout);
     var invoices = new App.Collections.Invoices();
     project.set('invoices', invoices);
@@ -243,7 +243,7 @@ Utilities.prototype = {
   },
 
   // Fetch Items
-  populateItemCollection: function(url, project) {
+  fetchItemCollection: function(url, project) {
     clearTimeout(App.itemTimeout);
     var items = new App.Collections.Items();
     project.set('items', items);

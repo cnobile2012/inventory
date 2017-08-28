@@ -10,17 +10,6 @@
 // Single project view
 App.Views.Project = Backbone.View.extend({
 
-  /* events: function() { */
-  /*   var publicId = this.model.get('public_id'); */
-  /*   var base = '#projects #' + publicId; */
-  /*   var file = 'click ' + base + ' button[name="project-logo"]'; */
-  /*   var save = 'click ' + base + ' button[name="project-save"]'; */
-  /*   var eventObjs = {}; */
-  /*   eventObjs[file] = this.openFileBox; */
-  /*   eventObjs[save] = this.saveModel; */
-  /*   return eventObjs; */
-  /* }, */
-
   render: function() {
     // Get this model's public_id
     var publicId = this.model.get('public_id');
@@ -100,10 +89,10 @@ App.Views.Project = Backbone.View.extend({
     // Setup some events
     var base = '#projects #' + publicId;
     var file = base + ' button[name="project-logo"]';
+    var setFile = base + ' input[type="file"]';
     var save = base + ' button[name="project-save"]';
-    //this.listenTo($(file), 'click', this.openFileBox);
-
     $(file).on('click', this.openFileBox.bind(this));
+    $(setFile).on('change', {self: this}, this.setupImage);
     $(save).on('click', this.saveModel.bind(this));
     },
 
@@ -151,10 +140,19 @@ App.Views.Project = Backbone.View.extend({
   openFileBox: function(event) {
     var $fi = this.$el.find('input[type="file"]');
     // Clear out previous images.
-    $fi.val('');
+    $fi.empty();
     $fi.attr('type', '');
     $fi.attr('type', 'file');
     $fi.trigger('click');
+  },
+
+  setupImage: function(event) {
+    var self = event.data.self;
+    var files = $(this).prop('files');
+
+    if(files.length > 0) {
+      $('#project-filename').text(files[0].name);
+    }
   },
 
   saveModel: function(event) {

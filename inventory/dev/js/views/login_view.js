@@ -48,7 +48,7 @@ jQuery(function($) {
           error: function(jqXHR, status, errorThrown) {
             var $elm = self.$el.find('.all-error');
             var errors = status.responseJSON;
-            App.utils.mimicDjangoErrors($elm, errors);
+            App.utils.mimicDjangoErrors(errors, $elm);
             $elm.show();
           }
         });
