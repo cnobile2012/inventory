@@ -18,6 +18,7 @@ psycopg2
 pytz
 Pillow
 
+hiredis
 redis
 rest_condition
 pyyaml

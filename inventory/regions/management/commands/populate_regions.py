@@ -29,7 +29,7 @@ class Command(BaseCommand):
     help = "Populate the regions database models."
 
     def add_arguments(self, parser):
-        self._parser= parser
+        self._parser = parser
         parser.fromfile_prefix_chars = '@'
         parser.add_argument(
             '-a', '--all', action='store_true', default=False, dest='all',
@@ -91,7 +91,7 @@ class Command(BaseCommand):
         if options.get('timezone') and not options.get('timezone_file'):
             msg = "Must supply a timezone file for processing.\n\n"
             sys.stderr.write(msg)
-            self.print_help()
+            self._parser.print_help()
             return
 
         if options.get('currency') and not options.get('currency_file'):
