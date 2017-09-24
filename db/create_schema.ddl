@@ -18,7 +18,7 @@ $body$;
 
 BEGIN;
   GRANT ALL PRIVILEGES ON DATABASE inventory TO inventory;
-  ALTER ROLE realm SET client_encoding TO 'utf8';
-  ALTER ROLE realm SET default_transaction_isolation TO 'read committed';
-  ALTER ROLE realm SET timezone TO 'UTC';
+  ALTER ROLE inventory SET client_encoding TO 'utf8';
+  ALTER ROLE inventory SET default_transaction_isolation TO 'read committed';
+  ALTER ROLE inventory SET timezone TO 'UTC';
 COMMIT;
