@@ -16,7 +16,6 @@ from django.utils.translation import ugettext_lazy as _
 from django_filters import filters, CharFilter, NumberFilter, DateFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
-from rest_framework.filters import SearchFilter
 from rest_framework.generics import (
     ListAPIView, ListCreateAPIView, RetrieveAPIView,
     RetrieveUpdateDestroyAPIView)
