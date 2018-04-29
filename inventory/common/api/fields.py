@@ -10,11 +10,11 @@ __docformat__ = "restructuredtext en"
 import logging
 
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
+from django.urls import NoReverseMatch
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
-from rest_framework.compat import NoReverseMatch
 from rest_framework.fields import Field
 from rest_framework.reverse import reverse
 
@@ -78,7 +78,7 @@ class HyperlinkedFilterField(serializers.Field):
         self.lookup_url_kwarg = kwargs.pop('lookup_url_kwarg',
                                            self.lookup_field)
         self.reverse = reverse
-        super(HyperlinkedFilterField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def get_attribute(self, instance):
         return instance
