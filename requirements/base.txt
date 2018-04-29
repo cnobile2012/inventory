@@ -14,7 +14,7 @@ docutils
 dateutils
 python-dateutil
 
-psycopg2
+psycopg2-binary
 pytz
 Pillow
 
