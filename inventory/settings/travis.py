@@ -4,9 +4,11 @@ DEBUG = False
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.abspath(os.path.join(
-            BASE_DIR, '..', 'data', 'db.sqlite3')),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'inventory',
+        'USER': 'inventory',
+        'PASSWORD': 'inventory',
+        'HOST': 'localhost',
         }
     }
 

@@ -3,11 +3,11 @@
 # inventory/sites/api/urls.py
 #
 
-from django.conf.urls import include, url
+from django.urls import re_path
 
 from inventory.sites.api import views
 
 
 urlpatterns = [
-    url(r'^$', views.api_root, name='api-root'),
+    re_path(r'^$', views.api_root, name='api-root'),
     ]

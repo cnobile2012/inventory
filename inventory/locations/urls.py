@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# inventory/maintenance/urls.py
+# inventory/locations/urls.py
 #
 
-from django.conf.urls import include, url
+from django.urls import re_path
 
 from inventory.maintenance import views
 

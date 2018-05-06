@@ -14,6 +14,10 @@ LOGS_DIR	= $(PREFIX)/logs
 RM_REGEX	= '(^.*.pyc$$)|(^.*.wsgic$$)|(^.*~$$)|(.*\#$$)|(^.*,cover$$)'
 RM_CMD		= find $(PREFIX) -regextype posix-egrep -regex $(RM_REGEX) \
                   -exec rm {} \;
+COVERAGE_DIR	= $(PREFIX)/.coverage_tests
+COVERAGE_FILE	= .coveragerc
+COVERAGE_PROCESS_START	= $(COVERAGE_FILE)
+TEST_ARGS	= --parallel
 PIP_ARGS	=
 
 #----------------------------------------------------------------------
@@ -24,13 +28,18 @@ tar	: clean
 	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz --exclude=".git" \
           --exclude="inventory/static" $(PACKAGE_DIR))
 
-.PHONY	: coverage
-coverage: clean
+.PHONY	: tests
+tests	: clean
 	@rm -rf $(DOCS_DIR)/htmlcov
-	coverage erase
-	coverage run ./manage.py test
-	coverage report
-	coverage html
+	@coverage erase --rcfile=$(COVERAGE_FILE)
+	@rm -rf $(COVERAGE_DIR)
+	@mkdir -p $(COVERAGE_DIR)
+	@coverage run --concurrency=multiprocessing \
+         --rcfile=$(COVERAGE_FILE)  ./manage.py test $(TEST_ARGS)
+	@mv .coverage.* $(COVERAGE_DIR)
+	@coverage combine --rcfile=$(COVERAGE_FILE) $(COVERAGE_DIR)
+	@coverage report -m --rcfile=$(COVERAGE_FILE)
+	@coverage html --rcfile=$(COVERAGE_FILE)
 
 .PHONY	: sphinx
 sphinx  : clean

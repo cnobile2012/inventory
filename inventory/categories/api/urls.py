@@ -3,15 +3,16 @@
 # inventory/categories/api/urls.py
 #
 
-from django.conf.urls import include, url
+from django.urls import re_path
 
 from .views import category_list, category_detail, category_clone
 
 
 urlpatterns = [
-    url(r'categories/$', category_list,
-        name="category-list"),
-    url(r'categories/(?P<public_id>\w+)/$', category_detail,
-        name="category-detail"),
-    url(r'category-clone/$', category_clone, name='category-clone'),
+    re_path(r'categories/$', category_list,
+            name="category-list"),
+    re_path(r'categories/(?P<public_id>\w+)/$', category_detail,
+            name="category-detail"),
+    re_path(r'category-clone/$', category_clone,
+            name='category-clone'),
     ]

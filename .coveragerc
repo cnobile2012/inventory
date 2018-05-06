@@ -1,5 +1,6 @@
 [run]
 source = inventory
+parallel = True
 
 omit =
     ../*migrations*
@@ -24,3 +25,4 @@ exclude_lines =
 [html]
 title = Inventory Coverage Report
 directory = docs/htmlcov
+
