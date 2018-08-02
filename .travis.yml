@@ -7,6 +7,9 @@ python:
 
 sudo: false
 
+addons:
+  postgresql: "9.5"
+
 before_script:
   - psql -U postgres template1 -f db/create_schema.ddl
 
@@ -18,7 +21,7 @@ script:
   - (cd inventory/settings/; ln -s travis.py local.py)
   - python manage.py makemigrations accounts categories invoices locations projects regions suppliers
   - python manage.py migrate
-  - make tests TEST_ARGS=--parallel=1
+  - make tests TEST_ARGS=--parallel=0
 
 after_success:
   - coveralls 

@@ -6,6 +6,7 @@
 # $Revision: 26 $
 #
 
+TODAY		= $(shell date +"%Y-%m-%dT%H:%M:%S.%N%:z")
 PREFIX		= $(shell pwd)
 PACKAGE_DIR	= $(shell echo $${PWD\#\#*/})
 APACHE_DIR	= $(PREFIX)/apache
@@ -40,6 +41,7 @@ tests	: clean
 	@coverage combine --rcfile=$(COVERAGE_FILE) $(COVERAGE_DIR)
 	@coverage report -m --rcfile=$(COVERAGE_FILE)
 	@coverage html --rcfile=$(COVERAGE_FILE)
+	@echo $(TODAY)
 
 .PHONY	: sphinx
 sphinx  : clean
