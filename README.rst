@@ -2,7 +2,9 @@
 Project Based Parts Management Service
 **************************************
 
-The MIT License (MIT)
+.. image:: http://img.shields.io/pypi/l/django-dcolumns.svg
+   :target: https://pypi.python.org/pypi/django-dcolumns
+   :alt: License
 
 .. image:: https://travis-ci.org/cnobile2012/inventory.svg?branch=develop
     :target: https://travis-ci.org/cnobile2012/inventory

@@ -11,9 +11,11 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from django_filters import filters, CharFilter, NumberFilter, DateFilter
+from django_filters import (
+    filters, LookupChoiceFilter, CharFilter, NumberFilter, DateFilter)
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
 from rest_framework.generics import (
@@ -132,37 +134,52 @@ class ItemAuthorizationMixin(object):
 
 class ItemFilter(FilterSet):
     public_id = CharFilter(
-        name='public_id', label=_("Public Id"), lookup_expr='exact')
+        field_name='public_id', label=_("Public Id"), lookup_expr='exact')
     project = CharFilter(
-        name='project__public_id', label=_("Project Public Id"),
+        field_name='project__public_id', label=_("Project Public Id"),
         lookup_expr='exact')
-    project_name = CharFilter(
-        name='project__name', label=_("Project Name"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    project_name = LookupChoiceFilter(
+        field_name='project__name', label=_("Project Name"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
     mfg = CharFilter(
-        name='manufacturer__public_id', label=_("Manufacturer Public Id"),
-        lookup_expr='exact')
-    mfg_name = CharFilter(
-        name='manufacturer__name', label=_("Manufacturer Name"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
+        field_name='manufacturer__public_id',
+        label=_("Manufacturer Public Id"), lookup_expr='exact')
+    mfg_name = LookupChoiceFilter(
+        field_name='manufacturer__name', label=_("Manufacturer Name"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
     category = CharFilter(
-        name='category__public_id', label=_("Category Public Id"),
+        field_name='category__public_id', label=_("Category Public Id"),
         lookup_expr='exact')
-    category_name = CharFilter(
-        name='category__name', label=_("Category Name"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
-    category_path = CharFilter(
-        name='category__path', label=_("Category Path"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    category_name = LookupChoiceFilter(
+        field_name='category__name', label=_("Category Name"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
+    category_path = LookupChoiceFilter(
+        field_name='category__path', label=_("Category Path"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
     location = CharFilter(
-        name='location__public_id', label=_("Location Public Id"),
+        field_name='location__public_id', label=_("Location Public Id"),
         lookup_expr='exact')
-    location_path = CharFilter(
-        name='location__path', label=_("Location Path"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    location_path = LookupChoiceFilter(
+        field_name='location__path', label=_("Location Path"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
     shared_projects = CharFilter(
-        name='shared_projects__public_id', label=_("Shared Project Public Id"),
-        lookup_expr='exact')
+        field_name='shared_projects__public_id',
+        label=_("Shared Project Public Id"), lookup_expr='exact')
 
     class Meta:
         model = Item
@@ -237,44 +254,62 @@ class InvoiceAuthorizationMixin(object):
 
 class InvoiceFilter(FilterSet):
     public_id = CharFilter(
-        name='public_id', label=_("Public Id"), lookup_expr='exact')
+        field_name='public_id', label=_("Public Id"), lookup_expr='exact')
     invoive_number = CharFilter(
-        name='invoice_number', label=_("Invoice Number"), lookup_expr='exact')
+        field_name='invoice_number', label=_("Invoice Number"),
+        lookup_expr='exact')
     invoive_date = DateFilter(
-        name='invoice_data', label=_("Invoice Data"), lookup_expr='icontains')
+        field_name='invoice_data', label=_("Invoice Data"),
+        lookup_expr='icontains')
     notes = CharFilter(
-        name='notes', label=_("Notes"), lookup_expr='icontains')
-    project = CharFilter(
-        name='project__public_id', label=_("Project Public Id"),
+        field_name='notes', label=_("Invoice Notes"), lookup_expr='icontains')
+    project_public_id = CharFilter(
+        field_name='project__public_id', label=_("Project Public Id"),
         lookup_expr='exact')
-    project_name = CharFilter(
-        name='project__name', label=_("Project Name"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    project_name = LookupChoiceFilter(
+        field_name='project__name', label=_("Project Name"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
     supplier = CharFilter(
-        name='supplier__public_id', label=_("Supplier Public Id"),
+        field_name='supplier__public_id', label=_("Supplier Public Id"),
         lookup_expr='exact')
-    supplier_name = CharFilter(
-        name='supplier__name', label=_("Supplier Name"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
+    supplier_name = LookupChoiceFilter(
+        field_name='supplier__name', label=_("Supplier Name"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
     invoice_item = CharFilter(
-        name='invoice_item__public_id', label=_("Invoice Item Public Id"),
-        lookup_expr='exact')
-    invoice_item_number = CharFilter(
-        name='invoice_item__item_number', label=_("Invoice Item Number"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
-    invoice_item_desc = CharFilter(
-        name='invoice_item__description', label=_("Invoice Item Description"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
-    invoice_item_quantity = NumberFilter(
-        name='invoice_item__description', label=_("Invoice Item Quantity"),
-        lookup_expr=['startswith', 'icontains', 'not_contains',])
+        field_name='invoice_item__public_id',
+        label=_("Invoice Item Public Id"), lookup_expr='exact')
+    invoice_item = LookupChoiceFilter(
+        field_name='invoice_item__item_number', label=_("Invoice Item Number"),
+        field_class=forms.CharField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
+    invoice_item_desc = LookupChoiceFilter(
+        field_name='invoice_item__description',
+        label=_("Invoice Item Description"), field_class=forms.CharField,
+        lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
+    invoice_item_quantity = LookupChoiceFilter(
+        field_name='invoice_item__quantity', label=_("Invoice Item Quantity"),
+        field_class=forms.IntegerField, lookup_choices=[
+            ('startswith', 'Starts With'),
+            ('icontains', 'Case-insensitive Contains'),
+            ('not_contains', 'Not Contains')])
 
     class Meta:
         model = Invoice
         fields = ('public_id', 'invoive_number', 'invoive_date', 'notes',
-                  'project', 'project_name', 'supplier', 'supplier_name',
-                  'invoice_item', 'invoice_item_number', 'invoice_item_desc',
-                  'invoice_item_quantity',)
+                  'project_public_id', 'project_name', 'supplier',
+                  'supplier_name', 'invoice_item', 'invoice_item',
+                  'invoice_item_desc', 'invoice_item_quantity',)
 
 
 class InvoiceList(TrapDjangoValidationErrorCreateMixin,
