@@ -20,21 +20,24 @@ window.App = {
   Collections: {},
   Views: {},
   //Forms: {},
-  // Routers: {},
   models: {},
   collections: {},
   views: {}, // Use for persistent single views.
   viewFunctions: {}, // Use for functions that call ephemeral views.
   templates: null,
   loginModel: null,
+  ViewContainer: null,
+  viewContainer: null,
+  Router: null,
   utils: null,
   invoiceTimeout: null,
   itemTimeout: null
 };
 
-
-// This function is run when logout happens, so that all data for the
-// user is removed.
+/*
+ * This function is run when logout happens, so that all data for the
+ * user is removed.
+ */
 window.destroyApp = function() {
   App.models = {};
   App.collections = {};
@@ -47,6 +50,54 @@ window.destroyApp = function() {
 };
 
 
+/*
+ * ViewContainer
+ */
+window.App.ViewContainer = Backbone.View.extend({
+  childView: null,
+
+  render: function() {
+    this.$el.html("Greeting Area");
+
+    this.$el.append(this.childView.$el);
+    return this;
+  }
+});
+
+
+/*
+ * Global Router
+ */
+window.App.Router = Backbone.Router.extend({
+  container: null,
+  projectViews: {},
+
+  initialize: function() {
+    this.container = new window.App.ViewContainer({})
+  },
+
+  routes: {
+    '': 'homePage',
+
+  },
+
+  handleProjectRoutes: function(key) {
+    view = this.projectViews[key];
+
+    if (view === (void 0)) {
+
+      view = new App.Views.Project()
+    }
+
+    this.container.childView = view;
+    this.container.render()
+  }
+});
+
+
+/*
+ * Utilities
+ */
 var Utilities = function() {
   this.initialize();
 };
