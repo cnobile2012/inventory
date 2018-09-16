@@ -2,6 +2,10 @@
 #
 # inventory/common/admin.py
 #
+"""
+Common Admin
+"""
+__docformat__ = "restructuredtext en"
 
 from django.contrib.admin import AdminSite
 

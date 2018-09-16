@@ -4,6 +4,10 @@
 # See for original code:
 #   http://codeinthehole.com/writing/a-deferred-logging-file-handler-for-django/
 #
+"""
+Global log handlers
+"""
+__docformat__ = "restructuredtext en"
 
 from logging import FileHandler
 from logging.handlers import RotatingFileHandler

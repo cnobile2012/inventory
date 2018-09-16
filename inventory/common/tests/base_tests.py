@@ -21,7 +21,7 @@ class BaseTest(RecordCreation, TestCase):
     _TEST_PASSWORD = 'TestPassword_007'
 
     def __init__(self, name):
-        super(BaseTest, self).__init__(name)
+        super().__init__(name)
         self.user = None
 
     def setUp(self):

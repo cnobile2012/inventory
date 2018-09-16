@@ -2,6 +2,10 @@
 #
 # inventory/common/api/view_mixins.py
 #
+"""
+Global view mixins
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 

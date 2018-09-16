@@ -2,6 +2,10 @@
 #
 # inventory/common/api/pagination.py
 #
+"""
+Global pagination
+"""
+__docformat__ = "restructuredtext en"
 
 from rest_framework.pagination import PageNumberPagination
 

@@ -2,6 +2,10 @@
 #
 # inventory/common/storage.py
 #
+"""
+Global file storage
+"""
+__docformat__ = "restructuredtext en"
 
 from django.core.files.storage import FileSystemStorage
 

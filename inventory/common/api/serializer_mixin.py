@@ -2,6 +2,10 @@
 #
 # inventory/common/api/serializer_mixin.py
 #
+"""
+Global serializer mixins
+"""
+__docformat__ = "restructuredtext en"
 
 from django.contrib.auth import get_user_model
 
@@ -38,7 +42,7 @@ class DynamicFieldsSerializer(serializers.Serializer):
         fields = kwargs.pop('fields', None)
 
         # Instantiate the superclass normally
-        super(DynamicFieldsSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if fields is not None:
             # Drop any fields that are not specified in the `fields` argument.

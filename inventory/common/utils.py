@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
+#
+# inventory/common/utils.py
+#
+"""
+Global utilities
+"""
+__docformat__ = "restructuredtext en"
 
 from IPy import IP
 
 class IPList(list):
     """
-    Converts standard network addresse protocol to a list of valid IPs.
+    Converts standard network address protocol to a list of valid IPs.
 
     https://github.com/haypo/python-ipy
     ubuntu: apt-get install python-ipy

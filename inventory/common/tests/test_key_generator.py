@@ -13,7 +13,7 @@ from ..key_generator import KeyGenerator
 class TestKeyGenerator(TestCase):
 
     def __init__(self, name):
-        super(TestKeyGenerator, self).__init__(name)
+        super().__init__(name)
 
     def test_length(self):
         #self.skipTest("Temporarily skipped")

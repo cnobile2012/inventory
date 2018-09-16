@@ -12,10 +12,10 @@ from .base_tests import BaseTest
 class TestStorage(BaseTest):
 
     def __init__(self, name):
-        super(TestStorage, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestStorage, self).setUp()
+        super().setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 

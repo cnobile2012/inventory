@@ -18,7 +18,7 @@ RM_CMD		= find $(PREFIX) -regextype posix-egrep -regex $(RM_REGEX) \
 COVERAGE_DIR	= $(PREFIX)/.coverage_tests
 COVERAGE_FILE	= .coveragerc
 COVERAGE_PROCESS_START	= $(COVERAGE_FILE)
-TEST_ARGS	= --parallel
+TEST_ARGS	= --parallel=4
 PIP_ARGS	=
 
 #----------------------------------------------------------------------

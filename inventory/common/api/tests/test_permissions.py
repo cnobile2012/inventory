@@ -27,7 +27,7 @@ UserModel = get_user_model()
 class TestPermissions(BaseTest):
 
     def __init__(self, name):
-        super(TestPermissions, self).__init__(name)
+        super().__init__(name)
 
     #
     # User level roles

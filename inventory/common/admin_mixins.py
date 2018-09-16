@@ -41,7 +41,7 @@ class UserAdminMixin(object):
             obj.creator = request.user
 
         obj.updater = request.user
-        super(UserAdminMixin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
 
 
 class UserInlineAdminMixin(object):
@@ -57,8 +57,7 @@ class UserInlineAdminMixin(object):
 
             i_form.instance.updater = request.user
 
-        super(UserInlineAdminMixin, self).save_formset(
-            request, form, formset, change)
+        super().save_formset(request, form, formset, change)
 
 
 #
