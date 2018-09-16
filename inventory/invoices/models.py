@@ -53,10 +53,9 @@ class ConditionManager(BaseChoiceManager):
     FIELD_LIST = ('pk', 'name',)
 
     def __init__(self):
-        super(ConditionManager, self).__init__()
+        super().__init__()
 
 
-@python_2_unicode_compatible
 class Condition(BaseChoice):
     pk = 0
     name = ''
@@ -82,7 +81,6 @@ class ItemManager(CollectionBaseManager, StatusModelManagerMixin):
         return ColumnCollection.objects.get(related_model=related_model)
 
 
-@python_2_unicode_compatible
 class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
     YES = True
     NO = False
@@ -149,7 +147,7 @@ class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
             self.sku = generate_sku_fragment()
 
     def save(self, *args, **kwargs):
-        super(Item, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "{} ({})".format(self.sku, self.project.name)
@@ -230,7 +228,6 @@ class InvoiceManager(models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,
               models.Model):
 
@@ -279,7 +276,7 @@ class Invoice(UserModelMixin, TimeModelMixin, ValidateOnSaveMixin,
             self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
-        super(Invoice, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "{} ({})".format(self.supplier.name, self.invoice_number)
@@ -298,7 +295,6 @@ class InvoiceItemManager(models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class InvoiceItem(ValidateOnSaveMixin, models.Model):
     YES = True
     NO = False
@@ -341,7 +337,7 @@ class InvoiceItem(ValidateOnSaveMixin, models.Model):
             self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
-        super(InvoiceItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "{} ({})".format(self.item_number, self.invoice.invoice_number)

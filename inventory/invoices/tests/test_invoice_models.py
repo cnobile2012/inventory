@@ -18,10 +18,10 @@ from ..models import Condition, Item, Invoice, InvoiceItem
 class TestCondition(BaseTest):
 
     def __init__(self, name):
-        super(TestCondition, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestCondition, self).setUp()
+        super().setUp()
 
     def test_str(self):
         """
@@ -38,10 +38,10 @@ class TestCondition(BaseTest):
 class BaseInvoice(BaseTest):
 
     def __init__(self, name):
-        super(BaseInvoice, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(BaseInvoice, self).setUp()
+        super().setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
         kwargs = {}
@@ -104,10 +104,10 @@ class BaseInvoice(BaseTest):
 class TestItem(BaseInvoice):
 
     def __init__(self, name):
-        super(TestItem, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestItem, self).setUp()
+        super().setUp()
 
     def test_str(self):
         """
@@ -241,10 +241,10 @@ class TestItem(BaseInvoice):
 class TestInvoice(BaseInvoice):
 
     def __init__(self, name):
-        super(TestInvoice, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestInvoice, self).setUp()
+        super().setUp()
         self.country = self._create_country()
         self.currency = self._create_currency(
             self.country, "US Dollar", "USD", 840, 2)
@@ -267,10 +267,10 @@ class TestInvoice(BaseInvoice):
 class TestInvoiceItem(BaseInvoice):
 
     def __init__(self, name):
-        super(TestInvoiceItem, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestInvoiceItem, self).setUp()
+        super().setUp()
         self.country = self._create_country()
         self.currency = self._create_currency(
             self.country, "US Dollar", "USD", 840, 2)

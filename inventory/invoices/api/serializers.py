@@ -31,8 +31,7 @@ class ConditionSerializer(DynamicFieldsSerializer):
 
     def __init__(self, *args, **kwargs):
         fields=('pk', 'name', 'href',)
-        super(ConditionSerializer, self).__init__(
-            *args, fields=fields, **kwargs)
+        super().__init__(*args, fields=fields, **kwargs)
 
     class Meta:
         fields = ('pk', 'name', 'href',)

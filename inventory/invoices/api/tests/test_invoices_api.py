@@ -19,10 +19,10 @@ UserModel = get_user_model()
 class TestConditionAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestConditionAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestConditionAPI, self).setUp()
+        super().setUp()
 
     def test_GET_condition_list_with_invalid_permissions(self):
         """
@@ -103,10 +103,10 @@ class TestConditionAPI(BaseTest):
 class TestItemAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestItemAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestItemAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
@@ -529,10 +529,10 @@ class TestItemAPI(BaseTest):
 class TestInvoiceAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestInvoiceAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestInvoiceAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         in_type = self._create_inventory_type()
         self.project = self._create_project(in_type, members=[self.user])
@@ -872,10 +872,10 @@ class TestInvoiceAPI(BaseTest):
 class TestInvoiceItemAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestInvoiceItemAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestInvoiceItemAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         in_type = self._create_inventory_type()
         self.project = self._create_project(in_type, members=[self.user])

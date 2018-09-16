@@ -2,6 +2,10 @@
 #
 # inventory/invoices/api/urls.py
 #
+"""
+Invoice API URLs
+"""
+__docformat__ = "restructuredtext en"
 
 from django.urls import re_path
 
