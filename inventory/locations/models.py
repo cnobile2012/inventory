@@ -147,7 +147,6 @@ class LocationSetNameManager(models.Manager):
         return nodes
 
 
-@python_2_unicode_compatible
 class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
                       models.Model):
     YES = True
@@ -192,7 +191,7 @@ class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
         FormatValidator(self.separator)
 
     def save(self, *args, **kwargs):
-        super(LocationSetName, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -259,7 +258,6 @@ class LocationFormatManager(models.Manager):
         return record
 
 
-@python_2_unicode_compatible
 class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
                      models.Model):
 
@@ -305,7 +303,7 @@ class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
         self.segment_length = len(self.char_definition.replace('\\', ''))
 
     def save(self, *args, **kwargs):
-        super(LocationFormat, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.char_definition
@@ -367,7 +365,6 @@ class LocationCodeManager(models.Manager):
         return result
 
 
-@python_2_unicode_compatible
 class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
                    models.Model):
     ROOT_NAME = '#'
@@ -445,7 +442,7 @@ class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
         self.level = self.path.count(separator)
 
     def save(self, *args, **kwargs):
-        super(LocationCode, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # Fix all the children if any.
         for child in self.children.all():

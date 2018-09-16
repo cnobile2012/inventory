@@ -18,10 +18,10 @@ class BaseLocation(BaseTest):
     _TEST_PASSWORD = 'TestPassword_007'
 
     def __init__(self, name):
-        super(BaseLocation, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(BaseLocation, self).setUp()
+        super().setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 
@@ -29,10 +29,10 @@ class BaseLocation(BaseTest):
 class TestLocationSetNameModel(BaseLocation):
 
     def __init__(self, name):
-        super(TestLocationSetNameModel, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLocationSetNameModel, self).setUp()
+        super().setUp()
 
     def test_auto_root_creation(self):
         """
@@ -257,10 +257,10 @@ class TestLocationSetNameModel(BaseLocation):
 class TestLocationFormatModel(BaseLocation):
 
     def __init__(self, name):
-        super(TestLocationFormatModel, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLocationFormatModel, self).setUp()
+        super().setUp()
         # Create a valid location default object.
         self.loc_set_name = self._create_location_set_name(self.project)
 
@@ -346,10 +346,10 @@ class TestLocationFormatModel(BaseLocation):
 class TestLocationCodeModel(BaseLocation):
 
     def __init__(self, name):
-        super(TestLocationCodeModel, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLocationCodeModel, self).setUp()
+        super().setUp()
         # Create a valid location default object.
         desc = "Test description."
         kwargs = {}
@@ -746,7 +746,8 @@ class TestLocationCodeModel(BaseLocation):
         self.assertEqual(code_3.level, 3, msg)
         # Test that the children update the path when the parent changes.
         code_1 = self._create_location_code(
-            loc_fmt_1, "A01", parent=code_1.parent, **{'update_segment': "A02"})
+            loc_fmt_1, "A01", parent=code_1.parent,
+            **{'update_segment': "A02"})
         code_2 = self._create_location_code(loc_fmt_2, "B01", parent=code_1)
         code_3 = self._create_location_code(loc_fmt_3, "C01R01", parent=code_2)
         path = '{0}{1}A02'.format(root, sep)

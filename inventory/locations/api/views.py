@@ -2,6 +2,10 @@
 #
 # inventory/locations/api/views.py
 #
+"""
+Location API Views
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 

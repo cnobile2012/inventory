@@ -2,6 +2,10 @@
 #
 # inventory/locations/forms.py
 #
+"""
+Location Forms
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -16,7 +20,7 @@ log = logging.getLogger('inventory.maintenance.forms')
 class LocationSetNameForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(LocationSetNameForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['name'].widget = forms.TextInput(
             attrs={'size': 70, 'maxlength': 100})
         self.fields['separator'].widget = forms.TextInput(

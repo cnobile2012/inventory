@@ -21,10 +21,10 @@ UserModel = get_user_model()
 class TestLocationSetNameAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestLocationSetNameAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLocationSetNameAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
@@ -381,10 +381,10 @@ class TestLocationSetNameAPI(BaseTest):
 class TestLocationFormatAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestLocationFormatAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLocationFormatAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType, Project, and LocationSetName.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
@@ -442,7 +442,8 @@ class TestLocationFormatAPI(BaseTest):
 
     def test_POST_location_format_list_with_valid_permissions(self):
         """
-        Test that a POST to location_format_list passes with valid permissions.
+        Test that a POST to location_format_list passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
@@ -540,7 +541,8 @@ class TestLocationFormatAPI(BaseTest):
 
     def test_PUT_location_format_detail_with_valid_permissions(self):
         """
-        Test that a PUT to location_format_detail passes with valid permissions.
+        Test that a PUT to location_format_detail passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         location_format = self._create_location_format(
@@ -722,7 +724,8 @@ class TestLocationFormatAPI(BaseTest):
         response = self.client.post(uri, data=data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, 'char_definition'), msg)
         self._test_errors(response, tests={
             'char_definition': u"Invalid format, found separator",
@@ -752,10 +755,10 @@ class TestLocationFormatAPI(BaseTest):
 class TestLocationCodeAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestLocationCodeAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLocationCodeAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType, Project, and LocationSetName.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
@@ -785,7 +788,8 @@ class TestLocationCodeAPI(BaseTest):
         method = 'get'
         location_code = self._create_location_code(self.location_format, "A01")
         uri = reverse('location-code-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(
+            uri, method, default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_location_code_list_with_invalid_permissions(self):
@@ -812,7 +816,8 @@ class TestLocationCodeAPI(BaseTest):
 
     def test_POST_location_code_list_with_valid_permissions(self):
         """
-        Test that a POST to location_code_list passes with valid permissions.
+        Test that a POST to location_code_list passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'post'
@@ -1078,7 +1083,8 @@ class TestLocationCodeAPI(BaseTest):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         msg = "Avaliable keys are: {}".format(response.data.keys())
         self.assertTrue(self._has_error(response, error_key='segment'), msg)
         self._test_errors(response, tests={
@@ -1094,7 +1100,8 @@ class TestLocationCodeAPI(BaseTest):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         msg = "Avaliable keys are: {}".format(response.data.keys())
         self.assertTrue(self._has_error(response, error_key='segment'), msg)
         self._test_errors(response, tests={
@@ -1215,10 +1222,10 @@ class TestLocationCodeAPI(BaseTest):
 class TestLocationSetNameCloneAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestLocationSetNameCloneAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLocationSetNameCloneAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])

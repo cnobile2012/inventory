@@ -2,6 +2,10 @@
 #
 # inventory/locations/admin.py
 #
+"""
+Location Admin
+"""
+__docformat__ = "restructuredtext en"
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
@@ -34,7 +38,8 @@ class LocationSetNameAdmin(UserAdminMixin, admin.ModelAdmin):
 class LocationFormatAdmin(UserAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('public_id', 'location_set_name', 'char_definition',
-                           'segment_order', 'description', 'segment_length',)}),
+                           'segment_order', 'description',
+                           'segment_length',)}),
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),

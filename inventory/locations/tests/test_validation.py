@@ -12,7 +12,7 @@ from ..validation import FormatValidator
 class TestValidation(TestCase):
 
     def __init__(self, name):
-        super(TestValidation, self).__init__(name)
+        super().__init__(name)
 
     def test_validate_separator(self):
         #self.skipTest("Temporarily skipped")
@@ -109,7 +109,8 @@ class TestValidation(TestCase):
             ]
 
         for delim, fmt, segment in segments:
-            fmt = FormatValidator(delimiter=delim).validate_char_definition(fmt)
+            fmt = FormatValidator(delimiter=delim
+                                  ).validate_char_definition(fmt)
             msg = "Delimiter: {}, format: {}, segment: {}".format(
                 delim, fmt, segment)
             value = ''

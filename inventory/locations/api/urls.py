@@ -2,12 +2,17 @@
 #
 # inventory/locations/api/urls.py
 #
+"""
+Location API URLs
+"""
+__docformat__ = "restructuredtext en"
 
 from django.urls import re_path
 
-from .views import (location_set_name_list, location_set_name_detail,
-                    location_format_list, location_format_detail,
-                    location_code_list, location_code_detail, location_clone)
+from .views import (
+    location_set_name_list, location_set_name_detail, location_format_list,
+    location_format_detail, location_code_list, location_code_detail,
+    location_clone)
 
 
 urlpatterns = [
