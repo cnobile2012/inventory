@@ -2,6 +2,10 @@
 #
 # inventory/sites/views.py
 #
+"""
+Site Views
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 
@@ -18,6 +22,6 @@ class SiteHomeView(TemplateView):
     template_name = "sites/site_home.html"
 
     def dispatch(self, *args, **kwargs):
-        return super(SiteHomeView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 site_home_view = SiteHomeView.as_view()

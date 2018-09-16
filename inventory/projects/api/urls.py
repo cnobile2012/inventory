@@ -2,6 +2,10 @@
 #
 # inventory/projects/api/urls.py
 #
+"""
+Project API URLs
+"""
+__docformat__ = "restructuredtext en"
 
 from django.urls import re_path
 

@@ -2,6 +2,10 @@
 #
 # inventory/projects/api/serializers.py
 #
+"""
+Project API Serializers
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 

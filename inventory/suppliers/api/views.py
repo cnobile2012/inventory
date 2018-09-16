@@ -2,7 +2,7 @@
 # inventory/suppliers/api/views.py
 #
 """
-Supplier views.
+Supplier Views.
 """
 __docformat__ = "restructuredtext en"
 

@@ -2,6 +2,10 @@
 #
 # inventory/sites/api/views.py
 #
+"""
+Site API Views
+"""
+__docformat__ = "restructuredtext en"
 
 from collections import OrderedDict
 

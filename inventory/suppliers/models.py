@@ -29,7 +29,6 @@ class SupplierManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
                ValidateOnSaveMixin, models.Model):
     """
@@ -108,7 +107,7 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         self.name = self.name.strip()
 
     def save(self, *args, **kwargs):
-        super(Supplier, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

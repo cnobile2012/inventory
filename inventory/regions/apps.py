@@ -1,6 +1,10 @@
 #
 # inventory/regions/apps.py
 #
+"""
+Regions App data
+"""
+__docformat__ = "restructuredtext en"
 
 from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _

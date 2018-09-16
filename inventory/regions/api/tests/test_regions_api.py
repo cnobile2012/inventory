@@ -19,7 +19,7 @@ UserModel = get_user_model()
 class BaseRegion(BaseTest):
 
     def setUp(self):
-        super(BaseRegion, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
@@ -28,7 +28,7 @@ class BaseRegion(BaseTest):
 class TestCountry(BaseRegion):
 
     def __init__(self, name):
-        super(TestCountry, self).__init__(name)
+        super().__init__(name)
 
     def test_GET_country_list_with_no_permissions(self):
         """
@@ -124,7 +124,7 @@ class TestCountry(BaseRegion):
 class TestSubdivision(BaseRegion):
 
     def __init__(self, name):
-        super(TestSubdivision, self).__init__(name)
+        super().__init__(name)
 
     def test_GET_subdivision_list_with_no_permissions(self):
         """
@@ -234,7 +234,7 @@ class TestSubdivision(BaseRegion):
 class TestLanguage(BaseRegion):
 
     def __init__(self, name):
-        super(TestLanguage, self).__init__(name)
+        super().__init__(name)
 
     def test_GET_language_list_with_no_permissions(self):
         """
@@ -344,7 +344,7 @@ class TestLanguage(BaseRegion):
 class TestTimezone(BaseRegion):
 
     def __init__(self, name):
-        super(TestTimezone, self).__init__(name)
+        super().__init__(name)
 
     def test_GET_timezone_list_with_no_permissions(self):
         """
@@ -462,7 +462,7 @@ class TestTimezone(BaseRegion):
 class TestCurrency(BaseRegion):
 
     def __init__(self, name):
-        super(TestCurrency, self).__init__(name)
+        super().__init__(name)
 
     def test_GET_currency_list_with_no_permissions(self):
         """

@@ -2,6 +2,10 @@
 #
 # inventory/regions/api/urls.py
 #
+"""
+Region API URLs
+"""
+__docformat__ = "restructuredtext en"
 
 from django.urls import re_path
 

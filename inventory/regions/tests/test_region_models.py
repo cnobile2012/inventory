@@ -13,16 +13,16 @@ from ..models import Country, Subdivision, Language, TimeZone, Currency
 class BaseRegions(BaseTest):
 
     def __init__(self, name):
-        super(BaseRegions, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(BaseRegions, self).setUp()
+        super().setUp()
 
 
 class TestCountry(BaseRegions):
 
     def __init__(self, name):
-        super(TestCountry, self).__init__(name)
+        super().__init__(name)
 
     def test_str(self):
         """
@@ -41,10 +41,10 @@ class TestCountry(BaseRegions):
 class TestSubdivision(BaseRegions):
 
     def __init__(self, name):
-        super(TestSubdivision, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestSubdivision, self).setUp()
+        super().setUp()
         self.country = self._create_country()
 
     def test_str(self):
@@ -65,10 +65,10 @@ class TestSubdivision(BaseRegions):
 class TestLanguage(BaseRegions):
 
     def __init__(self, name):
-        super(TestLanguage, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLanguage, self).setUp()
+        super().setUp()
         self.country = self._create_country()
 
     def test_str(self):
@@ -86,10 +86,10 @@ class TestLanguage(BaseRegions):
 class TestTimeZone(BaseRegions):
 
     def __init__(self, name):
-        super(TestTimeZone, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestTimeZone, self).setUp()
+        super().setUp()
         self.country = self._create_country()
 
     def test_str(self):
@@ -108,10 +108,10 @@ class TestTimeZone(BaseRegions):
 class TestCurrency(BaseRegions):
 
     def __init__(self, name):
-        super(TestCurrency, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestCurrency, self).setUp()
+        super().setUp()
         self.country = self._create_country()
 
     def test_str(self):

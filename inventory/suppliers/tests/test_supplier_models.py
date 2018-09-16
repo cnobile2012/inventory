@@ -11,10 +11,10 @@ from inventory.common.tests.base_tests import BaseTest
 class TestSupplierModels(BaseTest):
 
     def __init__(self, name):
-        super(TestSupplierModels, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestSupplierModels, self).setUp()
+        super().setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 

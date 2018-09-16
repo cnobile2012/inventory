@@ -2,6 +2,10 @@
 #
 # inventory/projects/admin.py
 #
+"""
+Project Admin
+"""
+__docformat__ = "restructuredtext en"
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _

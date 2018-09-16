@@ -4,7 +4,7 @@
 #
 
 """
-Supplier URLs.
+Supplier API URLs.
 """
 __docformat__ = "restructuredtext en"
 

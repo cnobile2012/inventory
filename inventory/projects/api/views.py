@@ -2,6 +2,10 @@
 #
 # inventory/projects/api/views.py
 #
+"""
+Project API Views
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 

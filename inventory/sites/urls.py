@@ -2,6 +2,10 @@
 #
 # inventory/sites/urls.py
 #
+"""
+Site URLs
+"""
+__docformat__ = "restructuredtext en"
 
 from django.urls import re_path
 

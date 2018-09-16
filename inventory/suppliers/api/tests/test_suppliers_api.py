@@ -14,10 +14,10 @@ from inventory.suppliers.models import Supplier
 class TestSupplierAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestSupplierAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestSupplierAPI, self).setUp()
+        super().setUp()
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
         kwargs = {'public_id': self.project.public_id}
@@ -44,7 +44,8 @@ class TestSupplierAPI(BaseTest):
         method = 'get'
         supplier = self._create_supplier(self.project)
         uri = reverse('supplier-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(
+            uri, method, default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_supplier_list_with_invalid_permissions(self):
@@ -117,7 +118,8 @@ class TestSupplierAPI(BaseTest):
 
     def test_GET_supplier_detail_with_invalid_permissions(self):
         """
-        Test that a GET on the supplier_detail fails with invalid permissions.
+        Test that a GET on the supplier_detail fails with invalid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         supplier = self._create_supplier(self.project)
@@ -194,7 +196,8 @@ class TestSupplierAPI(BaseTest):
 
     def test_PATCH_supplier_detail_with_invalid_permissions(self):
         """
-        Test that a PATCH to supplier_detail fails with invalid permissions.
+        Test that a PATCH to supplier_detail fails with invalid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         supplier = self._create_supplier(self.project)
@@ -218,7 +221,8 @@ class TestSupplierAPI(BaseTest):
 
     def test_PATCH_supplier_detail_with_valid_permissions(self):
         """
-        Test that a PATCH to supplier_detail passes with valid permissions.
+        Test that a PATCH to supplier_detail passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         supplier = self._create_supplier(self.project)
@@ -247,7 +251,8 @@ class TestSupplierAPI(BaseTest):
 
     def test_DELETE_supplier_detail_with_invalid_permissions(self):
         """
-        Test that a DELETE to supplier_detail fails with invalid permissions.
+        Test that a DELETE to supplier_detail fails with invalid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'
@@ -259,7 +264,8 @@ class TestSupplierAPI(BaseTest):
 
     def test_DELETE_supplier_detail_with_valid_permissions(self):
         """
-        Test that a DELETE to supplier_detail pass' with valid permissions.
+        Test that a DELETE to supplier_detail pass' with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'delete'

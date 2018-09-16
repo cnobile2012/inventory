@@ -20,10 +20,10 @@ UserModel = get_user_model()
 class TestInventoryType(BaseTest):
 
     def __init__(self, name):
-        super(TestInventoryType, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestInventoryType, self).setUp()
+        super().setUp()
         # Create an InventoryType and a Project.
         self.in_type = self._create_inventory_type()
         kwargs = {'public_id': self.in_type.public_id}
@@ -154,7 +154,8 @@ class TestInventoryType(BaseTest):
 
     def test_POST_inventory_type_list_with_valid_permissions(self):
         """
-        Test that a POST to inventory-type-list passes with valid permissions.
+        Test that a POST to inventory-type-list passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -207,7 +208,8 @@ class TestInventoryType(BaseTest):
 
     def test_GET_inventory_type_detail_with_valid_permissions(self):
         """
-        Test that a GET to inventory-type-detail passes with valid permissions.
+        Test that a GET to inventory-type-detail passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -217,7 +219,8 @@ class TestInventoryType(BaseTest):
 
     def test_PUT_inventory_type_detail_with_invalid_permissions(self):
         """
-        Test that a PUT to inventory-type-detail fails with invalid permissions.
+        Test that a PUT to inventory-type-detail fails with invalid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -239,7 +242,8 @@ class TestInventoryType(BaseTest):
 
     def test_PUT_inventory_type_detail_with_valid_permissions(self):
         """
-        Test that a PUT to inventory-type-detail passes with valid permissions.
+        Test that a PUT to inventory-type-detail passes with valid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -342,10 +346,10 @@ class TestInventoryType(BaseTest):
 class TestProject(BaseTest):
 
     def __init__(self, name):
-        super(TestProject, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestProject, self).setUp()
+        super().setUp()
         # Create an InventoryType and a Project.
         self.in_type = self._create_inventory_type()
         kwargs = {'public_id': self.in_type.public_id}
@@ -478,7 +482,8 @@ class TestProject(BaseTest):
 
     def test_GET_project_detail_with_invalid_permissions(self):
         """
-        Test that a GET on the project-detail fails with invalid permissions.
+        Test that a GET on the project-detail fails with invalid
+        permissions.
         """
         #self.skipTest("Temporarily skipped")
         method = 'get'
@@ -700,7 +705,8 @@ class TestProject(BaseTest):
             self.project_uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         error_key = 'inventory_type_public_id'
         msg = "Should have error with key '{}'".format(error_key)
         self.assertTrue(self._has_error(response, error_key=error_key), msg)
@@ -714,7 +720,8 @@ class TestProject(BaseTest):
             self.project_uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         error_key = 'non_field_errors'
         msg = "Should have error with key '{}'".format(error_key)
         #self.assertTrue(self._has_error(response, error_key=error_key), msg)
@@ -747,7 +754,8 @@ class TestProject(BaseTest):
         response = client.post(uri, data=su, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='role'), msg)
         self._test_errors(response, tests={
             'role': "is not a valid user for setting a role."
@@ -765,7 +773,8 @@ class TestProject(BaseTest):
         response = client.post(uri, data=su, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='role'), msg)
         self._test_errors(response, tests={
             'role': " is not a valid role."
@@ -775,7 +784,8 @@ class TestProject(BaseTest):
         response = client.post(uri, data=su, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='role'), msg)
         self._test_errors(response, tests={
             'role': "The user project role '' is not valid."
@@ -784,7 +794,8 @@ class TestProject(BaseTest):
         response = client.post(uri, data=su, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='role'), msg)
         self._test_errors(response, tests={
             'role': "The user project role 'None' is not valid."

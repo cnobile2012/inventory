@@ -16,10 +16,10 @@ UserModel = get_user_model()
 class TestInventoryType(BaseTest):
 
     def __init__(self, name):
-        super(TestInventoryType, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestInventoryType, self).setUp()
+        super().setUp()
 
     def test_str(self):
         """
@@ -36,10 +36,10 @@ class TestInventoryType(BaseTest):
 class TestProject(BaseTest):
 
     def __init__(self, name):
-        super(TestProject, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestProject, self).setUp()
+        super().setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 
@@ -193,10 +193,10 @@ class TestProject(BaseTest):
 class TestMembership(BaseTest):
 
     def __init__(self, name):
-        super(TestMembership, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestMembership, self).setUp()
+        super().setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 

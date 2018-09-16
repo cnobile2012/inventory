@@ -28,7 +28,6 @@ class CountryManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Country(StatusModelMixin):
     """
     This model implements country codes.
@@ -43,7 +42,7 @@ class Country(StatusModelMixin):
     objects = CountryManager()
 
     def save(self, *args, **kwargs):
-        super(Country, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "{} ({})".format(self.country, self.code)
@@ -61,7 +60,6 @@ class SubdivisionManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Subdivision(StatusModelMixin):
     """
     This model implements country subdivision codes.
@@ -80,7 +78,7 @@ class Subdivision(StatusModelMixin):
     objects = SubdivisionManager()
 
     def save(self, *args, **kwargs):
-        super(Subdivision, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.subdivision_name
@@ -99,7 +97,6 @@ class LanguageManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Language(StatusModelMixin, ValidateOnSaveMixin, models.Model):
     """
     This model implements language codes.
@@ -121,7 +118,7 @@ class Language(StatusModelMixin, ValidateOnSaveMixin, models.Model):
             self.locale = "{}-{}".format(self.code, self.country.code.upper())
 
     def save(self, *args, **kwargs):
-        super(Language, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.locale
@@ -139,7 +136,6 @@ class TimeZoneManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class TimeZone(StatusModelMixin):
     """
     This model implements timezone codes.
@@ -160,7 +156,7 @@ class TimeZone(StatusModelMixin):
     objects = TimeZoneManager()
 
     def save(self, *args, **kwargs):
-        super(TimeZone, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.zone
@@ -179,7 +175,6 @@ class CurrencyManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Currency(StatusModelMixin):
     """
     This model implements currency codes.

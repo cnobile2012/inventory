@@ -36,12 +36,11 @@ class InventoryTypeManager(models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
                     models.Model):
     public_id = models.CharField(
-        verbose_name=_("Public Inventory Type ID"), max_length=30, unique=True,
-        blank=True,
+        verbose_name=_("Public Inventory Type ID"), max_length=30,
+        unique=True, blank=True,
         help_text=_("Public ID to identify an individual inventory type."))
     name = models.CharField(
         verbose_name=_("Inventory Type"), max_length=250,
@@ -59,7 +58,7 @@ class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
             self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
-        super(InventoryType, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -77,7 +76,6 @@ class ProjectManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
               ValidateOnSaveMixin, models.Model):
     """
@@ -125,7 +123,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
             self.active = True
 
     def save(self, *args, **kwargs):
-        super(Project, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -228,7 +226,6 @@ class MembershipManager(models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Membership(ValidateOnSaveMixin, models.Model):
     PROJECT_USER = 0
     PROJECT_OWNER = 1
@@ -261,7 +258,7 @@ class Membership(ValidateOnSaveMixin, models.Model):
             raise ValidationError(msg)
 
     def save(self, *args, **kwargs):
-        super(Membership, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "{} ({})".format(self.user.get_full_name_reversed(),
