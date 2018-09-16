@@ -25,10 +25,10 @@ class TestCategoryModel(BaseTest):
     _TEST_PASSWORD = 'TestPassword_007'
 
     def __init__(self, name):
-        super(TestCategoryModel, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestCategoryModel, self).setUp()
+        super().setUp()
         self.inventory_type = self._create_inventory_type()
         self.project = self._create_project(self.inventory_type)
 

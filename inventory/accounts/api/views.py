@@ -2,6 +2,10 @@
 #
 # inventory/accounts/api/views.py
 #
+"""
+Account API Views
+"""
+__docformat__ = "restructuredtext en"
 
 import logging
 

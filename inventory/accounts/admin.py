@@ -85,7 +85,8 @@ class AnswerAdmin(UserAdminMixin, admin.ModelAdmin):
                        'fields': ('creator', 'created', 'updater',
                                   'updated',)}),
         )
-    readonly_fields = ('public_id', 'creator', 'created', 'updater', 'updated',)
+    readonly_fields = ('public_id', 'creator', 'created', 'updater',
+                       'updated',)
     list_display = ('question', 'user', 'updater_producer', 'updated',)
     list_filter = ('user__username',)
     search_fields = ('user__username', 'question__question', 'public_id',)

@@ -20,19 +20,19 @@ class BaseAccount(BaseTest):
     DEFAULT_ANSWER = "Tesla Model S"
 
     def __init__(self, name):
-        super(BaseAccount, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(BaseAccount, self).setUp()
+        super().setUp()
 
 
 class TestUserAPI(BaseAccount):
 
     def __init__(self, name):
-        super(TestUserAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestUserAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
@@ -53,7 +53,8 @@ class TestUserAPI(BaseAccount):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='is_active'), msg)
         self._test_errors(response, tests={
             'is_active': "have permission to change the 'is_active' field.",
@@ -65,7 +66,8 @@ class TestUserAPI(BaseAccount):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='is_staff'), msg)
         self._test_errors(response, tests={
             'is_staff': "have permission to change the 'is_staff' field.",
@@ -79,7 +81,8 @@ class TestUserAPI(BaseAccount):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
             self._has_error(response, error_key='role'), msg)
         self._test_errors(response, tests={
@@ -94,7 +97,8 @@ class TestUserAPI(BaseAccount):
             uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
             self._has_error(response, error_key='is_superuser'), msg)
         self._test_errors(response, tests={
@@ -528,19 +532,19 @@ class TestUserAPI(BaseAccount):
 ## class TestGroupAPI(BaseTest):
 
 ##     def __init__(self, name):
-##         super(TestGroupAPI, self).__init__(name)
+##         super().__init__(name)
 
 ##     def setUp(self):
-##         super(TestGroupAPI, self).setUp()
+##         super().setUp()
 
 
 class TestQuestionAPI(BaseAccount):
 
     def __init__(self, name):
-        super(TestQuestionAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestQuestionAPI, self).setUp()
+        super().setUp()
 
     def test_GET_question_list_with_invalid_permissions(self):
         """
@@ -561,7 +565,8 @@ class TestQuestionAPI(BaseAccount):
         method = 'get'
         question = self._create_question(self.DEFAULT_QUESTION)
         uri = reverse('question-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(
+            uri, method, default_user=False)
 
     def test_POST_question_list_with_invalid_permissions(self):
         """
@@ -769,10 +774,10 @@ class TestQuestionAPI(BaseAccount):
 class TestAnswerAPI(BaseAccount):
 
     def __init__(self, name):
-        super(TestAnswerAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestAnswerAPI, self).setUp()
+        super().setUp()
         self.user_uri = reverse('user-detail',
                       kwargs={'public_id': self.user.public_id})
 
@@ -797,7 +802,8 @@ class TestAnswerAPI(BaseAccount):
         question = self._create_question(self.DEFAULT_QUESTION)
         answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
         uri = reverse('answer-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(
+            uri, method, default_user=False)
 
     def test_POST_answer_list_with_invalid_permissions(self):
         """
@@ -1059,10 +1065,10 @@ class TestAnswerAPI(BaseAccount):
 class TestLoginAPI(BaseAccount):
 
     def __init__(self, name):
-        super(TestLoginAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestLoginAPI, self).setUp()
+        super().setUp()
 
     def test_GET_login_with_invalid_method(self):
         """
@@ -1111,7 +1117,8 @@ class TestLoginAPI(BaseAccount):
                                     **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
     def test_POST_logout(self):
         """

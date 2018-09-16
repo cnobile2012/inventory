@@ -2,6 +2,10 @@
 #
 # inventory/categories/api/urls.py
 #
+"""
+Category API URLs
+"""
+__docformat__ = "restructuredtext en"
 
 from django.urls import re_path
 

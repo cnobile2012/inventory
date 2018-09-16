@@ -225,7 +225,6 @@ class CategoryManager(models.Manager):
         return result
 
 
-@python_2_unicode_compatible
 class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
                models.Model):
     DEFAULT_SEPARATOR = '>'
@@ -287,8 +286,8 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
             elif self.pk is None and Category.objects.filter(
                 name=self.name, project=self.project, level=0).count():
                 raise ValidationError(
-                    {'name': _("A root level category name [{}] already exists."
-                               ).format(self.name)})
+                    {'name': _("A root level category name [{}] already "
+                               "exists.").format(self.name)})
 
     def _get_category_path(self, current=True):
         parents = Category.objects.get_parents(self.project, self)
@@ -317,7 +316,7 @@ class Category(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
     parents_producer.short_description = _("Category Parents")
 
     def save(self, *args, **kwargs):
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # Fix all children if any.
         for child in self.children.all():

@@ -84,7 +84,6 @@ class UserManager(BaseUserManager):
                                  **extra_fields)
 
 
-@python_2_unicode_compatible
 class User(AbstractUser, ValidateOnSaveMixin, models.Model):
     DEFAULT_USER = 0
     ADMINISTRATOR = 1
@@ -167,7 +166,7 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
             raise ValidationError(msg)
 
     def save(self, *args, **kwargs):
-        super(User, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.get_full_name_reversed()
@@ -271,7 +270,6 @@ class QuestionManager(StatusModelManagerMixin, models.Manager):
         return self.active().exclude(pk__in=exclude_pks)
 
 
-@python_2_unicode_compatible
 class Question(TimeModelMixin, UserModelMixin, StatusModelMixin,
                ValidateOnSaveMixin, models.Model):
 
@@ -291,7 +289,7 @@ class Question(TimeModelMixin, UserModelMixin, StatusModelMixin,
             self.public_id = generate_public_key()
 
     def save(self, *args, **kwargs):
-        super(Question, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.question
@@ -309,7 +307,6 @@ class AnswerManager(models.Manager):
     pass
 
 
-@python_2_unicode_compatible
 class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
              models.Model):
     ANSWER_SALT = "inventory.accounts.models.Answer.clean"
@@ -344,7 +341,7 @@ class Answer(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
             self.answer = hash_value
 
     def save(self, *args, **kwargs):
-        super(Answer, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.question.question

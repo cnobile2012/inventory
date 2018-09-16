@@ -18,10 +18,10 @@ UserModel = get_user_model()
 class TestCategoryAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestCategoryAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestCategoryAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])
@@ -54,7 +54,8 @@ class TestCategoryAPI(BaseTest):
         method = 'get'
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-list')
-        self._test_users_with_valid_permissions(uri, method, default_user=False)
+        self._test_users_with_valid_permissions(
+            uri, method, default_user=False)
         self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_category_list_with_invalid_permissions(self):
@@ -350,7 +351,8 @@ class TestCategoryAPI(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
     def test_delimitor_in_category_name(self):
         """
@@ -365,7 +367,8 @@ class TestCategoryAPI(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, 'name'), msg)
         self._test_errors(response, tests={
             'name': u"A category name cannot ",
@@ -393,7 +396,8 @@ class TestCategoryAPI(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, 'name'), msg)
         self._test_errors(response, tests={
             'name': u"A category in this tree ",
@@ -415,7 +419,8 @@ class TestCategoryAPI(BaseTest):
         response = self.client.post(uri, new_data, format='json')
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, 'name'), msg)
         self._test_errors(response, tests={
             'name': u"A root level category name ",
@@ -475,10 +480,10 @@ class TestCategoryAPI(BaseTest):
 class TestCategoryCloneAPI(BaseTest):
 
     def __init__(self, name):
-        super(TestCategoryCloneAPI, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
-        super(TestCategoryCloneAPI, self).setUp()
+        super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         self.project = self._create_project(self.in_type, members=[self.user])

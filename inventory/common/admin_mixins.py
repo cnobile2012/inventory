@@ -34,7 +34,8 @@ class UserAdminMixin(object):
           form : Form
             Django form object.
           change : bool
-            If `True` the record was updated, if `False` the record was created.
+            If `True` the record was updated, if `False` the record was
+            created.
         """
         if change is False:
             obj.creator = request.user

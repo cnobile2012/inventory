@@ -19,7 +19,7 @@ UserModel = get_user_model()
 class BaseAccountModels(BaseTest):
 
     def __init__(self, name):
-        super(BaseAccountModels, self).__init__(name)
+        super().__init__(name)
 
     def setUp(self):
         super(BaseAccountModels, self).setUp()
@@ -30,7 +30,7 @@ class BaseAccountModels(BaseTest):
 class TestUser(BaseAccountModels):
 
     def __init__(self, name):
-        super(TestUser, self).__init__(name)
+        super().__init__(name)
 
     def test_create_superuser(self):
         """
@@ -262,7 +262,7 @@ class TestUser(BaseAccountModels):
 class TestQuestion(BaseAccountModels):
 
     def __init__(self, name):
-        super(TestQuestion, self).__init__(name)
+        super().__init__(name)
 
     def test_get_active_questions(self):
         """
@@ -284,7 +284,7 @@ class TestQuestion(BaseAccountModels):
 class TestAnswer(BaseAccountModels):
 
     def __init__(self, name):
-        super(TestAnswer, self).__init__(name)
+        super().__init__(name)
 
     def test_model_validation(self):
         """
