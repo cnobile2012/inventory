@@ -22,6 +22,11 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
     ]
 
+# Current site schema, URL and port.
+SITE_SCHEMA = 'http://'
+SITE_DOMAIN = 'localhost'
+SITE_PORT = 8000
+
 # email settings
 EMAIL_HOST = 'localhost'
 EMAIL_HOST_USER = ''

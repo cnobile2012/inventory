@@ -22,4 +22,4 @@ hiredis
 redis
 rest_condition
 pyyaml
-markdown
+markdown==2.6.11
