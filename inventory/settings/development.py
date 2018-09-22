@@ -33,6 +33,11 @@ DATABASES = {
 #KEY_PREFIX = 'dev'
 #KEY_FUNCTION = 'inventory.common.caching.make_key'
 
+# Current site schema, URL and port.
+SITE_SCHEMA = 'http://'
+SITE_DOMAIN = 'localhost'
+SITE_PORT = 8000
+
 # Add to the MIDDLEWARE here.
 MIDDLEWARE.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 

@@ -9,6 +9,12 @@ __docformat__ = "restructuredtext en"
 
 from IPy import IP
 
+from django.conf import settings
+
+
+__all__ = ('IPList', 'get_site_url',)
+
+
 class IPList(list):
     """
     Converts standard network address protocol to a list of valid IPs.
@@ -33,3 +39,11 @@ class IPList(list):
             pass
 
         return False
+
+
+def get_site_url(path=''):
+    port = settings.SITE_PORT
+    port = ':{}'.format(port) if port else ''
+    return "{}{}{}{}".format(settings.SITE_SCHEMA,
+                             settings.SITE_DOMAIN,
+                             port, path)

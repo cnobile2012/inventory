@@ -26,6 +26,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Where is the root of the site? This can be a root-relative URL.
 SITE_URL = '/'
 
+# Current site schema, URL and port.
+SITE_SCHEMA = 'https://'
+SITE_DOMAIN = 'inventory.tetrasys-design.net'
+SITE_PORT = ''
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
