@@ -35,7 +35,7 @@ DATABASES = {
 
 ALLOWED_HOSTS = [
     '.tetrasys-design.net',
-    '162.209.110.28',
+    '45.76.60.126',
     ]
 
 # email settings
