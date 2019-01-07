@@ -20,8 +20,7 @@ all	: tar
 
 .PHONY	: tar
 tar	: clean
-	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz --exclude=".svn" \
-          $(PACKAGE_DIR))
+	@(cd ..; tar -czvf $(PACKAGE_DIR).tar.gz $(PACKAGE_DIR))
 
 .PHONY	: coverage
 coverage: clean

@@ -125,7 +125,7 @@ MIDDLEWARE_CLASSES = [
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '/var/run/redis/redis.sock',
+        'LOCATION': '/var/run/redis/redis-server.sock',
         'OPTIONS': {
             'DB': 0,
             'PARSER_CLASS': 'redis.connection.HiredisParser',

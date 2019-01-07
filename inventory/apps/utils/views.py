@@ -42,11 +42,10 @@ class ViewBase(object):
     ##     # RFC-2616 states that: "All 1xx (informational), 204 (no content),
     ##     # and 304 (not modified) responses MUST NOT include a message-body".
     ##     if status in (100, 101, 102, 204, 304): return ''
-    ##     response = {}
-    ##     response['title'] = "%s %s" % (status, STATUS_CODES.get(
+    ##     context = {}
+    ##     context['title'] = "%s %s" % (status, STATUS_CODES.get(
     ##         status, 'Invalid Status'))
-    ##     response['message'] = str(message)
-    ##     context = Context(response)
+    ##     context['message'] = str(message)
     ##     self._log.debug("Context dump for %s: %s", self.__module__, context)
     ##     tmpl = loader.get_template('response.html')
     ##     return tmpl.render(context)

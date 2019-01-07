@@ -1,4 +1,4 @@
-django
+django==1.11.17
 django-redis-cache
 djangorestframework
 djangorestframework-xml
@@ -15,7 +15,7 @@ mysqlclient
 pytz
 Pillow
 
-redis
+redis==2.10.6
 rest_condition
 markdown
 

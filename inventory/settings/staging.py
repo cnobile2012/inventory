@@ -9,8 +9,9 @@ DATABASES = {
         'NAME': 'inventory',
         'USER': 'inventory',
         'PASSWORD': 'inventory',
-        'HOST': '',
-        'PORT': '',
+        'HOST': 'localhost',
+        #'HOST': '/var/run/mysqld/mysqld.sock',
+        'PORT': '3306',
          'OPTIONS': {
             'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
                              "SET default_storage_engine=INNODB;"),

@@ -6,7 +6,7 @@ import json
 import datetime, pytz
 
 from django.http import HttpResponse
-from django.template import Context, loader
+from django.template import loader
 from django.contrib.sessions.models import Session
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -29,19 +29,18 @@ class FrontPage(ViewBase):
         super(FrontPage, self).__init__(log)
 
     def __call__(self, request, *args, **kwargs):
-        response = {}
+        context = {}
         username = request.user.username
         self._setBreadcrumb(request, 'Home', '/')
         self._log.info("SERVER_NAME: %s", request.get_host())
 
         if username:
             tmpl = loader.get_template('frontPage_user.html')
-            response['user'] = username
+            context['user'] = username
         else:
             tmpl = loader.get_template('frontPage_login.html')
 
-        response['name'] = SITE_NAME
-        context = Context(response)
+        context['name'] = SITE_NAME
         self._log.debug("Context dump for %s: %s", self.__module__, context)
         return HttpResponse(tmpl.render(context))
 
@@ -55,7 +54,7 @@ class ProcessRegion(ViewBase):
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
-        response = {'valid': True}
+        context = {'valid': True}
 
         try:
             country, delimiter, code = \
@@ -80,19 +79,19 @@ class ProcessRegion(ViewBase):
 
             code = code.strip(')')
             record = Country.objects.get(country_code_2__iexact=code)
-            response['regions'] = [
+            context['regions'] = [
                 ("%s (%s: %s)" %
                 (m['region'], m['region_code'], m['primary_level']), m['id'])
                 for m in record.region_set.values()]
-            response['selected'] = selected
+            context['selected'] = selected
         except Exception as e:
             msg = "Failed to find region records"
             self._log.error(msg + ": %s", e)
-            response['valid'] = False
-            response['message'] = msg + "."
+            context['valid'] = False
+            context['message'] = msg + "."
 
-        self._log.debug("Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(json.dumps(response))
+        self._log.debug("Context dump for %s: %s", self.__module__, context)
+        return HttpResponse(json.dumps(context))
 
 
 ##############################

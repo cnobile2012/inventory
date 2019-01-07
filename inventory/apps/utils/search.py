@@ -9,7 +9,7 @@
 #----------------------------------
 
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.template import Context, loader
+from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
@@ -35,19 +35,19 @@ class SearchBase(ViewBase):
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
-        response = {}
-        response['name'] = SITE_NAME
-        response['user'] = request.user.username
-        response['action'] = self._action
+        context = {}
+        context['name'] = SITE_NAME
+        context['user'] = request.user.username
+        context['action'] = self._action
         title = referTitle = ''
 
         if isinstance(self._crumbData, tuple) and len(self._crumbData) == 3:
             title, referTitle, img = self._crumbData
             self._setBreadcrumb(request, title, self._action)
             breadcrumbs = self._getBreadcrumbs(request)
-            response['breadcrumb'] = {'pages': breadcrumbs, 'img': img}
+            context['breadcrumb'] = {'pages': breadcrumbs, 'img': img}
 
-        response['title'] = title
+        context['title'] = title
 
         if request.POST:
             form = self._getSearchForm(data=request.POST)
@@ -56,22 +56,21 @@ class SearchBase(ViewBase):
                 query = self._buildQuery(form)
                 records = self._getRecords(query)
                 self._log.debug("records: %s", records)
-                response['title'] = referTitle
+                context['title'] = referTitle
 
                 if records:
-                    response['records'] = []
+                    context['records'] = []
 
                     for record in records:
-                        response['records'].append(self._populateRow(record))
+                        context['records'].append(self._populateRow(record))
 
                     self._setBreadcrumb(request, referTitle, "")
-                    context = Context(response)
                     self._log.debug("Context dump for %s: %s",
                                     self.__module__, context)
                     tmpl = loader.get_template(self._referringPage)
                     return HttpResponse(tmpl.render(context))
                 else:
-                    response['message'] = "No records found"
+                    context['message'] = "No records found"
             ## else: # Error condition
         else:
             form = self._getSearchForm()
@@ -83,8 +82,7 @@ class SearchBase(ViewBase):
             active = form.fields.get('active')
             active.initial = False
 
-        response['form'] = form
-        context = Context(response)
+        context['form'] = form
         context.update(csrf(request))
         self._log.debug("Context dump for %s: %s", self.__module__, context)
         tmpl = loader.get_template(self._getSearchHTML())

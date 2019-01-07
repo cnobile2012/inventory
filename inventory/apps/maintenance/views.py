@@ -3,9 +3,9 @@
 #
 
 import json
-from django.http import HttpResponse, HttpResponseRedirect, \
-     HttpResponseBadRequest
-from django.template import Context, loader
+from django.http import (
+    HttpResponse, HttpResponseRedirect, HttpResponseBadRequest)
+from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.template.context_processors import csrf
@@ -27,20 +27,20 @@ class Confirm(ViewBase):
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
-        response = {}
+        context = {}
         self._log.debug(request.POST)
-        response['message'] = u"At least one box must be checked."
+        context['message'] = u"At least one box must be checked."
 
         if request.POST:
             pks = request.POST.getlist('pks')
-            response['valid'] = any(pks)
+            context['valid'] = any(pks)
 
-            if response['valid']:
-                response['message'] = u"Confirm your choices then click" + \
-                                      u" submit again."
+            if context['valid']:
+                context['message'] = u"Confirm your choices then click" + \
+                                     u" submit again."
 
-        self._log.debug(u"Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(json.dumps(response))
+        self._log.debug(u"Context dump for %s: %s", self.__module__, context)
+        return HttpResponse(json.dumps(context))
 
 
 class Delete(ViewBase):
@@ -50,27 +50,27 @@ class Delete(ViewBase):
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
-        response = {}
+        context = {}
         self._log.debug(request.POST)
-        response['message'] = u"No IDs sent from client."
+        context['message'] = u"No IDs sent from client."
 
         if request.POST:
             pks = request.POST.getlist('pks')
-            response['valid'] = any(pks)
+            context['valid'] = any(pks)
 
-            if response['valid']:
+            if context['valid']:
                 try:
                     self._deleteRecords(pks)
-                    response['message'] = u"The selected records" + \
+                    context['message'] = u"The selected records" + \
                                           u" have been deleted."
                 except DoesNotExist as e:
-                    response['message'] = unicode(str(e))
+                    context['message'] = unicode(str(e))
                 except Exception as e:
                     # Send error message
                     pass
 
-        self._log.debug(u"Context dump for %s: %s", self.__module__, response)
-        return HttpResponse(json.dumps(response))
+        self._log.debug(u"Context dump for %s: %s", self.__module__, context)
+        return HttpResponse(json.dumps(context))
 
     def _deleteRecords(self, pks):
         # Make the PKs integers.
@@ -143,37 +143,37 @@ class Location(ViewBase):
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
-        response = {}
+        context = {}
         self._log.debug(request.POST)
-        #response['message'] = u"At least one box must be checked."
+        #context['message'] = "At least one box must be checked."
         title = ''
 
         if isinstance(self._crumbData, tuple) and len(self._crumbData) == 2:
             title, img = self._crumbData
             self._setBreadcrumb(request, title, "/maintenance/location/")
             breadcrumbs = self._getBreadcrumbs(request)
-            response['breadcrumb'] = {'pages': breadcrumbs, 'img': img}
+            context['breadcrumb'] = {'pages': breadcrumbs, 'img': img}
 
-        response['title'] = title
+        context['title'] = title
 
         if request.POST:
             #pks = request.POST.getlist('pks')
-            #response['valid'] = any(pks)
+            #context['valid'] = any(pks)
 
-            #if response['valid']:
-            #    response['message'] = u"Confirm your choices then click" + \
-            #                          " submit again."
+            #if context['valid']:
+            #    context['message'] = "Confirm your choices then click" + \
+            #                         " submit again."
 
             self._log.debug(u"Context dump for %s: %s",
-                            self.__module__, response)
-            result = json.dumps(response)
+                            self.__module__, context)
+            result = json.dumps(context)
         else:
             form = LocationConfigForm()
-            response['form'] = form
+            context['form'] = form
             tmpl = loader.get_template("location.html")
-            context = Context(response)
             context.update(csrf(request))
-            self._log.debug("Context dump for %s: %s", self.__module__, context)
+            self._log.debug("Context dump for %s: %s",
+                            self.__module__, context)
             result = tmpl.render(context)
 
         return HttpResponse(result)

@@ -3,7 +3,7 @@
 #
 
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.template import Context, loader
+from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
@@ -31,9 +31,9 @@ class ReportsBase(ViewBase):
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
-        response = {}
-        response['name'] = SITE_NAME
-        response['user'] = request.user.username
+        context = {}
+        context['name'] = SITE_NAME
+        context['user'] = request.user.username
         pk = kwargs.get('pk')
         title = ''
 
@@ -47,16 +47,15 @@ class ReportsBase(ViewBase):
             title, img = self._crumbData
             self._setBreadcrumb(request, title, "")
             breadcrumbs = self._getBreadcrumbs(request)
-            response['breadcrumb'] = {'pages': breadcrumbs, 'img': img}
+            context['breadcrumb'] = {'pages': breadcrumbs, 'img': img}
 
-        response['title'] = title
-        self._populateRecord(response, pk)
-        context = Context(response)
+        context['title'] = title
+        self._populateRecord(context, pk)
         self._log.debug("Context dump for %s: %s", self.__module__, context)
         tmpl = loader.get_template(self._getRecordHTML())
         return HttpResponse(tmpl.render(context))
 
-    def _populateRecord(self, response, pk):
+    def _populateRecord(self, context, pk):
         msg = "_populateRecord() must be defined in the subclass."
         raise NotImplementedError(msg)
 
@@ -65,11 +64,10 @@ class ReportsBase(ViewBase):
         raise NotImplementedError(msg)
 
     def _makeErrorResponse(self, name, message):
-        response = {}
-        response['siteName'] = SITE_NAME
-        response['name'] = name
-        response['message'] = message
-        context = Context(response)
+        context = {}
+        context['siteName'] = SITE_NAME
+        context['name'] = name
+        context['message'] = message
         self._log.debug("Context dump for %s: %s", self.__module__, context)
         return loader.get_template('error.html')
 
@@ -79,12 +77,12 @@ class ItemRecord(ReportsBase):
     def __init__(self, *args, **kwargs):
         super(ItemRecord, self).__init__(*args, **kwargs)
 
-    def _populateRecord(self, response, pk):
-        response['edit'] = "/admin/items/item/%s/" % pk
+    def _populateRecord(self, context, pk):
+        context['edit'] = "/admin/items/item/%s/" % pk
         record = Item.objects.get(pk=int(pk))
-        response['item'] = self._getItemForm(record)
-        response['specset'] = self._getSpecForms(record)
-        response['costset'] = self._getCostForms(record)
+        context['item'] = self._getItemForm(record)
+        context['specset'] = self._getSpecForms(record)
+        context['costset'] = self._getCostForms(record)
 
     def _getRecordHTML(self):
         return 'itemRecord.html'
@@ -179,11 +177,11 @@ class DistributorRecord(BusinessRecordBase):
     def __init__(self, *args, **kwargs):
         super(DistributorRecord, self).__init__(*args, **kwargs)
 
-    def _populateRecord(self, response, pk):
-        response['edit'] = "/admin/items/distributor/%s/" % pk
-        response['business'] = "Distributor"
+    def _populateRecord(self, context, pk):
+        context['edit'] = "/admin/items/distributor/%s/" % pk
+        context['business'] = "Distributor"
         record = Distributor.objects.get(pk=int(pk))
-        response['item'] = self._getBusinessForm(record)
+        context['item'] = self._getBusinessForm(record)
 
 
 class ManufacturerRecord(BusinessRecordBase):
@@ -191,11 +189,11 @@ class ManufacturerRecord(BusinessRecordBase):
     def __init__(self, *args, **kwargs):
         super(ManufacturerRecord, self).__init__(*args, **kwargs)
 
-    def _populateRecord(self, response, pk):
-        response['edit'] = "/admin/items/manufacturer/%s/" % pk
-        response['business'] = "Manufacturer"
+    def _populateRecord(self, context, pk):
+        context['edit'] = "/admin/items/manufacturer/%s/" % pk
+        context['business'] = "Manufacturer"
         record = Manufacturer.objects.get(pk=int(pk))
-        response['item'] = self._getBusinessForm(record)
+        context['item'] = self._getBusinessForm(record)
 
 
 ##############################
