@@ -55,6 +55,9 @@ class UserModelMixin(models.Model):
         :param args: Positional arguments.
         :param kwargs: Keyword arguments.
         """
+        if self.creator is not None:
+            kwargs.pop('creator', None)
+
         super().save(*args, **kwargs)
 
     def updater_producer(self):
