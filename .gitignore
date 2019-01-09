@@ -4,6 +4,7 @@
 *#*#
 .DS_Store
 *.txt
+.coverage.*
 !base.txt
 !development.txt
 !production.txt

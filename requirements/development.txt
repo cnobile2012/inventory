@@ -2,6 +2,7 @@
 -r base.txt
 
 coverage
+tblib
 django_debug_toolbar
 django-extensions
 IPy

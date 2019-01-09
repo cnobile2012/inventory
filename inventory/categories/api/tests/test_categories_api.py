@@ -744,12 +744,12 @@ class TestCategoryCloneAPI(BaseTest):
         user, client = self._create_user(**kwargs)
         self.project.process_members([self.user, user])
         self.project.set_role(user, Membership.PROJECT_USER)
-        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        status_code = status.HTTP_400_BAD_REQUEST
+        response = client.get(uri, data=data, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-        self.assertEqual(
-            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
+            response.status_code, status_code, response.data)
+        self.assertEqual(response.status_code, status_code, msg)
         self.assertTrue(self._has_error(response, error_key='categories'), msg)
         self._test_errors(response, tests={
-            'categories': "The list of categories is empty.",
+            'categories': "This field is required.",
             })
