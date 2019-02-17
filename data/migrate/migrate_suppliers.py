@@ -77,7 +77,7 @@ class MigrateSupplier(MigrateBase):
 
             for idx, supplier in enumerate(suppliers, start=1):
                 for record in supplier:
-                    name = record.name.strip().encode('utf-8')
+                    name = self._process_field(record.name)
 
                     if hasattr(record, 'country') and record.country:
                         country_code_2 = record.country.country_code_2.encode(
@@ -97,23 +97,39 @@ class MigrateSupplier(MigrateBase):
                     else:
                         stype = idx
 
+                    address_01 = self._process_field(record.address_01)
+                    address_02 = self._process_field(record.address_02)
+                    city = self._process_field(record.city)
+                    postal_code = self._process_field(
+                        record.postal_code, encode=False)
+                    phone = self._process_field(record.phone)
+                    fax = self._process_field(record.fax)
+                    email = self._process_field(record.email)
+                    url = self._process_field(record.url)
+                    username = self._process_field(
+                        record.user.username, encode=False)
+
                     writer.writerow([
                         name,
-                        record.address_01.strip().encode('utf-8'),
-                        record.address_02.strip().encode('utf-8'),
-                        record.city.strip().encode('utf-8'),
+                        address_01,
+                        address_02,
+                        city,
                         region_code,
-                        record.postal_code.strip(),
+                        postal_code,
                         country_code_2,
-                        record.phone.strip().encode('utf-8'),
-                        record.fax.strip().encode('utf-8'),
-                        record.email.strip().encode('utf-8'),
-                        record.url.strip().encode('utf-8'),
+                        phone,
+                        fax,
+                        email,
+                        url,
                         stype,
-                        record.user.username.strip(),
+                        username,
                         record.ctime.isoformat(),
                         record.mtime.isoformat()
                         ])
+
+    def _process_field(self, field, encode=True):
+        field = field.strip() if field else ''
+        return field.encode('utf-8') if encode else field
 
     def _create_supplier(self, project):
         with open(self._SUPPLIER, mode='r') as csvfile:

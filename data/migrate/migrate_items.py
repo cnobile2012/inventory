@@ -165,12 +165,16 @@ class MigrateItem(MigrateBase):
                 cats = ','.join([cat.name
                                  for cat in record.categories.all()
                                  if cat])
+                title = self._process_field(record.title)
+                item_number = self._process_field(record.item_number)
+                item_number_mfg = self._process_field(record.item_number_mfg)
+                item_number_dst = self._process_field(record.item_number_dst)
 
                 writer.writerow([
-                    record.title.encode('utf-8'),
-                    record.item_number.encode('utf-8'),
-                    record.item_number_mfg.encode('utf-8'),
-                    record.item_number_dst.encode('utf-8'),
+                    title,
+                    item_number,
+                    item_number_mfg,
+                    item_number_dst,
                     record.quantity,
                     lcs,
                     cats,
@@ -184,12 +188,16 @@ class MigrateItem(MigrateBase):
                     ])
 
                 # Get the dynamic columns from the item record itself.
+                item_number = self._process_field(record.item_number)
+                notes = self._process_field(record.notes)
+                package = self._process_field(record.package)
+
                 dc = {
                     'Condition': record.condition,
-                    'item_number': record.item_number.encode('utf-8'),
-                    'Notes': record.notes.encode('utf-8'),
+                    'item_number': item_number,
+                    'Notes': notes,
                     'Obsolete': record.obsolete,
-                    'Package': record.package.encode('utf-8'),
+                    'Package': package,
                     }
 
                 # Add the dynamic columns from the specifications.
@@ -223,6 +231,10 @@ class MigrateItem(MigrateBase):
 
             sys.stdout.write("Processed a total of {} dynamic "
                              "columns.\n".format(idx))
+
+    def _process_field(self, field, encode=True):
+        field = field.strip() if field else ''
+        return field.encode('utf-8') if encode else field
 
     def __get_dynamic_column_keys(self, specifications):
         specs = {}
