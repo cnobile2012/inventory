@@ -232,10 +232,6 @@ class MigrateItem(MigrateBase):
             sys.stdout.write("Processed a total of {} dynamic "
                              "columns.\n".format(idx))
 
-    def _process_field(self, field, encode=True):
-        field = field.strip() if field else ''
-        return field.encode('utf-8') if encode else field
-
     def __get_dynamic_column_keys(self, specifications):
         specs = {}
 
@@ -274,12 +270,14 @@ class MigrateItem(MigrateBase):
             for record in Cost.objects.all():
                 date_acquired = (record.date_acquired.isoformat()
                                  if record.date_acquired else '')
+                invoice_number = self._process_field(record.invoice_number)
+                item_number = self._process_field(record.item.item_number)
                 writer.writerow([
                     record.value,
                     record.currency.currency if record.currency else '',
                     date_acquired,
-                    record.invoice_number.encode('utf-8'),
-                    record.item.item_number.encode('utf-8'),
+                    invoice_number,
+                    item_number,
                     record.distributor.name if record.distributor else '',
                     record.manufacturer.name if record.manufacturer else '',
                     record.user.username if record.user else '',
@@ -594,6 +592,10 @@ class MigrateItem(MigrateBase):
 
                     slug, location, order = slug_map.get(header, ('', '', 0))
                     item_obj.set_key_value(slug, value)
+
+    def _process_field(self, field, encode=True):
+        field = field.strip() if field else ''
+        return field.encode('utf-8') if encode else field
 
 
 if __name__ == '__main__':
