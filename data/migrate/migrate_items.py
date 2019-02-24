@@ -289,10 +289,11 @@ class MigrateItem(MigrateBase):
                     record.mtime.isoformat(),
                     ])
 
-                if (not (dst_name or mfg_name) or not invoice_number):
-                    print(("item_number: '{}', invoice_date: '{}' missing "
-                           "supplier or invoice_number").format(
-                              item_number, date_acquired))
+                if (not (dst_name or mfg_name) or not invoice_number
+                    or not date_acquired):
+                    print(("item_number: '{}', date_acquired: '{}' missing "
+                           "supplier, invoice_number, or date_acquired"
+                           ).format(item_number, date_acquired))
 
     def _create_invoice(self, project):
         with open(self._COST, mode='r') as csvfile:
