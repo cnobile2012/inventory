@@ -262,18 +262,28 @@ class MigrateItem(MigrateBase):
             for record in Cost.objects.all():
                 date_acquired = (record.date_acquired.isoformat()
                                  if record.date_acquired else '')
+                dst_name = (record.distributor.name if record.distributor
+                            else '')
+                mfg_name = (record.manufacturer.name if record.manufacturer
+                            else '')
                 writer.writerow([
                     record.value,
                     record.currency.currency if record.currency else '',
                     date_acquired,
                     record.invoice_number.encode('utf-8'),
                     record.item.item_number.encode('utf-8'),
-                    record.distributor.name if record.distributor else '',
-                    record.manufacturer.name if record.manufacturer else '',
+                    dst_name,
+                    mfg_name,
                     record.user.username if record.user else '',
                     record.ctime.isoformat(),
                     record.mtime.isoformat(),
                     ])
+
+                if (not (dst_name or mfg_name) or not invoice_number
+                    or not date_acquired):
+                    print(("item_number: '{}', date_acquired: '{}' missing "
+                           "supplier, invoice_number, or date_acquired"
+                           ).format(item_number, date_acquired))
 
     def _create_invoice(self, project):
         with open(self._COST, mode='r') as csvfile:
@@ -308,9 +318,11 @@ class MigrateItem(MigrateBase):
                     else:
                         supplier = None
 
-                    #print("supplier: {}, item_number: {}, "
-                    #      "invoice_date: {}".format(supplier, item_number,
-                    #                                date_acquired))
+                    if not supplier or not invoice_number:
+                        print(("item_number '{}', date_acquired '{}' missing "
+                               "supplier or invoice_number").format(
+                                  item_number, date_acquired))
+                        continue
 
                     try:
                         obj = Invoice.objects.get(
