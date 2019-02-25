@@ -21,7 +21,8 @@ sys.path.append(MIGRATE_PATH)
 
 import django; django.setup()
 from django.utils import six
-from django.template.defaultfilters import slugify
+
+from dcolumn.common import create_field_name
 
 from migrate import setup_logger, MigrateBase
 
@@ -534,7 +535,7 @@ class MigrateItem(MigrateBase):
         return slug_map, dcolumns
 
     def __remap_key_names(self, keys):
-        slug_map = {key: [slugify(key)] for key in keys}
+        slug_map = {key: [create_field_name(key)] for key in keys}
         # This is the natural key not a category.
         slug_map.pop('item_number', '')
 
