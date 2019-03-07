@@ -46,26 +46,26 @@ class MigrateItem(MigrateBase):
     _DYNAMIC_COLUMN = 'dynamic_column.csv'
     _COLLECTION_NAME = "Inventory Items"
 
-    LOCATION_1 = "location_1"   # Item Related
-    LOCATION_2 = "location_2"   # Battery
-    LOCATION_3 = "location_3"   # Capacitor
-    LOCATION_4 = "location_4"   # Fan
-    LOCATION_5 = "location_5"   # General
-    LOCATION_6 = "location_6"   # Hardware
-    LOCATION_7 = "location_7"   # Inductor
-    LOCATION_8 = "location_8"   # Motor
-    LOCATION_9 = "location_9"   # Resistor
-    LOCATION_10 = "location_10" # Switch/Relay
-    LOCATION_11 = "location_11" # Wire
-    ORDER_1 = 1
-    ORDER_2 = 2
-    ORDER_3 = 3
-    ORDER_4 = 4
-    ORDER_5 = 5
-    ORDER_6 = 6
-    ORDER_7 = 7
-    ORDER_8 = 8
-    ORDER_9 = 9
+    LOCATION_01 = "location_01"   # Item Related
+    LOCATION_02 = "location_02"   # Battery
+    LOCATION_03 = "location_03"   # Capacitor
+    LOCATION_04 = "location_04"   # Fan
+    LOCATION_05 = "location_05"   # General
+    LOCATION_06 = "location_06"   # Hardware
+    LOCATION_07 = "location_07"   # Inductor
+    LOCATION_08 = "location_08"   # Motor
+    LOCATION_09 = "location_09"   # Resistor
+    LOCATION_10 = "location_10"   # Switch/Relay
+    LOCATION_11 = "location_11"   # Wire
+    ORDER_01 = 1
+    ORDER_02 = 2
+    ORDER_03 = 3
+    ORDER_04 = 4
+    ORDER_05 = 5
+    ORDER_06 = 6
+    ORDER_07 = 7
+    ORDER_08 = 8
+    ORDER_09 = 9
     ORDER_10 = 10
     ORDER_11 = 11
     ORDER_12 = 12
@@ -82,42 +82,42 @@ class MigrateItem(MigrateBase):
     ORDER_23 = 23
 
     SPECS = {
-        'AWG': [LOCATION_11, ORDER_1],
-        'Amp Hours': [LOCATION_2, ORDER_1],
-        'CFM': [LOCATION_4, ORDER_1],
-        'Capacitance': [LOCATION_3, ORDER_1],
-        'Color': [LOCATION_5, ORDER_1],
-        'Condition': [LOCATION_1, ORDER_2],
-        'Configuration': [LOCATION_5, ORDER_2],
-        'Contacts': [LOCATION_5, ORDER_3],
-        'Current': [LOCATION_5, ORDER_4],
-        'Depth': [LOCATION_5, ORDER_5],
-        'Diameter': [LOCATION_5, ORDER_6],
-        'Dimensions': [LOCATION_5, ORDER_7],
-        'Height': [LOCATION_5, ORDER_8],
-        'Lead Spacing': [LOCATION_5, ORDER_9],
-        'Length': [LOCATION_5, ORDER_10],
-        'Material': [LOCATION_5, ORDER_11],
-        'Mount': [LOCATION_5, ORDER_12],
-        'Notes': [LOCATION_1, ORDER_1],
-        'Obsolete': [LOCATION_1, ORDER_3],
-        'Orientation': [LOCATION_5, ORDER_13],
-        'Package': [LOCATION_5, ORDER_14],
-        'Pins': [LOCATION_5, ORDER_15],
-        'Polarity': [LOCATION_5, ORDER_16],
-        'Positions': [LOCATION_10, ORDER_1],
-        'Power': [LOCATION_5, ORDER_17],
-        'Resistance': [LOCATION_9, ORDER_1],
-        'Shaft': [LOCATION_8, ORDER_1],
-        'Step Angle': [LOCATION_8, ORDER_2],
-        'Temperature': [LOCATION_5, ORDER_18],
-        'Thread': [LOCATION_6, ORDER_1],
-        'Tolerance': [LOCATION_5, ORDER_19],
-        'Turns': [LOCATION_7, ORDER_1],
-        'Type': [LOCATION_5, ORDER_20],
-        'Voltage': [LOCATION_5, ORDER_21],
-        'Weight': [LOCATION_5, ORDER_22],
-        'Width': [LOCATION_5, ORDER_23],
+        'AWG': [LOCATION_11, ORDER_01],
+        'Amp Hours': [LOCATION_02, ORDER_01],
+        'CFM': [LOCATION_04, ORDER_01],
+        'Capacitance': [LOCATION_03, ORDER_01],
+        'Color': [LOCATION_05, ORDER_01],
+        'Condition': [LOCATION_01, ORDER_02],
+        'Configuration': [LOCATION_05, ORDER_02],
+        'Contacts': [LOCATION_05, ORDER_03],
+        'Current': [LOCATION_05, ORDER_04],
+        'Depth': [LOCATION_05, ORDER_05],
+        'Diameter': [LOCATION_05, ORDER_06],
+        'Dimensions': [LOCATION_05, ORDER_07],
+        'Height': [LOCATION_05, ORDER_08],
+        'Lead Spacing': [LOCATION_05, ORDER_09],
+        'Length': [LOCATION_05, ORDER_10],
+        'Material': [LOCATION_05, ORDER_11],
+        'Mount': [LOCATION_05, ORDER_12],
+        'Notes': [LOCATION_01, ORDER_01],
+        'Obsolete': [LOCATION_01, ORDER_03],
+        'Orientation': [LOCATION_05, ORDER_13],
+        'Package': [LOCATION_05, ORDER_14],
+        'Pins': [LOCATION_05, ORDER_15],
+        'Polarity': [LOCATION_05, ORDER_16],
+        'Positions': [LOCATION_10, ORDER_01],
+        'Power': [LOCATION_05, ORDER_17],
+        'Resistance': [LOCATION_09, ORDER_01],
+        'Shaft': [LOCATION_08, ORDER_01],
+        'Step Angle': [LOCATION_08, ORDER_02],
+        'Temperature': [LOCATION_05, ORDER_18],
+        'Thread': [LOCATION_06, ORDER_01],
+        'Tolerance': [LOCATION_05, ORDER_19],
+        'Turns': [LOCATION_07, ORDER_01],
+        'Type': [LOCATION_05, ORDER_20],
+        'Voltage': [LOCATION_05, ORDER_21],
+        'Weight': [LOCATION_05, ORDER_22],
+        'Width': [LOCATION_05, ORDER_23],
         }
 
     def __init__(self, log, options):
