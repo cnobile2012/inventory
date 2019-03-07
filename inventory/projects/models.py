@@ -109,7 +109,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         help_text=_("Upload project logo image."))
     public = models.BooleanField(
         verbose_name=_("Public"), choices=PUBLIC_BOOL, default=YES,
-        help_text=_("Set to YES if this project is public else set to NO."))
+        help_text=_("Set to YES if this project is public."))
 
     objects = ProjectManager()
 

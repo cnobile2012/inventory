@@ -244,15 +244,15 @@ REST_FRAMEWORK = {
 LOGIN_URL = "/admin/"
 
 dcolumn_manager.register_css_containers(
-       (('location_1', 'location-1'),
-        ('location_2', 'location-2'),
-        ('location_3', 'location-3'),
-        ('location_4', 'location-4'),
-        ('location_5', 'location-5'),
-        ('location_6', 'location-6'),
-        ('location_7', 'location-7'),
-        ('location_8', 'location-8'),
-        ('location_9', 'location-9'),
+       (('location_01', 'location-01'),
+        ('location_02', 'location-02'),
+        ('location_03', 'location-03'),
+        ('location_04', 'location-04'),
+        ('location_05', 'location-05'),
+        ('location_06', 'location-06'),
+        ('location_07', 'location-07'),
+        ('location_08', 'location-08'),
+        ('location_09', 'location-09'),
         ('location_10', 'location-10'),
         ('location_11', 'location-11'),
         ))

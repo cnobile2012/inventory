@@ -83,7 +83,9 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
         (_("Category & Location"), {'fields': ('categories',
                                                'location_codes',)}),
         (_("Status"), {'classes': ('collapse',),
-                       'fields': ('column_collection', 'shared_projects',
+                        # BROKEN (Needs to be fixed)
+                       'fields': ('column_collection',
+                                  'shared_projects',
                                   'purge', 'active', 'creator', 'created',
                                   'updater', 'updated',)}),
         )
@@ -103,7 +105,12 @@ class ItemAdmin(UserAdminMixin, admin.ModelAdmin):
     date_hierarchy = 'created'
     save_as = True
     ordering = ('categories__path',)
-    form = ItemForm
+
+    ## def get_form(self, request, obj=None, **kwargs):
+    ##     if not self.has_change_permission(request, obj):
+    ##         return super().get_form(request, obj, **kwargs)
+
+    ##     return ItemForm
 
     ## def save_formset(self, request, form, formset, change):
     ##     instances = formset.save(commit=False)

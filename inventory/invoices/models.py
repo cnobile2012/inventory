@@ -323,7 +323,7 @@ class InvoiceItem(ValidateOnSaveMixin, models.Model):
         help_text=_("Item price."))
     process = models.BooleanField(
         verbose_name=_("Create Item"), choices=YES_NO, default=YES,
-        help_text=_("If 'Yes' an item is created from the invoice."))
+        help_text=_("If 'Yes' an inventory item is created from the invoice."))
     item = models.ForeignKey(
         Item, on_delete=models.SET_NULL, verbose_name=_("Item"), null=True,
         blank=True, related_name='invoice_items',

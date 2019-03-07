@@ -196,6 +196,5 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
                             'updated',)
         extra_kwargs = {
-            'active': {'help_text': _("Set to YES if this project is public "
-                                      "else set to NO.")}
+            'active': {'help_text': _("Set to YES if this project is active.")}
             }
