@@ -19,6 +19,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.html import format_html_join, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils import timezone
@@ -112,7 +113,8 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
         help_text=_("Photo of the individual."))
     send_email = models.BooleanField(
         verbose_name=_("Send Email"), choices=YES_NO, default=NO,
-        help_text=_("Set to YES if this individual needs to be sent an email."))
+        help_text=_("Set to YES if this individual needs to be sent "
+                    "an email."))
     need_password = models.BooleanField(
         verbose_name=_("Need Password"), choices=YES_NO, default=NO,
         help_text=_("Set to YES if this individual needs to reset their "
@@ -233,32 +235,34 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
     full_name_reversed_producer.short_description = _("User")
 
     def projects_producer(self):
-        return mark_safe("<br />".join(
-            [record.name for record in self.projects.all()]))
-    projects_producer.allow_tags = True
+        return format_html_join(
+            mark_safe("<br>"), '{}',
+            ((record.name,) for record in self.projects.all()))
     projects_producer.short_description = _("Projects")
 
     def image_url_producer(self):
         result = _("No Image URL")
 
         if self.picture and hasattr(self.picture, "url"):
-            result = ('<a href="{}">{}</a>').format(
+            result = format_html(
+                mark_safe('<a href="{}">{}</a>'),
                 self.picture.url, _("View Image"))
 
         return result
     image_url_producer.short_description = _("Image URL")
-    image_url_producer.allow_tags = True
 
     def image_thumb_producer(self):
         result = _("No Image")
 
         if self.picture:
-            result = ('<img src="{}" alt="{}" width="100" height="100"/>'
-                      ).format(self.picture.url, _("Cannot display image" ))
+            img = '<img src="{}" alt="{}" width="100" height="100"/>'
+            result = format_html(
+                mark_safe(img),
+                self.picture.url,
+                _("Cannot display image" ))
 
         return result
     image_thumb_producer.short_description = _("Thumb")
-    image_thumb_producer.allow_tags = True
 
 
 #

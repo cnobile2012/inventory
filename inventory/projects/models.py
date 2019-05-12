@@ -18,6 +18,8 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from inventory.common import generate_public_key
@@ -197,12 +199,12 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         result = _("No Image")
 
         if self.image:
-            result = ('<img src="{}" alt="{}" width="100" height="100"/>'
-                      ).format(self.image.url, _("Cannot display image" ))
+            img = '<img src="{}" alt="{}" width="100" height="100"/>'
+            result = format_html(mark_safe(img), self.image.url,
+                                 _("Cannot display image" ))
 
         return result
     image_thumb_producer.short_description = _("Thumb")
-    image_thumb_producer.allow_tags = True
 
 
 @receiver(post_save, sender=Project)

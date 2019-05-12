@@ -17,6 +17,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
+from django.utils.html import format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -159,15 +160,15 @@ class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
         verbose_name_plural = _("Items")
 
     def location_code_producer(self):
-        return mark_safe("<br />".join(
-            [record.path for record in self.location_codes.all()]))
-    location_code_producer.allow_tags = True
+        return format_html_join(
+            mark_safe("<br>"), '{}',
+            ((record.path,) for record in self.location_codes.all()))
     location_code_producer.short_description = _("Location Code")
 
     def category_producer(self):
-        return mark_safe("<br />".join(
-            [record.path for record in self.categories.all()]))
-    category_producer.allow_tags = True
+        return format_html_join(
+            mark_safe("<br>"), '{}',
+            ((record.path,) for record in self.categories.all()))
     category_producer.short_description = _("Categories")
 
     def process_location_codes(self, location_codes):

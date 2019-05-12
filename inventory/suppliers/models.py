@@ -13,6 +13,7 @@ import logging
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from inventory.common import generate_public_key
@@ -122,8 +123,7 @@ class Supplier(TimeModelMixin, UserModelMixin, StatusModelMixin,
         result = _("No URL")
 
         if self.url:
-            result = ('<a href="{0}">{0}</a>').format(self.url)
+            result = mark_safe('<a href="{0}">{0}</a>'.format(self.url))
 
         return result
     url_producer.short_description = _("Company URL")
-    url_producer.allow_tags = True
