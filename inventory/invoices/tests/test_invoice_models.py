@@ -135,7 +135,7 @@ class TestItem(BaseInvoice):
         item.process_location_codes([code_1, code_2, code_3])
         # Test for proper locations
         result = item.location_code_producer()
-        codes = '#:T01:C01R01<br />#:T02:C05R05<br />#:T03:C10R10'
+        codes = '#:T01:C01R01<br>#:T02:C05R05<br>#:T03:C10R10'
         msg = "Found: {}, should be: {}".format(result, codes)
         self.assertEqual(result, codes, msg)
 
@@ -155,7 +155,7 @@ class TestItem(BaseInvoice):
         cat_1 = categories[0][1][1][1] # 'TestLevel-2a'
         item.process_categories([cat_0, cat_1])
         # Test for proper categories
-        cats = ("TestLevel-0>TestLevel-1a>TestLevel-2a<br />"
+        cats = ("TestLevel-0>TestLevel-1a>TestLevel-2a<br>"
                 "TestLevel-0>TestLevel-1>TestLevel-2")
         result = item.category_producer()
         msg = "Found: {}, should be: {}".format(result, cats)
