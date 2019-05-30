@@ -175,49 +175,58 @@ class Item(CollectionBase, ValidateOnSaveMixin, models.Model):
         """
         Add and remove location_codes.
         """
-        if isinstance(location_codes, (list, tuple, models.QuerySet)):
-            wanted_pks = [inst.pk for inst in location_codes]
-            old_pks = [inst.pk for inst in self.location_codes.all()]
-            # Remove unwanted location_codes.
-            rem_pks = list(set(old_pks) - set(wanted_pks))
-            unwanted = self.location_codes.filter(pk__in=rem_pks)
-            self.location_codes.remove(*unwanted)
-            # Add new location_codes.
-            add_pks = list(set(wanted_pks) - set(old_pks))
-            wanted = [obj for obj in location_codes if obj.pk in add_pks]
-            self.location_codes.add(*wanted)
+        seq = (list, tuple, models.QuerySet)
+        assert isinstance(location_codes, seq), (
+            "The location_codes argument must be one of '{}', found '{}'."
+            ).format(seq, location_codes)
+        wanted_pks = [inst.pk for inst in location_codes]
+        old_pks = [inst.pk for inst in self.location_codes.all()]
+        # Remove unwanted location_codes.
+        rem_pks = list(set(old_pks) - set(wanted_pks))
+        unwanted = self.location_codes.filter(pk__in=rem_pks)
+        self.location_codes.remove(*unwanted)
+        # Add new location_codes.
+        add_pks = list(set(wanted_pks) - set(old_pks))
+        wanted = [obj for obj in location_codes if obj.pk in add_pks]
+        self.location_codes.add(*wanted)
 
     def process_categories(self, categories):
         """
         Add and remove categories.
         """
-        if isinstance(categories, (list, tuple, models.QuerySet)):
-            wanted_pks = [inst.pk for inst in categories]
-            old_pks = [inst.pk for inst in self.categories.all()]
-            # Remove unwanted categories.
-            rem_pks = list(set(old_pks) - set(wanted_pks))
-            unwanted = self.categories.filter(pk__in=rem_pks)
-            self.categories.remove(*unwanted)
-            # Add new categories.
-            add_pks = list(set(wanted_pks) - set(old_pks))
-            wanted = [obj for obj in categories if obj.pk in add_pks]
-            self.categories.add(*wanted)
+        seq = (list, tuple, models.QuerySet)
+        assert isinstance(categories, seq), (
+            "The categories argument must be one of '{}', found '{}'."
+            ).format(seq, categories)
+        wanted_pks = [inst.pk for inst in categories]
+        old_pks = [inst.pk for inst in self.categories.all()]
+        # Remove unwanted categories.
+        rem_pks = list(set(old_pks) - set(wanted_pks))
+        unwanted = self.categories.filter(pk__in=rem_pks)
+        self.categories.remove(*unwanted)
+        # Add new categories.
+        add_pks = list(set(wanted_pks) - set(old_pks))
+        wanted = [obj for obj in categories if obj.pk in add_pks]
+        self.categories.add(*wanted)
 
     def process_shared_projects(self, shared_projects):
         """
         Add and remove shared projects.
         """
-        if isinstance(shared_projects, (list, tuple, models.QuerySet)):
-            wanted_pks = [inst.pk for inst in shared_projects if inst.public]
-            old_pks = [inst.pk for inst in self.shared_projects.all()]
-            # Remove unwanted shared projects.
-            rem_pks = list(set(old_pks) - set(wanted_pks))
-            unwanted = self.shared_projects.filter(pk__in=rem_pks)
-            self.shared_projects.remove(*unwanted)
-            # Add new shared projects.
-            add_pks = list(set(wanted_pks) - set(old_pks))
-            wanted = [obj for obj in shared_projects if obj.pk in add_pks]
-            self.shared_projects.add(*wanted)
+        seq = (list, tuple, models.QuerySet)
+        assert isinstance(shared_projects, seq), (
+            "The shared_projects argument must be one of '{}', found '{}'."
+            ).format(seq, shared_projects)
+        wanted_pks = [inst.pk for inst in shared_projects if inst.public]
+        old_pks = [inst.pk for inst in self.shared_projects.all()]
+        # Remove unwanted shared projects.
+        rem_pks = list(set(old_pks) - set(wanted_pks))
+        unwanted = self.shared_projects.filter(pk__in=rem_pks)
+        self.shared_projects.remove(*unwanted)
+        # Add new shared projects.
+        add_pks = list(set(wanted_pks) - set(old_pks))
+        wanted = [obj for obj in shared_projects if obj.pk in add_pks]
+        self.shared_projects.add(*wanted)
 
 dcolumn_manager.register_choice(Item, 2, 'sku')
 

@@ -86,7 +86,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         source='inventory_type.public_id', required=False)
     members = serializers.HyperlinkedRelatedField(
         view_name='user-detail', many=True, queryset=UserModel.objects.all(),
-        default=None, lookup_field='public_id')
+        default=[], lookup_field='public_id')
     image = serializers.ImageField(
         allow_empty_file=True, use_url=True, required=False,
         help_text=_("Upload project logo image."))

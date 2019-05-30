@@ -163,21 +163,24 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         """
         This method adds and removes members to the project.
         """
-        if isinstance(members, (list, tuple, models.QuerySet)):
-            UserModel = get_user_model()
-            wanted_pks = [inst.pk for inst in members]
-            old_pks = [inst.pk for inst in self.members.all()]
-            # Remove unwanted members.
-            rem_pks = list(set(old_pks) - set(wanted_pks))
-            rem_users = UserModel.objects.filter(pk__in=rem_pks)
-            Membership.objects.filter(
-                project=self, user__in=rem_users).delete()
-            # Add new members.
-            add_pks = list(set(wanted_pks) - set(old_pks))
+        seq = (list, tuple, models.QuerySet)
+        assert isinstance(members, seq), (
+            "The members argument must be one of '{}', found '{}'.").format(
+            seq, members)
+        UserModel = get_user_model()
+        wanted_pks = [inst.pk for inst in members]
+        old_pks = [inst.pk for inst in self.members.all()]
+        # Remove unwanted members.
+        rem_pks = list(set(old_pks) - set(wanted_pks))
+        rem_users = UserModel.objects.filter(pk__in=rem_pks)
+        Membership.objects.filter(
+            project=self, user__in=rem_users).delete()
+        # Add new members.
+        add_pks = list(set(wanted_pks) - set(old_pks))
 
-            for user in [obj for obj in members if obj.pk in add_pks]:
-                obj = Membership(project=self, user=user)
-                obj.save()
+        for user in [obj for obj in members if obj.pk in add_pks]:
+            obj = Membership(project=self, user=user)
+            obj.save()
 
     def has_authority(self, user):
         """

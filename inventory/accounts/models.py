@@ -211,20 +211,23 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
         """
         This method adds and removes projects to a member.
         """
-        if isinstance(projects, (list, tuple, models.QuerySet)):
-            wanted_pks = [inst.pk for inst in projects]
-            old_pks = [inst.pk for inst in self.projects.all()]
-            # Remove unwanted projects.
-            rem_pks = list(set(old_pks) - set(wanted_pks))
-            rem_prod = Project.objects.filter(pk__in=rem_pks)
-            Membership.objects.filter(
-                user=self, project__in=rem_prod).delete()
-            # Add new members.
-            add_pks = list(set(wanted_pks) - set(old_pks))
+        seq = (list, tuple, models.QuerySet)
+        assert isinstance(projects, seq), (
+            "The projects argument must be one of '{}', found '{}'.").format(
+            seq, projects)
+        wanted_pks = [inst.pk for inst in projects]
+        old_pks = [inst.pk for inst in self.projects.all()]
+        # Remove unwanted projects.
+        rem_pks = list(set(old_pks) - set(wanted_pks))
+        rem_prod = Project.objects.filter(pk__in=rem_pks)
+        Membership.objects.filter(
+            user=self, project__in=rem_prod).delete()
+        # Add new members.
+        add_pks = list(set(wanted_pks) - set(old_pks))
 
-            for project in [obj for obj in projects if obj.pk in add_pks]:
-                obj = Membership(user=self, project=project)
-                obj.save()
+        for project in [obj for obj in projects if obj.pk in add_pks]:
+            obj = Membership(user=self, project=project)
+            obj.save()
 
     def get_unused_questions(self):
         used_pks = [answer.question.pk for answer in self.answers.all()]

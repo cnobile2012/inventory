@@ -54,14 +54,14 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
         view_name='supplier-detail', default=None,
         queryset=Supplier.objects.all(), lookup_field='public_id')
     categories = serializers.HyperlinkedRelatedField(
-        view_name='category-detail', many=True, default=None,
+        view_name='category-detail', many=True, default=[],
         queryset=Category.objects.all(), lookup_field='public_id')
     location_codes = serializers.HyperlinkedRelatedField(
-        view_name='location-code-detail', many=True, default=None,
+        view_name='location-code-detail', many=True, default=[],
         queryset=LocationCode.objects.all(), lookup_field='public_id')
     shared_projects = serializers.HyperlinkedRelatedField(
         view_name='project-detail', many=True, queryset=Project.objects.all(),
-        default=None, lookup_field='public_id')
+        default=[], lookup_field='public_id')
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
