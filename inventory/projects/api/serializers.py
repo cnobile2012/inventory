@@ -115,7 +115,8 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
         except InventoryType.DoesNotExist:
             msg = _("Could not find {} with {} '{}'").format(
                 'InventoryType', 'public_id', value)
-            raise serializers.ValidationError(msg)
+            raise serializers.ValidationError(
+                {'inventory_type_public_id': msg})
 
         return obj
 
@@ -133,7 +134,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
             if not obj:
                 if not self.partial:
                     msg = _("Must choose a valid ").format("Inventory Type")
-                    raise serializers.ValidationError(msg)
+                    raise serializers.ValidationError({'inventory_type': msg})
 
         if role_data and ('user' in role_data and 'role' in role_data):
             username = role_data.get('user')

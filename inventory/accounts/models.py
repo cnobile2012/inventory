@@ -165,7 +165,7 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
             msg = _("Invalid user role, must be one of {}.").format(
                 self.ROLE_MAP.values())
             log.error(msg)
-            raise ValidationError(msg)
+            raise ValidationError({'role': msg})
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

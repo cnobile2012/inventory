@@ -404,9 +404,9 @@ class TestUserAPI(BaseAccount):
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
-            self._has_error(response, error_key='non_field_errors'), msg)
+            self._has_error(response, error_key='detail'), msg)
         self._test_errors(response, tests={
-            'non_field_errors': "You cannot update a user account on this ",
+            'detail': "You cannot update a user account on this ",
             })
 
     def test_PATCH_user_detail_with_invalid_permissions(self):

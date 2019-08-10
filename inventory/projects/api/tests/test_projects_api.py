@@ -722,7 +722,7 @@ class TestProject(BaseTest):
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
-        error_key = 'non_field_errors'
+        error_key = 'inventory_type'
         msg = "Should have error with key '{}'".format(error_key)
         #self.assertTrue(self._has_error(response, error_key=error_key), msg)
         self._test_errors(response, tests={

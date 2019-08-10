@@ -182,7 +182,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         msg = _("You cannot update a user account on this endpoint.")
-        raise serializers.ValidationError(msg)
+        raise serializers.ValidationError({'detail': msg})
 
     class Meta:
         model = UserModel
@@ -306,7 +306,7 @@ class LoginSerializer(serializers.Serializer):
 
         if not user:
             msg = _("The entered username and/or password is invalid.")
-            raise serializers.ValidationError(msg)
+            raise serializers.ValidationError({'username': msg})
 
         data['user'] = user
         return data

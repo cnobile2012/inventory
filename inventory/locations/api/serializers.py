@@ -147,7 +147,7 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
             and request.method not in ('GET', 'HEAD', 'OPTIONS')):
             msg = _("Segment is '{}', This is an unalterable root location."
                     ).format(LocationCode.ROOT_NAME)
-            raise serializers.ValidationError(msg)
+            raise serializers.ValidationError({'segment': msg})
 
         return value
 
@@ -224,7 +224,7 @@ class LocationCloneSerializer(SerializerMixin, serializers.Serializer):
         except Project.DoesNotExist:
             msg = _("A project with the {} '{}' does not exist.").format(
                 "public_id", value)
-            raise serializers.ValidationError(msg)
+            raise serializers.ValidationError({'project': msg})
         else:
             return project
 

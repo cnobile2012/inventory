@@ -260,7 +260,7 @@ class Membership(ValidateOnSaveMixin, models.Model):
             msg = _("Invalid project role, must be one of {}.").format(
                 self.ROLE_MAP.values())
             log.error(msg)
-            raise ValidationError(msg)
+            raise ValidationError({'role': msg})
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
