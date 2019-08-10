@@ -16,7 +16,7 @@ from rest_framework.serializers import ValidationError
 log = logging.getLogger('api.common.view_mixin')
 
 
-class TrapDjangoValidationErrorCreateMixin(object):
+class TrapDjangoValidationErrorCreateMixin:
 
     def perform_create(self, serializer):
         try:
@@ -25,7 +25,7 @@ class TrapDjangoValidationErrorCreateMixin(object):
             raise ValidationError(detail.message_dict)
 
 
-class TrapDjangoValidationErrorUpdateMixin(object):
+class TrapDjangoValidationErrorUpdateMixin:
 
     def perform_update(self, serializer):
         try:

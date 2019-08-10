@@ -17,7 +17,7 @@ UserModel = get_user_model()
 #
 # SerializerMixin
 #
-class SerializerMixin(object):
+class SerializerMixin:
 
     def get_request(self):
         return self.context.get('request', None)

@@ -12,7 +12,7 @@ import csv
 from django.utils import six
 
 
-class CountryParser(object):
+class CountryParser:
     LOWER_CASE = ('and', 'da', 'of', 'the',)
     UPPER_3RD_CHAR = ('mcd',)
 

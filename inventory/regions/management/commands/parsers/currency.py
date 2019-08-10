@@ -12,7 +12,7 @@ import csv
 from django.utils import six
 
 
-class CurrencyParser(object):
+class CurrencyParser:
 
     def __init__(self, filename):
         self._filename = filename

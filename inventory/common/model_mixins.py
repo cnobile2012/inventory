@@ -135,7 +135,7 @@ class TimeModelMixin(models.Model):
 #
 # StatusModel
 #
-class StatusModelManagerMixin(object):
+class StatusModelManagerMixin:
     """
     Manager mixin for the StatusModelMixin abstract model.
     """
@@ -184,7 +184,7 @@ class StatusModelMixin(models.Model):
 #
 # ValidateOnSaveMixin
 #
-class ValidateOnSaveMixin(object):
+class ValidateOnSaveMixin:
 
     def save(self, *args, **kwargs):
         """

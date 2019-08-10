@@ -10,7 +10,7 @@ __docformat__ = "restructuredtext en"
 import csv
 
 
-class LanguageParser(object):
+class LanguageParser:
 
     def __init__(self, filename):
         self._filename = filename

@@ -41,7 +41,7 @@ UserModel = get_user_model()
 #
 # Category
 #
-class CategoryAuthorizationMixin(object):
+class CategoryAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or

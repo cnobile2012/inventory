@@ -16,7 +16,7 @@ from django.contrib.admin.filters import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 
 
-class UserAdminMixin(object):
+class UserAdminMixin:
     """
     This mixin should be placed in the MRO of an admin class.
     """
@@ -44,7 +44,7 @@ class UserAdminMixin(object):
         super().save_model(request, obj, form, change)
 
 
-class UserInlineAdminMixin(object):
+class UserInlineAdminMixin:
     """
     This mixin shopuld be placed in the MRO of the parent admin class not
     the inline classes.

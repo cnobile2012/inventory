@@ -45,7 +45,7 @@ UserModel = get_user_model()
 #
 # User
 #
-class UserAuthorizationMixin(object):
+class UserAuthorizationMixin:
     serializers = {
         'default': UserSerializer,
         'public': PublicUserSerializer
@@ -113,7 +113,7 @@ user_detail = UserDetail.as_view()
 #
 # Group
 #
-## class GroupAuthorizationMixin(object):
+## class GroupAuthorizationMixin:
 
 ##     def get_queryset(self):
 ##         if (self.request.user.is_superuser or
@@ -210,7 +210,7 @@ question_detail = QuestionDetail.as_view()
 #
 # Answer
 #
-class AnswerAuthorizationMixin(object):
+class AnswerAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or

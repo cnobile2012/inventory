@@ -22,7 +22,7 @@ def remove_description(value):
     return result
 
 
-class TimezoneParser(object):
+class TimezoneParser:
 
     def __init__(self, filename):
         self._filename = filename

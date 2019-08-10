@@ -18,7 +18,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 log = logging.getLogger('inventory.common.key-generator')
 
 
-class KeyGenerator(object):
+class KeyGenerator:
     """
     Create various keys used in the system
     """

@@ -83,7 +83,7 @@ inventory_type_detail = InventoryTypeDetail.as_view()
 #
 # Project
 #
-class ProjectAuthorizationMixin(object):
+class ProjectAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or

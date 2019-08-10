@@ -33,7 +33,7 @@ def setup_logger(name='root', fullpath=None, fmt=None, level=logging.INFO):
     return logger
 
 
-class MigrateBase(object):
+class MigrateBase:
     _DEFAULT_USER = 'cnobile'
     _INVENTORY_NAME = "Electronics"
     _PROJECT_NAME = "Carl's Electronics Inventory"

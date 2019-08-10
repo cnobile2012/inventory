@@ -42,7 +42,7 @@ UserModel = get_user_model()
 #
 # LocationSetName
 #
-class LocationSetNameAuthorizationMixin(object):
+class LocationSetNameAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -106,7 +106,7 @@ location_set_name_detail = LocationSetNameDetail.as_view()
 #
 # LocationFormat
 #
-class LocationFormatAuthorizationMixin(object):
+class LocationFormatAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -172,7 +172,7 @@ location_format_detail = LocationFormatDetail.as_view()
 #
 # LocationCode
 #
-class LocationCodeAuthorizationMixin(object):
+class LocationCodeAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or

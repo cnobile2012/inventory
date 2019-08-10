@@ -62,7 +62,7 @@ filters.LOOKUP_TYPES = [
 #
 # Condition
 #
-class ConditionMixin(object):
+class ConditionMixin:
 
     def get_object(self):
         value = self.kwargs.get(self.lookup_field, None)
@@ -118,7 +118,7 @@ condition_detail = ConditionDetail.as_view()
 #
 # Item
 #
-class ItemAuthorizationMixin(object):
+class ItemAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -238,7 +238,7 @@ item_detail = ItemDetail.as_view()
 #
 # Invoice
 #
-class InvoiceAuthorizationMixin(object):
+class InvoiceAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -362,7 +362,7 @@ invoice_detail = InvoiceDetail.as_view()
 #
 # InvoiceItem
 #
-class InvoiceItemAuthorizationMixin(object):
+class InvoiceItemAuthorizationMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or

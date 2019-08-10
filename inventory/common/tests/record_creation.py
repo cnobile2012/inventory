@@ -14,7 +14,7 @@ from inventory.regions.models import (
 from inventory.suppliers.models import Supplier
 
 
-class RecordCreation(object):
+class RecordCreation:
     INV_TYPE_NAME = "Test Inventory"
     PROJECT_NAME = "My Test Project"
     LOCATION_SET_NAME = "Test Location Set Name"
