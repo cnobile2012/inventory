@@ -22,7 +22,7 @@ function buildSubmenus()
              * If this is a first level submenu
              *
              * Dynamically position first level submenus to be width of
-             * main menu item
+             * main menu item.
              */
             if (ultags[t].parentNode.parentNode.id == menuids[i])
                 {
@@ -35,12 +35,12 @@ function buildSubmenus()
             ultags[t].parentNode.onmouseover = function()
                 {
                 this.getElementsByTagName("ul")[0].style.display = "block";
-                }
+                };
 
             ultags[t].parentNode.onmouseout = function()
                 {
                 this.getElementsByTagName("ul")[0].style.display = "none";
-                }
+                };
             }
 
         /*
