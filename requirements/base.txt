@@ -19,7 +19,7 @@ pytz
 Pillow
 
 hiredis
-redis==2.10.6 # Change when django-redis-cache is updated.
+redis
 rest_condition
 pyyaml
-markdown==2.6.11
+markdown
