@@ -112,7 +112,7 @@ Utilities.prototype = {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
   },
 
-  setHeaders: function() {
+  setHeader: function() {
     var self = this;
 
     $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
