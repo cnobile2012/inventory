@@ -112,14 +112,18 @@ Utilities.prototype = {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
   },
 
-  setHeader: function() {
-    $.ajaxSetup({
-      crossDomain: false,
-      beforeSend: function(xhr, settings) {
-        if(!this._csrfSafeMethod(settings.type)) {
+  setHeaders: function() {
+    var self = this;
+
+    $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+      options.crossDomain = false;
+
+      // Set the Django CSRF token.
+      options.beforeSend = function(xhr, settings) {
+        if(!self._csrfSafeMethod(settings.type)) {
           xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
         }
-      }.bind(this)
+      }.bind(self);
     });
   },
 
@@ -141,9 +145,9 @@ Utilities.prototype = {
 
   mimicDjangoErrors: function(data, elm) {
     // Mimic Django error messages.
-    var ul = '<ul class="errorlist"></ul>';
-    var li = '<li></li>';
-    var $tag = null, $errorUl = null, $errorLi = null;
+      let ul = '<ul class="errorlist"></ul>',
+          li = '<li></li>',
+          $tag = null, $errorUl = null, $errorLi = null;
     $('ul.errorlist').remove();
 
     for(var key in data) {
@@ -177,6 +181,75 @@ Utilities.prototype = {
       return obj[key];
     }
   },
+
+  getMetaChoices: function(choices) {
+    let out = {};
+
+    for(let i = 0; i < choices.length; i++) {
+      out[choices[i].value] = choices[i].display_name;
+    }
+
+    return out;
+  },
+
+  assert: function(condition, message) {
+    if(!condition) {
+      message = message || "Assertion Error";
+
+      if(typeof Error !== (void 0)) {
+        throw new Error(message);
+      }
+
+      throw message; // If the Error exception does not exist.
+    }
+  },
+
+  arrayDiff: function(a1, a2) {
+    // https://stackoverflow.com/questions/1187518/how-to-get-the-difference-between-two-arrays-in-javascript
+    let a = [], diff = [];
+
+    for(let i = 0; i < a1.length; i++) {
+      a[a1[i]] = true;
+    }
+
+    for(let i = 0; i < a2.length; i++) {
+      if(a[a2[i]]) {
+        delete a[a2[i]];
+      } else {
+        a[a2[i]] = true;
+      }
+    }
+
+    for(let k in a) {
+      diff.push(k);
+    }
+
+    return diff;
+  },
+
+  arrayUnique: function(array) {
+    let a = array.concat();
+
+    for(let i = 0; i < a.length; ++i) {
+      for(let j = i + 1; j < a.length; ++j) {
+        if(a[i] === a[j]) {
+          a.splice(j--, 1);
+        }
+      }
+    }
+  },
+
+  arrayAdd: function(a1, a2) {
+    return this.arrayUnique(a1.concat(a2));
+  },
+
+  sleep: function(milliseconds) {
+    let start = new Date().getTime();
+
+    while((new Date().getTime() - start) < milliseconds);
+  },
+
+  // Inventory specific methods.
 
   setLogin: function() {
     if(!IS_AUTHENTICATED) {
