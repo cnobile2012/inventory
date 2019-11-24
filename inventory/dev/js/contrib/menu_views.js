@@ -1,7 +1,7 @@
 /*
  * Menu views
  *
- * js/views/menu_views.js
+ * js/contrib/menu_views.js
  *
  * See:
  * http://stackoverflow.com/questions/12908210/click-menu-item-to-highlight-in-backbone-view
@@ -103,8 +103,9 @@ App.Views.Menu = Backbone.View.extend({
 });
 
 
-// MENU VIEW ENTRY POINT
-// Project entry points
+/*
+  Examples:
+
 App.Views.ProjectItemMenu = App.Views.MenuItem.extend({
   toggle: false,
 
@@ -136,3 +137,4 @@ App.Views.ProjectMenu = Backbone.View.extend({
     this.$el.append(menu.render().el);
   }
 });
+*/

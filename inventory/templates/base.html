@@ -25,12 +25,13 @@
 {% compress js %}
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/template-loader.js' %}"></script>
+    <script src="{% static 'js/contrib/menu_model.js' %}"></script>
+    <script src="{% static 'js/contrib/menu_views.js' %}"></script>
     <script src="{% static 'js/models/base_meta_model.js' %}"></script>
     <script src="{% static 'js/models/account_models.js' %}"></script>
     <script src="{% static 'js/models/invoice_models.js' %}"></script>
     <script src="{% static 'js/models/login_model.js' %}"></script>
     <script src="{% static 'js/models/logout_model.js' %}"></script>
-    <script src="{% static 'js/models/menu_model.js' %}"></script>
     <script src="{% static 'js/models/root_model.js' %}"></script>
     <script src="{% static 'js/models/project_models.js' %}"></script>
     <script src="{% static 'js/views/base_modal_view.js' %}"></script>
@@ -39,7 +40,7 @@
     <script src="{% static 'js/views/project_views.js' %}"></script>
 
     <!-- Add all other views before the menu view. -->
-    <script src="{% static 'js/views/menu_views.js' %}"></script>
+    <script src="{% static 'js/views/inventory_menu_views.js' %}"></script>
 {% block js-extras %}{% endblock %}
 {% endcompress %}
     <link rel="stylesheet"
