@@ -5,13 +5,14 @@
 
 from rest_framework.reverse import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.regions.models import Country, Subdivision
 from inventory.suppliers.models import Supplier
 
 
-class TestSupplierAPI(BaseTest):
+class TestSupplierAPI(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)

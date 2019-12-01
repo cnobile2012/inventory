@@ -45,7 +45,8 @@ class IsAdminSuperUser(permissions.BasePermission):
         if user and user.is_superuser:
             result = True
 
-        log.debug("IsAdminSuperUser: %s", result)
+        log.debug("IsAdminSuperUser: %s, method: %s, user: %s, view: %s",
+                  result, request.method, user, view.__class__.__name__)
         return result
 
 
@@ -62,7 +63,8 @@ class IsAdministrator(permissions.BasePermission):
             user.role == UserModel.ADMINISTRATOR):
             result = True
 
-        log.debug("IsAdministrator: %s", result)
+        log.debug("IsAdministrator: %s, method: %s, user: %s, view: %s",
+                  result, request.method, user, view.__class__.__name__)
         return result
 
 
@@ -79,7 +81,8 @@ class IsDefaultUser(permissions.BasePermission):
             user.role == UserModel.DEFAULT_USER):
             result = True
 
-        log.debug("IsDefaultUser: %s", result)
+        log.debug("IsDefaultUser: %s, method: %s, user: %s, view: %s",
+                  result, request.method, user, view.__class__.__name__)
         return result
 
 
@@ -98,7 +101,8 @@ class IsAnyUser(permissions.BasePermission):
             UserModel.DEFAULT_USER, UserModel.ADMINISTRATOR))):
             result = True
 
-        log.debug("IsAnyUser: %s", result)
+        log.debug("IsAnyUser: %s, method: %s, user: %s, view: %s",
+                  result, request.method, user, view.__class__.__name__)
         return result
 
 
@@ -154,13 +158,15 @@ class IsProjectOwner(BaseProjectPermission):
 
     def has_permission(self, request, view):
         result = self.has_project_permission(request, Membership.PROJECT_OWNER)
-        log.debug("IsProjectOwner: %s", result)
+        log.debug("IsProjectOwner: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, Membership.PROJECT_OWNER)
-        log.debug("IsProjectOwner (object): %s", result)
+        log.debug("IsProjectOwner: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
 
@@ -172,13 +178,15 @@ class IsProjectManager(BaseProjectPermission):
     def has_permission(self, request, view):
         result = self.has_project_permission(
             request, Membership.PROJECT_MANAGER)
-        log.debug("IsProjectManager: %s", result)
+        log.debug("IsProjectManager: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, Membership.PROJECT_MANAGER)
-        log.debug("IsProjectManager (object): %s", result)
+        log.debug("IsProjectManager: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
 
@@ -190,13 +198,15 @@ class IsProjectDefaultUser(BaseProjectPermission):
     def has_permission(self, request, view):
         result = self.has_project_permission(
             request, Membership.PROJECT_USER)
-        log.debug("IsProjectDefaultUser: %s", result)
+        log.debug(": %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, Membership.PROJECT_USER)
-        log.debug("IsProjectDefaultUser (object): %s", result)
+        log.debug(": %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
 
@@ -208,13 +218,15 @@ class IsAnyProjectUser(BaseProjectPermission):
     def has_permission(self, request, view):
         result = self.has_project_permission(
             request, list(Membership.ROLE_MAP))
-        log.debug("IsAnyProjectUser: %s", result)
+        log.debug("IsAnyProjectUser: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, list(Membership.ROLE_MAP))
-        log.debug("IsAnyProjectUser (object): %s", result)
+        log.debug("IsAnyProjectUser: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
 
@@ -233,7 +245,8 @@ class IsReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             result = True
 
-        log.debug("IsReadOnly: %s", result)
+        log.debug("IsReadOnly: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
 
@@ -249,7 +262,8 @@ class IsUserActive(permissions.BasePermission):
         if user and user.is_active:
             result = True
 
-        log.debug("IsUserActive: %s, method: %s", result, request.method)
+        log.debug("IsUserActive: %s, method: %s, user: %s, view: %s",
+                  result, request.method, user, view.__class__.__name__)
         return result
 
 
@@ -266,7 +280,8 @@ class IsUserActive(permissions.BasePermission):
 ##         if user == instance:
 ##             result = True
 
-##         log.debug("IsUserRecord: %s", result)
+##         log.debug(": %s, method: %s, user: %s, view: %s",
+##                   result, request.method, user, view.__class__.__name__)
 ##         return result
 
 
@@ -281,7 +296,8 @@ class CanDelete(permissions.BasePermission):
         if request.method == 'DELETE':
             result = True
 
-        log.debug("CanDelete: %s", result)
+        log.debug("CanDelete: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result
 
 
@@ -296,5 +312,6 @@ class IsPostOnly(permissions.BasePermission):
         if request.method == 'POST':
             result = True
 
-        log.debug("IsPostOnly: %s", result)
+        log.debug("IsPostOnly: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user, view.__class__.__name__)
         return result

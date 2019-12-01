@@ -8,6 +8,7 @@ Category API Views
 __docformat__ = "restructuredtext en"
 
 import logging
+from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
@@ -19,6 +20,7 @@ from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 from rest_framework.mixins import DestroyModelMixin, CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -26,13 +28,16 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectOwner, IsProjectManager,
     IsProjectDefaultUser, IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.parsers import parser_factory
+from inventory.common.api.renderers import renderer_factory
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import Category
 
 from .serializers import (
-    CategorySerializer, CategoryItemSerializer, CategoryCloneSerializer)
+    CategorySerializerVer01, CategoryItemSerializerVer01,
+    CategoryCloneSerializerVer01)
 
 log = logging.getLogger('api.categories.views')
 UserModel = get_user_model()
@@ -41,7 +46,21 @@ UserModel = get_user_model()
 #
 # Category
 #
-class CategoryAuthorizationMixin:
+class CategoryMixin:
+    parser_classes = (parser_factory('categories')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('categories')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = CategorySerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = CategorySerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -55,13 +74,12 @@ class CategoryAuthorizationMixin:
         return result
 
 
-class CategoryList(CategoryAuthorizationMixin,
+class CategoryList(CategoryMixin,
                    TrapDjangoValidationErrorCreateMixin,
                    ListCreateAPIView):
     """
     Category list endpoint.
     """
-    serializer_class = CategorySerializer
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
@@ -78,13 +96,12 @@ class CategoryList(CategoryAuthorizationMixin,
 category_list = CategoryList.as_view()
 
 
-class CategoryDetail(CategoryAuthorizationMixin,
+class CategoryDetail(CategoryMixin,
                      TrapDjangoValidationErrorUpdateMixin,
                      RetrieveUpdateDestroyAPIView):
     """
     Category detail endpoint.
     """
-    serializer_class = CategorySerializer
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
@@ -110,7 +127,10 @@ class CategoryClone(TrapDjangoValidationErrorCreateMixin,
     """
     Retrives, clones, and deletes lists of categories.
     """
-    serializer_class = CategoryCloneSerializer
+    parser_classes = (parser_factory('category-clone')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('category-clone')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
@@ -122,6 +142,16 @@ class CategoryClone(TrapDjangoValidationErrorCreateMixin,
             ),
         )
 
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = CategoryCloneSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = CategoryCloneSerializerVer02
+
+        return serializer
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -132,7 +162,7 @@ class CategoryClone(TrapDjangoValidationErrorCreateMixin,
         result = []
 
         for item in queryset:
-            serializer = CategoryItemSerializer(
+            serializer = CategoryItemSerializerVer01(
                 item, many=True, context={'request': request})
             result.append(serializer.data)
 
@@ -150,7 +180,7 @@ class CategoryClone(TrapDjangoValidationErrorCreateMixin,
 
         # Return the flattened results.
         for item in self.flatten(data_list):
-            serializer = CategoryItemSerializer(
+            serializer = CategoryItemSerializerVer01(
                 item, many=False, context={'request': request})
             result.append(serializer.data)
 

@@ -8,6 +8,7 @@ Account API Views
 __docformat__ = "restructuredtext en"
 
 import logging
+from decimal import Decimal
 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model, login, logout
@@ -20,6 +21,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.settings import api_settings
 from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
 from rest_framework.views import APIView
 
@@ -30,13 +32,15 @@ from inventory.common.api.permissions import (
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
     IsUserActive, IsPostOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.parsers import parser_factory
+from inventory.common.api.renderers import renderer_factory
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import Question, Answer
 from .serializers import (
-    UserSerializer, PublicUserSerializer, QuestionSerializer, AnswerSerializer,
-    LoginSerializer)
+    UserSerializerVer01, PublicUserSerializerVer01, QuestionSerializerVer01,
+    AnswerSerializerVer01, LoginSerializerVer01)
 
 log = logging.getLogger('api.accounts.views')
 UserModel = get_user_model()
@@ -45,11 +49,11 @@ UserModel = get_user_model()
 #
 # User
 #
-class UserAuthorizationMixin:
-    serializers = {
-        'default': UserSerializer,
-        'public': PublicUserSerializer
-        }
+class UserMixin:
+    parser_classes = (parser_factory('users')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('users')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
 
     def get_serializer_class(self):
         serializer = None
@@ -57,9 +61,16 @@ class UserAuthorizationMixin:
         if (self.request.user.is_superuser
             or self.request.user.role == UserModel.ADMINISTRATOR
             or (self.kwargs and self.request.user == self.get_object())):
-            serializer = self.serializers.get('default')
+
+            if self.request.version == Decimal("1"):
+                serializer = UserSerializerVer01
+                # elif self.request.version == Decimal("2"):
+                #    serializer = UserSerializerVer02
         else:
-            serializer = self.serializers.get('public')
+            if self.request.version == Decimal("1"):
+                serializer = PublicUserSerializerVer01
+                # elif self.request.version == Decimal("2"):
+                #    serializer = PublicUserSerializerVer02
 
         return serializer
 
@@ -68,7 +79,7 @@ class UserAuthorizationMixin:
 
 
 class UserList(TrapDjangoValidationErrorCreateMixin,
-               UserAuthorizationMixin,
+               UserMixin,
                ListCreateAPIView):
     """
     User list endpoint.
@@ -93,7 +104,7 @@ user_list = UserList.as_view()
 
 
 class UserDetail(TrapDjangoValidationErrorUpdateMixin,
-                 UserAuthorizationMixin,
+                 UserMixin,
                  RetrieveUpdateAPIView):
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
@@ -113,7 +124,16 @@ user_detail = UserDetail.as_view()
 #
 # Group
 #
-## class GroupAuthorizationMixin:
+## class GroupMixin:
+##     def get_serializer_class(self):
+##         serializer = None
+
+##         if self.request.version == Decimal("1"):
+##             serializer = GroupSerializerVer01
+##         # elif self.request.version == Decimal("2"):
+##         #    serializer = GroupSerializerVer02
+
+##         return serializer
 
 ##     def get_queryset(self):
 ##         if (self.request.user.is_superuser or
@@ -126,14 +146,13 @@ user_detail = UserDetail.as_view()
 
 
 ## class GroupList(TrapDjangoValidationErrorCreateMixin,
-##                 GroupAuthorizationMixin,
+##                 GroupMixin,
 ##                 ListCreateAPIView):
 ##     """
 ##     Group list endpoint.
 ##     """
-##     serializer_class = GroupSerializer
 ##     permission_classes = (
-##         And(IsUserActive, #IsAuthenticated,
+##         And(IsUserActive, IsAuthenticated,
 ##             Or(IsAdminSuperUser,
 ##                IsAdministrator)
 ##             ),
@@ -145,11 +164,10 @@ user_detail = UserDetail.as_view()
 
 
 ## class GroupDetail(TrapDjangoValidationErrorUpdateMixin,
-##                   GroupAuthorizationMixin,
+##                   GroupMixin,
 ##                   RetrieveUpdateAPIView):
-##     serializer_class = GroupSerializer
 ##     permission_classes = (
-##         And(IsUserActive, #IsAuthenticated,
+##         And(IsUserActive, IsAuthenticated,
 ##             Or(IsAdminSuperUser,
 ##                IsAdministrator)
 ##             ),
@@ -162,13 +180,30 @@ user_detail = UserDetail.as_view()
 #
 # Question
 #
+class QuestionMixin:
+    parser_classes = (parser_factory('questions')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('questions')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = QuestionSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = QuestionSerializerVer02
+
+        return serializer
+
+
 class QuestionList(TrapDjangoValidationErrorCreateMixin,
+                   QuestionMixin,
                    ListCreateAPIView):
     """
     Question list endpoint.
     """
     queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
@@ -186,12 +221,12 @@ question_list = QuestionList.as_view()
 
 
 class QuestionDetail(TrapDjangoValidationErrorUpdateMixin,
+                     QuestionMixin,
                      RetrieveUpdateAPIView):
     """
     Question detail endpoint.
     """
     queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
     permission_classes = (
          And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
@@ -210,7 +245,21 @@ question_detail = QuestionDetail.as_view()
 #
 # Answer
 #
-class AnswerAuthorizationMixin:
+class AnswerMixin:
+    parser_classes = (parser_factory('answers')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('answers')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = AnswerSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = AnswerSerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -223,12 +272,11 @@ class AnswerAuthorizationMixin:
 
 
 class AnswerList(TrapDjangoValidationErrorCreateMixin,
-                 AnswerAuthorizationMixin,
+                 AnswerMixin,
                  ListCreateAPIView):
     """
     Answer list endpoint.
     """
-    serializer_class = AnswerSerializer
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
             Or(IsAnyUser,
@@ -242,12 +290,11 @@ answer_list = AnswerList.as_view()
 
 
 class AnswerDetail(TrapDjangoValidationErrorUpdateMixin,
-                   AnswerAuthorizationMixin,
+                   AnswerMixin,
                    RetrieveUpdateDestroyAPIView):
     """
     Answer detail endpoint.
     """
-    serializer_class = AnswerSerializer
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
             Or(IsAnyUser,
@@ -268,7 +315,11 @@ class LoginView(GenericAPIView):
     name and the href to the user's endpoint. Credentials are required to
     login.
     """
-    serializer_class = LoginSerializer
+    parser_classes = (parser_factory('login')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('login')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+    serializer_class = LoginSerializerVer01
     permission_classes = ()
 
     def post(self, request, *args, **kwargs):
@@ -294,6 +345,10 @@ class LogoutView(APIView):
     Logout view. Performs the logout on a POST. No POST data is required
     to logout.
     """
+    parser_classes = (parser_factory('logout')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('logout')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
     permission_classes = (
         And(IsUserActive, IsAuthenticated,
             Or(IsAnyUser,

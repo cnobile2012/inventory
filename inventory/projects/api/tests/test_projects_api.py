@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework.reverse import reverse
 from rest_framework import status
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.projects.models import Project, Membership
@@ -17,7 +17,7 @@ from inventory.projects.models import Project, Membership
 UserModel = get_user_model()
 
 
-class TestInventoryType(BaseTest):
+class TestInventoryType(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)
@@ -343,7 +343,7 @@ class TestInventoryType(BaseTest):
             self.in_type_uri, method)
 
 
-class TestProject(BaseTest):
+class TestProject(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)

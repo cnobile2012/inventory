@@ -28,9 +28,9 @@ User = get_user_model()
 
 
 #
-# CategorySerializer
+# CategorySerializerVer01
 #
-class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
+class CategorySerializerVer01(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         view_name='project-detail', queryset=Project.objects.all(),
         lookup_field='public_id')
@@ -70,9 +70,9 @@ class CategorySerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# CategoryCloneListSerializer
+# CategoryCloneListSerializerVer01
 #
-class CategoryCloneListSerializer(serializers.ListSerializer):
+class CategoryCloneListSerializerVer01(serializers.ListSerializer):
 
     def to_representation(self, data):
         """
@@ -102,9 +102,9 @@ class CategoryCloneListSerializer(serializers.ListSerializer):
 
 
 #
-# CategoryItemSerializer
+# CategoryItemSerializerVer01
 #
-class CategoryItemSerializer(serializers.Serializer):
+class CategoryItemSerializerVer01(serializers.Serializer):
     name = serializers.CharField(max_length=250)
     path = serializers.CharField(max_length=250)
     href = serializers.HyperlinkedIdentityField(
@@ -114,13 +114,13 @@ class CategoryItemSerializer(serializers.Serializer):
         model = Category
         fields = ('name', 'path', 'href',)
         read_only_fields = ('name', 'path',)
-        list_serializer_class = CategoryCloneListSerializer
+        list_serializer_class = CategoryCloneListSerializerVer01
 
 
 #
-# CategoryCloneSerializer
+# CategoryCloneSerializerVer01
 #
-class CategoryCloneSerializer(SerializerMixin, serializers.Serializer):
+class CategoryCloneSerializerVer01(SerializerMixin, serializers.Serializer):
     project = serializers.CharField(max_length=30)
     categories = serializers.ListField()
     with_root = serializers.BooleanField(default=True)

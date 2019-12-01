@@ -5,7 +5,8 @@
 
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import (
+    APITestCase, APIRequestFactory, force_authenticate)
 
 from django.contrib.auth import get_user_model
 
@@ -24,7 +25,7 @@ from ..permissions import (
 UserModel = get_user_model()
 
 
-class TestPermissions(BaseTest):
+class TestPermissions(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)

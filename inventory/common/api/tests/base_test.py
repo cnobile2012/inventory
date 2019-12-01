@@ -14,7 +14,7 @@ from django.utils.translation import ugettext
 from django.utils import six
 
 from rest_framework import permissions
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APIClient
 from rest_framework.status import (
     HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND,
@@ -26,7 +26,7 @@ from inventory.projects.models import Membership
 UserModel = get_user_model()
 
 
-class BaseTest(RecordCreation, APITestCase):
+class BaseTest(RecordCreation):
     _TEST_USERNAME = 'TestUser'
     _TEST_PASSWORD = 'TestPassword_007'
     _ERROR_MESSAGES = {
@@ -36,10 +36,12 @@ class BaseTest(RecordCreation, APITestCase):
         'delete': 'Method "DELETE" not allowed.',
         'get':  'Method "GET" not allowed.',
         }
-    _HEADERS = {'HTTP_ACCEPT': 'application/json',}
+    _HEADERS = {
+        'ACCEPT': 'application/json',
+        }
 
     def __init__(self, name):
-        super(BaseTest, self).__init__(name)
+        super().__init__(name)
         self.client = None
         self.user = None
 
@@ -100,8 +102,10 @@ class BaseTest(RecordCreation, APITestCase):
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('SU', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
@@ -119,8 +123,10 @@ class BaseTest(RecordCreation, APITestCase):
         kwargs['role'] = UserModel.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('AD', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
@@ -138,8 +144,10 @@ class BaseTest(RecordCreation, APITestCase):
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('DU', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
@@ -159,8 +167,10 @@ class BaseTest(RecordCreation, APITestCase):
 
         if user.projects.all().count() == 0:
             data = self.__get_request_data('DU', request_data)
+            extra = dict(self._HEADERS)
+            if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
             response = getattr(client, method)(
-                uri, data=data, format='json', **self._HEADERS)
+                uri, data=data, format='json', **extra)
 
             if response.status_code == HTTP_403_FORBIDDEN:
                 code = HTTP_403_FORBIDDEN
@@ -205,8 +215,10 @@ class BaseTest(RecordCreation, APITestCase):
         self.project.process_members([self.user, user])
         self.project.set_role(user, Membership.PROJECT_OWNER)
         data = self.__get_request_data('POW', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
@@ -225,8 +237,10 @@ class BaseTest(RecordCreation, APITestCase):
         user, client = self._create_user(**kwargs)
         self.project.set_role(user, Membership.PROJECT_MANAGER)
         data = self.__get_request_data('PMA', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
@@ -245,8 +259,10 @@ class BaseTest(RecordCreation, APITestCase):
         user, client = self._create_user(**kwargs)
         self.project.set_role(user, Membership.PROJECT_USER)
         data = self.__get_request_data('PDU', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
@@ -265,8 +281,10 @@ class BaseTest(RecordCreation, APITestCase):
         user, client = self._create_user(**kwargs)
         self.project.set_role(user, Membership.PROJECT_USER)
         data = self.__get_request_data('PDU', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
 
         if response.status_code == HTTP_403_FORBIDDEN:
             code = HTTP_403_FORBIDDEN
@@ -308,8 +326,10 @@ class BaseTest(RecordCreation, APITestCase):
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('SU', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)
@@ -325,8 +345,10 @@ class BaseTest(RecordCreation, APITestCase):
         kwargs['role'] = UserModel.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('AD', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)
@@ -343,8 +365,10 @@ class BaseTest(RecordCreation, APITestCase):
 
         if user.projects.all().count() > 0:
             data = self.__get_request_data('DU', request_data)
+            extra = dict(self._HEADERS)
+            if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
             response = getattr(client, method)(
-                uri, data=data, format='json', **self._HEADERS)
+                uri, data=data, format='json', **extra)
             msg = "Response: {} should be {}, content: {}".format(
                 response.status_code, status_code, response.data)
             self.assertEqual(response.status_code, status_code, msg)
@@ -373,8 +397,10 @@ class BaseTest(RecordCreation, APITestCase):
         self.project.process_members([self.user, user])
         self.project.set_role(user, Membership.PROJECT_OWNER)
         data = self.__get_request_data('POW', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status_code, response.data, uri)
         self.assertEqual(response.status_code, status_code, msg)
@@ -391,8 +417,10 @@ class BaseTest(RecordCreation, APITestCase):
         self.project.process_members([self.user, user])
         self.project.set_role(user, Membership.PROJECT_MANAGER)
         data = self.__get_request_data('PMA', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)
@@ -409,8 +437,10 @@ class BaseTest(RecordCreation, APITestCase):
         self.project.process_members([self.user, user])
         self.project.set_role(user, Membership.PROJECT_USER)
         data = self.__get_request_data('PDU', request_data)
+        extra = dict(self._HEADERS)
+        if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **extra)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)

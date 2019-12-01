@@ -8,6 +8,7 @@ Location API Views
 __docformat__ = "restructuredtext en"
 
 import logging
+from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 
@@ -18,6 +19,7 @@ from rest_framework.mixins import DestroyModelMixin, CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 
 from rest_condition import ConditionalPermission, C, And, Or, Not
 
@@ -25,15 +27,17 @@ from inventory.common.api.permissions import (
     IsAdminSuperUser, IsAdministrator, IsProjectOwner, IsProjectManager,
     IsProjectDefaultUser, IsUserActive, IsReadOnly)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.parsers import parser_factory
+from inventory.common.api.renderers import renderer_factory
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import LocationSetName, LocationFormat, LocationCode
 
 from .serializers import (
-    LocationSetNameSerializer, LocationFormatSerializer,
-    LocationCodeSerializer, LocationCloneSerializer,
-    LocationSetNameItemSerializer, LocationFormatItemSerializer)
+    LocationSetNameSerializerVer01, LocationFormatSerializerVer01,
+    LocationCodeSerializerVer01, LocationCloneSerializerVer01,
+    LocationSetNameItemSerializerVer01, LocationFormatItemSerializerVer01)
 
 log = logging.getLogger('api.locations.views')
 UserModel = get_user_model()
@@ -42,7 +46,21 @@ UserModel = get_user_model()
 #
 # LocationSetName
 #
-class LocationSetNameAuthorizationMixin:
+class LocationSetNameMixin:
+    parser_classes = (parser_factory('location-set-names')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('location-set-names')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = LocationSetNameSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = LocationSetNameSerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -56,16 +74,15 @@ class LocationSetNameAuthorizationMixin:
         return result
 
 
-class LocationSetNameList(LocationSetNameAuthorizationMixin,
+class LocationSetNameList(LocationSetNameMixin,
                           TrapDjangoValidationErrorCreateMixin,
                           ListCreateAPIView):
     """
     LocationSetName list endpoint.
     """
     queryset = LocationSetName.objects.all()
-    serializer_class = LocationSetNameSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -80,16 +97,15 @@ class LocationSetNameList(LocationSetNameAuthorizationMixin,
 location_set_name_list = LocationSetNameList.as_view()
 
 
-class LocationSetNameDetail(LocationSetNameAuthorizationMixin,
+class LocationSetNameDetail(LocationSetNameMixin,
                             TrapDjangoValidationErrorUpdateMixin,
                             RetrieveUpdateDestroyAPIView):
     """
     LocationSetName detail endpoint.
     """
     queryset = LocationSetName.objects.all()
-    serializer_class = LocationSetNameSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -106,7 +122,21 @@ location_set_name_detail = LocationSetNameDetail.as_view()
 #
 # LocationFormat
 #
-class LocationFormatAuthorizationMixin:
+class LocationFormatMixin:
+    parser_classes = (parser_factory('location-formats')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('location-formats')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = LocationFormatSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = LocationFormatSerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -122,16 +152,15 @@ class LocationFormatAuthorizationMixin:
         return result
 
 
-class LocationFormatList(LocationFormatAuthorizationMixin,
+class LocationFormatList(LocationFormatMixin,
                          TrapDjangoValidationErrorCreateMixin,
                          ListCreateAPIView):
     """
     LocationFormat list endpoint.
     """
     queryset = LocationFormat.objects.all()
-    serializer_class = LocationFormatSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -146,16 +175,15 @@ class LocationFormatList(LocationFormatAuthorizationMixin,
 location_format_list = LocationFormatList.as_view()
 
 
-class LocationFormatDetail(LocationFormatAuthorizationMixin,
+class LocationFormatDetail(LocationFormatMixin,
                            TrapDjangoValidationErrorUpdateMixin,
                            RetrieveUpdateDestroyAPIView):
     """
     LocationFormat detail endpoint.
     """
     queryset = LocationFormat.objects.all()
-    serializer_class = LocationFormatSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -172,7 +200,21 @@ location_format_detail = LocationFormatDetail.as_view()
 #
 # LocationCode
 #
-class LocationCodeAuthorizationMixin:
+class LocationCodeMixin:
+    parser_classes = (parser_factory('location-codes')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('location-codes')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = LocationCodeSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = LocationCodeSerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -190,16 +232,15 @@ class LocationCodeAuthorizationMixin:
         return result
 
 
-class LocationCodeList(LocationCodeAuthorizationMixin,
+class LocationCodeList(LocationCodeMixin,
                        TrapDjangoValidationErrorCreateMixin,
                        ListCreateAPIView):
     """
     LocationCode list endpoint.
     """
     queryset = LocationCode.objects.all()
-    serializer_class = LocationCodeSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -214,16 +255,15 @@ class LocationCodeList(LocationCodeAuthorizationMixin,
 location_code_list = LocationCodeList.as_view()
 
 
-class LocationCodeDetail(LocationCodeAuthorizationMixin,
+class LocationCodeDetail(LocationCodeMixin,
                          TrapDjangoValidationErrorUpdateMixin,
                          RetrieveUpdateDestroyAPIView):
     """
     LocationCode detail endpoint.
     """
     queryset = LocationCode.objects.all()
-    serializer_class = LocationCodeSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -247,9 +287,12 @@ class LocationClone(TrapDjangoValidationErrorCreateMixin,
     """
     Retrives, clones, and deletes location sets.
     """
-    serializer_class = LocationCloneSerializer
+    parser_classes = (parser_factory('location-clone')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('location-clone')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -258,6 +301,16 @@ class LocationClone(TrapDjangoValidationErrorCreateMixin,
                ),
             ),
         )
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = LocationCloneSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = LocationCloneSerializerVer02
+
+        return serializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -270,11 +323,11 @@ class LocationClone(TrapDjangoValidationErrorCreateMixin,
 
         for instance in queryset:
             if isinstance(instance, LocationSetName):
-                serializer = LocationSetNameItemSerializer(
+                serializer = LocationSetNameItemSerializerVer01(
                     instance, many=False, context={'request': request})
                 result.append(serializer.data)
             else:
-                serializer = LocationFormatItemSerializer(
+                serializer = LocationFormatItemSerializerVer01(
                     instance, many=False, context={'request': request})
                 result.append(serializer.data)
 
@@ -292,10 +345,10 @@ class LocationClone(TrapDjangoValidationErrorCreateMixin,
 
         for instance in data_list:
             if isinstance(instance, LocationSetName):
-                serializer = LocationSetNameItemSerializer(
+                serializer = LocationSetNameItemSerializerVer01(
                     instance, many=False, context={'request': request})
             else:
-                serializer = LocationFormatItemSerializer(
+                serializer = LocationFormatItemSerializerVer01(
                     instance, many=False, context={'request': request})
                 result.append(serializer.data)
 

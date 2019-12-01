@@ -17,6 +17,7 @@ python-dateutil
 psycopg2-binary
 pytz
 Pillow
+parsing-tools
 
 hiredis
 redis

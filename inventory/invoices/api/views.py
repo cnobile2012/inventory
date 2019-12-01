@@ -8,6 +8,7 @@ Invoice and Item views.
 __docformat__ = "restructuredtext en"
 
 import logging
+from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -23,6 +24,7 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.serializers import ValidationError
+from rest_framework.settings import api_settings
 
 from rest_condition import C, And, Or, Not
 
@@ -31,14 +33,16 @@ from inventory.common.api.permissions import (
     IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
     IsUserActive)
 from inventory.common.api.pagination import SmallResultsSetPagination
+from inventory.common.api.parsers import parser_factory
+from inventory.common.api.renderers import renderer_factory
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
 
 from ..models import Condition, Item, Invoice, InvoiceItem
 
 from .serializers import (
-    ConditionSerializer, ItemSerializer, InvoiceSerializer,
-    InvoiceItemSerializer)
+    ConditionSerializerVer01, ItemSerializerVer01, InvoiceSerializerVer01,
+    InvoiceItemSerializerVer01)
 
 log = logging.getLogger('api.invoices.views')
 UserModel = get_user_model()
@@ -63,6 +67,20 @@ filters.LOOKUP_TYPES = [
 # Condition
 #
 class ConditionMixin:
+    parser_classes = (parser_factory('conditions')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('conditions')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = ConditionSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = ConditionSerializerVer02
+
+        return serializer
 
     def get_object(self):
         value = self.kwargs.get(self.lookup_field, None)
@@ -84,10 +102,9 @@ class ConditionList(ConditionMixin, ListAPIView):
     Condition list endpoint.
     """
     queryset = Condition.objects.model_objects()
-    serializer_class = ConditionSerializer
     permission_classes = (
         And(IsUserActive,
-            IsReadOnly, #IsAuthenticated,
+            IsReadOnly, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsAnyProjectUser),
@@ -102,10 +119,9 @@ class ConditionDetail(ConditionMixin, RetrieveAPIView):
     Condition detail endpoint.
     """
     queryset = Condition.objects.model_objects()
-    serializer_class = ConditionSerializer
     permission_classes = (
         And(IsUserActive,
-            IsReadOnly, #IsAuthenticated,
+            IsReadOnly, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsAnyProjectUser),
@@ -118,7 +134,21 @@ condition_detail = ConditionDetail.as_view()
 #
 # Item
 #
-class ItemAuthorizationMixin:
+class ItemMixin:
+    parser_classes = (parser_factory('items')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('items')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = ItemSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = ItemSerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -189,14 +219,13 @@ class ItemFilter(FilterSet):
 
 
 class ItemList(TrapDjangoValidationErrorCreateMixin,
-               ItemAuthorizationMixin,
+               ItemMixin,
                ListCreateAPIView):
     """
     Item list endpoint.
     """
-    serializer_class = ItemSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -214,14 +243,13 @@ item_list = ItemList.as_view()
 
 
 class ItemDetail(TrapDjangoValidationErrorUpdateMixin,
-                 ItemAuthorizationMixin,
+                 ItemMixin,
                  RetrieveUpdateDestroyAPIView):
     """
     Item detail endpoint.
     """
-    serializer_class = ItemSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -238,7 +266,21 @@ item_detail = ItemDetail.as_view()
 #
 # Invoice
 #
-class InvoiceAuthorizationMixin:
+class InvoiceMixin:
+    parser_classes = (parser_factory('invoices')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('invoices')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = InvoiceSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = InvoiceSerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -313,14 +355,13 @@ class InvoiceFilter(FilterSet):
 
 
 class InvoiceList(TrapDjangoValidationErrorCreateMixin,
-                  InvoiceAuthorizationMixin,
+                  InvoiceMixin,
                   ListCreateAPIView):
     """
     Invoice list endpoint
     """
-    serializer_class = InvoiceSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -338,14 +379,13 @@ invoice_list = InvoiceList.as_view()
 
 
 class InvoiceDetail(TrapDjangoValidationErrorUpdateMixin,
-                    InvoiceAuthorizationMixin,
+                    InvoiceMixin,
                     RetrieveUpdateDestroyAPIView):
     """
     Invoice detail endpoint.
     """
-    serializer_class = InvoiceSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -362,7 +402,21 @@ invoice_detail = InvoiceDetail.as_view()
 #
 # InvoiceItem
 #
-class InvoiceItemAuthorizationMixin:
+class InvoiceItemMixin:
+    parser_classes = (parser_factory('invoice-items')
+                      + api_settings.DEFAULT_PARSER_CLASSES)
+    renderer_classes = (renderer_factory('invoice-items')
+                        + api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get_serializer_class(self):
+        serializer = None
+
+        if self.request.version == Decimal("1"):
+            serializer = InvoiceItemSerializerVer01
+        # elif self.request.version == Decimal("2"):
+        #    serializer = InvoiceItemSerializerVer02
+
+        return serializer
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
@@ -379,14 +433,13 @@ class InvoiceItemAuthorizationMixin:
 
 
 class InvoiceItemList(TrapDjangoValidationErrorCreateMixin,
-                      InvoiceItemAuthorizationMixin,
+                      InvoiceItemMixin,
                       ListCreateAPIView):
     """
     InvoiceItem list endpoint
     """
-    serializer_class = InvoiceItemSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
@@ -402,14 +455,13 @@ invoice_item_list = InvoiceItemList.as_view()
 
 
 class InvoiceItemDetail(TrapDjangoValidationErrorUpdateMixin,
-                        InvoiceItemAuthorizationMixin,
+                        InvoiceItemMixin,
                         RetrieveUpdateDestroyAPIView):
     """
     InvoiceItem detail endpoint.
     """
-    serializer_class = InvoiceItemSerializer
     permission_classes = (
-        And(IsUserActive, #IsAuthenticated,
+        And(IsUserActive, IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,

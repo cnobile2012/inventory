@@ -10,14 +10,14 @@
 // InventoryType
 App.Models.InventoryType = Backbone.Model.extend({
   urlRoot: function() {
-    return App.models.rootModel.get('projects').inventory_type_list;
+    return App.models.rootModel.get('projects').inventory_types.href;
   }
 });
 
 
 App.Models.InventoryTypeMeta = App.Models.BaseMetaModel.extend({
   urlRoot: function() {
-    return App.models.rootModel.get('projects').inventory_type_list;
+    return App.models.rootModel.get('projects').inventory_type.href;
   }
 });
 
@@ -40,7 +40,7 @@ App.Collections.InventoryType = Backbone.Collection.extend({
   },
 
   url: function() {
-    return App.models.rootModel.get('projects').inventory_type_list;
+    return App.models.rootModel.get('projects').inventory_types.href;
   }
 });
 
@@ -109,9 +109,9 @@ App.Models.Project = Backbone.Model.extend({
     },
 
     updater: function() {
-      var name = "Not Found";
-      var href = this.attributes.updater;
-      var userHREF = App.models.userModel.get('href');
+        var name = "Not Found",
+            href = this.attributes.updater,
+            userHREF = App.models.userModel.get('href');
 
       // Check if it's the current user first.
       if(href === userHREF) {
@@ -138,7 +138,7 @@ App.Models.Project = Backbone.Model.extend({
 
 App.Models.ProjectMeta = App.Models.BaseMetaModel.extend({
   urlRoot: function() {
-    return App.models.rootModel.get('projects').projects;
+    return App.models.rootModel.get('projects').projects.href;
   }
 });
 
@@ -151,7 +151,10 @@ App.Collections.Projects = Backbone.Collection.extend({
     // Create project menu
     this.listenTo(this, 'change', function(model) {
       $('div#projects div.tab-choice-pane div').empty();
-      var options = [], item = null, model = null, data = "";
+        var options = [],
+            item = null,
+            model = null,
+            data = "";
 
       for(var i = 0; i < this.length; i++) {
         model = this.at(i);

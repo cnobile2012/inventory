@@ -25,9 +25,10 @@ UserModel = get_user_model()
 
 
 #
-# InventoryTypeSerializer
+# InventoryTypeSerializerVer01
 #
-class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
+class InventoryTypeSerializerVer01(SerializerMixin,
+                                   serializers.ModelSerializer):
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
@@ -63,9 +64,9 @@ class InventoryTypeSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# MembershipSerializer
+# MembershipSerializerVer01
 #
-class MembershipSerializer(SerializerMixin, serializers.ModelSerializer):
+class MembershipSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     user = serializers.CharField(source='user.public_id')
 
     class Meta:
@@ -75,9 +76,9 @@ class MembershipSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# ProjectSerializer
+# ProjectSerializerVer01
 #
-class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
+class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     inventory_type = serializers.HyperlinkedRelatedField(
         view_name='inventory-type-detail', label=_("Inventory Type"),
         queryset=InventoryType.objects.all(), lookup_field='public_id',
@@ -93,7 +94,7 @@ class ProjectSerializer(SerializerMixin, serializers.ModelSerializer):
     role = serializers.DictField(
         label=_("Role"), write_only=True, required=False,
         help_text=_("Set the role of the user in this project."))
-    memberships = MembershipSerializer(
+    memberships = MembershipSerializerVer01(
         many=True, read_only=True, help_text=_("Members of this project."))
     items_href = HyperlinkedFilterField(
         view_name='item-list', query_name='project', read_only=True,

@@ -20,9 +20,9 @@ log = logging.getLogger('api.regions.serializers')
 
 
 #
-# CountrySerializer
+# CountrySerializerVer01
 #
-class CountrySerializer(serializers.ModelSerializer):
+class CountrySerializerVer01(serializers.ModelSerializer):
     href = serializers.HyperlinkedIdentityField(view_name='country-detail')
 
     class Meta:
@@ -32,9 +32,9 @@ class CountrySerializer(serializers.ModelSerializer):
 
 
 #
-# SubdivisionSerializer
+# SubdivisionSerializerVer01
 #
-class SubdivisionSerializer(serializers.ModelSerializer):
+class SubdivisionSerializerVer01(serializers.ModelSerializer):
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', read_only=True)
     href = serializers.HyperlinkedIdentityField(view_name='subdivision-detail')
@@ -48,9 +48,9 @@ class SubdivisionSerializer(serializers.ModelSerializer):
 
 
 #
-# LanguageSerializer
+# LanguageSerializerVer01
 #
-class LanguageSerializer(serializers.ModelSerializer):
+class LanguageSerializerVer01(serializers.ModelSerializer):
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', read_only=True)
     href = serializers.HyperlinkedIdentityField(view_name='language-detail')
@@ -62,9 +62,9 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 
 #
-# TimeZoneSerializer
+# TimeZoneSerializerVer01
 #
-class TimeZoneSerializer(serializers.ModelSerializer):
+class TimeZoneSerializerVer01(serializers.ModelSerializer):
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', read_only=True)
     href = serializers.HyperlinkedIdentityField(view_name='timezone-detail')
@@ -78,9 +78,9 @@ class TimeZoneSerializer(serializers.ModelSerializer):
 
 
 #
-# CurrencySerializer
+# CurrencySerializerVer01
 #
-class CurrencySerializer(SerializerMixin, serializers.ModelSerializer):
+class CurrencySerializerVer01(SerializerMixin, serializers.ModelSerializer):
     country = serializers.HyperlinkedRelatedField(
         view_name='country-detail', read_only=True)
     href = serializers.HyperlinkedIdentityField(view_name='currency-detail')

@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework.reverse import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.projects.models import Membership
@@ -16,7 +17,7 @@ from inventory.regions.models import (
 UserModel = get_user_model()
 
 
-class BaseRegion(BaseTest):
+class BaseRegion(BaseTest, APITestCase):
 
     def setUp(self):
         super().setUp()

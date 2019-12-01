@@ -17,7 +17,7 @@ from rest_framework import serializers
 from rest_framework.permissions import SAFE_METHODS
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from inventory.projects.api.serializers import ProjectSerializer
+from inventory.projects.api.serializers import ProjectSerializerVer01
 from inventory.projects.models import Project
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
@@ -30,11 +30,12 @@ UserModel = get_user_model()
 #
 # User
 #
-class UserSerializer(SerializerMixin, serializers.ModelSerializer):
+class UserSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     MESSAGE = _("You do not have permission to change the '{}' field.")
 
     full_name = serializers.SerializerMethodField()
-    role = serializers.IntegerField(source='user.role', required=False)
+    role = serializers.IntegerField(
+        source='user.role', required=False)
     picture  = serializers.ImageField(
         allow_empty_file=True, use_url=True, required=False)
     subdivision = serializers.HyperlinkedRelatedField(
@@ -52,7 +53,8 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
     answers = serializers.HyperlinkedRelatedField(
         view_name='answer-detail', many=True, read_only=True,
         label=_("Security answers"), lookup_field='public_id')
-    projects = ProjectSerializer(many=True, required=False)
+    projects = ProjectSerializerVer01(
+        many=True, required=False)
     href = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))
@@ -170,7 +172,7 @@ class UserSerializer(SerializerMixin, serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
 
-class PublicUserSerializer(serializers.ModelSerializer):
+class PublicUserSerializerVer01(serializers.ModelSerializer):
 
     full_name = serializers.SerializerMethodField()
     href = serializers.HyperlinkedIdentityField(
@@ -195,7 +197,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 #
 # Group
 #
-## class GroupSerializer(serializers.ModelSerializer):
+## class GroupSerializerVer01(serializers.ModelSerializer):
 ##     user_set = serializers.HyperlinkedRelatedField(
 ##         many=True, read_only=True, view_name='user-detail')
 ##     href = serializers.HyperlinkedIdentityField(view_name='group-detail')
@@ -219,7 +221,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 #
 # Question
 #
-class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
+class QuestionSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     creator = serializers.HyperlinkedRelatedField(
         view_name='user-detail', read_only=True, lookup_field='public_id')
     updater = serializers.HyperlinkedRelatedField(
@@ -253,7 +255,7 @@ class QuestionSerializer(SerializerMixin, serializers.ModelSerializer):
 #
 # Answer
 #
-class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
+class AnswerSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     user = serializers.HyperlinkedRelatedField(
         view_name='user-detail', queryset=UserModel.objects.all(),
         lookup_field='public_id')
@@ -295,7 +297,7 @@ class AnswerSerializer(SerializerMixin, serializers.ModelSerializer):
 #
 # Login
 #
-class LoginSerializer(serializers.Serializer):
+class LoginSerializerVer01(serializers.Serializer):
     username = serializers.CharField(max_length=150, write_only=True)
     password = serializers.CharField(max_length=50, write_only=True)
 

@@ -25,9 +25,10 @@ User = get_user_model()
 
 
 #
-# LocationSetNameSerializer
+# LocationSetNameSerializerVer01
 #
-class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
+class LocationSetNameSerializerVer01(SerializerMixin,
+                                     serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         view_name='project-detail', queryset=Project.objects.all(),
         lookup_field='public_id')
@@ -70,9 +71,10 @@ class LocationSetNameSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# LocationFormatSerializer
+# LocationFormatSerializerVer01
 #
-class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
+class LocationFormatSerializerVer01(SerializerMixin,
+                                    serializers.ModelSerializer):
     location_set_name = serializers.HyperlinkedRelatedField(
         view_name='location-set-name-detail',
         queryset=LocationSetName.objects.all(), lookup_field='public_id')
@@ -118,9 +120,10 @@ class LocationFormatSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# LocationCodeSerializer
+# LocationCodeSerializerVer01
 #
-class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
+class LocationCodeSerializerVer01(SerializerMixin,
+                                  serializers.ModelSerializer):
     location_format = serializers.HyperlinkedRelatedField(
         view_name='location-format-detail', lookup_field='public_id',
         queryset=LocationFormat.objects.all())
@@ -180,9 +183,9 @@ class LocationCodeSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# LocationSetNameItemSerializer
+# LocationSetNameItemSerializerVer01
 #
-class LocationSetNameItemSerializer(serializers.Serializer):
+class LocationSetNameItemSerializerVer01(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     description = serializers.CharField(max_length=1000)
     href = serializers.HyperlinkedIdentityField(
@@ -195,9 +198,9 @@ class LocationSetNameItemSerializer(serializers.Serializer):
 
 
 #
-# LocationFormatItemSerializer
+# LocationFormatItemSerializerVer01
 #
-class LocationFormatItemSerializer(serializers.Serializer):
+class LocationFormatItemSerializerVer01(serializers.Serializer):
     char_definition = serializers.CharField(max_length=250)
     description = serializers.CharField(max_length=1000)
     href = serializers.HyperlinkedIdentityField(
@@ -210,9 +213,9 @@ class LocationFormatItemSerializer(serializers.Serializer):
 
 
 #
-# LocationCloneSerializer
+# LocationCloneSerializerVer01
 #
-class LocationCloneSerializer(SerializerMixin, serializers.Serializer):
+class LocationCloneSerializerVer01(SerializerMixin, serializers.Serializer):
     project = serializers.CharField(max_length=30)
     location_set_name = serializers.CharField(max_length=250)
     with_set_name = serializers.BooleanField(default=True)

@@ -15,7 +15,7 @@ from inventory.common.api.tests.base_test import BaseTest
 UserModel = get_user_model()
 
 
-class BaseAccount(BaseTest):
+class BaseAccount(BaseTest, APITestCase):
     DEFAULT_QUESTION = "What make car do you have?"
     DEFAULT_ANSWER = "Tesla Model S"
 

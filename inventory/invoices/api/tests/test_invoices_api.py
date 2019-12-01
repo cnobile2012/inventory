@@ -9,6 +9,7 @@ from dcolumn.dcolumns.models import ColumnCollection
 
 from rest_framework.reverse import reverse
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.invoices.models import Condition, Item, Invoice, InvoiceItem
@@ -16,7 +17,7 @@ from inventory.invoices.models import Condition, Item, Invoice, InvoiceItem
 UserModel = get_user_model()
 
 
-class TestConditionAPI(BaseTest):
+class TestConditionAPI(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)
@@ -100,7 +101,7 @@ class TestConditionAPI(BaseTest):
         self._test_users_with_valid_permissions(uri, method)
 
 
-class TestItemAPI(BaseTest):
+class TestItemAPI(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)
@@ -526,7 +527,7 @@ class TestItemAPI(BaseTest):
             })
 
 
-class TestInvoiceAPI(BaseTest):
+class TestInvoiceAPI(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)
@@ -869,7 +870,7 @@ class TestInvoiceAPI(BaseTest):
         self._test_project_users_with_valid_permissions(uri, method)
 
 
-class TestInvoiceItemAPI(BaseTest):
+class TestInvoiceItemAPI(BaseTest, APITestCase):
 
     def __init__(self, name):
         super().__init__(name)

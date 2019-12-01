@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# realm/common/api/negotiation.py
+# inventory/common/api/negotiation.py
 #
 
 from rest_framework import exceptions
@@ -24,6 +24,7 @@ class ContentNegotiation(DefaultContentNegotiation, MIMEParser):
         for parser in parsers:
             if self.best_match([parser.media_type], request.content_type):
                 result = parser
+                break
 
         return result
 
@@ -54,10 +55,10 @@ class ContentNegotiation(DefaultContentNegotiation, MIMEParser):
     def filter_renderers(self, renderers, format): # pragma: no cover
         """
         If there is a '.json' style format suffix, filter the renderers
-        so that we only negotiation against those that accept that format.
+        so that we only negotiate against those that accept that format.
         """
         renderers = [renderer for renderer in renderers
-                     if format in renderer.format]
+                     if format.lower() in renderer.format]
 
         if not renderers:
             raise Http404

@@ -22,9 +22,9 @@ from ..models import Condition, Item, Invoice, InvoiceItem
 
 
 #
-# ConditionSerializer
+# ConditionSerializerVer01
 #
-class ConditionSerializer(DynamicFieldsSerializer):
+class ConditionSerializerVer01(DynamicFieldsSerializer):
     pk = serializers.IntegerField(read_only=True)
     name = serializers.CharField(read_only=True)
     href = HyperlinkedCustomIdentityField(view_name='condition-detail')
@@ -38,9 +38,9 @@ class ConditionSerializer(DynamicFieldsSerializer):
 
 
 #
-# ItemSerializer
+# ItemSerializerVer01
 #
-class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
+class ItemSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     """
     Inventory Item Serializer
     """
@@ -128,9 +128,9 @@ class ItemSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# InvoiceItemSerializer
+# InvoiceItemSerializerVer01
 #
-class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
+class InvoiceItemSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     """
     Invoice Item Serializer
     """
@@ -174,9 +174,9 @@ class InvoiceItemSerializer(SerializerMixin, serializers.ModelSerializer):
 
 
 #
-# InvoiceSerializer
+# InvoiceSerializerVer01
 #
-class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
+class InvoiceSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     """
     Invoice Serializer
     """
@@ -190,7 +190,7 @@ class InvoiceSerializer(SerializerMixin, serializers.ModelSerializer):
     supplier = serializers.HyperlinkedRelatedField(
         view_name='supplier-detail', default=None,
         queryset=Supplier.objects.all(), lookup_field='public_id')
-    invoice_items = InvoiceItemSerializer(many=True, read_only=True)
+    invoice_items = InvoiceItemSerializerVer01(many=True, read_only=True)
     href = serializers.HyperlinkedIdentityField(
         view_name='invoice-detail', lookup_field='public_id')
 

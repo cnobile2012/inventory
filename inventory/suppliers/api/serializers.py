@@ -12,7 +12,6 @@ import logging
 from rest_framework import serializers
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from inventory.accounts.api.serializers import UserSerializer
 from inventory.projects.models import Project
 from inventory.suppliers.models import Supplier
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
@@ -21,7 +20,10 @@ from inventory.regions.models import Country, Subdivision, Language, TimeZone
 log = logging.getLogger('api.suppliers.serializers')
 
 
-class SupplierSerializer(SerializerMixin, serializers.ModelSerializer):
+#
+# SupplierSerializerVer01
+#
+class SupplierSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         view_name='project-detail', queryset=Project.objects.all(),
         lookup_field='public_id')

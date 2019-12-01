@@ -224,20 +224,31 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
         'rest_framework_xml.parsers.XMLParser',
-        'rest_framework_yaml.parsers.YAMLParser',
+        #'rest_framework_yaml.parsers.YAMLParser',
         ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework_xml.renderers.XMLRenderer',
-        'rest_framework_yaml.renderers.YAMLRenderer',
+        #'rest_framework_yaml.renderers.YAMLRenderer',
         ),
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'TEST_REQUEST_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.MultiPartRenderer',
         'rest_framework.renderers.TemplateHTMLRenderer',
-        )
+        ),
+    'DEFAULT_VERSIONING_CLASS': ('inventory.common.api.versioning.'
+                                 'AcceptHeaderVersioning'),
+    'DEFAULT_CONTENT_NEGOTIATION_CLASS': ('inventory.common.api.negotiation.'
+                                          'ContentNegotiation'),
+    'DEFAULT_VERSION': 1.0,
+    'ALLOWED_VERSIONS': (1.0,),
+    'VERSION_PARAM': 'ver',
+    'URL_FIELD_NAME': 'href',
+    'DATETIME_FORMAT': None,
+    'DATE_FORMAT': None,
+    'TIME_FORMAT': None,
     }
 
 # Change the URL below to your login path.
