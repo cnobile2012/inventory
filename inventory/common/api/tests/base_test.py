@@ -37,7 +37,7 @@ class BaseTest(RecordCreation):
         'get':  'Method "GET" not allowed.',
         }
     _HEADERS = {
-        'ACCEPT': 'application/json',
+        'HTTP_ACCEPT': 'application/json',
         }
 
     def __init__(self, name):
@@ -330,6 +330,7 @@ class BaseTest(RecordCreation):
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
+        #print('Content-Type:', response.get('Content-Type'))
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)

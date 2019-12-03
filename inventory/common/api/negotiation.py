@@ -3,13 +3,19 @@
 # inventory/common/api/negotiation.py
 #
 
+import logging
+
+from django.http import Http404
+
 from rest_framework import exceptions
-from rest_framework.negotiation import DefaultContentNegotiation
+from rest_framework.settings import api_settings
 
 from mimeparser import MIMEParser
 
+log = logging.getLogger('api.common.negotiation')
 
-class ContentNegotiation(DefaultContentNegotiation, MIMEParser):
+
+class ContentNegotiation(MIMEParser):
 
     def __init__(self):
         MIMEParser.__init__(self)
@@ -26,6 +32,7 @@ class ContentNegotiation(DefaultContentNegotiation, MIMEParser):
                 result = parser
                 break
 
+        log.debug("mimetype: %s", result)
         return result
 
     def select_renderer(self, request, renderers, format_suffix=None):
@@ -34,11 +41,11 @@ class ContentNegotiation(DefaultContentNegotiation, MIMEParser):
         (renderer, media type).
         """
         # Allow URL style format override. eg. ?format=json
-        format_query_param = self.settings.URL_FORMAT_OVERRIDE
-        format = format_suffix or request.query_params.get(format_query_param)
+        format_query_param = api_settings.URL_FORMAT_OVERRIDE
+        fmt = format_suffix or request.query_params.get(format_query_param)
 
-        if format: # pragma: no cover
-            renderers = self.filter_renderers(renderers, format)
+        if fmt: # pragma: no cover
+            renderers = self.filter_renderers(renderers, fmt)
 
         accept = request.META.get('HTTP_ACCEPT', '*/*')
         # Check the best match media type against each renderer.
@@ -50,6 +57,7 @@ class ContentNegotiation(DefaultContentNegotiation, MIMEParser):
         if result[0] is None: # pragma: no cover
             raise exceptions.NotAcceptable(available_renderers=renderers)
 
+        log.debug("mimetype: %s", result)
         return result
 
     def filter_renderers(self, renderers, format): # pragma: no cover
