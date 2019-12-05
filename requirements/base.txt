@@ -1,4 +1,4 @@
-django
+django==2.2.8
 django-compressor
 django-dcolumns
 django-filter

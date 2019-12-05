@@ -11,7 +11,6 @@ from collections import OrderedDict
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext
-from django.utils import six
 
 from rest_framework import permissions
 from rest_framework.test import APIClient
@@ -501,8 +500,7 @@ class BaseTest(RecordCreation):
         elif isinstance(value, (dict, OrderedDict,)):
             for key in value:
                 value[key] = self.__clean_value(value.get(key))
-        elif (isinstance(value, (six.integer_types, bool, type,)) or
-              value is None):
+        elif isinstance(value, (int, bool, type,)) or value is None:
             pass
         else:
             value = ugettext(value)

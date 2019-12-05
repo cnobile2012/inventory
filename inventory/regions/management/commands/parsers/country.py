@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 import csv
 
-from django.utils import six
-
 
 class CountryParser:
     LOWER_CASE = ('and', 'da', 'of', 'the',)
@@ -58,10 +56,7 @@ class CountryParser:
         parts = []
 
         for idx, item in enumerate(items):
-            if six.PY2:
-                item = item.strip().decode('utf-8')
-            else:
-                item = item.strip()
+            item = item.strip()
 
             if idx == 0 and item.lower().startswith('the'):
                 parts.append(item.capitalize())

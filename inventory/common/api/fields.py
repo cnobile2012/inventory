@@ -8,10 +8,10 @@ Invoice, InvoiceItem and Item serializers.
 __docformat__ = "restructuredtext en"
 
 import logging
+from urllib.parse import urlencode
 
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.urls import NoReverseMatch
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
@@ -91,8 +91,7 @@ class HyperlinkedFilterField(serializers.Field):
         attributes are not configured to correctly match the URL conf.
         """
         lookup_value = getattr(obj, self.lookup_field)
-        search = six.moves.urllib.parse.urlencode(
-            {self.query_name: lookup_value})
+        search = urlencode({self.query_name: lookup_value})
         return self.reverse(view_name, request=request, format=format
                             ) + '?' + search
 

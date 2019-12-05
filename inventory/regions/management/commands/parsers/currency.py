@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 import csv
 
-from django.utils import six
-
 
 class CurrencyParser:
 
@@ -41,13 +39,8 @@ class CurrencyParser:
                 if len(row) > 5: continue
 
                 # All counties are uppercase.
-                if six.PY2:
-                    entity = row[0].strip().decode('utf-8')
-                    currency = row[1].strip().decode('utf-8')
-                else:
-                    entity = row[0].strip()
-                    currency = row[1].strip()
-
+                entity = row[0].strip()
+                currency = row[1].strip()
                 alphabetic_code = row[2]
                 numeric_code = int(row[3]) if row[3].isdigit() else 0
                 minor_unit = int(row[4]) if row[4].isdigit() else 0

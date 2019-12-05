@@ -11,7 +11,6 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
-from django.utils import six
 
 from rest_framework import serializers
 
@@ -149,7 +148,7 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
                               "setting a role.").format(username)})
 
             if role not in ['', None]:
-                if isinstance(role, six.string_types) and role.isdigit():
+                if isinstance(role, str) and role.isdigit():
                     role = int(role)
 
                 if role not in Membership.ROLE_MAP:

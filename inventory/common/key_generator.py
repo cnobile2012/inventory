@@ -12,7 +12,6 @@ import logging
 import random
 from string import ascii_lowercase, ascii_uppercase, digits
 
-from django.utils import six
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 log = logging.getLogger('inventory.common.key-generator')
@@ -60,7 +59,7 @@ class KeyGenerator:
             else:
                 self._length = length
 
-            if not isinstance(length, six.integer_types):
+            if not isinstance(length, int):
                 msg = self._ERROR_MSGS.get('invalid_length', self._UNKNOWN_MSG)
                 log.error(ugettext(msg))
                 raise ValueError(msg)
