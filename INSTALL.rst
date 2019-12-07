@@ -5,19 +5,22 @@ Installation of Basic Requirements
 On Ubuntu Basic Packages Need to be Installed
 =============================================
 
-Use ``sudo apt-get install`` or ``sudo aptitude install``.
+.. code-block:: console
 
-
-|    ubuntu-dev-tools python-setuptools python3-dev OR python-dev
-|    postgresql postgresql-client postgresql-contrib postgresql-server-dev-all
-|    redis-server redis-tools libssl-dev
+    $ sudo apt ubuntu-dev-tools python-setuptools python3-dev OR python-dev
+               postgresql postgresql-client postgresql-contrib
+               postgresql-server-dev-all redis-server redis-tools libssl-dev
 
 Python Packages Need to be Installed
 ====================================
 
-``$ sudo easy_install pip``
+.. code-block:: console
 
-``$ sudo pip install virtualenvwrapper``
+    $ sudo easy_install3 pip
+    # Newer systems no longer have ``easy_install`` for Python 3
+    # installed, however I have found the commands below to work.
+    $ sudo python3 /usr/lib/python3/dist-packages/easy_install.py pip
+    $ sudo -H pip3 install virtualenvwrapper
 
 Virtual Wrapper Initialization
 ==============================
@@ -25,15 +28,22 @@ Virtual Wrapper Initialization
 Use your favorite editor to add the following lines at the end of your
 ``.bashrc`` file.
 
-|    ``# Setup the Python virtual environment.``
-|    ``. /usr/local/bin/virtualenvwrapper.sh``
+.. code-block:: bash
+
+    # Setup the Python virtual environment.
+    VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+    source /usr/local/bin/virtualenvwrapper.sh
 
 Create the Virtual Environment
 ==============================
 
-``$ mkvirtualenv inventory``
+.. code-block:: console
+
+    $ mkvirtualenv inventory
 
 Install the Inventory Requirements
 ==================================
 
-``$ pip install -r requirements/<env file>.txt``
+.. code-block:: console
+
+    $ pip install -r requirements/<env file>.txt
