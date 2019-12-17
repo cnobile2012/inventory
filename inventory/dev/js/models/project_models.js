@@ -8,169 +8,174 @@
 
 
 // InventoryType
-App.Models.InventoryType = Backbone.Model.extend({
-  urlRoot: function() {
+class InventoryModelType extends Backbone.Model {
+  urlRoot() {
     return App.models.rootModel.get('projects').inventory_types.href;
   }
-});
+};
 
 
-App.Models.InventoryTypeMeta = App.Models.BaseMetaModel.extend({
-  urlRoot: function() {
-    return App.models.rootModel.get('projects').inventory_type.href;
+class InventoryTypeMeta extends App.Models.BaseMetaModel {
+  urlRoot() {
+    return App.models.rootModel.get('projects').inventory_types.href;
   }
-});
+};
+
+App.Models.InventoryTypeMeta = InventoryTypeMeta;
 
 
-App.Collections.InventoryType = Backbone.Collection.extend({
-  name: "InventoryType",
-  model: App.Models.InventoryType,
+class InventoryType extends Backbone.Collection {
+  get name() { return "InventoryModelType"; }
+  get model() { return InventoryModelType; }
 
-  initialize: function () {
-  },
+  initialize() {}
 
-  parse: function(response, options) {
-    var models = response.results;
+  parse(response, options) {
+    let models = response.results;
     App.models.inventoryTypeMeta.set({
       count: response.count,
       next: response.next,
       previous: response.previous
     });
     return models;
-  },
+  }
 
-  url: function() {
+  url() {
     return App.models.rootModel.get('projects').inventory_types.href;
   }
-});
+};
+
+App.Collections.InventoryType = InventoryType;
 
 
 // Project
-App.Models.Project = Backbone.Model.extend({
-  defaults: {
-    public_id: '',
-    name: '',
-    members: [],
-    memberships: [],
-    invoices: [],
-    invoices_href: '',
-    items: [],
-    items_href: '',
-    inventory_type: '',
-    public: false,
-    active: false,
-    creator: '',
-    created: '',
-    updater: '',
-    updated: '',
-    href: ''
-  },
+class Project extends Backbone.Model {
+  get urlRoot() {
+    return this.get('href');
+  }
 
-  mutators: {
-    invoices_href: {
-      set: function(key, value, options, set) {
-        set(key, value, options);
+  get defaults() {
+    return {
+      public_id: '',
+      name: '',
+      members: [],
+      memberships: [],
+      invoices: [],
+      invoices_href: '',
+      items: [],
+      items_href: '',
+      inventory_type: '',
+      public: false,
+      active: false,
+      creator: '',
+      created: '',
+      updater: '',
+      updated: '',
+      href: ''
+    };
+  }
 
-        if(value.length > 0) {
-          App.invoiceTimeout = setTimeout(App.utils.fetchInvoiceCollection,
-                                          200, value, this);
+  get mutators() {
+    return {
+      invoices_href: {
+        set(key, value, options, set) {
+          set(key, value, options);
+
+          if(value.length > 0) {
+            App.invoiceTimeout = setTimeout(App.utils.fetchInvoiceCollection,
+                                            200, value, this);
+          }
         }
-      }
-    },
+      },
+      items_href: {
+        set(key, value, options, set) {
+          set(key, value, options);
 
-    items_href: {
-      set: function(key, value, options, set) {
-        set(key, value, options);
-
-        if(value.length > 0) {
-          App.itemTimeout = setTimeout(App.utils.fetchItemCollection,
-                                       200, value, this);
+          if(value.length > 0) {
+            App.itemTimeout = setTimeout(App.utils.fetchItemCollection,
+                                         200, value, this);
+          }
         }
-      }
-    },
+      },
+      creator() {
+        let name = "Not Found",
+            href = this.attributes.creator,
+            userHREF = App.models.userModel.get('href');
 
-    creator: function() {
-      var name = "Not Found";
-      var href = this.attributes.creator;
-      var userHREF = App.models.userModel.get('href');
+        // Check if it's the current user first.
+        if(href === userHREF) {
+          name = App.models.userModel.get('full_name');
+        } else {
+          // Get the creator with the 'href'.
+        }
 
-      // Check if it's the current user first.
-      if(href === userHREF) {
-        name = App.models.userModel.get('full_name');
-      } else {
-        // Get the creator with the 'href'.
-      }
-
-      return name;
-    },
-
-    created: function() {
-      return new Date(this.attributes.created).toLocaleString();
-    },
-
-    updater: function() {
-        var name = "Not Found",
+        return name;
+      },
+      created() {
+        return new Date(this.attributes.created).toLocaleString();
+      },
+      updater() {
+        let name = "Not Found",
             href = this.attributes.updater,
             userHREF = App.models.userModel.get('href');
 
-      // Check if it's the current user first.
-      if(href === userHREF) {
-        name = App.models.userModel.get('full_name');
-      } else {
-        // Get the updater with the 'href'.
+        // Check if it's the current user first.
+        if(href === userHREF) {
+          name = App.models.userModel.get('full_name');
+        } else {
+          // Get the updater with the 'href'.
+        }
+
+        return name;
+      },
+      updated: {
+        get() {
+          return new Date(this.attributes.updated).toLocaleString();
+        }
       }
-
-      return name;
-    },
-
-    updated: {
-      get: function() {
-        return new Date(this.attributes.updated).toLocaleString();
-      }
-    }
-  },
-
-  urlRoot: function() {
-    return this.get('href');
+    };
   }
-});
+};
 
+App.Models.Project = Project;
 
-App.Models.ProjectMeta = App.Models.BaseMetaModel.extend({
-  urlRoot: function() {
+class ProjectMeta extends App.Models.BaseMetaModel {
+  get urlRoot() {
     return App.models.rootModel.get('projects').projects.href;
   }
-});
+};
+
+App.Models.ProjectMeta = ProjectMeta;
 
 
-App.Collections.Projects = Backbone.Collection.extend({
-  name: "Projects",
-  model: App.Models.Project,
+class Projects extends Backbone.Collection {
+  get name() { return "Projects"; }
+  get model() { return App.Models.Project; }
 
-  initialize: function () {
+  initialize() {
     // Create project menu
     this.listenTo(this, 'change', function(model) {
       $('div#projects div.tab-choice-pane div').empty();
-        var options = [],
-            item = null,
-            model = null,
-            data = "";
+      let options = [],
+          item = null,
+          data = "",
+          nextModel = null;
 
-      for(var i = 0; i < this.length; i++) {
-        model = this.at(i);
-        data = model.get('public_id');
+      for(let i = 0; i < this.length; i++) {
+        nextModel = this.at(i);
+        data = nextModel.get('public_id');
         item = {title: '<a href="#project' + i + '" data="' + data + '" >'
-                + model.get('name') + '</a>'};
+                + nextModel.get('name') + '</a>'};
         options[i] = item;
       }
 
-      App.collections.projectMenu = new App.Collections.MenuItems(options);
-
-      App.views.projectMenu = new App.Views.ProjectMenu({
-        collection: App.collections.projectMenu
-      });
-
+      App.collections.projectMenu = new App.Collections.MenuModelItems(
+        options);
+      App.views.projectMenu = new App.Views.ProjectMenu(
+        {collection: App.collections.projectMenu});
       App.views.projectMenu.render();
     });
   }
-});
+};
+
+App.Collections.Projects = Projects;

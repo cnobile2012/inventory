@@ -15,7 +15,22 @@
 "use strict";
 
 
-window.App = {
+/*
+ * Global Router (non sub-application dependents)
+ */
+var DefaultRouter = Backbone.Router.extend({
+  routes: {
+    '': 'defaultRoute'
+  },
+
+  // Redirect to contacts app by default
+  defaultRoute() {
+    this.navigate('contacts', true);
+  }
+});
+
+
+var App = {
   Models: {},
   Collections: {},
   Views: {},
@@ -31,8 +46,42 @@ window.App = {
   Router: null,
   utils: null,
   invoiceTimeout: null,
-  itemTimeout: null
+  itemTimeout: null,
+
+  start() {
+    // Initialize all available routes
+    _.each(_.values(this.Routers), function(Router) {
+      new Router();
+    });
+
+    // The common place where sub-applications will be shown
+    App.mainRegion = new Region({el: '#main'});
+
+    // Create a global router to enable sub-applications to redirect to
+    // other urls
+    App.router = new DefaultRouter();
+    Backbone.history.start();
+  },
+
+  // Only one subapplication can be running at once, destroy any
+  // currently running subapplication and start the asked for one.
+  startSubApplication(SubApplication) {
+    // Do not run the same subapplication twice
+    if (this.currentSubapp && this.currentSubapp instanceof SubApplication) {
+      return this.currentSubapp;
+    }
+
+    // Destroy any previous subapplication if we can
+    if (this.currentSubapp && this.currentSubapp.destroy) {
+      this.currentSubapp.destroy();
+    }
+
+    // Run subapplication
+    this.currentSubapp = new SubApplication({region: App.mainRegion});
+    return this.currentSubapp;
+  }
 };
+
 
 /*
  * This function is run when logout happens, so that all data for the
@@ -53,42 +102,21 @@ window.destroyApp = function() {
 /*
  * ViewContainer
  */
-window.App.ViewContainer = Backbone.View.extend({
-  childView: null,
+class ViewContainer extends Backbone.View {
+  get childView() { return null; }
 
-  render: function() {
+  render() {
     this.$el.html("Greeting Area");
 
     this.$el.append(this.childView.$el);
     return this;
   }
-});
+};
+
+App.ViewContainer = ViewContainer;
 
 
-/*
- * Global Router
- */
-window.App.Router = Backbone.Router.extend({
-  container: null,
-  projectViews: {},
+// Allow App object to listen and trigger events, useful for global events.
+_.extend(App, Backbone.Events);
 
-  initialize: function() {
-      this.container = new window.App.ViewContainer({});
-  },
-
-  routes: {
-    '': 'homePage',
-  },
-
-  handleProjectRoutes: function(key) {
-    view = this.projectViews[key];
-
-    if (view === (void 0)) {
-
-      view = new App.Views.Project();
-    }
-
-    this.container.childView = view;
-    this.container.render();
-  }
-});
+window.App = App;

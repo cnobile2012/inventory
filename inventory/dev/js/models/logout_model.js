@@ -7,15 +7,16 @@
 "use strict";
 
 
-App.Models.Logout = Backbone.Model.extend({
-  id: 'LogoutModel',
-  defaults: {},
-  urlRoot: function() {
+class Logout extends Backbone.Model {
+  get id() { return 'LogoutModel'; }
+  get defaults() { return {}; }
+
+  get urlRoot() {
     return App.models.rootModel.get('accounts').logout.href;
   }
-});
+};
 
 
 jQuery(function($) {
-  App.models.logoutModel = new App.Models.Logout();
+  App.models.logoutModel = new Logout();
 });

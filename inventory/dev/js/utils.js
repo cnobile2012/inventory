@@ -10,22 +10,15 @@
 /*
  * Utilities
  */
-var Utilities = function() {
-  this.initialize();
-};
+class Utilities {
 
-Utilities.prototype = {
-
-  initialize: function() {
-  },
-
-  _csrfSafeMethod: function(method) {
+  _csrfSafeMethod(method) {
     // These HTTP methods do not require CSRF protection.
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-  },
+  }
 
-  setHeader: function() {
-    var self = this;
+  setHeader() {
+    let self = this;
 
     $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
       options.crossDomain = false;
@@ -37,25 +30,25 @@ Utilities.prototype = {
         }
       }.bind(self);
     });
-  },
+  }
 
-  showMessage: function(message, fade) {
-    var $messages = $('#messages');
+  showMessage(message, fade) {
+    let $messages = $('#messages');
     $messages.html(message);
     $messages.show();
 
     if(fade !== (void 0) && fade === true) {
       $messages.fadeOut(7500);
     }
-  },
+  }
 
-  hideMessage: function() {
-    var $messages = $('#messages');
+  hideMessage() {
+    let $messages = $('#messages');
     $messages.hide();
     $messages.empty();
-  },
+  }
 
-  mimicDjangoErrors: function(data, elm) {
+  mimicDjangoErrors(data, elm) {
     // Mimic Django error messages.
       let ul = '<ul class="errorlist"></ul>',
           li = '<li></li>',
@@ -81,20 +74,20 @@ Utilities.prototype = {
         $errorLi.appendTo($errorUl);
       }
     }
-  },
+  }
 
   // Set a default value on an object key--similar to Python's
   // <dict>.setdefault(<key>, value).
-  setDefault: function(obj, key, value) {
+  setDefault(obj, key, value) {
     if(key in obj) {
       return obj[key];
     } else {
       obj[key] = value;
       return obj[key];
     }
-  },
+  }
 
-  getMetaChoices: function(choices) {
+  getMetaChoices(choices) {
     let out = {};
 
     for(let i = 0; i < choices.length; i++) {
@@ -102,9 +95,9 @@ Utilities.prototype = {
     }
 
     return out;
-  },
+  }
 
-  assert: function(condition, message) {
+  assert(condition, message) {
     if(!condition) {
       message = message || "Assertion Error";
 
@@ -114,9 +107,9 @@ Utilities.prototype = {
 
       throw message; // If the Error exception does not exist.
     }
-  },
+  }
 
-  arrayDiff: function(a1, a2) {
+  arrayDiff(a1, a2) {
     // https://stackoverflow.com/questions/1187518/how-to-get-the-difference-between-two-arrays-in-javascript
     let a = [], diff = [];
 
@@ -137,9 +130,9 @@ Utilities.prototype = {
     }
 
     return diff;
-  },
+  }
 
-  arrayUnique: function(array) {
+  arrayUnique(array) {
     let a = array.concat();
 
     for(let i = 0; i < a.length; ++i) {
@@ -149,40 +142,40 @@ Utilities.prototype = {
         }
       }
     }
-  },
+  }
 
-  arrayAdd: function(a1, a2) {
+  arrayAdd(a1, a2) {
     return this.arrayUnique(a1.concat(a2));
-  },
+  }
 
-  sleep: function(milliseconds) {
+  sleep(milliseconds) {
     let start = new Date().getTime();
-
     while((new Date().getTime() - start) < milliseconds);
-  },
+  }
 
   // Inventory specific methods.
 
-  setLogin: function() {
+  setLogin() {
     if(!IS_AUTHENTICATED) {
-      var options = {
-        backdrop: 'static',
-        keyboard: false
-      };
-      new App.Views.LoginModal().show(options);
+      let options = {
+            backdrop: 'static',
+            keyboard: false
+          };
+      let login = new App.Views.LoginModal();
+      login.show(options);
     } else {
       App.loginModel.set(
         'href', location.protocol + '//' + location.host + USER_HREF);
       this.fetchData();
     }
-  },
+  }
 
-  fetchData: function() {
+  fetchData() {
     this.fetchUser();
     this.fetchRoot();
-  },
+  }
 
-  fetchUser: function() {
+  fetchUser() {
     if(App.models.userModel === (void 0)) {
       App.models.userModel = new App.Models.User();
     }
@@ -193,9 +186,9 @@ Utilities.prototype = {
                               USERNAME + "' from API.");
       }
     });
-  },
+  }
 
-  fetchRoot: function() {
+  fetchRoot() {
     if(App.models.rootModel === (void 0)) {
       App.models.rootModel = new App.Models.RootModel();
     }
@@ -211,9 +204,9 @@ Utilities.prototype = {
         App.utils.showMessage("Error: Could not get data from API root.");
       }
     });
-  },
+  }
 
-  fetchProjectMeta: function() {
+  fetchProjectMeta() {
     if(App.models.projectMeta === (void 0)) {
       App.models.projectMeta = new App.Models.ProjectMeta();
     }
@@ -227,9 +220,9 @@ Utilities.prototype = {
         App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
-  },
+  }
 
-  fetchInventoryType: function() {
+  fetchInventoryType() {
     if(App.collections.inventoryType === (void 0)) {
       App.collections.inventoryType = new App.Collections.InventoryType();
     }
@@ -243,9 +236,9 @@ Utilities.prototype = {
         App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
-  },
+  }
 
-  fetchInventoryTypeMeta: function() {
+  fetchInventoryTypeMeta() {
     if(App.models.inventoryTypeMeta === (void 0)) {
       App.models.inventoryTypeMeta = new App.Models.InventoryTypeMeta();
     }
@@ -259,10 +252,10 @@ Utilities.prototype = {
         App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
-  },
+  }
 
   // Fetch Invoices
-  fetchInvoiceCollection: function(url, project) {
+  fetchInvoiceCollection(url, project) {
     clearTimeout(App.invoiceTimeout);
     var invoices = new App.Collections.Invoices();
     project.set('invoices', invoices);
@@ -276,10 +269,10 @@ Utilities.prototype = {
         console.log(response);
       }
     });
-  },
+  }
 
   // Fetch Items
-  fetchItemCollection: function(url, project) {
+  fetchItemCollection(url, project) {
     clearTimeout(App.itemTimeout);
     var items = new App.Collections.Items();
     project.set('items', items);
@@ -293,17 +286,17 @@ Utilities.prototype = {
         console.log(response);
       }
     });
-  },
+  }
 
   // SEARCH ENDPOINTS
-  searchEndpoint: function(event) {
-    var self = event.data.self;
-    var uri = event.data.endpoint;
+  searchEndpoint(event) {
+    let self = event.data.self,
+        uri = event.data.endpoint,
+        search = encodeURI($(this).val().trim());
     // ex. App.models.rootModel.get('accounts').users
-    var search = encodeURI($(this).val().trim());
 
     if(search !== "") {
-      var options = {
+      let options = {
         url: uri + '?search=' + search,
         cache: true,
         type: 'GET',
@@ -319,9 +312,9 @@ Utilities.prototype = {
       $input.prop('data', 0);
       $input.empty();
     }
-  },
+  }
 
-  searchRequestCB: function(data, status, jqXHR) {
+  searchRequestCB(data, status, jqXHR) {
     if(data.count > 0) {
       var result = null;
       var $listUl = $('#model-choice');
@@ -333,7 +326,7 @@ Utilities.prototype = {
         $listUi: $listUi
       };
 
-      for(var i = 0; i < data.results.length; i++) {
+      for(let i = 0; i < data.results.length; i++) {
         result = data.results[i];
         $li = $(li);
         $li.text('' + result.year + ' ' + result.make + ' ' + result.model);
@@ -344,14 +337,14 @@ Utilities.prototype = {
 
       $ul.show();
     }
-  },
+  }
 
-  errorCB: function(jqXHR, status, errorThrown) {
+  errorCB(jqXHR, status, errorThrown) {
     try {
-      var json = $.parseJSON(jqXHR.responseText);
-      var msg = '';
+      let json = $.parseJSON(jqXHR.responseText),
+          msg = '';
 
-      for(var key in json) {
+      for(let key in json) {
         msg += key + ": " + json[key] + "<br />";
       }
 
@@ -359,11 +352,11 @@ Utilities.prototype = {
     } catch (e) {
       this.showMessage(jqXHR.statusText + ": " + jqXHR.status);
     }
-  },
+  }
 
-  chooseItem: function(event) {
-    var self = event.data.self;
-    var $input = $(event.data.input);
+  chooseItem(event) {
+    let self = event.data.self,
+        $input = $(event.data.input);
     $input.prop('data', $(this).prop('data'));
     $input.val($(this).text());
     event.data.$listUl.hide();

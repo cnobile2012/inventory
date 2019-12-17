@@ -7,18 +7,20 @@
 "use strict";
 
 
-App.Models.Login = Backbone.Model.extend({
-  id: 'LoginModel',
-  urlRoot: API_LOGIN,
-  defaults: {
-    username: 'X',
-    password: 'X',
-    fullname: '',
-    href: ''
+class Login extends Backbone.Model {
+  get id() { return 'LoginModel'; }
+  get urlRoot() { return API_LOGIN; }
+  get defaults() {
+    return {
+      username: 'X',
+      password: 'X',
+      fullname: '',
+      href: ''
+    };
   }
-});
+};
 
 
 jQuery(function($) {
-  App.loginModel = new App.Models.Login();
+  App.loginModel = new Login();
 });

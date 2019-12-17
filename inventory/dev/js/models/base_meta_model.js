@@ -7,19 +7,21 @@
 "use strict";
 
 
-App.Models.BaseMetaModel = Backbone.Model.extend({
-  mutators: {
-    actions: {
-      set: function(key, value, options, set) {
-        _.forEach(value.POST, function(value, key) {
-          this.set(key, value);
-        }.bind(this));
+class BaseMetaModel extends Backbone.Model {
+  get mutators() {
+    return {
+      actions: {
+        set(key, value, options, set) {
+          _.forEach(value.POST, function(value, key) {
+            this.set(key, value);
+          }.bind(this));
+        }
       }
-    }
-  },
+    };
+  }
 
-  sync: function(method, model, options) {
-    var type = 'OPTIONS';
+  sync(method, model, options) {
+    let type = 'OPTIONS';
 
     // Default options, unless specified.
     _.defaults(options || (options = {}), {
@@ -28,7 +30,7 @@ App.Models.BaseMetaModel = Backbone.Model.extend({
     });
 
     // Default JSON-request options.
-    var params = {type: type, dataType: 'json'};
+    let params = {type: type, dataType: 'json'};
 
     // Ensure that we have a URL.
     if (!options.url) {
@@ -36,7 +38,7 @@ App.Models.BaseMetaModel = Backbone.Model.extend({
     }
 
     // Pass along `textStatus` and `errorThrown` from jQuery.
-    var error = options.error;
+    let error = options.error;
     options.error = function(xhr, textStatus, errorThrown) {
       options.textStatus = textStatus;
       options.errorThrown = errorThrown;
@@ -44,8 +46,10 @@ App.Models.BaseMetaModel = Backbone.Model.extend({
     };
 
     // Make the request, allowing the user to override any Ajax options.
-    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
+    let xhr = options.xhr = Backbone.ajax(_.extend(params, options));
     model.trigger('request', model, xhr, options);
     return xhr;
   }
-});
+};
+
+App.Models.BaseMetaModel = BaseMetaModel;

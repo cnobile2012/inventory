@@ -3,40 +3,71 @@
  *
  * js/views/menu_views.js
  *
+ * MENU VIEW ENTRY POINTS
  */
 
 "use strict";
 
-// MENU VIEW ENTRY POINT
-// Project entry points
-App.Views.ProjectItemMenu = App.Views.MenuItem.extend({
-  toggle: false,
 
-  onClickCallback: function(model) {
-    App.viewFunctions.project(model);
+// Inventory Menu
+class InventoryItemMenu extends App.Views.MenuItem {
+  get toggle() { return true; }
+
+  onClickCallback(model) {
+    App.viewFunctions.inventory(model);
   }
-});
+};
 
 
-App.Views.ProjectParentMenu = App.Views.Menu.extend({
-  renderCallback: function(model) {
-    return new App.Views.ProjectItemMenu({model: model});
+class InventoryParentMenu extends App.Views.Menu{
+  renderCallback(model) {
+    return new InventoryItemMenu({model: model});
   }
-});
+};
 
 
-App.Views.ProjectMenu = Backbone.View.extend({
-  el: 'div#projects div.tab-choice-pane div.pane-nav',
+class InventoryMenu extends Backbone.View {
+  get el() { return 'div#content'; }
 
-  initialize: function() {
+  initialize() {
     _.bindAll(this);
-  },
+  }
 
-  render: function() {
-    var menu = new App.Views.ProjectParentMenu({
-      collection: this.collection
-    });
-
+  render() {
+    var menu = new InventoryParentMenu({collection: this.collection});
     this.$el.append(menu.render().el);
   }
-});
+};
+
+
+// Project Menu
+class ProjectItemMenu extends App.Views.MenuItem {
+  get toggle() { return false; }
+
+  onClickCallback(model) {
+    App.viewFunctions.project(model);
+  }
+};
+
+
+class ProjectParentMenu extends App.Views.Menu {
+  renderCallback(model) {
+    return new ProjectItemMenu({model: model});
+  }
+};
+
+
+class ProjectMenu extends Backbone.View {
+  get el() { return 'div#projects div.tab-choice-pane div.pane-nav'; }
+
+  initialize() {
+    _.bindAll(this);
+  }
+
+  render() {
+    var menu = new ProjectParentMenu({collection: this.collection});
+    this.$el.append(menu.render().el);
+  }
+};
+
+App.Views.ProjectMenu = ProjectMenu;

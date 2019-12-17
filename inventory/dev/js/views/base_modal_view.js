@@ -4,16 +4,23 @@
  * js/views/base_modal_view.js
  */
 
-App.Views.BaseModal = Backbone.View.extend({
-  template: '',
+"use strict";
 
-  initialize: function() {
+
+class BaseModal extends Backbone.View {
+  get template() { return ''; }
+
+  constructor(options) {
+    super(options);
+  }
+
+  initialize() {
     _.bindAll(this, 'show', 'render', 'close', 'submit', 'keydownHandler');
     this.render();
-  },
+  }
 
-  show: function(options) {
-    var self = this;
+  show(options) {
+    let self = this;
     this.$el.off('hide.bs.modal');
     this.$el.on('hide.bs.modal', function() {
       self.close();
@@ -25,23 +32,23 @@ App.Views.BaseModal = Backbone.View.extend({
 
     this.options = options;
     this.$el.modal(options);
-  },
+  }
 
-  render: function() {
+  render() {
     this.$el = $(this.template);
     this.delegateEvents(this.events);
     return this;
-  },
+  }
 
-  close: function() {
+  close() {
     this.remove();
     $('.modal-backdrop').remove();
     $('body').removeClass('modal-open');
-  },
+  }
 
-  submit: function() {},
+  submit() {}
 
-  keydownHandler: function (e) {
+  keydownHandler(e) {
     switch (e.which) {
       // esc
       case 27:
@@ -55,4 +62,6 @@ App.Views.BaseModal = Backbone.View.extend({
         break;
     }
   }
-});
+};
+
+App.Views.BaseModal = BaseModal;

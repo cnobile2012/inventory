@@ -9,27 +9,32 @@
 
 "use strict";
 
-App.Models.MenuItem = Backbone.Model.extend({
-  defaults: {
+
+class MenuModelItem extends Backbone.Model {
+  defaults = {
     title: 'Default Title',
     isSelected: false
-  }
-});
+  };
+};
 
 
-App.Collections.MenuItems = Backbone.Collection.extend({
-  model: App.Models.MenuItem,
+class MenuModelItems extends Backbone.Collection {
+  model = null;
 
   // Listen to any model's isSelected change event
-  initialize: function() {
+  constructor(options) {
+    super(options);
+    this.model = MenuModelItem;
     this.listenTo(this, 'change:isSelected', this.onSelectedChanged);
-  },
+  }
 
-  // If any model changes it's selection property to true, go through
-  // each model in collection, checking if it has isSelected property
-  // equal to true and not being changed during this change event. if
-  // found any--reset it's isSelected property to false.
-  onSelectedChanged: function(currentModel, value) {
+  /*
+   * If any model changes it's selection property to true, go through
+   * each model in collection, checking if it has isSelected property
+   * equal to true and not being changed during this change event. if
+   * found any--reset it's isSelected property to false.
+   */
+  onSelectedChanged(currentModel, value) {
     // Only check if `isSelected` is `true`.
     if(value === true) {
       this.each(function(model) {
@@ -39,4 +44,6 @@ App.Collections.MenuItems = Backbone.Collection.extend({
       });
     }
   }
-});
+};
+
+App.Collections.MenuModelItems = MenuModelItems;

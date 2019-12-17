@@ -4,41 +4,48 @@
  * js/views/logout_view.js
  */
 
-jQuery(function($) {
-  // Create a modal view class
-  App.Views.LogoutModal = App.Views.BaseModal.extend({
-    model: App.models.logoutModel,
-    el: $("#logout-modal"),
-    template: App.templates.logout_template(),
+// Create a modal view class
+class LogoutModal extends App.Views.BaseModal {
+  get model() { return App.models.logoutModel; }
+  get el() { return $("#logout-modal"); }
+  get template() { return App.templates.logout_template(); }
 
-    events: {
+  get events() {
+    return {
       'click button[name=logout-cancel]': 'close',
       'click button[name=logout-submit]': 'submit',
       'keydown': 'keydownHandler'
-    },
+    };
+  }
 
-    submit: function() {
-      App.utils.setHeader();
-      this.model.save({}, {
-        success: function(data, status, jqXHR) {
-          App.utils.showMessage(status.detail);
-          IS_AUTHENTICATED = false;
-          $('#user-fullname').empty();
-          destroyApp();
-          App.utils.setLogin();
-        },
+  constructor(options) {
+    super(options);
+  }
 
-        error: function(jqXHR, status, errorThrown) {
-          App.utils.showMessage(status.responseJSON.detail +
-            " Already logged out please refresh the page.");
-        }
-      });
+  submit() {
+    App.utils.setHeader();
+    this.model.save({}, {
+      success(data, status, jqXHR) {
+        App.utils.showMessage(status.detail);
+        IS_AUTHENTICATED = false;
+        $('#user-fullname').empty();
+        destroyApp();
+        App.utils.setLogin();
+      },
+      error(jqXHR, status, errorThrown) {
+        App.utils.showMessage(status.responseJSON.detail +
+                              " Already logged out please refresh the page.");
+      }
+    });
 
-      this.close();
-    }
-  });
+    this.close();
+  }
+};
 
+ 
+jQuery(function($) {  
   $('#logout-button').on('click', function() {
-    new App.Views.LogoutModal().show({show: true});
+    let logout = new LogoutModal();
+    logout.show({show: true});
   });
 });
