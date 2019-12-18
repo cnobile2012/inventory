@@ -8,200 +8,242 @@
 
 
 // Invoices
-App.Models.Invoices = Backbone.Model.extend({
-  defaults: {
-    public_id: '',
-    project: null,
-    currency: null,
-    supplier: null,
-    invoices_number: '',
-    invoice_date: '',
-    credit: 0,
-    shipping: 0,
-    other: 0,
-    tax: 0,
-    notes: '',
-    creator: '',
-    created: '',
-    updater: '',
-    updated: '',
-    href: ''
-  },
+class InvoicesModel extends Backbone.Model {
+  get defaults() {
+    return {
+      public_id: '',
+      project: null,
+      currency: null,
+      supplier: null,
+      invoices_number: '',
+      invoice_date: '',
+      credit: 0,
+      shipping: 0,
+      other: 0,
+      tax: 0,
+      notes: '',
+      creator: '',
+      created: '',
+      updater: '',
+      updated: '',
+      href: ''
+    };
+  }
 
-  mutators: {
-    invoice_items: {
-      set: function(key, value, options, set) {
-        var invoice_items = new App.Collections.InvoiceItems();
-        set(key, invoice_items, options);
+  get mutators() {
+    return {
+      invoice_items: {
+        set(key, value, options, set) {
+          var invoice_items = new App.Collections.InvoiceItemsCollection();
+          set(key, invoice_items, options);
 
-        _.forEach(value, function(value, key) {
-          invoice_items.add(value);
-        });
+          _.forEach(value, function(value, key) {
+            invoice_items.add(value);
+          });
+        }
       }
-    }
-  },
+    };
+  }
 
-  url: function() {
+  url() {
     return this.get('href');
   }
-});
 
-
-App.Models.InvoicesMeta = Backbone.Model.extend({
-  defaults: {
-    project_public_id: '',
-    count: 0,
-    next: null,
-    previous: null,
-    options: {}
+  constructor(options) {
+    super(options);
   }
-});
+};
+
+App.Models.InvoicesModel = InvoicesModel;
 
 
-App.Collections.InvoicesMeta = Backbone.Collection.extend({
-  name: "InvoicesMeta",
-  model: App.Models.InvoicesMeta
-});
+class InvoicesMetaModel extends Backbone.Model {
+  get defaults() {
+    return {
+      project_public_id: '',
+      count: 0,
+      next: null,
+      previous: null,
+      options: {}
+    };
+  }
+
+  constructor(options) {
+    super(options);
+  }
+};
+
+App.Models.InvoicesMetaModel = InvoicesMetaModel;
 
 
-App.Collections.Invoices = Backbone.Collection.extend({
-  name: "Invoices",
-  model: App.Models.Invoices,
+class InvoicesCollection extends Backbone.Collection {
+  get name() { return "InvoicesModel"; }
+  get model() { return App.Models.InvoicesModel; }
 
-  parse: function(response, options) {
-    var models = response.results;
+  constructor(options) {
+    super(options);
+  }
 
-    if(App.collections.invoicesMeta === (void 0)) {
-      App.collections.invoicesMeta = new App.Collections.InvoicesMeta();
-    }
+  parse(response, options) {
+    let models = response.results;
 
     if(response.count > 0) {
-      var project_public_id = models[0].project_public_id;
-      var invoicesMeta = new App.Models.InvoicesMeta({
-        project_public_id: project_public_id,
-        count: response.count,
-        next: response.next,
-        previous: response.previous
-      });
-      App.collections.invoicesMeta.add(invoicesMeta);
+      let project_public_id = models[0].project_public_id,
+          invoicesMeta = new App.Models.InvoicesMetaModel({
+            project_public_id: project_public_id,
+            count: response.count,
+            next: response.next,
+            previous: response.previous
+          });
+      App.models.invoicesMeta = invoicesMeta;
     }
 
     return models;
   }
-});
+};
+
+App.Collections.InvoicesCollection = InvoicesCollection;
 
 
 // InvoiceItems
-App.Models.InvoiceItems = Backbone.Model.extend({
-  defaults: {
-    invoice: '',
-    invoice_public_id: '',
-    item_number: '',
-    description: '',
-    quantity: 0,
-    unit_price: '',
-    process: true,
-    item: '',
-    href: ''
-  },
+class InvoiceItemsModel extends Backbone.Model {
+  get defaults() {
+    return {
+      invoice: '',
+      invoice_public_id: '',
+      item_number: '',
+      description: '',
+      quantity: 0,
+      unit_price: '',
+      process: true,
+      item: '',
+      href: ''
+    };
+  }
 
-  url: function() {
+  url() {
     return this.get('href');
   }
-});
 
-
-App.Models.InvoiceItemsMeta = Backbone.Model.extend({
-  defaults: {
-    invoice_public_id: '',
-    count: 0,
-    next: null,
-    previous: null,
-    options: {}
+  constructor(options) {
+    super(options);
   }
-});
+};
+
+App.Models.InvoiceItemsModel = InvoiceItemsModel;
 
 
-App.Collections.InvoiceItemsMeta = Backbone.Collection.extend({
-  name: "InvoiceItemsMeta",
-  model: App.Models.InvoiceItemsMeta
-});
+class InvoiceItemsMetaModel extends Backbone.Model {
+  get defaults() {
+    return {
+      invoice_public_id: '',
+      count: 0,
+      next: null,
+      previous: null,
+      options: {}
+    };
+  }
+
+  constructor(options) {
+    super(options);
+  }
+};
+
+App.Models.InvoiceItemsMetaModel = InvoiceItemsMetaModel;
 
 
-App.Collections.InvoiceItems = Backbone.Collection.extend({
-  name: "InvoiceItems",
-  model: App.Models.InvoiceItems
-});
+class InvoiceItemsCollection extends Backbone.Collection {
+  get name() { return "InvoiceItemsModel"; }
+  get model() { return App.Models.InvoiceItemsModel; }
+
+  constructor(options) {
+    super(options);
+  }
+};
+
+App.Collections.InvoiceItemsCollection = InvoiceItemsCollection;
 
 
 // Items
-App.Models.Items = Backbone.Model.extend({
-  defaults: {
-    public_id: '',
-    project: null,
-    sku: '',
-    item_number: '',
-    item_number_mfg: '',
-    manufacturer: null,
-    description: '',
-    quantity: 0,
-    categories: [],
-    location_codes: [],
-    shared_projects: [],
-    purge: false,
-    active: false,
-    creator: '',
-    created: '',
-    updater: '',
-    updated: '',
-    href: ''
-  },
+class ItemsModel extends Backbone.Model {
+  get defaults() {
+    return {
+      public_id: '',
+      project: null,
+      sku: '',
+      item_number: '',
+      item_number_mfg: '',
+      manufacturer: null,
+      description: '',
+      quantity: 0,
+      categories: [],
+      location_codes: [],
+      shared_projects: [],
+      purge: false,
+      active: false,
+      creator: '',
+      created: '',
+      updater: '',
+      updated: '',
+      href: ''
+    };
+  }
 
-  url: function() {
+  url() {
     return this.get('href');
   }
-});
+
+  constructor(options) {
+    super(options);
+  }
+};
+
+App.Models.ItemsModel = ItemsModel;
 
 
-App.Models.ItemsMeta = Backbone.Model.extend({
-  defaults: {
-    count: 0,
-    next: null,
-    previous: null,
-    options: {}
-  },
-});
+class ItemsMetaModel extends Backbone.Model {
+  get defaults() {
+    return {
+      count: 0,
+      next: null,
+      previous: null,
+      options: {}
+    };
+  }
+
+  constructor(options) {
+    super(options);
+  }
+};
+
+App.Models.ItemsMetaModel = ItemsMetaModel;
 
 
-App.Collections.ItemsMeta = Backbone.Collection.extend({
-  name: "ItemsMeta",
-  model: App.Models.ItemsMeta
-});
+class ItemsCollection extends Backbone.Collection {
+  get name() { return "ItemsModel"; }
+  get model() { return App.Models.ItemsModel; }
 
+  constructor(options) {
+    super(options);
+  }
 
-App.Collections.Items = Backbone.Collection.extend({
-  name: "Items",
-  model: App.Models.Items,
-
-  parse: function(response, options) {
-    var models = response.results;
-
-    if(App.collections.itemsMeta === (void 0)) {
-      App.collections.itemsMeta = new App.Collections.ItemsMeta();
-    }
+  parse(response, options) {
+    let models = response.results;
 
     if(response.count > 0) {
-      var project_public_id = models[0].project_public_id;
-      var itemsMeta = new App.Models.ItemsMeta({
-        project_public_id: project_public_id,
-        count: response.count,
-        next: response.next,
-        previous: response.previous
-      });
+      let project_public_id = models[0].project_public_id,
+          itemsMeta = new App.Models.ItemsMetaModel({
+            project_public_id: project_public_id,
+            count: response.count,
+            next: response.next,
+            previous: response.previous
+          });
 
-      App.collections.itemsMeta.add(itemsMeta);
+      App.models.itemsMeta = itemsMeta;
     }
 
     return models;
   }
-});
+};
+
+App.Collections.ItemsCollection = ItemsCollection;

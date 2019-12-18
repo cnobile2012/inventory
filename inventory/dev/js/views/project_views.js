@@ -8,9 +8,9 @@
 
 
 // Single project view
-App.Views.Project = Backbone.View.extend({
+class ProjectView extends Backbone.View {
 
-  render: function() {
+  render() {
     // Get this model's public_id
     var publicId = this.model.get('public_id');
     // public_id
@@ -87,20 +87,20 @@ App.Views.Project = Backbone.View.extend({
     //  App.models.projectMeta.get('updated').help_text);
 
     // Setup some events
-    var base = '#projects #' + publicId;
-    var file = base + ' button[name="project-logo"]';
-    var setFile = base + ' input[type="file"]';
-    var save = base + ' button[name="project-save"]';
+    let base = '#projects #' + publicId,
+        file = base + ' button[name="project-logo"]',
+        setFile = base + ' input[type="file"]',
+        save = base + ' button[name="project-save"]';
     $(file).on('click', this.openFileBox.bind(this));
     $(setFile).on('change', {self: this}, this.setupImage);
     $(save).on('click', this.saveModel.bind(this));
-    },
+    }
 
-  getInventoryTypes: function() {
-    var option = "<option></option>";
-    var $select = this.$el.find('.project-inventory-type select.value');
-    var $option = null, optionPublicId = '';
-    var publicId = this.model.get('inventory_type_public_id');
+  getInventoryTypes() {
+    let option = "<option></option>",
+        $select = this.$el.find('.project-inventory-type select.value'),
+        $option = null, optionPublicId = '',
+        publicId = this.model.get('inventory_type_public_id');
 
     _.forEach(App.collections.inventoryType, function(value, key) {
       $option = $(option);
@@ -114,13 +114,13 @@ App.Views.Project = Backbone.View.extend({
       $option.text(App.collections.inventoryType.at(key).get('name'));
       $option.appendTo($select);
     });
-  },
+  }
 
-  getYesNo: function(field, select) {
-    var option = "<option></option>";
-    var $option = null;
-    var optionValue = this.model.get(field);
-    var $select = this.$el.find(select);
+  getYesNo(field, select) {
+    let option = "<option></option>",
+        $option = null,
+        optionValue = this.model.get(field),
+        $select = this.$el.find(select);
 
     // Use the `public` meta values for all booleans.
     _.forEach(App.models.projectMeta.get('public').choices,
@@ -135,27 +135,27 @@ App.Views.Project = Backbone.View.extend({
       $option.text(value.display_name);
       $option.appendTo($select);
     });
-  },
+  }
 
-  openFileBox: function(event) {
-    var $fi = this.$el.find('input[type="file"]');
+  openFileBox(event) {
+    let $fi = this.$el.find('input[type="file"]');
     // Clear out previous images.
     $fi.empty();
     $fi.attr('type', '');
     $fi.attr('type', 'file');
     $fi.trigger('click');
-  },
+  }
 
-  setupImage: function(event) {
-    var self = event.data.self;
-    var files = $(this).prop('files');
+  setupImage(event) {
+    let self = event.data.self,
+        files = $(this).prop('files');
 
     if(files.length > 0) {
       $('#project-filename').text(files[0].name);
     }
-  },
+  }
 
-  saveModel: function(event) {
+  saveModel(event) {
     event.preventDefault();
     App.utils.setLogin();
     this.model.save()
@@ -168,18 +168,24 @@ App.Views.Project = Backbone.View.extend({
 
     return false;
   }
-});
-
-
-App.viewFunctions.project = function(model) {
-  var publicId = model.get('public_id');
-  var $template = $(App.templates.project_template());
-  $template.appendTo($('#projects #' + publicId));
-  var options = {
-    template: $template[0],
-    model: model,
-    el: "#" + publicId
-  };
-
-  new App.Views.Project(options).render();
 };
+
+App.Views.ProjectView = ProjectView;
+
+
+var project = function(model) {
+  let publicId = model.get('public_id'),
+      $template = $(App.templates.project_template()),
+      options = {
+        template: $template[0],
+        model: model,
+        el: "#" + publicId
+      };
+
+  $template.appendTo($('#projects #' + publicId));
+
+  const project = new App.Views.ProjectView(options);
+  project.render();
+ };
+
+App.viewFunctions.project = project;

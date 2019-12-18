@@ -139,6 +139,7 @@ class Project extends Backbone.Model {
 
 App.Models.Project = Project;
 
+
 class ProjectMeta extends App.Models.BaseMetaModel {
   get urlRoot() {
     return App.models.rootModel.get('projects').projects.href;

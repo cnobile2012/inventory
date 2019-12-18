@@ -4,16 +4,16 @@
  * js/views/invoices_view.js
  */
 
-jQuery(function($) {
-  App.Views.InvoiceView = Backbone.View.extend({
-    tagName: 'ul',
 
-    render: function() {
-      this.collection.each(function(invoice) {
-        var view = new 
+class InvoiceView extends Backbone.View {
+  get tagName() {return 'ul'; }
 
-      });
+  render() {
+    this.collection.each(function(invoice) {
+      //let view = new 
 
-    }
-  });
-});
+    });
+  }
+};
+
+App.Views.InvoiceView = InvoiceView;

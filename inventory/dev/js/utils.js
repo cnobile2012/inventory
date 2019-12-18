@@ -257,7 +257,7 @@ class Utilities {
   // Fetch Invoices
   fetchInvoiceCollection(url, project) {
     clearTimeout(App.invoiceTimeout);
-    var invoices = new App.Collections.Invoices();
+    let invoices = new App.Collections.InvoicesCollection();
     project.set('invoices', invoices);
     invoices.url = url;
     invoices.fetch({
@@ -274,7 +274,7 @@ class Utilities {
   // Fetch Items
   fetchItemCollection(url, project) {
     clearTimeout(App.itemTimeout);
-    var items = new App.Collections.Items();
+    let items = new App.Collections.ItemsCollection();
     project.set('items', items);
     items.url = url;
     items.fetch({

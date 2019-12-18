@@ -4,16 +4,15 @@
  * js/views/account_view.js
  */
 
-jQuery(function($) {
-  App.Views.UserView = Backbone.View.extend({
-    tagName: 'ul',
+class UserView extends Backbone.View {
+  get tagName() {return 'ul'; }
 
-    render: function() {
-      this.collection.each(function(invoice) {
-        var view = new 
+  render() {
+    this.collection.each(function(invoice) {
+      //let view = new 
 
-      });
+    });
+  }
+};
 
-    }
-  });
-});
+App.Views.UserView = UserView;

@@ -18,16 +18,18 @@
 /*
  * Global Router (non sub-application dependents)
  */
-var DefaultRouter = Backbone.Router.extend({
-  routes: {
-    '': 'defaultRoute'
-  },
+class DefaultRouter extends Backbone.Router {
+  get routes() {
+    return {
+      '': 'defaultRoute'
+    };
+  }
 
   // Redirect to contacts app by default
   defaultRoute() {
     this.navigate('contacts', true);
   }
-});
+};
 
 
 var App = {
