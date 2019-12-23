@@ -24,22 +24,22 @@
       var USERNAME = "{{ user.username }}"
     </script>
 {% compress js %}
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/utils.js' %}"></script>
-    <script src="{% static 'js/template-loader.js' %}"></script>
-    <script src="{% static 'js/contrib/menu_model.js' %}"></script>
-    <script src="{% static 'js/contrib/menu_views.js' %}"></script>
-    <script src="{% static 'js/models/base_meta_model.js' %}"></script>
-    <script src="{% static 'js/models/account_models.js' %}"></script>
-    <script src="{% static 'js/models/invoice_models.js' %}"></script>
-    <script src="{% static 'js/models/login_model.js' %}"></script>
-    <script src="{% static 'js/models/logout_model.js' %}"></script>
-    <script src="{% static 'js/models/root_model.js' %}"></script>
-    <script src="{% static 'js/models/project_models.js' %}"></script>
-    <script src="{% static 'js/views/base_modal_view.js' %}"></script>
-    <script src="{% static 'js/views/login_view.js' %}"></script>
-    <script src="{% static 'js/views/logout_view.js' %}"></script>
-    <script src="{% static 'js/views/project_views.js' %}"></script>
+    <script src="{% static 'js/contrib/menu/menu_model.js' %}"></script>
+    <script src="{% static 'js/contrib/menu/menu_views.js' %}"></script>
+    <script src="{% static 'js/contrib/modal/base_modal_view.js' %}"></script>
+    <script src="{% static 'js/app/main.js' %}"></script>
+    <script src="{% static 'js/app/utils.js' %}"></script>
+    <script src="{% static 'js/app/common/base_meta_model.js' %}"></script>
+    <script src="{% static 'js/app/common/root_model.js' %}"></script>
+    <script src="{% static 'js/app/template-loader.js' %}"></script>
+    <script src="{% static 'js/app/accounts/account_models.js' %}"></script>
+    <script src="{% static 'js/app/accounts/login_model.js' %}"></script>
+    <script src="{% static 'js/app/accounts/login_view.js' %}"></script>
+    <script src="{% static 'js/app/accounts/logout_model.js' %}"></script>
+    <script src="{% static 'js/app/accounts/logout_view.js' %}"></script>
+    <script src="{% static 'js/app/projects/project_models.js' %}"></script>
+    <script src="{% static 'js/app/projects/project_views.js' %}"></script>
+    <script src="{% static 'js/app/invoices/invoice_models.js' %}"></script>
 
     <!-- Add all other views before the menu view. -->
     <script src="{% static 'js/views/inventory_menu_views.js' %}"></script>

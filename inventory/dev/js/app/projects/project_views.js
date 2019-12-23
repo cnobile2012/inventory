@@ -173,7 +173,7 @@ class ProjectView extends Backbone.View {
 App.Views.ProjectView = ProjectView;
 
 
-var project = function(model) {
+let project = function(model) {
   let publicId = model.get('public_id'),
       $template = $(App.templates.project_template()),
       options = {
@@ -184,7 +184,7 @@ var project = function(model) {
 
   $template.appendTo($('#projects #' + publicId));
 
-  const project = new App.Views.ProjectView(options);
+  let project = new App.Views.ProjectView(options);
   project.render();
  };
 

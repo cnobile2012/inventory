@@ -63,5 +63,3 @@ class BaseModal extends Backbone.View {
     }
   }
 };
-
-App.Views.BaseModal = BaseModal;

@@ -79,8 +79,6 @@ class MenuItem extends Backbone.View {
   }
 };
 
-App.Views.MenuItem = MenuItem;
-
 
 // Whole menu view
 class Menu extends Backbone.View {
@@ -108,14 +106,15 @@ class Menu extends Backbone.View {
   }
 };
 
-App.Views.Menu = Menu;
-
 
 //  Examples:
 
-// Inventory Menu
 //class InventoryItemMenu extends App.Views.MenuItem {
 //  get toggle() { return true; }
+
+//  constructor(options) {
+//    super(options);
+//  }
 
 //  onClickCallback(model) {
 //    App.viewFunctions.inventory(model);
@@ -124,6 +123,10 @@ App.Views.Menu = Menu;
 
 
 //class InventoryParentMenu extends App.Views.Menu{
+//  constructor(options) {
+//    super(options);
+//  }
+
 //  renderCallback(model) {
 //    return new InventoryItemMenu({model: model});
 //  }
@@ -133,12 +136,18 @@ App.Views.Menu = Menu;
 //class InventoryMenu extends Backbone.View {
 //  get el() { return 'div#content'; }
 
+//  constructor(options) {
+//    super(options);
+//  }
+
 //  initialize() {
 //    _.bindAll(this);
 //  }
 
 //  render() {
-//    var menu = new InventoryParentMenu({collection: this.collection});
+//    let menu = new InventoryParentMenu({collection: this.collection});
 //    this.$el.append(menu.render().el);
 //  }
 //};
+
+//App.Views.InventoryMenu = InventoryMenu;

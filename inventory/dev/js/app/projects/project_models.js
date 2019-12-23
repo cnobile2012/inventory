@@ -160,7 +160,9 @@ class Projects extends Backbone.Collection {
       let options = [],
           item = null,
           data = "",
-          nextModel = null;
+          nextModel = null,
+          projectMenuCollection = null,
+          projectMenuView = null;
 
       for(let i = 0; i < this.length; i++) {
         nextModel = this.at(i);
@@ -170,11 +172,10 @@ class Projects extends Backbone.Collection {
         options[i] = item;
       }
 
-      App.collections.projectMenu = new App.Collections.MenuModelItems(
-        options);
-      App.views.projectMenu = new App.Views.ProjectMenu(
-        {collection: App.collections.projectMenu});
-      App.views.projectMenu.render();
+      projectMenuCollection = new App.Collections.MenuModelItems(options);
+      projectMenuView = new App.Views.ProjectMenu(
+        {collection: projectMenuCollection});
+      projectMenuView.render();
     });
   }
 };

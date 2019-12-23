@@ -11,20 +11,24 @@
 
 
 class MenuModelItem extends Backbone.Model {
-  defaults = {
-    title: 'Default Title',
-    isSelected: false
-  };
+  get defaults() {
+    return {
+      title: 'Default Title',
+      isSelected: false
+    };
+  }
 };
 
 
 class MenuModelItems extends Backbone.Collection {
-  model = null;
+  get model() { return MenuModelItem; }
 
-  // Listen to any model's isSelected change event
   constructor(options) {
     super(options);
-    this.model = MenuModelItem;
+  }
+
+  // Listen to any model's isSelected change event
+  initialize() {
     this.listenTo(this, 'change:isSelected', this.onSelectedChanged);
   }
 
@@ -45,5 +49,3 @@ class MenuModelItems extends Backbone.Collection {
     }
   }
 };
-
-App.Collections.MenuModelItems = MenuModelItems;

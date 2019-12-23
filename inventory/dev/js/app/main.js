@@ -84,6 +84,12 @@ var App = {
   }
 };
 
+// Attach contrib objects.
+App.Views.MenuItem = MenuItem;
+App.Views.Menu = Menu;
+App.Collections.MenuModelItems = MenuModelItems;
+App.Views.BaseModal = BaseModal;
+
 
 /*
  * This function is run when logout happens, so that all data for the
