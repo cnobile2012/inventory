@@ -27,25 +27,27 @@ class DefaultRouter extends Backbone.Router {
 
   // Redirect to contacts app by default
   defaultRoute() {
-    this.navigate('contacts', true);
+    //this.navigate('inventory', true);
+    this.navigate('accounts', true);
   }
 };
 
 
 var App = {
-  Models: {},
   Collections: {},
-  Views: {},
-  //Forms: {},
-  models: {},
   collections: {},
+  Models: {},
+  models: {},
+  Routers: {},
+  router: null,
+  Views: {},
   views: {}, // Use for persistent single views.
+  //Forms: {},
   viewFunctions: {}, // Use for functions that call ephemeral views.
   templates: null,
   loginModel: null,
   ViewContainer: null,
   viewContainer: null,
-  Router: null,
   utils: null,
   invoiceTimeout: null,
   itemTimeout: null,
