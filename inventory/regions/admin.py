@@ -29,7 +29,7 @@ class CountryAdmin(admin.ModelAdmin):
     readonly_fields = ('country', 'code',)
     list_editable = ('active',)
     search_fields = ('code', 'country',)
-    list_filter = ('active',)
+    list_filter = ('active', 'code',)
     ordering = ('country',)
     form = CountryForm
 
@@ -48,7 +48,7 @@ class SubdivisionAdmin(admin.ModelAdmin):
     readonly_fields = ('subdivision_name', 'country', 'code',)
     list_display = ('subdivision_name', 'country', 'code', 'active',)
     list_editable = ('active',)
-    list_filter = ('active',)
+    list_filter = ('active', 'country__country',)
     search_fields = ('subdivision_name', 'code', 'country__code',
                      'country__country',)
     form = SubdivisionForm
@@ -68,7 +68,7 @@ class LanguageAdmin(admin.ModelAdmin):
     readonly_fields = ('locale', 'country', 'code',)
     list_display = ('locale', 'country', 'code', 'active',)
     list_editable = ('active',)
-    list_filter = ('active',)
+    list_filter = ('active', 'country__country',)
     search_fields = ('locale', 'country__code', 'country__country',)
     form = LanguageForm
 
@@ -87,7 +87,7 @@ class TimeZoneAdmin(admin.ModelAdmin):
     readonly_fields = ('zone', 'coordinates', 'country', 'desc',)
     list_display = ('zone', 'country', 'coordinates', 'desc', 'active',)
     list_editable = ('active',)
-    list_filter = ('active',)
+    list_filter = ('active', 'country__country',)
     search_fields = ('country__country', 'country__code', 'zone', 'desc',)
     form = TimeZoneForm
 
@@ -103,11 +103,11 @@ class CurrencyAdmin(admin.ModelAdmin):
         (_('Status'), {'classes': ('collapse',),
                        'fields': ('active',)}),
         )
-    readonly_fields = ('currency', 'country', 'alphabetic_code', 'numeric_code',
-                       'minor_unit', 'symbol',)
+    readonly_fields = ('currency', 'country', 'alphabetic_code',
+                       'numeric_code', 'minor_unit', 'symbol',)
     list_display = ('currency', 'country', 'symbol', 'active',)
     list_editable = ('active',)
-    list_filter = ('active',)
+    list_filter = ('active', 'country__country',)
     search_fields = ('currency', 'country__country', 'alphabetic_code',
                      'numeric_code',)
     form = CurrencyForm

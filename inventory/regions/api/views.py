@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 import logging
 from decimal import Decimal
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.settings import api_settings
@@ -59,6 +61,46 @@ class CountryList(TrapDjangoValidationErrorCreateMixin,
                   ListAPIView):
     """
     Country list endpoint.
+
+    ## Endpoint Use
+      The GET and OPTIONS HTTP methods can be used on this endpoint.
+
+      1. /api/regions/countries/
+      2. /api/regions/countries/{id}/
+      3. /api/regions/countries/?code=&lt;2 Letter Country Code&gt;
+
+    ### GET
+      Example with request: `/api/regions/countries/`
+
+        {
+            "count": 249,
+            "next": "http://localhost:8000/api/regions/countries/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "code": "AF",
+                    "country": "Afghanistan",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/countries/1/"
+                },
+                {
+                     "id": 2,
+                     "code": "AX",
+                     "country": "Aland Islands",
+                     "active": true,
+                     "href": "http://localhost:8000/api/regions/countries/2/"
+                },
+                {
+                     "id": 3,
+                     "code": "AL",
+                     "country": "Albania",
+                     "active": true,
+                     "href": "http://localhost:8000/api/regions/countries/3/"
+                },
+                ...
+            ]
+        }
     """
     queryset = Country.objects.all()
     serializer_class = CountrySerializerVer01
@@ -70,6 +112,8 @@ class CountryList(TrapDjangoValidationErrorCreateMixin,
             ),
         )
     pagination_class = SmallResultsSetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('code',)
 
 country_list = CountryList.as_view()
 
@@ -118,6 +162,49 @@ class SubdivisionList(TrapDjangoValidationErrorCreateMixin,
                       ListAPIView):
     """
     Subdivision list endpoint.
+
+    ## Endpoint Use
+      The GET and OPTIONS HTTP methods can be used on this endpoint.
+
+      1. /api/regions/subdivisions/
+      2. /api/regions/subdivisions/{id}/
+      3. /api/regions/subdivisions/?country=&lt;id&gt;
+
+    ### GET
+      Example with request: `/api/regions/subdivisions/`
+
+        {
+            "count": 3466,
+            "next": "http://localhost:8000/api/regions/subdivisions/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 15,
+                    "subdivision_name": "Badakhshan",
+                    "country": "http://localhost:8000/api/regions/countries/1/",
+                    "code": "AF-BDS",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/subdivisions/15/"
+                },
+                {
+                    "id": 16,
+                    "subdivision_name": "Badghis",
+                    "country": "http://localhost:8000/api/regions/countries/1/",
+                    "code": "AF-BDG",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/subdivisions/16/"
+                },
+                {
+                    "id": 17,
+                    "subdivision_name": "Baghlan",
+                    "country": "http://localhost:8000/api/regions/countries/1/",
+                    "code": "AF-BGL",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/subdivisions/17/"
+                },
+                ...
+            ]
+        }
     """
     queryset = Subdivision.objects.all()
     serializer_class = SubdivisionSerializerVer01
@@ -129,6 +216,8 @@ class SubdivisionList(TrapDjangoValidationErrorCreateMixin,
             ),
         )
     pagination_class = SmallResultsSetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('country',)
 
 subdivision_list = SubdivisionList.as_view()
 
@@ -177,6 +266,49 @@ class LanguageList(TrapDjangoValidationErrorCreateMixin,
                    ListAPIView):
     """
     Language list endpoint.
+
+    ## Endpoint Use
+      The GET and OPTIONS HTTP methods can be used on this endpoint.
+
+      1. /api/regions/languages/
+      2. /api/regions/languages/{id}/
+      3. /api/regions/languages/?country=&lt;id&gt;
+
+    ### GET
+      Example with request: `/api/regions/languages/`
+
+        {
+            "count": 353,
+            "next": "http://localhost:8000/api/regions/languages/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "locale": "af-NA",
+                    "country": "http://localhost:8000/api/regions/countries/154/",
+                    "code": "af",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/languages/1/"
+                },
+                {
+                    "id": 2,
+                    "locale": "af-ZA",
+                    "country": "http://localhost:8000/api/regions/countries/206/",
+                    "code": "af",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/languages/2/"
+                },
+                {
+                     "id": 3,
+                     "locale": "ak-GH",
+                     "country": "http://localhost:8000/api/regions/countries/84/",
+                     "code": "ak",
+                     "active": true,
+                     "href": "http://localhost:8000/api/regions/languages/3/"
+                },
+                ...
+            ]
+        }
     """
     queryset = Language.objects.all()
     permission_classes = (
@@ -187,6 +319,8 @@ class LanguageList(TrapDjangoValidationErrorCreateMixin,
             ),
         )
     pagination_class = SmallResultsSetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('country',)
 
 language_list = LanguageList.as_view()
 
@@ -234,6 +368,52 @@ class TimeZoneList(TrapDjangoValidationErrorCreateMixin,
                    ListAPIView):
     """
     TimeZone list endpoint.
+
+    ## Endpoint Use
+      The GET and OPTIONS HTTP methods can be used on this endpoint.
+
+      1. /api/regions/timezones/
+      2. /api/regions/timezones/{id}/
+      3. /api/regions/timezones/?country=&lt;id&gt;
+
+    ### GET
+      Example with request: `/api/regions/timezones/`
+
+        {
+            "count": 423,
+            "next": "http://localhost:8000/api/regions/timezones/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 105,
+                    "zone": "Africa/Abidjan",
+                    "country": "http://localhost:8000/api/regions/countries/36/",
+                    "coordinates": "+0519-00402",
+                    "desc": "",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/timezones/105/"
+                },
+                {
+                    "id": 114,
+                    "zone": "Africa/Abidjan",
+                    "country": "http://localhost:8000/api/regions/countries/223/",
+                    "coordinates": "+0519-00402",
+                    "desc": "",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/timezones/114/"
+                },
+                {
+                    "id": 108,
+                    "zone": "Africa/Abidjan",
+                    "country": "http://localhost:8000/api/regions/countries/137/",
+                    "coordinates": "+0519-00402",
+                    "desc": "",
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/timezones/108/"
+                },
+                ...
+            ]
+        }
     """
     queryset = TimeZone.objects.all()
     permission_classes = (
@@ -244,6 +424,8 @@ class TimeZoneList(TrapDjangoValidationErrorCreateMixin,
             ),
         )
     pagination_class = SmallResultsSetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('country',)
 
 timezone_list = TimeZoneList.as_view()
 
@@ -291,6 +473,58 @@ class CurrencyList(TrapDjangoValidationErrorCreateMixin,
                    ListAPIView):
     """
     Currency list endpoint.
+
+    ## Endpoint Use
+      The GET and OPTIONS HTTP methods can be used on this endpoint.
+
+      1. /api/regions/currencies/
+      2. /api/regions/currencies/{id}/
+      3. /api/regions/currencies/?country=&lt;id&gt;
+
+    ### GET
+      Example with request: `/api/regions/currencies/`
+
+        {
+            "count": 256,
+            "next": "http://localhost:8000/api/regions/currencies/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "country": "http://localhost:8000/api/regions/countries/1/",
+                    "currency": "Afghani",
+                    "alphabetic_code": "AFN",
+                    "numeric_code": 971,
+                    "minor_unit": 2,
+                    "symbol": null,
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/currencies/1/"
+                },
+                {
+                    "id": 2,
+                    "country": "http://localhost:8000/api/regions/countries/2/",
+                    "currency": "Euro",
+                    "alphabetic_code": "EUR",
+                    "numeric_code": 978,
+                    "minor_unit": 2,
+                    "symbol": null,
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/currencies/2/"
+                },
+                {
+                    "id": 3,
+                    "country": "http://localhost:8000/api/regions/countries/3/",
+                    "currency": "Lek",
+                    "alphabetic_code": "ALL",
+                    "numeric_code": 8,
+                    "minor_unit": 2,
+                    "symbol": null,
+                    "active": true,
+                    "href": "http://localhost:8000/api/regions/currencies/3/"
+                },
+                ...
+            ]
+        }
     """
     queryset = Currency.objects.all()
     permission_classes = (
@@ -301,6 +535,8 @@ class CurrencyList(TrapDjangoValidationErrorCreateMixin,
             ),
         )
     pagination_class = SmallResultsSetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('country',)
 
 currency_list = CurrencyList.as_view()
 

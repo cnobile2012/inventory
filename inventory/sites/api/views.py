@@ -104,20 +104,18 @@ def api_root(request, format=None):
       * page_size `int` (optional)
         * Number of items to return in the page. Default is 25 maximum is 200.
 
-    ## Examples:
+    ### Examples:
       1. `/?format=api`
         * Returns items in HTML format.
       2. `/?format=json`
         * Returns items in JSON format.
       3. `/?format=xml`
         * Returns items in XML format.
-      4. `/?format=yaml`
-        * Returns items in YAML format.
-      5. `/`
+      4. `/`
         * Returns the first page of 25 items.
-      6. `/?page=1`
+      5. `/?page=1`
         * Returns the first page of 25 items.
-      7. `/?page=3&page_size=100`
+      6. `/?page=3&page_size=100`
         * Returns the third page of 100 items.
 
     ### Notes:
@@ -129,26 +127,37 @@ def api_root(request, format=None):
          appropriate `page_size` to the URI if a value different from the
          default is desired.
 
-    ## Endpoints
+    ## Version Control and MIME Types
+      Access to different media types and versions is through the use of
+      mimetypes.
+
+    ### Examples
+      * `Accept: application/json`
+        * Will always return the latest released version
+          (Generally do not use this).
+      * `Accept: application/vnd.tetrasys.pbpms.projects+json;ver=1.0`
+        * Returns the specific version 1 in JSON format on the `projects`
+          endpoint.
+      * `Accept: application/vnd.tetrasys.pbpms.items+xml;ver=2.0;q=0.9,
+                 application/xml;q=0.5`
+        * Returns version two if it exists or the latest version in XML
+          format if it does not exist.
+
+    ### Notes:
       Each endpoint is made up of three parts a `href`, `accept_header`,
       and `content_type_header` as explained below.
 
-      1. `href`
-        * This is the URI endpoint.
-      2. `accept_header`
-        * Use this media type to indicate the type of content that you
-          want to recieve.
-      3. `content_type_header`
-        * Use this media type to indicate the type of content that is
-          being sent.
-
-    ### Notes:
-      1. In general the `accept_header` and `content_type_header` will
+      1. `href`: This is the URI endpoint.
+      2. `accept_header`: Use this media type to indicate the type of
+         content that you want to recieve.
+      3. `content_type_header`: Use this media type to indicate the type
+         of content that is being sent.
+      4. In general the `accept_header` and `content_type_header` will
          have the same media type assigned to them, however, this could
          feasibly change in the future.
-      2. Both of the above media types are accessed by the version number
+      5. Both of the above media types are accessed by the version number
          as the key.
-      3. Different endpoints can have multiple versions available.
+      6. Each endpoint can have one to many versions available.
     """
     # Buffer
     buff = OrderedDict()
