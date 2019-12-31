@@ -1,7 +1,7 @@
 /*
  * Project models
  *
- * js/models/project_models.js
+ * js/projects/project_models.js
  */
 
 "use strict";

@@ -1,7 +1,7 @@
 /*
  * Account models
  *
- * js/models/account_models.js
+ * js/app/accounts/account_models.js
  */
 
 "use strict";
@@ -59,7 +59,7 @@ class User extends Backbone.Model {
     var url = this.get('href');
 
     if(url === '') {
-      url = App.loginModel.get('href');
+      url = App.login.get('href');
     }
 
     return url;
@@ -70,7 +70,7 @@ App.Models.User = User;
 
 
 class Users extends Backbone.Collection {
-  get model() { return App.Models.User; }
+  get model() { return User; }
 };
 
 App.Collections.Users = Users;

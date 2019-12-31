@@ -18,21 +18,21 @@
     <script src="{% static 'vendor/backbone.mutators.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
     <script>
-      var API_LOGIN = "{% url 'login' %}";
-      var API_ROOT = "{% url 'api-root' %}";
+      const API_LOGIN = "{% url 'login' %}";
+      const API_ROOT = "{% url 'api-root' %}";
       var IS_AUTHENTICATED = eval("{{ user.is_authenticated|yesno:'true,false' }}");
-      var USER_HREF = "{{ user.get_absolute_url }}"
-      var USERNAME = "{{ user.username }}"
+      const USER_HREF = "{{ user.get_absolute_url }}"
+      const USERNAME = "{{ user.username }}"
     </script>
 {% compress js %}
     <script src="{% static 'js/contrib/menu/menu_model.js' %}"></script>
     <script src="{% static 'js/contrib/menu/menu_views.js' %}"></script>
     <script src="{% static 'js/contrib/modal/base_modal_view.js' %}"></script>
-    <script src="{% static 'js/app/main.js' %}"></script>
+    <script src="{% static 'js/app/app.js' %}"></script>
     <script src="{% static 'js/app/utils.js' %}"></script>
+    <script src="{% static 'js/app/common/common_objects.js' %}"></script>
     <script src="{% static 'js/app/common/base_meta_model.js' %}"></script>
     <script src="{% static 'js/app/common/root_model.js' %}"></script>
-    <script src="{% static 'js/app/template-loader.js' %}"></script>
     <script src="{% static 'js/app/accounts/account_models.js' %}"></script>
     <script src="{% static 'js/app/accounts/login_model.js' %}"></script>
     <script src="{% static 'js/app/accounts/login_view.js' %}"></script>
@@ -43,7 +43,8 @@
     <script src="{% static 'js/app/invoices/invoice_models.js' %}"></script>
 
     <!-- Add all other views before the menu view. -->
-    <script src="{% static 'js/app/common/inventory_menu_views.js' %}"></script>
+    <script src="{% static 'js/app/common/menu_views.js' %}"></script>
+
 {% block js-extras %}{% endblock %}
 {% endcompress %}
     <link rel="stylesheet"

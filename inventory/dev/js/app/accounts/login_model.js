@@ -1,13 +1,13 @@
 /*
  * Inventory Login Model
  *
- * js/models/login_model.js
+ * js/app/accounts/login_model.js
  */
 
 "use strict";
 
 
-class Login extends Backbone.Model {
+class LoginModel extends Backbone.Model {
   get id() { return 'LoginModel'; }
   get urlRoot() { return API_LOGIN; }
   get defaults() {
@@ -20,7 +20,4 @@ class Login extends Backbone.Model {
   }
 };
 
-
-jQuery(function($) {
-  App.loginModel = new Login();
-});
+App.Models.LoginModel = LoginModel;

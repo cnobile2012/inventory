@@ -1,13 +1,13 @@
 /*
  * Inventory Logout Model
  *
- * js/models/logout_model.js
+ * js/app/models/logout_model.js
  */
 
 "use strict";
 
 
-class Logout extends Backbone.Model {
+class LogoutModel extends Backbone.Model {
   get id() { return 'LogoutModel'; }
   get defaults() { return {}; }
 
@@ -16,7 +16,4 @@ class Logout extends Backbone.Model {
   }
 };
 
-
-jQuery(function($) {
-  App.models.logoutModel = new Logout();
-});
+App.Models.LogoutModel = LogoutModel;

@@ -9,7 +9,6 @@
 
 // Single project view
 class ProjectView extends Backbone.View {
-
   render() {
     // Get this model's public_id
     var publicId = this.model.get('public_id');
@@ -157,7 +156,6 @@ class ProjectView extends Backbone.View {
 
   saveModel(event) {
     event.preventDefault();
-    App.utils.setLogin();
     this.model.save()
       .done(function(result) {
         console.log(result);
@@ -173,7 +171,7 @@ class ProjectView extends Backbone.View {
 App.Views.ProjectView = ProjectView;
 
 
-let project = function(model) {
+let projects = function(model) {
   let publicId = model.get('public_id'),
       $template = $(App.templates.project_template()),
       options = {
@@ -188,4 +186,4 @@ let project = function(model) {
   project.render();
  };
 
-App.viewFunctions.project = project;
+App.viewFunctions.projects = projects;

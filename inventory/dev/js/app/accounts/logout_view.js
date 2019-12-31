@@ -1,12 +1,12 @@
 /*
  * Inventory Logout view
  *
- * js/views/logout_view.js
+ * js/app/accounts/logout_view.js
  */
 
 // Create a modal view class
-class LogoutModal extends App.Views.BaseModal {
-  get model() { return App.models.logoutModel; }
+class LogoutModalView extends App.Views.BaseModalView {
+  get model() { return App.logout; }
   get el() { return $("#logout-modal"); }
   get template() { return App.templates.logout_template(); }
 
@@ -27,10 +27,9 @@ class LogoutModal extends App.Views.BaseModal {
     this.model.save({}, {
       success(data, status, jqXHR) {
         App.utils.showMessage(status.detail);
-        IS_AUTHENTICATED = false;
         $('#user-fullname').empty();
-        destroyApp();
-        App.utils.setLogin();
+        App.destroyApp();
+        App.router.navigate('', {trigger: true});
       },
       error(jqXHR, status, errorThrown) {
         App.utils.showMessage(status.responseJSON.detail +
@@ -42,10 +41,4 @@ class LogoutModal extends App.Views.BaseModal {
   }
 };
 
- 
-jQuery(function($) {  
-  $('#logout-button').on('click', function() {
-    let logout = new LogoutModal();
-    logout.show({show: true});
-  });
-});
+App.Views.LogoutModalView = LogoutModalView;

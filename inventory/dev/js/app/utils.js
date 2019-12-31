@@ -153,22 +153,9 @@ class Utilities {
     while((new Date().getTime() - start) < milliseconds);
   }
 
-  // Inventory specific methods.
-
-  setLogin() {
-    if(!IS_AUTHENTICATED) {
-      let options = {
-            backdrop: 'static',
-            keyboard: false
-          };
-      let login = new App.Views.LoginModal();
-      login.show(options);
-    } else {
-      App.loginModel.set(
-        'href', location.protocol + '//' + location.host + USER_HREF);
-      this.fetchData();
-    }
-  }
+  /*
+   * Inventory specific methods.
+   */
 
   fetchData() {
     this.fetchUser();
@@ -181,7 +168,7 @@ class Utilities {
     }
 
     return App.models.userModel.fetch({
-      error: function(model, response, options) {
+      error(model, response, options) {
         App.utils.showMessage("Error: Could not get data for user '" +
                               USERNAME + "' from API.");
       }
@@ -194,13 +181,13 @@ class Utilities {
     }
 
     return App.models.rootModel.fetch({
-      success: function(model, response, options) {
+      success(model, response, options) {
         App.utils.fetchProjectMeta();
         App.utils.fetchInventoryType();
         App.utils.fetchInventoryTypeMeta();
       },
 
-      error: function(model, response, options) {
+      error(model, response, options) {
         App.utils.showMessage("Error: Could not get data from API root.");
       }
     });
@@ -212,11 +199,11 @@ class Utilities {
     }
 
     return App.models.projectMeta.fetch({
-      success: function(model, response, options) {
+      success(model, response, options) {
         //console.log(model.get('projects').projects);
       },
 
-      error: function(model, response, options) {
+      error(model, response, options) {
         App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
@@ -228,11 +215,11 @@ class Utilities {
     }
 
     return App.collections.inventoryType.fetch({
-      success: function(model, response, options) {
+      success(model, response, options) {
         //console.log(model.get('projects').projects);
       },
 
-      error: function(model, response, options) {
+      error(model, response, options) {
         App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
@@ -244,11 +231,11 @@ class Utilities {
     }
 
     return App.models.inventoryTypeMeta.fetch({
-      success: function(model, response, options) {
+      success(model, response, options) {
         //console.log(model.get('projects').projects);
       },
 
-      error: function(model, response, options) {
+      error(model, response, options) {
         App.utils.showMessage(options.textStatus + " " + options.errorThrown);
       }
     });
@@ -261,11 +248,11 @@ class Utilities {
     project.set('invoices', invoices);
     invoices.url = url;
     invoices.fetch({
-      success: function(collection, response, options) {
+      success(collection, response, options) {
         console.log(response);
       },
 
-      error: function(collection, response, options) {
+      error(collection, response, options) {
         console.log(response);
       }
     });
@@ -278,11 +265,11 @@ class Utilities {
     project.set('items', items);
     items.url = url;
     items.fetch({
-      success: function(collection, response, options) {
+      success(collection, response, options) {
         console.log(response);
       },
 
-      error: function(collection, response, options) {
+      error(collection, response, options) {
         console.log(response);
       }
     });

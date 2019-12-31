@@ -7,7 +7,7 @@
 "use strict";
 
 
-class BaseModal extends Backbone.View {
+class BaseModalView extends Backbone.View {
   get template() { return ''; }
 
   constructor(options) {
@@ -50,14 +50,13 @@ class BaseModal extends Backbone.View {
 
   keydownHandler(e) {
     switch (e.which) {
-      // esc
-      case 27:
+      case 27: // Escape
         if(!(this.options.hasOwnProperty('keyboard'))) {
           this.close();
         }
 
         break;
-      case 13:
+      case 13: // Enter
         this.submit();
         break;
     }

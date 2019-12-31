@@ -1,7 +1,7 @@
 /*
  * Inventory Menu Views
  *
- * js/views/menu_views.js
+ * js/app/common/menu_views.js
  *
  * MENU VIEW ENTRY POINTS
  */
@@ -23,7 +23,7 @@ class InventoryItemMenu extends App.Views.MenuItem {
 };
 
 
-class InventoryParentMenu extends App.Views.Menu{
+class InventoryParentMenu extends App.Views.Menu {
   constructor(options) {
     super(options);
   }
@@ -63,7 +63,7 @@ class ProjectItemMenu extends App.Views.MenuItem {
   }
 
   onClickCallback(model) {
-    App.viewFunctions.project(model);
+    App.viewFunctions.projects(model);
   }
 };
 

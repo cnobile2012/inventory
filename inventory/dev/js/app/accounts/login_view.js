@@ -1,12 +1,12 @@
 /*
  * Inventory Login view
  *
- * js/views/login_view.js
+ * js/app/accounts/login_view.js
  */
 
 // Create a modal view class
-class LoginModal extends App.Views.BaseModal {
-  get model() { return App.loginModel; }
+class LoginModalView extends App.Views.BaseModalView {
+  get model() { return App.login; }
   get el() { return $("#login-modal"); }
   get template() { return App.templates.login_template(); }
 
@@ -61,9 +61,4 @@ class LoginModal extends App.Views.BaseModal {
   }
 };
 
-App.Views.LoginModal = LoginModal;
-
-
-jQuery(function($) {
-  App.utils.setLogin();
-});
+App.Views.LoginModalView = LoginModalView;
