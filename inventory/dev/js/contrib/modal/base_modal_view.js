@@ -44,7 +44,10 @@ class BaseModalView extends Backbone.View {
     this.remove();
     $('.modal-backdrop').remove();
     $('body').removeClass('modal-open');
+    this.closeCallback();
   }
+
+  closeCallback() {}
 
   submit() {}
 

@@ -15,5 +15,3 @@ class InvoiceView extends Backbone.View {
     });
   }
 };
-
-App.Views.InvoiceView = InvoiceView;

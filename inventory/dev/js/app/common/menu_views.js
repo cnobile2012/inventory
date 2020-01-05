@@ -10,7 +10,7 @@
 
 
 // Inventory Menu
-class InventoryItemMenu extends App.Views.MenuItem {
+class InventoryItemMenu extends MenuItem {
   get toggle() { return true; }
 
   constructor(options) {
@@ -23,7 +23,7 @@ class InventoryItemMenu extends App.Views.MenuItem {
 };
 
 
-class InventoryParentMenu extends App.Views.Menu {
+class InventoryParentMenu extends Menu {
   constructor(options) {
     super(options);
   }
@@ -51,11 +51,9 @@ class InventoryMenu extends Backbone.View {
   }
 };
 
-App.Views.InventoryMenu = InventoryMenu;
-
 
 // Project Menu
-class ProjectItemMenu extends App.Views.MenuItem {
+class ProjectItemMenu extends MenuItem {
   get toggle() { return false; }
 
   constructor(options) {
@@ -68,7 +66,7 @@ class ProjectItemMenu extends App.Views.MenuItem {
 };
 
 
-class ProjectParentMenu extends App.Views.Menu {
+class ProjectParentMenu extends Menu {
   constructor(options) {
     super(options);
   }
@@ -95,5 +93,3 @@ class ProjectMenu extends Backbone.View {
     this.$el.append(menu.render().el);
   }
 };
-
-App.Views.ProjectMenu = ProjectMenu;

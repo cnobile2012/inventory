@@ -1,7 +1,7 @@
 /*
  * Inventory Logout Model
  *
- * js/app/models/logout_model.js
+ * js/app/accounts/logout_model.js
  */
 
 "use strict";
@@ -15,5 +15,3 @@ class LogoutModel extends Backbone.Model {
     return App.models.rootModel.get('accounts').logout.href;
   }
 };
-
-App.Models.LogoutModel = LogoutModel;

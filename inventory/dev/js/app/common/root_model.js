@@ -30,5 +30,3 @@ class RootModel extends Backbone.Model {
     };
   }
 };
-
-App.Models.RootModel = RootModel;

@@ -109,7 +109,7 @@ class Menu extends Backbone.View {
 
 //  Examples:
 
-//class InventoryItemMenu extends App.Views.MenuItem {
+//class InventoryItemMenu extends MenuItem {
 //  get toggle() { return true; }
 
 //  constructor(options) {
@@ -122,7 +122,7 @@ class Menu extends Backbone.View {
 //};
 
 
-//class InventoryParentMenu extends App.Views.Menu{
+//class InventoryParentMenu extends Menu{
 //  constructor(options) {
 //    super(options);
 //  }
@@ -149,5 +149,3 @@ class Menu extends Backbone.View {
 //    this.$el.append(menu.render().el);
 //  }
 //};
-
-//App.Views.InventoryMenu = InventoryMenu;

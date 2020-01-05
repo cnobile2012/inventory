@@ -14,5 +14,3 @@ class UserView extends Backbone.View {
     });
   }
 };
-
-App.Views.UserView = UserView;

@@ -36,8 +36,6 @@ class ModelView extends Backbone.View {
   }
 };
 
-App.Views.ModelView = ModelView;
-
 
 class CollectionView extends Backbone.View {
   initialize() {
@@ -133,8 +131,6 @@ class CollectionView extends Backbone.View {
   }
 };
 
-App.Views.CollectionView = CollectionView;
-
 
 class Region {
   constructor(options) {
@@ -181,8 +177,6 @@ class Region {
     this.closeView(this.currentView);
   }
 };
-
-App.Regions.Region = Region;
 
 
 class Layout extends ModelView {
@@ -234,5 +228,3 @@ class Layout extends ModelView {
     });
   }
 };
-
-App.Layouts = Layout;

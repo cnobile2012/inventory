@@ -1,6 +1,7 @@
 {% load i18n %}
     <script type="text/template" class="template" id="logout_template">
-      <div id="logout-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div id="logout-modal" class="inv-modal modal fade" tabindex="-1"
+           role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -14,10 +15,14 @@
               <div>{% trans "Press 'Continue' to logout." %}</div>
             </div>
             <div class="modal-footer">
-              <button type="button" name="logout-cancel" class="btn btn-default"
-                      data-dismiss="modal">{% trans "Cancel" %}</button>
-              <button type="button" name="logout-submit" class="btn btn-primary"
-                      form="logout-form">{% trans "Continue" %}</button>
+              <button type="button" name="logout-cancel"
+                      class="button button-def">
+                {% trans "Cancel" %}
+              </button>
+              <button type="button" name="logout-submit" form="logout-form"
+                      class="button button-prim">
+                {% trans "Continue" %}
+              </button>
             </div>
           </div>
         </div>

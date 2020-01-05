@@ -5,8 +5,8 @@
  */
 
 // Create a modal view class
-class LoginModalView extends App.Views.BaseModalView {
-  get model() { return App.login; }
+class LoginModalView extends BaseModalView {
+  get model() { return App.persistentModels.login; }
   get el() { return $("#login-modal"); }
   get template() { return App.templates.login_template(); }
 
@@ -60,5 +60,3 @@ class LoginModalView extends App.Views.BaseModalView {
     }
   }
 };
-
-App.Views.LoginModalView = LoginModalView;

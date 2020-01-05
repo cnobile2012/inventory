@@ -8,25 +8,23 @@
 
 
 // InventoryType
-class InventoryModelType extends Backbone.Model {
+class InventoryTypeModel extends Backbone.Model {
   urlRoot() {
     return App.models.rootModel.get('projects').inventory_types.href;
   }
 };
 
 
-class InventoryTypeMeta extends App.Models.BaseMetaModel {
+class InventoryTypeMetaModel extends BaseMetaModel {
   urlRoot() {
     return App.models.rootModel.get('projects').inventory_types.href;
   }
 };
 
-App.Models.InventoryTypeMeta = InventoryTypeMeta;
 
-
-class InventoryType extends Backbone.Collection {
-  get name() { return "InventoryModelType"; }
-  get model() { return InventoryModelType; }
+class InventoryTypeCollection extends Backbone.Collection {
+  get name() { return "InventoryTypeCollection"; }
+  get model() { return InventoryTypeModel; }
 
   initialize() {}
 
@@ -45,11 +43,9 @@ class InventoryType extends Backbone.Collection {
   }
 };
 
-App.Collections.InventoryType = InventoryType;
-
 
 // Project
-class Project extends Backbone.Model {
+class ProjectModel extends Backbone.Model {
   get urlRoot() {
     return this.get('href');
   }
@@ -137,21 +133,17 @@ class Project extends Backbone.Model {
   }
 };
 
-App.Models.Project = Project;
 
-
-class ProjectMeta extends App.Models.BaseMetaModel {
+class ProjectMetaModel extends BaseMetaModel {
   get urlRoot() {
     return App.models.rootModel.get('projects').projects.href;
   }
 };
 
-App.Models.ProjectMeta = ProjectMeta;
 
-
-class Projects extends Backbone.Collection {
+class ProjectCollection extends Backbone.Collection {
   get name() { return "Projects"; }
-  get model() { return App.Models.Project; }
+  get model() { return ProjectModel; }
 
   initialize() {
     // Create project menu
@@ -172,12 +164,10 @@ class Projects extends Backbone.Collection {
         options[i] = item;
       }
 
-      projectMenuCollection = new App.Collections.MenuModelItems(options);
-      projectMenuView = new App.Views.ProjectMenu(
+      projectMenuCollection = new MenuModelItems(options);
+      projectMenuView = new ProjectMenu(
         {collection: projectMenuCollection});
       projectMenuView.render();
     });
   }
 };
-
-App.Collections.Projects = Projects;

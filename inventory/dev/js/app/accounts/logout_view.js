@@ -5,8 +5,8 @@
  */
 
 // Create a modal view class
-class LogoutModalView extends App.Views.BaseModalView {
-  get model() { return App.logout; }
+class LogoutModalView extends BaseModalView {
+  get model() { return App.persistentModels.logout; }
   get el() { return $("#logout-modal"); }
   get template() { return App.templates.logout_template(); }
 
@@ -40,5 +40,3 @@ class LogoutModalView extends App.Views.BaseModalView {
     this.close();
   }
 };
-
-App.Views.LogoutModalView = LogoutModalView;

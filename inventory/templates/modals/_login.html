@@ -1,6 +1,7 @@
 {% load i18n %}
     <script type="text/template" class="template" id="login_template">
-      <div id="login-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div id="login-modal" class="inv-modal modal fade" tabindex="-1"
+           role="dialog">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -35,7 +36,9 @@
               </div>
               <div>
                 <button type="button" name="login-submit" form="login-form"
-                        class="btn btn-primary">{% trans "Login" %}</button>
+                        class="button button-prim">
+                  {% trans "Login" %}
+                </button>
             </div>
           </div>
         </div>

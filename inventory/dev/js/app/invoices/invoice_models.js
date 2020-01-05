@@ -34,7 +34,7 @@ class InvoicesModel extends Backbone.Model {
     return {
       invoice_items: {
         set(key, value, options, set) {
-          var invoice_items = new App.Collections.InvoiceItemsCollection();
+          var invoice_items = new InvoiceItemsCollection();
           set(key, invoice_items, options);
 
           _.forEach(value, function(value, key) {
@@ -54,8 +54,6 @@ class InvoicesModel extends Backbone.Model {
   }
 };
 
-App.Models.InvoicesModel = InvoicesModel;
-
 
 class InvoicesMetaModel extends Backbone.Model {
   get defaults() {
@@ -73,12 +71,10 @@ class InvoicesMetaModel extends Backbone.Model {
   }
 };
 
-App.Models.InvoicesMetaModel = InvoicesMetaModel;
-
 
 class InvoicesCollection extends Backbone.Collection {
   get name() { return "InvoicesModel"; }
-  get model() { return App.Models.InvoicesModel; }
+  get model() { return InvoicesModel; }
 
   constructor(options) {
     super(options);
@@ -89,7 +85,7 @@ class InvoicesCollection extends Backbone.Collection {
 
     if(response.count > 0) {
       let project_public_id = models[0].project_public_id,
-          invoicesMeta = new App.Models.InvoicesMetaModel({
+          invoicesMeta = new InvoicesMetaModel({
             project_public_id: project_public_id,
             count: response.count,
             next: response.next,
@@ -101,8 +97,6 @@ class InvoicesCollection extends Backbone.Collection {
     return models;
   }
 };
-
-App.Collections.InvoicesCollection = InvoicesCollection;
 
 
 // InvoiceItems
@@ -130,8 +124,6 @@ class InvoiceItemsModel extends Backbone.Model {
   }
 };
 
-App.Models.InvoiceItemsModel = InvoiceItemsModel;
-
 
 class InvoiceItemsMetaModel extends Backbone.Model {
   get defaults() {
@@ -149,19 +141,15 @@ class InvoiceItemsMetaModel extends Backbone.Model {
   }
 };
 
-App.Models.InvoiceItemsMetaModel = InvoiceItemsMetaModel;
-
 
 class InvoiceItemsCollection extends Backbone.Collection {
   get name() { return "InvoiceItemsModel"; }
-  get model() { return App.Models.InvoiceItemsModel; }
+  get model() { return InvoiceItemsModel; }
 
   constructor(options) {
     super(options);
   }
 };
-
-App.Collections.InvoiceItemsCollection = InvoiceItemsCollection;
 
 
 // Items
@@ -198,8 +186,6 @@ class ItemsModel extends Backbone.Model {
   }
 };
 
-App.Models.ItemsModel = ItemsModel;
-
 
 class ItemsMetaModel extends Backbone.Model {
   get defaults() {
@@ -216,12 +202,10 @@ class ItemsMetaModel extends Backbone.Model {
   }
 };
 
-App.Models.ItemsMetaModel = ItemsMetaModel;
-
 
 class ItemsCollection extends Backbone.Collection {
   get name() { return "ItemsModel"; }
-  get model() { return App.Models.ItemsModel; }
+  get model() { return ItemsModel; }
 
   constructor(options) {
     super(options);
@@ -232,7 +216,7 @@ class ItemsCollection extends Backbone.Collection {
 
     if(response.count > 0) {
       let project_public_id = models[0].project_public_id,
-          itemsMeta = new App.Models.ItemsMetaModel({
+          itemsMeta = new ItemsMetaModel({
             project_public_id: project_public_id,
             count: response.count,
             next: response.next,
@@ -245,5 +229,3 @@ class ItemsCollection extends Backbone.Collection {
     return models;
   }
 };
-
-App.Collections.ItemsCollection = ItemsCollection;

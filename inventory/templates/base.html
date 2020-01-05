@@ -8,6 +8,7 @@
     <title>{% trans "Project Based Parts Management Service" %}</title>
 {% include "modals/_login.html" %}
 {% include "modals/_logout.html" %}
+{% include "modals/_notify.html" %}
 {% include "sites/_accounts.html" %}
 {% include "sites/_projects.html" %}
 {% include "sites/_invoices.html" %}
@@ -33,6 +34,8 @@
     <script src="{% static 'js/app/common/common_objects.js' %}"></script>
     <script src="{% static 'js/app/common/base_meta_model.js' %}"></script>
     <script src="{% static 'js/app/common/root_model.js' %}"></script>
+    <script src="{% static 'js/app/common/modal_models.js' %}"></script>
+    <script src="{% static 'js/app/common/modal_views.js' %}"></script>
     <script src="{% static 'js/app/accounts/account_models.js' %}"></script>
     <script src="{% static 'js/app/accounts/login_model.js' %}"></script>
     <script src="{% static 'js/app/accounts/login_view.js' %}"></script>
@@ -51,8 +54,7 @@
 	  href="{% static 'vendor/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" />
 {% compress css %}
     <link rel="stylesheet" href="{% static 'css/common.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/logout.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}" />
 {% block css-extras %}{% endblock %}
 {% endcompress %}
   </head>

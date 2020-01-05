@@ -51,5 +51,3 @@ class BaseMetaModel extends Backbone.Model {
     return xhr;
   }
 };
-
-App.Models.BaseMetaModel = BaseMetaModel;

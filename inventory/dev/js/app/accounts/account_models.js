@@ -7,7 +7,7 @@
 "use strict";
 
 
-class User extends Backbone.Model {
+class UserModel extends Backbone.Model {
   get defaults() {
     return {
       public_id: '',
@@ -44,7 +44,7 @@ class User extends Backbone.Model {
     return {
       projects: {
         set(key, value, options, set) {
-          var projects = new App.Collections.Projects();
+          var projects = new ProjectCollection();
           set(key, projects, options);
 
           _.forEach(value, function(value, key) {
@@ -59,18 +59,14 @@ class User extends Backbone.Model {
     var url = this.get('href');
 
     if(url === '') {
-      url = App.login.get('href');
+      url = App.persistentModels.login.get('href');
     }
 
     return url;
   }
 };
 
-App.Models.User = User;
 
-
-class Users extends Backbone.Collection {
+class UsersCollection extends Backbone.Collection {
   get model() { return User; }
 };
-
-App.Collections.Users = Users;

@@ -19,5 +19,3 @@ class LoginModel extends Backbone.Model {
     };
   }
 };
-
-App.Models.LoginModel = LoginModel;

@@ -1,10 +1,10 @@
 /*
- * Login Modal View CSS
+ * Modal View CSS
  *
- * css/login.css
+ * css/modal.css
  */
 
-#login-modal.modal {
+.inv-modal {
   position: absolute;
   top: 130px;
   right: 0;
@@ -14,6 +14,44 @@
   overflow: auto;
   overflow-y: auto;
 }
+
+.inv-modal .modal-footer .button {
+  margin: 1px;
+  padding: 6px 12px;
+  width: 50%;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  white-space:nowrap;
+  cursor: pointer;
+}
+
+.inv-modal .modal-footer .button-prim {
+  color: rgba(255, 255, 255, 1);
+  background-color: rgba(51, 122, 183, 1);
+  border-color: rgba(46, 109, 164, 1);
+}
+
+.inv-modal .modal-footer .button-def {
+  color: rgba(72, 48, 24, 1);
+  border-color: rgba(204, 204, 204, 1);
+}
+
+.inv-modal .block-center {
+  display: block;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 50%;
+}
+
+.inv-modal .text-center {
+  text-align: center;
+}
+
+
+/* Login Modal */
 
 #login-modal .modal-header {
   display: flex;
@@ -101,6 +139,35 @@
   font-size: 80%;
 }
 
-#login-modal button[name=login-submit] {
-  width: 50%;
+
+/* Logout Modal */
+
+#logout-modal .modal-dialog {
+  width: 300px;
+}
+
+#logout-modal .modal-footer {
+  display: flex;
+}
+
+
+/* Notify Modal */
+
+#notify-modal .modal-dialog {
+  width: 400px;
+}
+
+#notify-modal .modal-body img {
+  width: 20%;
+  height: 20%;
+}
+
+#notify-modal .modal-body div:nth-of-type(2) {
+  margin: 10px 0 6px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+#notify-modal .modal-footer {
+  display: flex;
 }

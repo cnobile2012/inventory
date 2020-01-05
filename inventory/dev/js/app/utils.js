@@ -164,7 +164,7 @@ class Utilities {
 
   fetchUser() {
     if(App.models.userModel === (void 0)) {
-      App.models.userModel = new App.Models.User();
+      App.models.userModel = new UserModel();
     }
 
     return App.models.userModel.fetch({
@@ -177,7 +177,7 @@ class Utilities {
 
   fetchRoot() {
     if(App.models.rootModel === (void 0)) {
-      App.models.rootModel = new App.Models.RootModel();
+      App.models.rootModel = new RootModel();
     }
 
     return App.models.rootModel.fetch({
@@ -195,7 +195,7 @@ class Utilities {
 
   fetchProjectMeta() {
     if(App.models.projectMeta === (void 0)) {
-      App.models.projectMeta = new App.Models.ProjectMeta();
+      App.models.projectMeta = new ProjectMetaModel();
     }
 
     return App.models.projectMeta.fetch({
@@ -211,7 +211,7 @@ class Utilities {
 
   fetchInventoryType() {
     if(App.collections.inventoryType === (void 0)) {
-      App.collections.inventoryType = new App.Collections.InventoryType();
+      App.collections.inventoryType = new InventoryTypeCollection();
     }
 
     return App.collections.inventoryType.fetch({
@@ -227,7 +227,7 @@ class Utilities {
 
   fetchInventoryTypeMeta() {
     if(App.models.inventoryTypeMeta === (void 0)) {
-      App.models.inventoryTypeMeta = new App.Models.InventoryTypeMeta();
+      App.models.inventoryTypeMeta = new InventoryTypeMetaModel();
     }
 
     return App.models.inventoryTypeMeta.fetch({
@@ -244,7 +244,7 @@ class Utilities {
   // Fetch Invoices
   fetchInvoiceCollection(url, project) {
     clearTimeout(App.invoiceTimeout);
-    let invoices = new App.Collections.InvoicesCollection();
+    let invoices = new InvoicesCollection();
     project.set('invoices', invoices);
     invoices.url = url;
     invoices.fetch({
@@ -261,7 +261,7 @@ class Utilities {
   // Fetch Items
   fetchItemCollection(url, project) {
     clearTimeout(App.itemTimeout);
-    let items = new App.Collections.ItemsCollection();
+    let items = new ItemsCollection();
     project.set('items', items);
     items.url = url;
     items.fetch({

@@ -1,0 +1,35 @@
+    <script type="text/template" class="template" id="notify_template">
+{% verbatim %}
+      <div id="notify-modal" class="inv-modal modal fade" tabindex="-1"
+           role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title"><%= title %></h3>
+            </div>
+            <div class="modal-body">
+              <div>
+                <img src="<%= image %>" class="block-center" />
+              </div>
+              <div class="text-center"><%= message %></div>
+            </div>
+            <div class="modal-footer">
+<% if (!noCancel) { %>
+              <button type="button" name="notify-cancel" data-dismiss="modal"
+                      class="<% if (noConfirm)
+                             { %>block-center<% } %> button button-def">
+                <%= cancel %>
+              </button>
+<% } %><% if (!noConfirm) { %>
+              <button type="button" name="success" form="logout-form"
+                      class="<% if (noCancel)
+                             { %>block-center<% } %> button button-prim">
+                <%= confirm %>
+              </button>
+<% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endverbatim %}
+    </script>

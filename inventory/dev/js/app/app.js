@@ -40,11 +40,11 @@ class DefaultRouter extends Backbone.Router {
             backdrop: 'static',
             keyboard: false
           };
-      let login = new App.Views.LoginModalView();
+      let login = new LoginModalView();
       login.show(options);
     } else {
       // Set the href on the login model.
-      App.login.set(
+      App.persistentModels.login.set(
         'href', location.protocol + '//' + location.host + USER_HREF);
       App.utils.fetchData();
     }
@@ -61,22 +61,18 @@ class DefaultRouter extends Backbone.Router {
 
 
 var App = {
-  Collections: {},
-  collections: {},
-  Layouts: {},
-  layouts: {},
-  Models: {},
-  models: {},
-  Regions: {},
-  regions: {},
   Routers: {},
   router: null, // Only the default router.
-  Views: {},
+  // Multiple instance variables.
+  collections: {},
+  layouts: {},
+  models: {},
+  persistentModels: {},
+  regions: {},
+  templates: {},
   views: {}, // Use for persistent single views.
   viewFunctions: {}, // Use for functions that call ephemeral views.
-  templates: {},
-  login: null, // Instance
-  logout: null, // Instance
+  // Single instance variables.
   ViewContainer: null,
   viewContainer: null,
   utils: null,
@@ -88,7 +84,7 @@ var App = {
     this.templateLoader();
 
     // Create the login and logout models instances.
-    this.createLogInOutModels();
+    this.createNeededModels();
     this.activateLogoutModal();
 
     // Initialize all available routes
@@ -113,29 +109,28 @@ var App = {
   templateLoader() {
     $('script.template').each(function(index) {
       // Load template from DOM.
-      if(App.templates[$(this).attr('id')] === (void 0)) {
-        App.templates[$(this).attr('id')] = _.template($(this).html());
+      let tag = $(this).attr('id');
+
+      if(App.templates[tag] === (void 0)) {
+        App.templates[tag] = _.template($(this).html());
         // Remove template from DOM.
         $(this).remove();
       }
     });
   },
 
-  createLogInOutModels() {
-    if(this.login === null) {
-      this.login = new this.Models.LoginModel();
-    }
+  createNeededModels() {
+    if(this.persistentModels.login === (void 0))
+      this.persistentModels.login = new LoginModel();
 
-    if(this.logout === null) {
-      this.logout = new this.Models.LogoutModel();
-    }
+    if(this.persistentModels.logout === (void 0))
+      this.persistentModels.logout = new LogoutModel();
   },
 
   activateLogoutModal() {
     $('#logout-button').on('click', function(event) {
-      let logout = new App.Views.LogoutModalView();
+      let logout = new LogoutModalView();
       logout.show({show: true});
-      //App.router.navigate('logout', {trigger: true, replace: true});
     });
   },
 
@@ -144,7 +139,8 @@ var App = {
    * user is removed.
    */
   destroyApp() {
-    App.login.clear().set(App.login.defaults);
+    App.persistentModels.login.clear()
+      .set(App.persistentModels.login.defaults);
     App.collections = {};
     App.layouts = {};
     App.models = {};
@@ -175,46 +171,19 @@ var App = {
     return this.currentSubapp;
   },
 
-  successMessage(message) {
-    let options = {
-      title: 'Success',
-      type: 'success',
-      text: message,
-      confirmButtonText: 'Okay'
-    };
-
-    swal(options);
-  },
-
   errorMessage(message) {
-    let options = {
-      title: 'Error',
-      type: 'error',
-      text: message,
-      confirmButtonText: 'Okay'
-    };
-
-    swal(options);
+    let model = new ErrorModalModel();
+    if(message !== (void 0)) model.set('message', message);
+    let cmv = new NotificationModalView({model: model});
+    cmv.show();
   },
 
   askConfirmation(message, callback) {
-    let options = {
-      title: 'Are you sure?',
-      // Show the warning icon
-      type: 'warning',
-      text: message,
-      // By default the cancel button is not shown
-      showCancelButton: true,
-      confirmButtonText: 'Yes, do it!',
-      // Overwrite the default button color
-      confirmButtonColor: '#5cb85c',
-      cancelButtonText: 'No'
-    };
-
-    // Show the message
-    swal(options, function(isConfirm) {
-      callback(isConfirm);
-    });
+    let model = new ConfirmModalModel();
+    if(message !== (void 0)) model.set('message', message);
+    let cmv = new NotificationModalView({model: model});
+    if(callback !== (void 0)) cmv.submit = callback;
+    cmv.show();
   },
 
   notifySuccess(message) {
@@ -237,12 +206,6 @@ var App = {
     });
   }
 };
-
-// Attach contrib objects.
-App.Views.MenuItem = MenuItem;
-App.Views.Menu = Menu;
-App.Collections.MenuModelItems = MenuModelItems;
-App.Views.BaseModalView = BaseModalView;
 
 
 /*
