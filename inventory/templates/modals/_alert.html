@@ -1,0 +1,21 @@
+    <script type="text/template" class="template" id="alert_template">
+{% verbatim %}
+      <div id="alert-modal" class="inv-alert-modal inv-modal fade"
+           tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content
+               <% if (theme === "failure") { %> failure <% }
+                  else { %> success <% } %>">
+            <div class="modal-header">
+              <h3 class="modal-title"><%= title %></h3>
+            </div>
+            <div class="modal-body">
+              <div class="text-center"><%= message %></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+{% endverbatim %}
+    </script>

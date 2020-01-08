@@ -172,38 +172,43 @@ var App = {
   },
 
   errorMessage(message) {
-    let model = new ErrorModalModel();
+    let model = new ErrorNotifyModalModel();
     if(message !== (void 0)) model.set('message', message);
-    let cmv = new NotificationModalView({model: model});
-    cmv.show();
+    let nmv = new NotificationModalView({model: model});
+    nmv.show();
   },
 
   askConfirmation(message, callback) {
-    let model = new ConfirmModalModel();
+    if(typeof message === 'function') {
+      callback = message;
+      message = (void 0);
+    }
+
+    let model = new ConfirmNotifyModalModel();
     if(message !== (void 0)) model.set('message', message);
-    let cmv = new NotificationModalView({model: model});
-    if(callback !== (void 0)) cmv.submit = callback;
-    cmv.show();
+    let nmv = new NotificationModalView({model: model});
+    if(callback !== (void 0)) nmv.submitCallback = callback;
+    nmv.show();
   },
 
-  notifySuccess(message) {
-    new noty({
-      text: message,
-      layout: 'topRight',
-      theme: 'relax',
-      type: 'success',
-      timeout: 3000 // close automatically
-    });
+  alertSuccess(message) {
+    let model = new SuccessAlertModalModel();
+    if(message !== (void 0)) model.set('message', message);
+    let amv = new AlertModalView({model: model});
+    amv.show();
+    setTimeout(() => {
+      $('#alert-modal').fadeOut(2000, () => { amv.close(); });
+    }, 2000);
   },
 
-  notifyError(message) {
-    new noty({
-      text: message,
-      layout: 'topRight',
-      theme: 'relax',
-      type: 'error',
-      timeout: 3000 // close automatically
-    });
+  alertError(message) {
+    let model = new ErrorAlertModalModel();
+    if(message !== (void 0)) model.set('message', message);
+    let amv = new AlertModalView({model: model});
+    amv.show();
+    setTimeout(() => {
+      $('#alert-modal').fadeOut(2000, () => { amv.close(); });
+    }, 2000);
   }
 };
 

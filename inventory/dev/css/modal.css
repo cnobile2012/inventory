@@ -13,6 +13,7 @@
   z-index: 1050;
   overflow: auto;
   overflow-y: auto;
+  outline: 0;
 }
 
 .inv-modal .modal-footer .button {
@@ -170,4 +171,23 @@
 
 #notify-modal .modal-footer {
   display: flex;
+}
+
+
+/* Alert Modal */
+
+.inv-alert-modal {
+  left: 85%;
+}
+
+#alert-modal .modal-dialog {
+  width: 300px;
+}
+
+.success {
+  background: lightgreen;
+}
+
+.failure {
+  background: salmon;
 }

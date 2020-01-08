@@ -49,7 +49,12 @@ class BaseModalView extends Backbone.View {
 
   closeCallback() {}
 
-  submit() {}
+  submit() {
+    this.submitCallback();
+    this.close();
+  }
+
+  submitCallback() {}
 
   keydownHandler(e) {
     switch (e.which) {

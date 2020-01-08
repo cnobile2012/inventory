@@ -7,8 +7,25 @@
 "use strict";
 
 
-class ConfirmModalModel extends Backbone.Model {
-  get id() { return 'ConfirmModalModel'; }
+class ErrorNotifyModalModel extends Backbone.Model {
+  get id() { return 'ErrorNotifyModalModel'; }
+
+  get defaults() {
+    return {
+      title: "Error",
+      image: "/static/img/molumen_red_square_error_warning_icon.svg",
+      message: "Oops",
+      noCancel: true,
+      //cancel: "Cancel",
+      noConfirm: false,
+      confirm: "Continue"
+    };
+  }
+};
+
+
+class ConfirmNotifyModalModel extends Backbone.Model {
+  get id() { return 'ConfirmNotifyModalModel'; }
 
   get defaults() {
     return {
@@ -24,18 +41,27 @@ class ConfirmModalModel extends Backbone.Model {
 };
 
 
-class ErrorModalModel extends Backbone.Model {
-  get id() { return 'ErrorModalModel'; }
+class SuccessAlertModalModel extends Backbone.Model {
+  get id() { return 'SuccessAlertModalModel'; }
 
   get defaults() {
     return {
-      title: "Error",
-      image: "/static/img/molumen_red_square_error_warning_icon.svg",
-      message: "Oops",
-      noCancel: true,
-      //cancel: "Cancel",
-      noConfirm: false,
-      confirm: "Continue"
+      title: "Success",
+      theme: 'success',
+      message: "The process has succeeded."
+    };
+  }
+};
+
+
+class ErrorAlertModalModel extends Backbone.Model {
+  get id() { return 'SuccessAlertModalModel'; }
+
+  get defaults() {
+    return {
+      title: "Failed",
+      theme: 'failure',
+      message: "The process has failed."
     };
   }
 };

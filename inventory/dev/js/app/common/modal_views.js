@@ -27,5 +27,19 @@ class NotificationModalView extends BaseModalView {
     super(options);
   }
 
-  submit() {}
+  submitCallback() {}
+};
+
+
+class AlertModalView extends BaseModalView {
+
+  get el() { return $("#alert-modal"); }
+
+  get template() {
+    return App.templates.alert_template(this.model.toJSON());
+  }
+
+  constructor(options) {
+    super(options);
+  }
 };
