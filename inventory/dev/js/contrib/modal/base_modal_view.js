@@ -50,8 +50,8 @@ class BaseModalView extends Backbone.View {
   closeCallback() {}
 
   submit() {
-    this.submitCallback();
     this.close();
+    this.submitCallback();
   }
 
   submitCallback() {}
