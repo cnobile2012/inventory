@@ -5,23 +5,29 @@
  */
 
 // Create a modal view class
-class LoginModalView extends BaseModalView {
+class LoginModalView extends MicromodalBaseView {
+
   get model() { return App.persistentModels.login; }
-  get el() { return $("#login-modal"); }
-  get template() { return App.templates.login_template(); }
+
+  get el() { return $("#" + this.tag); }
 
   get events() {
     return {
-      'click button[name=login-submit]': 'submit',
+      'click button[name=login-success]': 'success',
       'keydown': 'keydownHandler'
     };
   }
 
-  constructor(options) {
-    super(options);
+  get template() {
+    return App.templates.login_template();
   }
 
-  submit() {
+  constructor(options) {
+    super(options);
+    this.tag = 'login-modal';
+  }
+
+  successCB(event) {
     let self = this,
         username = this.$el.find('input[type=text]').val(),
         password = this.$el.find('input[type=password]').val();
@@ -42,7 +48,6 @@ class LoginModalView extends BaseModalView {
           self.model.set('fullname', status.fullname);
           self.model.set('href', status.href);
           $('#user-fullname').text(status.fullname);
-          self.close();
           self.model.set('username', 'X');
           self.model.set('password', 'X');
           App.utils.hideMessage();

@@ -130,7 +130,7 @@ var App = {
   activateLogoutModal() {
     $('#logout-button').on('click', function(event) {
       let logout = new LogoutModalView();
-      logout.show({show: true});
+      logout.show();
     });
   },
 
@@ -209,6 +209,13 @@ var App = {
     setTimeout(() => {
       $('#alert-modal').fadeOut(2000, () => { amv.close(); });
     }, 2000);
+  },
+
+  tempModal(message) {
+    let model = new TestNotifyModalModel();
+    if(message !== (void 0)) model.set('message', message);
+    let tnmv = new TestNotifyModalView({model: model});
+    tnmv.show();
   }
 };
 

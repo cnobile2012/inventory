@@ -9,6 +9,7 @@
 {% include "modals/_login.html" %}
 {% include "modals/_logout.html" %}
 {% include "modals/_notify.html" %}
+{% include "modals/_tmp_notify.html" %}
 {% include "modals/_alert.html" %}
 {% include "sites/_accounts.html" %}
 {% include "sites/_projects.html" %}
@@ -18,7 +19,8 @@
     <script src="{% static 'vendor/lodash-4.17.15.min.js' %}"></script>
     <script src="{% static 'vendor/backbone-1.4.0.min.js' %}"></script>
     <script src="{% static 'vendor/backbone.mutators.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/micromodal.js' %}"></script>
+    <!--script src="{% static 'vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script-->
     <script>
       const API_LOGIN = "{% url 'login' %}";
       const API_ROOT = "{% url 'api-root' %}";
@@ -51,8 +53,9 @@
 
 {% block js-extras %}{% endblock %}
 {% endcompress %}
-    <link rel="stylesheet"
-	  href="{% static 'vendor/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" />
+    <link rel="Shortcut Icon" href="{% static 'img/favicon.ico' %}" />
+    <!--link rel="stylesheet"
+	  href="{% static 'vendor/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" /-->
 {% compress css %}
     <link rel="stylesheet" href="{% static 'css/common.css' %}" />
     <link rel="stylesheet" href="{% static 'css/modal.css' %}" />

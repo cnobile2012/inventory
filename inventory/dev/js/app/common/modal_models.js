@@ -55,13 +55,31 @@ class SuccessAlertModalModel extends Backbone.Model {
 
 
 class ErrorAlertModalModel extends Backbone.Model {
-  get id() { return 'SuccessAlertModalModel'; }
+  get id() { return 'ErrorAlertModalModel'; }
 
   get defaults() {
     return {
       title: "Failed",
       theme: 'failure',
       message: "The process has failed."
+    };
+  }
+};
+
+
+// Test Modal
+class TestNotifyModalModel extends Backbone.Model {
+  get id() { return 'TestNotifyModalModel'; }
+
+  get defaults() {
+    return {
+      title: "It Worked",
+      image: "/static/img/rodentia-icons_dialog-warning.svg",
+      message: "The modal worked.",
+      noCancel: false,
+      cancel: "Cancel",
+      noConfirm: false,
+      confirm: "Continue"
     };
   }
 };

@@ -5,7 +5,7 @@
  */
 
 .inv-modal {
-  position: absolute;
+  position: fixed;
   top: 130px;
   right: 0;
   bottom: 0;
@@ -16,8 +16,36 @@
   outline: 0;
 }
 
+.inv-modal .modal-content {
+  position: relative;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 6px;
+  outline: 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+}
+
+.inv-modal .modal-header {
+  display: block;
+  padding: 15px;
+  border-bottom: 1px solid rgba(229, 229, 229, 1);
+}
+
+.inv-modal .modal-body {
+  position: relative;
+  padding: 15px;
+}
+
+.inv-modal .modal-footer {
+  padding: 10px;
+  text-align: right;
+  border-top: 1px solid rgba(229, 229, 229, 1);
+  font-size: 125%;
+}
+
 .inv-modal .modal-footer .button {
-  margin: 1px;
+  margin: 1px 4px;
   padding: 6px 12px;
   width: 50%;
   border: 1px solid transparent;
@@ -51,8 +79,67 @@
   text-align: center;
 }
 
+.inv-modal .inv-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes invFadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+
+@keyframes invFadeOut {
+    from { opacity: 1; }
+      to { opacity: 0; }
+}
+
+@keyframes invSlideIn {
+  from { transform: translate(100%, -100%); }
+    to { transform: translate(0, 0); }
+}
+
+@keyframes invSlideOut {
+    from { transform: translate(0, 0); }
+    to { transform: translate(100%, -100%); }
+}
+
+.modal-slide {
+  display: none;
+}
+
+.modal-slide.is-open {
+  display: block;
+}
+
+.modal-slide[aria-hidden="false"] .inv-modal-backdrop {
+  animation: invFadeIn 2s cubic-bezier(0.6, 0.1, 0.15, 0.7);
+}
+
+.modal-slide[aria-hidden="false"] .modal-content {
+  animation: invSlideIn 2s cubic-bezier(0.6, 0.1, 0.15, 0.7);
+}
+
+.modal-slide[aria-hidden="true"] .inv-modal-backdrop {
+  animation: invFadeOut 2s cubic-bezier(0.6, 0.1, 0.15, 0.7);
+}
+
+.modal-slide[aria-hidden="true"] .modal-content {
+  animation: invSlideOut 2s cubic-bezier(0.6, 0.1, 0.15, 0.7);
+}
+
 
 /* Login Modal */
+#login-modal .modal-dialog {
+  width: 500px;
+}
 
 #login-modal .modal-header {
   display: flex;
@@ -176,18 +263,41 @@
 
 /* Alert Modal */
 
-.inv-alert-modal {
-  left: 85%;
-}
-
 #alert-modal .modal-dialog {
   width: 300px;
 }
 
-.success {
-  background: lightgreen;
+#alert-modal .success {
+  background: lightgreen !important;
 }
 
-.failure {
-  background: salmon;
+#alert-modal .failure {
+  background: salmon !important;
+}
+
+#alert-modal .inv-alert-modal {
+  top: -30%;
+  left: 43%;
+}
+
+
+/* Test Modal */
+
+#test-notify-modal .modal-dialog {
+  width: 400px;
+}
+
+#test-notify-modal .modal-body img {
+  width: 20%;
+  height: 20%;
+}
+
+#test-notify-modal .modal-body div:nth-of-type(2) {
+  margin: 10px 0 6px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+#test-notify-modal .modal-footer {
+  display: flex;
 }

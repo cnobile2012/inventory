@@ -7,7 +7,7 @@
 "use strict";
 
 
-class BaseModalView extends Backbone.View {
+class MicromodalBaseView extends Backbone.View {
   get template() { return ''; }
 
   constructor(options) {
@@ -15,57 +15,60 @@ class BaseModalView extends Backbone.View {
   }
 
   initialize() {
-    _.bindAll(this, 'show', 'render', 'close', 'submit', 'keydownHandler');
+    _.bindAll(this, 'show', 'close', 'render', 'cancel', 'success',
+              'keydownHandler');
     this.render();
-  }
-
-  show(options) {
-    let self = this;
-    this.$el.off('hide.bs.modal');
-    this.$el.on('hide.bs.modal', function() {
-      self.close();
+    MicroModal.init({
+      //debugMode: true,
+      disableScroll: true,
+      awaitCloseAnimation: false
     });
-
-    if(options === (void 0)) {
-      options = {};
-    }
-
-    this.options = options;
-    this.$el.modal(options);
   }
 
   render() {
     this.$el = $(this.template);
     this.delegateEvents(this.events);
+
+    if(!this.$el[0].isConnected) {
+      document.querySelector('body').appendChild(this.$el[0]);
+    }
+
     return this;
   }
 
-  close() {
-    this.remove();
-    $('.modal-backdrop').remove();
-    $('body').removeClass('modal-open');
-    this.closeCallback();
+  show() {
+    MicroModal.show(this.tag);
   }
 
-  closeCallback() {}
+  close(event) {
+    if(event !== (void 0)) {
+      event.stopImmediatePropagation();
+    }
 
-  submit() {
-    this.close();
-    this.submitCallback();
+    if(this.$el[0].isConnected) {
+      MicroModal.close(this.tag);
+      document.querySelector('body').removeChild(this.$el[0]);
+    }
   }
 
-  submitCallback() {}
+  cancel(event) {
+    this.cancelCB(event);
+    this.close(event);
+  }
 
-  keydownHandler(e) {
-    switch (e.which) {
-      case 27: // Escape
-        if(!(this.options.hasOwnProperty('keyboard'))) {
-          this.close();
-        }
+  cancelCB(event) {}
 
-        break;
+  success(event) {
+    this.successCB(event);
+    this.close(event);
+  }
+
+  successCB(event) {}
+
+  keydownHandler(event) {
+    switch (event.which) {
       case 13: // Enter
-        this.submit();
+        this.success();
         break;
     }
   }

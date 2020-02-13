@@ -5,24 +5,31 @@
  */
 
 // Create a modal view class
-class LogoutModalView extends BaseModalView {
+class LogoutModalView extends MicromodalBaseView {
+
   get model() { return App.persistentModels.logout; }
-  get el() { return $("#logout-modal"); }
-  get template() { return App.templates.logout_template(); }
+
+  get el() { return $("#" + this.tag); }
 
   get events() {
     return {
-      'click button[name=logout-cancel]': 'close',
-      'click button[name=logout-submit]': 'submit',
+      'click div[data-micromodal-close]': 'cancel',
+      'click button[name=logout-cancel]': 'cancel',
+      'click button[name=logout-success]': 'success',
       'keydown': 'keydownHandler'
     };
   }
 
-  constructor(options) {
-    super(options);
+  get template() {
+    return App.templates.logout_template();
   }
 
-  submit() {
+  constructor(options) {
+    super(options);
+    this.tag = 'logout-modal';
+  }
+
+  successCB(event) {
     App.utils.setHeader();
     this.model.save({}, {
       success(data, status, jqXHR) {
@@ -36,7 +43,5 @@ class LogoutModalView extends BaseModalView {
                               " Already logged out please refresh the page.");
       }
     });
-
-    this.close();
   }
 };

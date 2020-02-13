@@ -1,12 +1,15 @@
 {% load i18n %}
     <script type="text/template" class="template" id="logout_template">
-      <div id="logout-modal" class="inv-modal fade" tabindex="-1"
-           role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3 class="modal-title">{% trans "Logout" %}</h3>
-            </div>
+      <div id="logout-modal" class="inv-modal modal-slide"
+           aria-hidden="true">
+        <div class="inv-modal-backdrop" tabindex="-1" data-micromodal-close>
+          <div class="modal-dialog modal-content" role="dialog"
+               aria-modal="true" aria-labelledby="logout-modal-title">
+            <header class="modal-header">
+              <h3 id="logout-modal-title" class="modal-title">
+                &#x1F512; {% trans "Logout" %}
+              </h3>
+            </header>
             <div class="modal-body">
               <form id="logout-form" name="logout" role="form" method="post"
                     action="">
@@ -14,16 +17,16 @@
               </form>
               <div>{% trans "Press 'Continue' to logout." %}</div>
             </div>
-            <div class="modal-footer">
+            <footer class="modal-footer">
               <button type="button" name="logout-cancel"
                       class="button button-def">
                 {% trans "Cancel" %}
               </button>
-              <button type="button" name="logout-submit" form="logout-form"
+              <button type="button" name="logout-success" form="logout-form"
                       class="button button-prim">
                 {% trans "Continue" %}
               </button>
-            </div>
+            </footer>
           </div>
         </div>
       </div>

@@ -1,33 +1,34 @@
-    <script type="text/template" class="template" id="notify_template">
+    <script type="text/template" class="template" id="test_notify_template">
 {% verbatim %}
-      <div id="notify-modal" class="inv-modal modal-slide" aria-hidden="true">
+      <div id="test-notify-modal" class="inv-modal modal-slide"
+           aria-hidden="true">
         <div class="inv-modal-backdrop" tabindex="-1" data-micromodal-close>
           <div class="modal-dialog modal-content" role="dialog"
-               aria-modal="true" aria-labelledby="notify-modal-title">
-            <div class="modal-header">
-              <h3 id="notify-modal-title" class="modal-title"><%= title %></h3>
-            </div>
+               aria-modal="true" aria-labelledby="test-notify-modal-title">
+            <header class="modal-header">
+              <h3 id="test-notify-modal-title"><%= title %></h3>
+            </header>
             <div class="modal-body">
               <div>
                 <img src="<%= image %>" class="block-center" />
               </div>
               <div class="text-center"><%= message %></div>
             </div>
-            <div class="modal-footer">
+            <footer class="modal-footer">
 <% if (!noCancel) { %>
               <button type="button" name="notify-cancel"
-                      class="<% if (noConfirm)
-                             { %>block-center<% } %> button button-def">
+                      class="<% if (noConfirm) { %>block-center<% } %>
+                             button button-def">
                 <%= cancel %>
               </button>
 <% } %><% if (!noConfirm) { %>
               <button type="button" name="notify-success"
-                      class="<% if (noCancel)
-                             { %>block-center<% } %> button button-prim">
+                      class="<% if (noCancel) { %>block-center<% } %>
+                             button button-prim">
                 <%= confirm %>
               </button>
 <% } %>
-            </div>
+            </footer>
           </div>
         </div>
       </div>
