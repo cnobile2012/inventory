@@ -78,10 +78,10 @@ class MediaTypeFactory(MIMEParser):
                 version = float(mt[3].get('ver', 0))
 
                 if version:
-                    tmp[version] = media_type
+                    tmp[str(version)] = media_type
 
                     if tmp.get(version) and mt[2]:
-                        tmp[version] = media_type
+                        tmp[str(version)] = media_type
 
         return media_map
 

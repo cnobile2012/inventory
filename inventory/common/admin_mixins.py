@@ -104,6 +104,6 @@ class UpdaterFilter(SimpleListFilter):
         result = queryset
 
         if self.value():
-            result = queryset.filter(creator__id__exact=self.value())
+            result = queryset.filter(updater__id__exact=self.value())
 
         return result
