@@ -39,7 +39,7 @@ class SupplierAdmin(UserAdminMixin, admin.ModelAdmin):
     list_filter = ('stype', 'active', 'project__name', UpdaterFilter,)
     ordering = ('name',)
 
-    class Media:
-        js = ('js/js.cookie-2.0.4.min.js',
-              'js/inheritance.js',
-              'js/regions.js',)
+#    class Media:
+#        js = ('vendor/js.cookie-2.0.4.min.js',
+#              'js/inheritance.js',
+#              'js/regions.js',)
