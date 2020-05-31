@@ -20,7 +20,7 @@ sys.path.append(MIGRATE_PATH)
 #print(sys.path)
 
 import django; django.setup()
-from django.utils import six
+import six
 
 from dcolumn.common import create_field_name
 

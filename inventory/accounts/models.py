@@ -18,7 +18,6 @@ from django.contrib.auth.hashers import get_hasher
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html_join, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
