@@ -11,11 +11,15 @@ class ProjectsRouter extends Backbone.Router {
   get routes() {
     return {
       'projects': 'showProjectList',
-      'projects/page/:page': 'showProjectList',
+      'projects/list/:page': 'showProjectList',
       'projects/create': 'createProject',
       'projects/show/:id': 'showProject',
       'projects/edit/:id': 'editProject'
     };
+  }
+
+  get region() {
+    return new Region({el: '#projects.pane-nav'});
   }
 
   constructor(options) {
@@ -33,21 +37,21 @@ class ProjectsRouter extends Backbone.Router {
 
   createProject() {
     let app = this.startApp();
-    app.showNewProjectForm();
+    app.showCreateProjectForm();
   }
 
-  showProject(projectId) {
+  showProject(id) {
     let app = this.startApp();
-    app.showProjectById(projectId);
+    app.showProjectById(id);
   }
 
-  editProject(projectId) {
+  editProject(id) {
     let app = this.startApp();
-    app.showProjectEditorById(projectId);
+    app.showProjectEditById(id);
   }
 
   startApp() {
-    return App.startSubApplication(ProjectsFacade);
+    return App.startSubApplication(ProjectsApp, this.region);
   }
 }
 

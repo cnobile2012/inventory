@@ -44,11 +44,11 @@ class UserModel extends Backbone.Model {
     return {
       projects: {
         set(key, value, options, set) {
-          var projects = new ProjectCollection();
-          set(key, projects, options);
+          App.models.projects = new ProjectCollection();
+          set(key, App.models.projects, options);
 
-          _.forEach(value, function(value, key) {
-            projects.add(value);
+          _.forEach(value, (value, key) => {
+            App.models.projects.add(value);
           });
         }
       }

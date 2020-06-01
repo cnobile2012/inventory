@@ -10,44 +10,17 @@
 
 
 // Inventory Menu
-class InventoryItemMenu extends MenuItem {
-  get toggle() { return true; }
+class InventoryItemMenu extends Backbone.View {
 
-  constructor(options) {
-    super(options);
+  get events() {
+    return {
+      'click #projects': 'projects'
+    };
   }
 
-  onClickCallback(model) {
-    App.viewFunctions.inventory(model);
-  }
-};
-
-
-class InventoryParentMenu extends Menu {
-  constructor(options) {
-    super(options);
-  }
-
-  renderCallback(model) {
-    return new InventoryItemMenu({model: model});
-  }
-};
-
-
-class InventoryMenu extends Backbone.View {
-  get el() { return 'div#content'; }
-
-  constructor(options) {
-    super(options);
-  }
-
-  initialize() {
-    _.bindAll(this);
-  }
-
-  render() {
-    let menu = new InventoryParentMenu({collection: this.collection});
-    this.$el.append(menu.render().el);
+  projects(e) {
+    e.preventDefault();
+    Backbone.trigger('menu:click:projects');
   }
 };
 

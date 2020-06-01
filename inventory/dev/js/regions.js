@@ -13,7 +13,7 @@
     _CONTACT_SERVER_TXT: "Getting list of regions please wait...",
     _SOURCE_ID: '#id_country',
     _TARGET_ID: '#id_region',
-    _API_URI: '/api/v1/regions/country/',
+    _API_URI: '/api/regions/countries/',
 
     init: function() {
       this._setupSubmit();

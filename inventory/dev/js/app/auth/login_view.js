@@ -44,7 +44,7 @@ class LoginModalView extends MicromodalBaseView {
       App.utils.setHeader();
 
       this.model.save(data, {
-        success(data, status, jqXHR) {
+        success: (data, status, jqXHR) => {
           self.model.set('fullname', status.fullname);
           self.model.set('href', status.href);
           $('#user-fullname').text(status.fullname);
@@ -52,10 +52,8 @@ class LoginModalView extends MicromodalBaseView {
           self.model.set('password', 'X');
           App.utils.hideMessage();
           IS_AUTHENTICATED = true;
-          App.utils.fetchData();
         },
-
-        error(jqXHR, status, errorThrown) {
+        error: (jqXHR, status, errorThrown) => {
           let $elm = self.$el.find('.all-error'),
               errors = status.responseJSON;
           App.utils.mimicDjangoErrors(errors, $elm);

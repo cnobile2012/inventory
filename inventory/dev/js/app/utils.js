@@ -157,58 +157,6 @@ class Utilities {
    * Inventory specific methods.
    */
 
-  fetchData() {
-    this.fetchUser();
-    this.fetchRoot();
-  }
-
-  fetchUser() {
-    if(App.models.userModel === (void 0)) {
-      App.models.userModel = new UserModel();
-    }
-
-    return App.models.userModel.fetch({
-      error(model, response, options) {
-        App.utils.showMessage("Error: Could not get data for user '" +
-                              USERNAME + "' from API.");
-      }
-    });
-  }
-
-  fetchRoot() {
-    if(App.models.rootModel === (void 0)) {
-      App.models.rootModel = new RootModel();
-    }
-
-    return App.models.rootModel.fetch({
-      success(model, response, options) {
-        App.utils.fetchProjectMeta();
-        App.utils.fetchInventoryType();
-        App.utils.fetchInventoryTypeMeta();
-      },
-
-      error(model, response, options) {
-        App.utils.showMessage("Error: Could not get data from API root.");
-      }
-    });
-  }
-
-  fetchProjectMeta() {
-    if(App.models.projectMeta === (void 0)) {
-      App.models.projectMeta = new ProjectMetaModel();
-    }
-
-    return App.models.projectMeta.fetch({
-      success(model, response, options) {
-        //console.log(model.get('projects').projects);
-      },
-
-      error(model, response, options) {
-        App.utils.showMessage(options.textStatus + " " + options.errorThrown);
-      }
-    });
-  }
-
   fetchInventoryType() {
     if(App.collections.inventoryType === (void 0)) {
       App.collections.inventoryType = new InventoryTypeCollection();

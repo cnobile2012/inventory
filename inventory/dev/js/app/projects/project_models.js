@@ -78,8 +78,8 @@ class ProjectModel extends Backbone.Model {
           set(key, value, options);
 
           if(value.length > 0) {
-            App.invoiceTimeout = setTimeout(App.utils.fetchInvoiceCollection,
-                                            200, value, this);
+            //App.invoiceTimeout = setTimeout(App.utils.fetchInvoiceCollection,
+            //                                200, value, this);
           }
         }
       },
@@ -88,8 +88,8 @@ class ProjectModel extends Backbone.Model {
           set(key, value, options);
 
           if(value.length > 0) {
-            App.itemTimeout = setTimeout(App.utils.fetchItemCollection,
-                                         200, value, this);
+            //App.itemTimeout = setTimeout(App.utils.fetchItemCollection,
+            //                             200, value, this);
           }
         }
       },
@@ -144,7 +144,9 @@ class ProjectMetaModel extends BaseMetaModel {
 class ProjectCollection extends Backbone.Collection {
   get name() { return "Projects"; }
   get model() { return ProjectModel; }
+  get url() { return App.models.rootModel.get('projects').projects.href; }
 
+/*
   initialize() {
     // Create project menu
     this.listenTo(this, 'change', function(model) {
@@ -170,4 +172,5 @@ class ProjectCollection extends Backbone.Collection {
       projectMenuView.render();
     });
   }
+*/
 };
