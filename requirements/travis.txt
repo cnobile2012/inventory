@@ -4,4 +4,5 @@
 
 # Test coverage
 coverage
-python-coveralls
+coveralls
+#python-coveralls
