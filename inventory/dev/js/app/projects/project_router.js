@@ -11,47 +11,48 @@ class ProjectsRouter extends Backbone.Router {
   get routes() {
     return {
       'projects': 'showProjectList',
-      'projects/list/:page': 'showProjectList',
       'projects/create': 'createProject',
-      'projects/show/:id': 'showProject',
-      'projects/edit/:id': 'editProject'
+      'projects/:id': 'showProject',
+      'projects/edit/:id': 'editProject',
+      '*nothingMatchedProjectsRouter': 'pageNotFoundRoute'
     };
-  }
-
-  get region() {
-    return new Region({el: '#projects.pane-nav'});
   }
 
   constructor(options) {
     super(options);
     this._bindRoutes();
+    App.events.bind('app:projects:projects', this.goToProjects.bind(this));
   }
 
-  showProjectList(page) {
-    // Page should be a postive number grater than 0
-    page = page || 1;
-    page = page > 0 ? page : 1;
-    let app = this.startApp();
-    app.showProjectList(page);
+  goToProjects() {
+    this.navigate('projects', {trigger: true});
+  }
+
+  showProjectList() {
+    let projectApp = this.startApp();
+    App.events.trigger('app:auth:auth',
+                       projectApp.showProjectList.bind(projectApp));
   }
 
   createProject() {
-    let app = this.startApp();
-    app.showCreateProjectForm();
+    this.startApp().showCreateProjectForm();
   }
 
   showProject(id) {
-    let app = this.startApp();
-    app.showProjectById(id);
+    this.startApp().showProjectById(id);
   }
 
   editProject(id) {
-    let app = this.startApp();
-    app.showProjectEditById(id);
+    this.startApp().showProjectEditById(id);
+  }
+
+  pageNotFoundRoute(failedRoute) {
+    console.error("ProjectsRouter: (" + failedRoute
+                  + ") Did not match any routes!");
   }
 
   startApp() {
-    return App.startSubApplication(ProjectsApp, this.region);
+    return App.startSubApplication(ProjectsApp);
   }
 }
 

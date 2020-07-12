@@ -23,10 +23,16 @@ class MenuItem extends Backbone.View {
   // Set to `false` if you don't want the menu items to toggle.
   get toggle() { return true; }
 
+  constructor(options) {
+    super(options);
+    this.target = options.target;
+    this.models = options.models;
+  }
+
   // Binding to model's selection change event
   // Thus having ability to update view state
   initialize() {
-    _.bindAll(this, 'onClickCallback');
+    _.bindAll(this, 'onClickCallback', 'closePaneCallback');
     this.listenTo(this.model, 'change:isSelected', this.onSelectedChange);
   }
 
@@ -38,16 +44,17 @@ class MenuItem extends Backbone.View {
 
   // Highlight our self and do any other logic on click
   onClick(event) {
-    let publicId = this.$el.find('a').attr('data'),
-        model = App.models.userModel.get('projects').find(function(model) {
-          return model.get('public_id') === publicId;
-        });
+    let id = this.$el.find('a').attr('data'),
+        model = this.models.find(function(model) {
+          return model.id === id;
+        }),
+        dataPaneClass = 'data-pane';
 
     // Only display pane once while active.
-    if($('#' + publicId).length <= 0) {
+    if($('#' + id).length <= 0) {
       this.highlight();
-      let $choicePane = $('div#projects div.tab-choice-pane'),
-          $dataPane = $('<div id="' + publicId + '" class="data-pane"></div>'),
+      let $choicePane = $('div#' + this.target + ' div.tab-choice-pane'),
+          $dataPane = $('<div id="' + id + '" class="' + dataPaneClass + '"></div>'),
           $closePane = $('<div class="pane-close">X</div>'),
           self = this;
       $closePane.appendTo($dataPane);
@@ -55,11 +62,15 @@ class MenuItem extends Backbone.View {
       $closePane.one('click', function() {
         $dataPane.remove();
         self.$el.removeClass('active');
+        self.closePaneCallback(dataPaneClass);
       });
 
       this.onClickCallback(model);
     }
   }
+
+  onClickCallback() {}
+  closePaneCallback(dataPaneClass) {}
 
   // If we changed our model's selection property during onClick then
   // update ourself with 'active' class if or model was forced by

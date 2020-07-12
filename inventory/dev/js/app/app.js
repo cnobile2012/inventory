@@ -19,16 +19,19 @@
  * Global Router (non sub-application dependents)
  */
 class DefaultRouter extends Backbone.Router {
-  get routes() {
-    return {
-      '': 'loginRoute',
-      'login': 'loginRoute'
-    };
+
+  initialize() {
+    this.route('', 'loginRoute');
+    this.route('login', 'loginRoute');
+    App.events.bind('app:auth:auth', this.redirectLoginRoute.bind(this));
   }
 
   loginRoute() {
-    App.startSubApplication(AuthApp);
-    App.apps.authApp.authenticate();
+    this.redirectLoginRoute();
+  }
+
+  redirectLoginRoute(redirect) {
+    App.startSubApplication(AuthApp).authenticate(redirect);
   }
 };
 
@@ -84,7 +87,10 @@ var App = {
     // Create a global router to enable sub-applications to redirect to
     // other urls
     this.router = new DefaultRouter();
-    this.router.loginRoute();
+
+    if(!Backbone.History.started) {
+          Backbone.history.start();
+    }
   },
 
   templateLoader() {
@@ -137,13 +143,7 @@ var App = {
   },
 
   hasRootData() {
-    let result = false;
-
-    if (this.models.rootModel !== (void 0)) {
-      result = true;
-    }
-
-    return result;
+    return (this.models.rootModel !== (void 0));
   },
 
   /*
@@ -158,10 +158,10 @@ var App = {
     let instName = SubApplication.name.substr(0, idx).toLowerCase()
         + SubApplication.name.substr(idx);
 
-    if (!(this.apps[instName]
+    if (!(this.apps[instName] !== (void 0)
          && this.apps[instName] instanceof SubApplication)) {
       // Destroy any previous subapplication if we can.
-      if (this.apps[instName] && this.apps[instName].destroy) {
+      if (this.apps[instName] && this.apps[instName].destroy !== (void 0)) {
         this.apps[instName].destroy();
       }
 

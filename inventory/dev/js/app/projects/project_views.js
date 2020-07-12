@@ -7,6 +7,60 @@
 "use strict";
 
 
+// Project Menu
+class ProjectItemMenu extends MenuItem {
+
+  get toggle() { return false; }
+
+  constructor(options) {
+    options.target = 'projects';
+    options.models = App.models.userModel.get('projects');
+    super(options);
+  }
+
+  onClickCallback(model) {
+    App.viewFunctions.projects(model);
+  }
+
+  closePaneCallback(dataPaneClass) {
+    // Revert back to #Projects
+    if ($('.' + dataPaneClass).length < 1) {
+      App.events.trigger('app:projects:projects');
+
+    }
+  }
+};
+
+
+class ProjectParentMenu extends Menu {
+
+  constructor(options) {
+    super(options);
+  }
+
+  renderCallback(model) {
+    return new ProjectItemMenu({model: model});
+  }
+};
+
+
+class ProjectMenu extends Backbone.View {
+
+  get el() { return 'div#projects div.tab-choice-pane div.pane-nav'; }
+
+  constructor(options) {
+    super(options);
+  }
+
+  render() {
+    this.$el.empty();
+    let menu = new ProjectParentMenu({collection: this.collection});
+    this.$el.append(menu.render().el);
+    return this;
+  }
+};
+
+
 // Single project view
 class ProjectView extends Backbone.View {
   render() {

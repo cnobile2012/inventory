@@ -9,6 +9,11 @@
 
 // InventoryType
 class InventoryTypeModel extends Backbone.Model {
+
+  get idAttribute() {
+    return 'public_id';
+  }
+
   urlRoot() {
     return App.models.rootModel.get('projects').inventory_types.href;
   }
@@ -46,6 +51,11 @@ class InventoryTypeCollection extends Backbone.Collection {
 
 // Project
 class ProjectModel extends Backbone.Model {
+
+  get idAttribute() {
+    return 'public_id';
+  }
+
   get urlRoot() {
     return this.get('href');
   }
@@ -124,10 +134,8 @@ class ProjectModel extends Backbone.Model {
 
         return name;
       },
-      updated: {
-        get() {
-          return new Date(this.attributes.updated).toLocaleString();
-        }
+      updated() {
+        return new Date(this.attributes.updated).toLocaleString();
       }
     };
   }
@@ -145,32 +153,4 @@ class ProjectCollection extends Backbone.Collection {
   get name() { return "Projects"; }
   get model() { return ProjectModel; }
   get url() { return App.models.rootModel.get('projects').projects.href; }
-
-/*
-  initialize() {
-    // Create project menu
-    this.listenTo(this, 'change', function(model) {
-      $('div#projects div.tab-choice-pane div').empty();
-      let options = [],
-          item = null,
-          data = "",
-          nextModel = null,
-          projectMenuCollection = null,
-          projectMenuView = null;
-
-      for(let i = 0; i < this.length; i++) {
-        nextModel = this.at(i);
-        data = nextModel.get('public_id');
-        item = {title: '<a href="#project' + i + '" data="' + data + '" >'
-                + nextModel.get('name') + '</a>'};
-        options[i] = item;
-      }
-
-      projectMenuCollection = new MenuModelItems(options);
-      projectMenuView = new ProjectMenu(
-        {collection: projectMenuCollection});
-      projectMenuView.render();
-    });
-  }
-*/
 };

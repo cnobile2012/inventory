@@ -1,5 +1,5 @@
 /*
- * Account Facade
+ * Account Application
  *
  * js/app/auth/auth_app.js
  */
@@ -13,7 +13,7 @@ class AuthApp {
     this.region = options.region;
   }
 
-  authenticate() {
+  authenticate(redirect) {
     if (!IS_AUTHENTICATED) {
       // Show Login Modal
       let options = {
@@ -30,13 +30,17 @@ class AuthApp {
         await self.fetchRootApi();
         App.startSubApplication(AccountsApp);
         await App.apps.accountsApp.fetchCurrentUserAccount();
+        App.utils.sleep(500);
 
-        if(!Backbone.History.started) {
-          Backbone.history.start();
+        // Call the redirect route if any.
+        if (redirect !== (void 0)) {
+          await redirect();
         }
       };
 
       run(this);
+    } else if (redirect !== (void 0)) { // Call the redirect route if any.
+      redirect();
     }
   }
 

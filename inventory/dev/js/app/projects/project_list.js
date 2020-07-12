@@ -74,6 +74,7 @@ class ProjectListItemView extends ModelView {
     App.router.navigate(`projects/view/${projectId}`, true);
   }
 }
+
 /*
 class ProjectListView extends CollectionView {
   constructor(options) {
@@ -89,9 +90,6 @@ class ProjectListView extends CollectionView {
 
 class ProjectList {
   constructor(options) {
-    // Region where the application will be placed
-    this.region = options.region;
-
     // Allow subapplication to listen and trigger events,
     // useful for subapplication wide events
     _.extend(this, Backbone.Events);
@@ -101,24 +99,21 @@ class ProjectList {
     // Create the views
     let options = [],
         item = null,
-        data = "",
+        id = "",
         nextModel = null,
         projectMenuCollection = null,
         projectMenuView = null;
 
     for(let i = 0; i < projects.length; i++) {
       nextModel = projects.at(i);
-      data = nextModel.get('public_id');
-      item = {title: '<a href="#project' + i + '" data="' + data + '" >'
-              + nextModel.get('name') + '</a>'};
+      item = {title: '<a href="#projects/' + nextModel.id + '" data="'
+              + nextModel.id + '" >' + nextModel.get('name') + '</a>'};
       options[i] = item;
     }
 
     projectMenuCollection = new MenuModelItems(options);
     projectMenuView = new ProjectMenu({collection: projectMenuCollection});
     projectMenuView.render();
-
-
 
 /*
     var layout = new ProjectListLayout();

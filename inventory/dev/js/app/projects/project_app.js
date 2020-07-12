@@ -1,5 +1,5 @@
 /*
- * Project Facade
+ * Project Application
  *
  * js/app/projects/project_app.js
  */
@@ -24,12 +24,14 @@ class ProjectsApp {
       .content_type_header.json['1.0'];
   }
 
-  showProjectList(page) {
+  showProjectList() {
+    // The projects themselves are returned with the fetch to the user
+    // however, we can reference them in the App.models.projects. So here
+    // we only need to get the meta data and start the menu.
     //App.events.trigger('loading:start');
     //App.events.trigger('app:projects:started');
     this.fetchProjectMeta();
-    // The projects themselves are returned with the fetch to the user
-    // however, we can reference them in the App.models.projects.
+    new ProjectList().showList(App.models.projects);
   }
 
   fetchProjectMeta() {
@@ -76,10 +78,11 @@ class ProjectsApp {
   }
 
   showProjectById(projectId) {
+/*
     App.events.trigger('loading:start');
     App.events.trigger('app:projects:started');
 
-    new Project({id: projectId}).fetch({
+    new ProjectModel({id: projectId}).fetch({
       success(model) {
         this.showViewer(model);
         App.events.trigger('loading:stop');
@@ -89,6 +92,7 @@ class ProjectsApp {
         App.events.trigger('server:error', response);
       }
     });
+*/
   }
 
   showList(projects) {
