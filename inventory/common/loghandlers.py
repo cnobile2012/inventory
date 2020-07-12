@@ -30,7 +30,7 @@ class DeferredRotatingFileHandler(RotatingFileHandler):
 
     def __init__(self, filename, *args, **kwargs):
         self.filename = filename
-        kwargs['delay'] = True    
+        kwargs['delay'] = True
         RotatingFileHandler.__init__(self, "/dev/null", *args, **kwargs)
 
     def _open(self):
