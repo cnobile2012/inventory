@@ -6,7 +6,7 @@
 import base64
 import json
 import types
-from collections import OrderedDict
+from collections import Mapping, OrderedDict
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -38,6 +38,11 @@ class BaseTest(RecordCreation):
     _HEADERS = {
         'HTTP_ACCEPT': 'application/json',
         }
+    DEFAULT_USER = UserModel.ROLE_MAP[UserModel.DEFAULT_USER]
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
+    PROJECT_MANAGER = Membership.ROLE_MAP[Membership.PROJECT_MANAGER]
+    PROJECT_OWNER = Membership.ROLE_MAP[Membership.PROJECT_OWNER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -62,7 +67,6 @@ class BaseTest(RecordCreation):
         kwargs['is_active'] = True
         kwargs['is_staff'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
         return kwargs
 
     def __get_request_data(self, key, request_data):
@@ -78,77 +82,96 @@ class BaseTest(RecordCreation):
 
         return code
 
-    def _test_users_with_invalid_permissions(self, uri, method,
+    def _test_users_with_invalid_permissions(self, uri, method, *,
+                                             user=None,
                                              request_data=None,
                                              default_user=True):
         self._test_superuser_with_invalid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
         self._test_administrator_with_invalid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
         self._test_default_user_with_invalid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
 
         if default_user:
             self._test_default_user_with_invalid_permissions_login(
-                uri, method, request_data=request_data)
+                uri, method, user=user, request_data=request_data)
 
-    def _test_superuser_with_invalid_permissions(self, uri, method,
+    def _test_superuser_with_invalid_permissions(self, uri, method, *,
+                                                 user=None,
                                                  request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that an unauthenticated superuser has no permissions.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = False
         kwargs['is_superuser'] = True
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('SU', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_403_FORBIDDEN, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
 
-    def _test_administrator_with_invalid_permissions(self, uri, method,
+    def _test_administrator_with_invalid_permissions(self, uri, method, *,
+                                                     user=None,
                                                      request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that an unauthenticated ADMINISTRATOR has no permissions.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.ADMINISTRATOR
+        kwargs['role'] = self.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('AD', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_403_FORBIDDEN, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
 
-    def _test_default_user_with_invalid_permissions(self, uri, method,
+    def _test_default_user_with_invalid_permissions(self, uri, method, *,
+                                                    user=None,
                                                     request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that a DEFAULT_USER has no permissions.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('DU', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_403_FORBIDDEN, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
@@ -156,15 +179,21 @@ class BaseTest(RecordCreation):
             })
 
     def _test_default_user_with_invalid_permissions_login(self, uri, method,
+                                                           *, user=None,
                                                           request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that a DEFAULT_USER has no permissions even if logged in.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
 
-        if user.projects.all().count() == 0:
+        if user.memberships.all().count() == 0:
             data = self.__get_request_data('DU', request_data)
             extra = dict(self._HEADERS)
             if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
@@ -181,89 +210,116 @@ class BaseTest(RecordCreation):
                 code = 0
                 message = ''
 
-            msg = "Response: {} should be {}, content: {}".format(
-                response.status_code, code, response.data)
+            msg = (f"Response: {response.status_code} should be {code}, "
+                   f"content: {response.data}")
             self.assertEqual(response.status_code, code, msg)
             self.assertTrue(self._has_error(response), msg)
             self._test_errors(response, tests={
                 'detail': self._ERROR_MESSAGES[message],
                 })
 
-    def _test_project_users_with_invalid_permissions(self, uri, method,
+    def _test_project_users_with_invalid_permissions(self, uri, method, *,
+                                                     user=None,
                                                      request_data=None,
                                                      project_user=True):
         self._test_project_owner_with_invalid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
         self._test_project_manager_with_invalid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
         self._test_project_user_with_invalid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
 
         if method.upper() not in permissions.SAFE_METHODS and project_user:
             self._test_project_user_with_invalid_permissions_login(
-                uri, method, request_data=request_data)
+                uri, method, user=user, request_data=request_data)
 
-    def _test_project_owner_with_invalid_permissions(self, uri, method,
+    def _test_project_owner_with_invalid_permissions(self, uri, method, *,
+                                                     user=None,
                                                      request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that a PROJECT_OWNER has no permissions.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.PROJECT_OWNER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_OWNER}
+            ]
+        self.project.process_members(members)
         data = self.__get_request_data('POW', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_403_FORBIDDEN, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
 
-    def _test_project_manager_with_invalid_permissions(self, uri, method,
+    def _test_project_manager_with_invalid_permissions(self, uri, method, *,
+                                                       user=None,
                                                        request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that a PROJECT_MANAGER has no permissions.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_MANAGER}
+            ]
+        self.project.process_members(members)
         data = self.__get_request_data('PMA', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_403_FORBIDDEN, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES['credentials'],
             })
 
-    def _test_project_user_with_invalid_permissions(self, uri, method,
+    def _test_project_user_with_invalid_permissions(self, uri, method, *,
+                                                    user=None,
                                                     request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that a PROJECT_USER has no access.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.set_role(user, Membership.PROJECT_USER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
         data = self.__get_request_data('PDU', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_403_FORBIDDEN, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
@@ -271,14 +327,23 @@ class BaseTest(RecordCreation):
             })
 
     def _test_project_user_with_invalid_permissions_login(self, uri, method,
+                                                          *, user=None,
                                                           request_data=None):
-        kwargs = self._setup_user_credentials()
         # Test that a PROJECT_USER has no access even when logged in.
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.set_role(user, Membership.PROJECT_USER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
         data = self.__get_request_data('PDU', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
@@ -295,34 +360,42 @@ class BaseTest(RecordCreation):
             code = 0
             message = ''
 
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, code, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{code}, content: {response.data}")
         self.assertEqual(response.status_code, code, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
             'detail': self._ERROR_MESSAGES[message],
             })
 
-    def _test_users_with_valid_permissions(self, uri, method,
+    def _test_users_with_valid_permissions(self, uri, method, *,
+                                           user=None,
                                            default_user=True,
                                            request_data=None):
         self._test_superuser_with_valid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
         self._test_administrator_with_valid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
 
         if default_user:
             self._test_default_user_with_valid_permissions(
-                uri, method, request_data=request_data)
+                uri, method, user=user, request_data=request_data)
 
-    def _test_superuser_with_valid_permissions(self, uri, method,
+    def _test_superuser_with_valid_permissions(self, uri, method, *,
+                                               user=None,
                                                request_data=None):
         status_code = self.__get_valid_response_code(method)
+
         # Test a valid return with a superuser role.
-        kwargs = self._setup_user_credentials()
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = True
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('SU', request_data)
         extra = dict(self._HEADERS)
@@ -330,125 +403,171 @@ class BaseTest(RecordCreation):
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
         #print('Content-Type:', response.get('Content-Type'))
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status_code, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status_code}, content: {response.data}")
         self.assertEqual(response.status_code, status_code, msg)
         #print(response.data)
 
-    def _test_administrator_with_valid_permissions(self, uri, method,
+    def _test_administrator_with_valid_permissions(self, uri, method, *,
+                                                   user=None,
                                                    request_data=None):
         status_code = self.__get_valid_response_code(method)
+
         # Test a valid return with an ADMINISTRATOR role.
-        kwargs = self._setup_user_credentials()
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.ADMINISTRATOR
+        kwargs['role'] = self.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('AD', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status_code, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status_code}, content: {response.data}")
         self.assertEqual(response.status_code, status_code, msg)
 
-    def _test_default_user_with_valid_permissions(self, uri, method,
+    def _test_default_user_with_valid_permissions(self, uri, method, *,
+                                                  user=None,
                                                   request_data=None):
         status_code = self.__get_valid_response_code(method)
+
         # Test a valid return with a DEFAULT_USER role.
-        kwargs = self._setup_user_credentials()
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
 
-        if user.projects.all().count() > 0:
+        if user.memberships.all().count() > 0:
             data = self.__get_request_data('DU', request_data)
             extra = dict(self._HEADERS)
             if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
             response = getattr(client, method)(
                 uri, data=data, format='json', **extra)
-            msg = "Response: {} should be {}, content: {}".format(
-                response.status_code, status_code, response.data)
+            msg = (f"Response: {response.status_code} should be "
+                   f"{status_code}, content: {response.data}")
             self.assertEqual(response.status_code, status_code, msg)
 
-    def _test_project_users_with_valid_permissions(self, uri, method,
-                                                  project_user=True,
-                                                  request_data=None):
+    def _test_project_users_with_valid_permissions(self, uri, method, *,
+                                                   user=None,
+                                                   project_user=True,
+                                                   request_data=None):
         self._test_project_owner_with_valid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
         self._test_project_manager_with_valid_permissions(
-            uri, method, request_data=request_data)
+            uri, method, user=user, request_data=request_data)
 
         if project_user:
             self._test_project_user_with_valid_permissions(
-                uri, method, request_data=request_data)
+                uri, method, user=user, request_data=request_data)
 
-    def _test_project_owner_with_valid_permissions(self, uri, method,
+    def _test_project_owner_with_valid_permissions(self, uri, method, *,
+                                                   user=None,
                                                    request_data=None):
         status_code = self.__get_valid_response_code(method)
+
         # Test a valid return with a PROJECT_OWNER user role.
-        kwargs = self._setup_user_credentials()
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.PROJECT_OWNER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_OWNER}
+            ]
+        self.project.process_members(members)
         data = self.__get_request_data('POW', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status_code, response.data, uri)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status_code}, content: {response.data}, uri: {uri}")
         self.assertEqual(response.status_code, status_code, msg)
 
-    def _test_project_manager_with_valid_permissions(self, uri, method,
+    def _test_project_manager_with_valid_permissions(self, uri, method, *,
+                                                     user=None,
                                                      request_data=None):
         status_code = self.__get_valid_response_code(method)
+
         # Test a valid return with a PROJECT_MANAGER role.
-        kwargs = self._setup_user_credentials()
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.PROJECT_MANAGER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_MANAGER}
+            ]
+        self.project.process_members(members)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_MANAGER}
+            ]
+        self.project.process_members(members)
         data = self.__get_request_data('PMA', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status_code, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status_code}, content: {response.data}")
         self.assertEqual(response.status_code, status_code, msg)
 
-    def _test_project_user_with_valid_permissions(self, uri, method,
+    def _test_project_user_with_valid_permissions(self, uri, method, *,
+                                                  user=None,
                                                   request_data=None):
         status_code = self.__get_valid_response_code(method)
+
         # Test a valid return with a PROJECT_USER role.
-        kwargs = self._setup_user_credentials()
+        if not user:
+            kwargs = self._setup_user_credentials()
+        else:
+            kwargs = {}
+            kwargs['username'] = user.username
+
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.PROJECT_USER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
         data = self.__get_request_data('PDU', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status_code, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status_code}, content: {response.data}")
         self.assertEqual(response.status_code, status_code, msg)
 
     def _test_valid_GET_with_errors(self, uri):
         response = self.client.get(uri, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, HTTP_404_NOT_FOUND, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{HTTP_404_NOT_FOUND}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_404_NOT_FOUND, msg)
         self.assertTrue(self._has_error(response), msg)
         self._test_errors(response, tests={
@@ -459,7 +578,7 @@ class BaseTest(RecordCreation):
     def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
                      **kwargs):
         kwargs['password'] = 'dummy'
-        role = kwargs.pop('role', UserModel.DEFAULT_USER)
+        role = kwargs.pop('role', self.DEFAULT_USER)
         login = kwargs.pop('login', True)
         user, created = UserModel.objects.get_or_create(
             username=username, defaults=kwargs)
@@ -471,7 +590,7 @@ class BaseTest(RecordCreation):
             user.is_superuser = kwargs.get('is_superuser', False)
             user.role = role
         else:
-            # role is a property, so isn't there when created.
+            # role is a property, so it isn't there when created.
             if user.role != role:
                 user.role = role
 
@@ -520,45 +639,77 @@ class BaseTest(RecordCreation):
 
         return result
 
-    def _test_errors(self, response, tests={}, exclude_keys=[]):
+    def _test_errors(self, response, *, tests={}, outer_key=None,
+                     exclude_keys=[]):
+        """
+        Tests is the error message(s) that are expected actually are in the
+        errors returned.
+
+        response     -- The response object.
+        tests        -- Keyword args that should be in response keys by the
+                        field name.
+        outer_key    -- A key to access before the key in the tests argument
+                        above.
+        exclude_keys -- Excluded keys not tested.
+        """
         if (hasattr(response, 'context_data') and
             hasattr(response.context_data, 'form')):
             errors = dict(response.context_data.get('form').errors)
             self._find_tests(errors, tests, exclude_keys, is_context_data=True)
         elif hasattr(response, 'data'):
-            errors = response.data
-            self._find_tests(errors, tests, exclude_keys)
+            data = response.data
+
+            if isinstance(data, Mapping):
+                errors = data.get(outer_key) if outer_key else data
+                errors = [errors] if isinstance(errors, Mapping) else errors
+
+                for error in errors:
+                    self._find_tests(error, tests, exclude_keys)
+
+                errors = [error for error in errors if error]
+            elif isinstance(data, list):
+                for item in data:
+                    errors = item.get(outer_key) if outer_key else item
+
+                    for error in errors:
+                        self._find_tests(error, tests, exclude_keys)
+
+                    errors = [error for error in errors if error]
         elif hasattr(response, 'content'):
             errors = json.loads(response.content.decode('utf-8'))
+            self._find_tests(errors, tests, exclude_keys)
+        elif isinstance(response, (dict, Mapping)): # Embedded errors
+            errors = response if outer_key is None else response.get(outer_key)
             self._find_tests(errors, tests, exclude_keys)
         else:
             msg = "No data found."
             self.assertTrue(False, msg)
 
-        msg = "Unaccounted for errors: {}".format(errors)
+        msg = f"Unaccounted for errors: {errors}"
         self.assertFalse(len(errors) != 0 and True or False, msg)
 
     def _find_tests(self, errors, tests, exclude_keys, is_context_data=False):
-        msg = "All errors: {}".format(errors)
+        msg = f"All errors: {errors}"
+        itr_errors = dict(errors)
 
-        for key, value in tests.items():
+        for key, err_msg in itr_errors.items():
             if key in exclude_keys:
                 errors.pop(key, None)
                 continue
 
-            err_msg = errors.pop(key, None)
-            self.assertTrue(
-                err_msg, "Could not find key: {}. {}".format(key, msg))
+            err_msg = str(err_msg)
+            value = tests.get(key)
+            errors.pop(key, None)
+            _msg = f"Could not find key: {key}. {msg}"
+            self.assertTrue(err_msg, _msg)
 
             if is_context_data:
                 err_msg = err_msg.as_text()
             else:
-                msg = "More than one error for key '{}', error: {}".format(
-                    key, err_msg)
+                msg = f"More than one error for key '{key}', error: {err_msg}"
                 self.assertTrue(len(err_msg), msg)
 
-            msg = "For key '{}' value '{}' not found in '{}'".format(
-                key, value, err_msg)
+            msg = f"For key '{key}' value '{value}' not found in '{err_msg}'"
 
             if not is_context_data:
                 if isinstance(err_msg, (list, tuple)):

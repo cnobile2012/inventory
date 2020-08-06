@@ -26,6 +26,11 @@ UserModel = get_user_model()
 
 
 class TestPermissions(BaseTest, APITestCase):
+    DEFAULT_USER = UserModel.ROLE_MAP[UserModel.DEFAULT_USER]
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
+    PROJECT_OWNER = Membership.ROLE_MAP[Membership.PROJECT_OWNER]
+    PROJECT_MANAGER = Membership.ROLE_MAP[Membership.PROJECT_MANAGER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -45,16 +50,14 @@ class TestPermissions(BaseTest, APITestCase):
         request.user = self.user
         force_authenticate(request, user=self.user)
         auth = IsAdminSuperUser()
-        msg = "User '{}', superuser: {}".format(request.user,
-                                                request.user.is_superuser)
+        msg = f"User '{request.user}', superuser: {request.user.is_superuser}"
         self.assertTrue(auth.has_permission(request, user_list), msg)
         # Test that a non superuser does not have access
         kwargs = {'is_superuser': False}
         user, client = self._create_user(**kwargs)
         request.user = user
         force_authenticate(request, user=user)
-        msg = "User '{}', superuser: {}".format(
-            request.user, request.user.is_superuser)
+        msg = f"User '{request.user}', superuser: {request.user.is_superuser}"
         self.assertFalse(auth.has_permission(request, user_list), msg)
 
     def test_IsAdministrator(self):
@@ -68,14 +71,14 @@ class TestPermissions(BaseTest, APITestCase):
         request.user = self.user
         force_authenticate(request, user=self.user)
         auth = IsAdministrator()
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
+        msg = f"User '{request.user}', role: {request.user.role}"
         self.assertFalse(auth.has_permission(request, user_list), msg)
         # Test that an ADMINISTRATOR role has access.
-        kwargs = {'role': UserModel.ADMINISTRATOR}
+        kwargs = {'role': self.ADMINISTRATOR}
         user, client = self._create_user(**kwargs)
         request.user = user
         force_authenticate(request, user=user)
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
+        msg = f"User '{request.user}', role: {request.user.role}"
         self.assertTrue(auth.has_permission(request, user_list), msg)
 
     def test_IsDefaultUser(self):
@@ -86,18 +89,18 @@ class TestPermissions(BaseTest, APITestCase):
         # Test that a DEFAULT_USER role does not have access.
         factory = APIRequestFactory()
         request = factory.get('user-list')
-        kwargs = {'role': UserModel.ADMINISTRATOR}
+        kwargs = {'role': self.ADMINISTRATOR}
         user, client = self._create_user(**kwargs)
         request.user = user
         auth = IsDefaultUser()
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
+        msg = f"User '{request.user}', role: {request.user.role}"
         self.assertFalse(auth.has_permission(request, user_list), msg)
         # Test that a DEFAULT_USER role has access.
-        kwargs = {'role': UserModel.DEFAULT_USER}
+        kwargs = {'role': self.DEFAULT_USER}
         user, client = self._create_user(**kwargs)
         request.user = user
         force_authenticate(request, user=user)
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
+        msg = f"User '{request.user}', role: {request.user.role}"
         self.assertTrue(auth.has_permission(request, user_list), msg)
 
     def test_IsAnyUser(self):
@@ -111,21 +114,21 @@ class TestPermissions(BaseTest, APITestCase):
         request.user = self.user
         force_authenticate(request, user=self.user)
         auth = IsAnyUser()
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
+        msg = f"User '{request.user}', role: {request.user.role}"
         self.assertTrue(auth.has_permission(request, user_list), msg)
         # Test that an ADMINISTRATOR role has access.
-        kwargs = {'role': UserModel.ADMINISTRATOR}
+        kwargs = {'role': self.ADMINISTRATOR}
         user, client = self._create_user(**kwargs)
         request.user = user
         force_authenticate(request, user=user)
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
+        msg = f"User '{request.user}', role: {request.user.role}"
         self.assertTrue(auth.has_permission(request, user_list), msg)
         # Test that a DEFAULT_USER role has access.
-        kwargs = {'role': UserModel.DEFAULT_USER}
+        kwargs = {'role': self.DEFAULT_USER}
         user, client = self._create_user(**kwargs)
         request.user = user
         force_authenticate(request, user=user)
-        msg = "User '{}', role: {}".format(request.user, request.user.role)
+        msg = f"User '{request.user}', role: {request.user.role}"
         self.assertTrue(auth.has_permission(request, user_list), msg)
 
     #
@@ -154,19 +157,19 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsProjectOwner()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_permission(request, project_list), msg)
         # Add the user to the project's membership list.
-        project.process_members([user])
-        project.set_role(user, Membership.PROJECT_OWNER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project.process_members(members)
         # Test that an PROJECT_OWNER role has access.
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_permission(request, project_list), msg)
 
     def test_IsProjectOwner_object(self):
@@ -193,20 +196,20 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsProjectOwner()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_object_permission(
             request, project_detail, project), msg)
         # Add the user to the project's membership list.
-        project.process_members([user])
-        project.set_role(user, Membership.PROJECT_OWNER)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project.process_members(members)
         # Test that an PROJECT_OWNER role has access.
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_object_permission(
             request, project_detail, project), msg)
 
@@ -217,11 +220,14 @@ class TestPermissions(BaseTest, APITestCase):
         #self.skipTest("Temporarily skipped")
         # Create an InventoryType, a Project, and a user.
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
         kwargs = {'username': 'Test_IsProjectManager',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Test that non-project user does not have access.
         factory = APIRequestFactory()
         request = factory.get('project-list')
@@ -230,19 +236,20 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsProjectManager()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_MANAGER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_permission(request, project_list), msg)
         # Add the user to the project's membership list.
-        project.process_members([user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            {'user': user, 'role_text': self.PROJECT_MANAGER}
+            ]
+        project.process_members(members)
         # Test that a PROJECT_MANAGER role has access.
-        project.set_role(user, Membership.PROJECT_MANAGER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_MANAGER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_permission(request, project_list), msg)
 
     def test_IsProjectManager_object(self):
@@ -252,11 +259,14 @@ class TestPermissions(BaseTest, APITestCase):
         #self.skipTest("Temporarily skipped")
         # Create an InventoryType, a Project, and a user.
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
         kwargs = {'username': 'Test_IsProjectManager',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Test that non-project user does not have access.
         uri = reverse('project-detail',
                       kwargs={'public_id': project.public_id})
@@ -267,20 +277,21 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsProjectManager()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_MANAGER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_object_permission(
             request, project_detail, project), msg)
         # Add the user to the project's membership list.
-        project.process_members([user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            {'user': user, 'role_text': self.PROJECT_MANAGER}
+            ]
+        project.process_members(members)
         # Test that a PROJECT_MANAGER role has access.
-        project.set_role(user, Membership.PROJECT_MANAGER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_MANAGER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_object_permission(
             request, project_detail, project), msg)
 
@@ -291,11 +302,14 @@ class TestPermissions(BaseTest, APITestCase):
         #self.skipTest("Temporarily skipped")
         # Create an InventoryType, a Project, and a user.
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
         kwargs = {'username': 'Test_DefaultUser',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_MANAGER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Test that non-project user does not have access.
         factory = APIRequestFactory()
         request = factory.get('project-list')
@@ -304,19 +318,21 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsProjectDefaultUser()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_permission(request, project_list), msg)
         # Add the user to the project's membership list.
-        project.process_members([user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_MANAGER},
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        project.process_members(members)
         # Test that a PROJECT_USER role has access.
-        project.set_role(user, Membership.PROJECT_USER)
+        project.set_role(user, self.PROJECT_USER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_permission(request, project_list), msg)
 
     def test_IsProjectDefaultUser_object(self):
@@ -326,11 +342,15 @@ class TestPermissions(BaseTest, APITestCase):
         #self.skipTest("Temporarily skipped")
         # Create an InventoryType, a Project, and a user.
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
         kwargs = {'username': 'Test_DefaultUser',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        # Add the user to the project's membership list.
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_MANAGER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Test that non-project user does not have access.
         uri = reverse('project-detail',
                       kwargs={'public_id': project.public_id})
@@ -341,20 +361,21 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsProjectDefaultUser()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_object_permission(
             request, project_detail, project), msg)
         # Add the user to the project's membership list.
-        project.process_members([user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_MANAGER},
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        project.process_members(members)
         # Test that a PROJECT_USER role has access.
-        project.set_role(user, Membership.PROJECT_USER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_object_permission(
             request, project_detail, project), msg)
 
@@ -365,11 +386,15 @@ class TestPermissions(BaseTest, APITestCase):
         #self.skipTest("Temporarily skipped")
         # Create an InventoryType, a Project, and a user.
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
+        # Add the user to the project's membership list.
         kwargs = {'username': 'Test_IsAnyProjectUser',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Test that non-project user does not have access.
         factory = APIRequestFactory()
         request = factory.get('project-list')
@@ -378,35 +403,34 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsAnyProjectUser()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_permission(request, project_list), msg)
-        # Add the user to the project's membership list.
-        project.process_members([user])
+        # Add the 2nd user.
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        project.process_members(members)
         # Test that a PROJECT_USER role has access.
-        project.set_role(user, Membership.PROJECT_USER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_permission(request, project_detail), msg)
         # Test that a PROJECT_MANAGER role has access.
-        project.set_role(user, Membership.PROJECT_MANAGER)
+        project.set_role(user, self.PROJECT_MANAGER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_MANAGER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_permission(request, project_detail), msg)
         # Test that an PROJECT_OWNER role has access.
-        project.set_role(user, Membership.PROJECT_OWNER)
+        project.set_role(user, self.PROJECT_OWNER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_permission(request, project_list), msg)
 
     def test_IsAnyProjectUser_object(self):
@@ -416,11 +440,14 @@ class TestPermissions(BaseTest, APITestCase):
         #self.skipTest("Temporarily skipped")
         # Create an InventoryType, a Project, and a user.
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
         kwargs = {'username': 'Test_IsAnyProjectUser',
                   'password': '1234567890',
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Test that non-project user does not have access.
         uri = reverse('project-detail',
                       kwargs={'public_id': project.public_id})
@@ -431,38 +458,38 @@ class TestPermissions(BaseTest, APITestCase):
         auth = IsAnyProjectUser()
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertFalse(auth.has_object_permission(
             request, project_detail, project), msg)
         # Add the user to the project's membership list.
-        project.process_members([user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_OWNER},
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        project.process_members(members)
         # Test that a PROJECT_USER role has access.
-        project.set_role(user, Membership.PROJECT_USER)
+        project.set_role(user, self.PROJECT_USER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_USER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_object_permission(
             request, project_detail, project), msg)
         # Test that a PROJECT_MANAGER role has access.
-        project.set_role(user, Membership.PROJECT_MANAGER)
+        project.set_role(user, self.PROJECT_MANAGER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_MANAGER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_object_permission(
             request, project_list, project), msg)
         # Test that a PROJECT_OWNER role has access.
-        project.set_role(user, Membership.PROJECT_OWNER)
+        project.set_role(user, self.PROJECT_OWNER)
         members = user.memberships.filter(project=project,
                                           role=Membership.PROJECT_OWNER)
-        role = members[0].role if members else None
-        msg = "User '{}', role: {}, members: {}".format(
-            request.user, role, members)
+        role = members[0].role_text if members else None
+        msg = f"User '{request.user}', role: {role}, members: {members}"
         self.assertTrue(auth.has_object_permission(
             request, project_detail, project), msg)
         # Test that a PROJECT_OWNER role has access to a project dependent
@@ -475,7 +502,7 @@ class TestPermissions(BaseTest, APITestCase):
         request.user = user
         force_authenticate(request, user=user)
         auth = IsAnyProjectUser()
-        msg = "User '{}', role: {}".format(request.user, role)
+        msg = f"User '{request.user}', role: {role}"
         self.assertTrue(auth.has_object_permission(
             request, category_detail, category), msg)
 
@@ -494,9 +521,11 @@ class TestPermissions(BaseTest, APITestCase):
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
-        project.process_members([user])
-        project.set_role(user, Membership.PROJECT_OWNER)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER},
+            {'user': user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Setup the GET request.
         factory = APIRequestFactory()
         request = factory.get('inventory-type-list')
@@ -504,8 +533,9 @@ class TestPermissions(BaseTest, APITestCase):
         force_authenticate(request, user=user)
         auth = IsReadOnly()
         # Test that a READ operation works.
-        msg = "User: {}".format(user)
-        self.assertTrue(auth.has_permission(request, inventory_type_list), msg)
+        msg = f"User: {user}"
+        self.assertTrue(
+            auth.has_permission(request, inventory_type_list), msg)
         # Setup the POST request.
         factory = APIRequestFactory()
         kwargs = {'name': 'Test IsReadOnly',
@@ -514,11 +544,10 @@ class TestPermissions(BaseTest, APITestCase):
         request.user = user
         force_authenticate(request, user=user)
         auth = IsReadOnly()
-        # Add the user to the project's membership list.
-        project.process_members([user])
         # Test that the user cannot post to this endpoint.
-        msg = "User: {}".format(user)
-        self.assertFalse(auth.has_permission(request, inventory_type_list), msg)
+        msg = f"User: {user}"
+        self.assertFalse(
+            auth.has_permission(request, inventory_type_list), msg)
 
     def test_IsUserActive(self):
         """
@@ -531,9 +560,11 @@ class TestPermissions(BaseTest, APITestCase):
                   'email': 'test@example.org'}
         user, client = self._create_user(**kwargs)
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
-        project.process_members([user])
-        project.set_role(user, Membership.PROJECT_OWNER)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER},
+            {'user': user, 'role_text': self.PROJECT_OWNER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Setup the GET request.
         factory = APIRequestFactory()
         request = factory.get('inventory-type-list')
@@ -541,13 +572,15 @@ class TestPermissions(BaseTest, APITestCase):
         force_authenticate(request, user=user)
         auth = IsUserActive()
         # Test that an active user has access.
-        msg = "User: {}".format(user)
-        self.assertTrue(auth.has_permission(request, inventory_type_list), msg)
+        msg = f"User: {user}"
+        self.assertTrue(
+            auth.has_permission(request, inventory_type_list), msg)
         # Test that an inactive user does not have access.
         user.is_active = False
         user.save()
-        msg = "User: {}".format(user)
-        self.assertFalse(auth.has_permission(request, inventory_type_list), msg)
+        msg = f"User: {user}"
+        self.assertFalse(
+            auth.has_permission(request, inventory_type_list), msg)
 
     def test_CanDelete(self):
         """
@@ -558,30 +591,32 @@ class TestPermissions(BaseTest, APITestCase):
         kwargs = {'username': 'Test_CanDelete',
                   'password': '1234567890',
                   'email': 'test@example.org',
-                  'role': UserModel.DEFAULT_USER}
+                  'role': self.DEFAULT_USER}
         user, client = self._create_user(**kwargs)
         in_type = self._create_inventory_type()
-        project = self._create_project(in_type, members=[self.user])
-        project.process_members([user])
-        project.set_role(user, Membership.PROJECT_USER)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER},
+            {'user': user, 'role_text': self.PROJECT_MANAGER},
+            ]
+        project = self._create_project(in_type, members=members)
         # Setup failing DELETE request
         factory = APIRequestFactory()
-        uri = reverse('project-detail', kwargs={'public_id': project.public_id})
+        uri = reverse('project-detail',
+                      kwargs={'public_id': project.public_id})
         request = factory.delete(uri)
         request.user = user
         force_authenticate(request, user=user)
         auth = CanDelete()
         # Test that an active PROJECT_USER cannot delete
-        msg = "User: {}".format(user)
+        msg = f"User: {user}"
         self.assertTrue(auth.has_permission(request, project_detail), msg)
         # Setup for passing DELETE request
-        project.set_role(user, Membership.PROJECT_MANAGER)
         request = factory.get(uri)
         request.user = user
         force_authenticate(request, user=user)
         auth = CanDelete()
         # Test that an active PROJECT_MANAGER cannot delete
-        msg = "User: {}".format(user)
+        msg = f"User: {user}"
         self.assertFalse(auth.has_permission(request, project_detail), msg)
 
     def test_IsPostOnly(self):
@@ -592,7 +627,7 @@ class TestPermissions(BaseTest, APITestCase):
         kwargs = {'username': 'Test_IsPostOnly',
                   'password': '1234567890',
                   'email': 'test@example.org',
-                  'role': UserModel.DEFAULT_USER}
+                  'role': self.DEFAULT_USER}
         user, client = self._create_user(**kwargs)
         in_type = self._create_inventory_type()
         in_type_uri = reverse('inventory-type-detail',
@@ -603,7 +638,7 @@ class TestPermissions(BaseTest, APITestCase):
         request.user = user
         force_authenticate(request, user=user)
         auth = IsPostOnly()
-        msg = "User: {}".format(user)
+        msg = f"User: {user}"
         self.assertFalse(auth.has_permission(request, project_list), msg)
         # Test that this user can POST a new project
         factory = APIRequestFactory()
@@ -615,5 +650,5 @@ class TestPermissions(BaseTest, APITestCase):
         request.user = user
         force_authenticate(request, user=user)
         auth = IsPostOnly()
-        msg = "User: {}".format(user)
+        msg = f"User: {user}"
         self.assertTrue(auth.has_permission(request, project_list), msg)

@@ -3,19 +3,18 @@
 # inventory/maintenance/tests/test_location_models.py
 #
 
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from inventory.common.tests.base_tests import BaseTest
+from inventory.projects.models import Membership
 
 from ..models import LocationSetName, LocationFormat, LocationCode
-
-User = get_user_model()
 
 
 class BaseLocation(BaseTest):
     _TEST_USERNAME = 'TestUser'
     _TEST_PASSWORD = 'TestPassword_007'
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -137,8 +136,11 @@ class TestLocationSetNameModel(BaseLocation):
         loc_set_name, fmt_root, fmt_0, fmt_1, fmt_2 = self.setup_set_name_tree(
             self.project, name, desc, LocationSetName.YES)
         # Make copy of 'location set name' and it's formats with a new project.
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
         project = self._create_project(
-            self.inventory_type, name="Test Project 2", members=[self.user])
+            self.inventory_type, name="Test Project 2", members=members)
         tree = LocationSetName.objects.clone_set_name_tree(
                 project, self.user, loc_set_name)
         msg = "tree: '{}', total in tree: '{}'.".format(tree, len(tree))

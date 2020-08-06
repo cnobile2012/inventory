@@ -31,6 +31,7 @@ from inventory.common.api.parsers import parser_factory
 from inventory.common.api.renderers import renderer_factory
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
+from inventory.projects.models import Project
 
 from ..models import LocationSetName, LocationFormat, LocationCode
 
@@ -51,6 +52,7 @@ class LocationSetNameMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('location-set-names')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -64,10 +66,11 @@ class LocationSetNameMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = LocationSetName.objects.all()
         else:
-            projects = self.request.user.projects.all()
+            projects = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
             result = LocationSetName.objects.select_related(
                 'project').filter(project__in=projects)
 
@@ -127,6 +130,7 @@ class LocationFormatMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('location-formats')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -140,10 +144,11 @@ class LocationFormatMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = LocationFormat.objects.all()
         else:
-            projects = self.request.user.projects.all()
+            projects = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
             lsn = LocationSetName.objects.select_related(
                 'project').filter(project__in=projects)
             result = LocationFormat.objects.select_related(
@@ -205,6 +210,7 @@ class LocationCodeMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('location-codes')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -218,10 +224,11 @@ class LocationCodeMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = LocationCode.objects.all()
         else:
-            projects = self.request.user.projects.all()
+            projects = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
             lsn = LocationSetName.objects.select_related(
                 'project').filter(project__in=projects)
             lf = LocationFormat.objects.select_related(

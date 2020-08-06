@@ -65,13 +65,22 @@ class InventoryTypeSerializerVer01(SerializerMixin,
 #
 # MembershipSerializerVer01
 #
-class MembershipSerializerVer01(SerializerMixin, serializers.ModelSerializer):
-    user = serializers.CharField(source='user.public_id')
+class MembershipSerializerVer01(SerializerMixin,
+                                serializers.ModelSerializer):
+    username = serializers.CharField(
+        source='user.username')
+    full_name = serializers.CharField(
+        source='user.get_full_name_or_username', read_only=True)
+    role = serializers.CharField(
+        source='role_text')
+    href = serializers.SerializerMethodField()
+
+    def get_href(self, obj):
+        return obj.get_user_href(request=self.get_request())
 
     class Meta:
         model = Membership
-        fields = ('role', 'user',)
-        read_only_fields = ('user', 'project',)
+        fields = ('username', 'full_name', 'role', 'href',)
 
 
 #
@@ -84,17 +93,11 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
         required=False, help_text=_("Choose an inventory type."))
     inventory_type_public_id = serializers.CharField(
         source='inventory_type.public_id', required=False)
-    members = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', many=True, queryset=UserModel.objects.all(),
-        default=[], lookup_field='public_id')
     image = serializers.ImageField(
         allow_empty_file=True, use_url=True, required=False,
         help_text=_("Upload project logo image."))
-    role = serializers.DictField(
-        label=_("Role"), write_only=True, required=False,
-        help_text=_("Set the role of the user in this project."))
     memberships = MembershipSerializerVer01(
-        many=True, read_only=True, help_text=_("Members of this project."))
+        many=True, required=False, help_text=_("Members of this project."))
     items_href = HyperlinkedFilterField(
         view_name='item-list', query_name='project', read_only=True,
         lookup_field='public_id')
@@ -120,10 +123,47 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
 
         return obj
 
+    def validate_memberships(self, members):
+        """
+        This method returns either an updated Membership object or a dict
+        of the objects to create a Membership object.
+
+        members data
+        ------------
+        [OrderedDict([('user', {'username': 'Normal_User'}),
+                      ('role_text', 'PROJECT_USER')])]
+        """
+        updated_members = []
+
+        for member in members:
+            username = member['user']['username']
+
+            try:
+                user = UserModel.objects.get(username=username)
+            except UserModel.DoesNotExist:
+                raise serializers.ValidationError({
+                    'role': _(f"The username '{username}' is not a valid "
+                              f"user for setting a role.")
+                    })
+            else:
+                role = member['role_text']
+                item = {}
+                item['user'] = user
+
+                if role not in Membership.ROLE_MAP_REV:
+                    msg = _(f"Invalid role type '{role}' found should be "
+                            f"one of {list(Membership.ROLE_MAP_REV.keys())}")
+                    raise serializers.ValidationError({'role': msg})
+
+                item['role_text'] = role
+                updated_members.append(item)
+
+        return updated_members
+
     def validate(self, data):
         """
         Pops out the role values and validates them, then adds the user
-        and role back into the data.
+        and role into the data.
         """
         obj = data.get('inventory_type')
         role_data = data.pop('role', {})
@@ -133,35 +173,8 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
 
             if not obj:
                 if not self.partial:
-                    msg = _("Must choose a valid ").format("Inventory Type")
+                    msg = _(f"Must choose a valid {'Inventory Type'}")
                     raise serializers.ValidationError({'inventory_type': msg})
-
-        if role_data and ('user' in role_data and 'role' in role_data):
-            username = role_data.get('user')
-            role = role_data.get('role')
-
-            try:
-                user = UserModel.objects.get(username=username)
-            except UserModel.DoesNotExist:
-                raise serializers.ValidationError({
-                    'role': _("The username '{}' is not a valid user for "
-                              "setting a role.").format(username)})
-
-            if role not in ['', None]:
-                if isinstance(role, str) and role.isdigit():
-                    role = int(role)
-
-                if role not in Membership.ROLE_MAP:
-                    raise serializers.ValidationError({
-                        'role': _("The value '{}' is not a valid role."
-                                  ).format(role)})
-            else:
-                raise serializers.ValidationError({
-                    'role': _("The user project role '{}' is not valid."
-                              ).format(role)})
-
-            data['user'] = user
-            data['role'] = role
 
         return data
 
@@ -169,14 +182,11 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
         user = self.get_user_object()
         validated_data['creator'] = user
         validated_data['updater'] = user
-        members = validated_data.pop('members', [])
-        role_user = validated_data.pop('user', None)
-        role = validated_data.pop('role', {})
-        obj = Project(**validated_data)
-        obj.save()
-        obj.process_members(members)
-        obj.set_role(role_user, role)
-        return obj
+        members = validated_data.pop('memberships', [])
+        instance = Project(**validated_data)
+        instance.save()
+        instance.process_members(members)
+        return instance
 
     def update(self, instance, validated_data):
         instance.image = validated_data.get('image', instance.image)
@@ -185,15 +195,16 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
         instance.active = validated_data.get('active', instance.active)
         instance.updater = self.get_user_object()
         instance.save()
-        instance.process_members(validated_data.get('members', []))
+        members = validated_data.get('memberships', [])
+        instance.process_members(members)
         return instance
 
     class Meta:
         model = Project
-        fields = ('public_id', 'name', 'members', 'image', 'role',
-                  'memberships', 'inventory_type', 'inventory_type_public_id',
-                  'items_href', 'invoices_href', 'public', 'active', 'creator',
-                  'created', 'updater', 'updated', 'href',)
+        fields = ('public_id', 'name', 'image', 'memberships',
+                  'inventory_type', 'inventory_type_public_id', 'items_href',
+                  'invoices_href', 'public', 'active', 'creator', 'created',
+                  'updater', 'updated', 'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
                             'updated',)
         extra_kwargs = {

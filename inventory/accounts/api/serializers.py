@@ -17,8 +17,7 @@ from rest_framework import serializers
 from rest_framework.permissions import SAFE_METHODS
 
 from inventory.common.api.serializer_mixin import SerializerMixin
-from inventory.projects.api.serializers import ProjectSerializerVer01
-from inventory.projects.models import Project
+from inventory.projects.models import Membership
 from inventory.regions.models import Country, Subdivision, Language, TimeZone
 
 from ..models import Question, Answer
@@ -28,14 +27,34 @@ UserModel = get_user_model()
 
 
 #
+# MembershipSerializerVer01
+#
+class ProjectMembershipSerializerVer01(SerializerMixin,
+                                       serializers.ModelSerializer):
+    project = serializers.CharField(
+        source='project.name')
+    href = serializers.SerializerMethodField()
+    role = serializers.CharField(
+        source='role_text')
+
+    def get_href(self, obj):
+        return obj.get_project_href(request=self.get_request())
+
+    class Meta:
+        model = Membership
+        fields = ('project', 'href', 'role',)
+
+
+#
 # User
 #
 class UserSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     MESSAGE = _("You do not have permission to change the '{}' field.")
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     full_name = serializers.SerializerMethodField()
-    role = serializers.IntegerField(
-        source='user.role', required=False)
+    role = serializers.CharField(
+        max_length=20, required=False)
     picture  = serializers.ImageField(
         allow_empty_file=True, use_url=True, required=False)
     subdivision = serializers.HyperlinkedRelatedField(
@@ -53,8 +72,8 @@ class UserSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     answers = serializers.HyperlinkedRelatedField(
         view_name='answer-detail', many=True, read_only=True,
         label=_("Security answers"), lookup_field='public_id')
-    projects = ProjectSerializerVer01(
-        many=True, required=False)
+    projects = ProjectMembershipSerializerVer01(
+        source='memberships', many=True, required=False)
     href = serializers.HyperlinkedIdentityField(
         view_name='user-detail', lookup_field='public_id',
         label=_("Identity URI"))
@@ -74,14 +93,14 @@ class UserSerializerVer01(SerializerMixin, serializers.ModelSerializer):
             if (is_active is not None
                 and self.instance.is_active != is_active and not
                 (self.instance.is_superuser or
-                 self.instance.role == UserModel.ADMINISTRATOR)):
+                 self.instance.role == self.ADMINISTRATOR)):
                 raise serializers.ValidationError(
                     {'is_active': self.MESSAGE.format('is_active')})
 
             if (is_staff is not None
                 and self.instance.is_staff != is_staff and not
                 (self.instance.is_superuser or
-                 self.instance.role == UserModel.ADMINISTRATOR)):
+                 self.instance.role == self.ADMINISTRATOR)):
                 raise serializers.ValidationError(
                     {'is_staff': self.MESSAGE.format('is_staff')})
 
@@ -94,7 +113,7 @@ class UserSerializerVer01(SerializerMixin, serializers.ModelSerializer):
             if (role is not None
                 and self.instance.role != role and not
                 (self.instance.is_superuser or
-                 self.instance.role == UserModel.ADMINISTRATOR)):
+                 self.instance.role == self.ADMINISTRATOR)):
                 raise serializers.ValidationError(
                     {'role': self.MESSAGE.format('role')})
 
@@ -161,13 +180,13 @@ class UserSerializerVer01(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ('public_id', 'username', 'password', 'full_name', 'picture',
-                  'send_email', 'need_password', 'first_name', 'last_name',
-                  'address_01', 'address_02', 'city', 'subdivision',
-                  'postal_code', 'country', 'language', 'timezone', 'dob',
-                  'email', 'role', 'projects', 'project_default', 'answers',
-                  'is_active', 'is_staff', 'is_superuser', 'last_login',
-                  'date_joined', 'href',)
+        fields = ('public_id', 'username', 'password', 'full_name', 'role',
+                  'picture', 'send_email', 'need_password', 'first_name',
+                  'last_name', 'address_01', 'address_02', 'city',
+                  'subdivision', 'postal_code', 'country', 'language',
+                  'timezone', 'dob', 'email', 'role', 'project_default',
+                  'projects', 'answers', 'is_active', 'is_staff',
+                  'is_superuser', 'last_login', 'date_joined', 'href',)
         read_only_fields = ('public_id', 'last_login', 'date_joined',)
         extra_kwargs = {'password': {'write_only': True}}
 

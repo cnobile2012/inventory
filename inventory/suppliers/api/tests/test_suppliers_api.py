@@ -8,23 +8,26 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
+from inventory.projects.models import Membership
 from inventory.regions.models import Country, Subdivision
 from inventory.suppliers.models import Supplier
 
 
 class TestSupplierAPI(BaseTest, APITestCase):
-
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
+ 
     def __init__(self, name):
         super().__init__(name)
 
     def setUp(self):
         super().setUp()
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
         kwargs = {'public_id': self.project.public_id}
         self.project_uri = reverse('project-detail', kwargs=kwargs)
-        #self.country = self._create_country()
-        #self.subdivision = self._create_subdivision(country)
 
     def test_GET_supplier_list_with_invalid_permissions(self):
         """

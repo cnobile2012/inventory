@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
+from inventory.projects.models import Membership
 
 UserModel = get_user_model()
 
@@ -18,6 +19,9 @@ UserModel = get_user_model()
 class BaseAccount(BaseTest, APITestCase):
     DEFAULT_QUESTION = "What make car do you have?"
     DEFAULT_ANSWER = "Tesla Model S"
+    # These are the global roles not the Membership roles
+    DEFAULT_USER = UserModel.ROLE_MAP[UserModel.DEFAULT_USER]
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def __init__(self, name):
         super().__init__(name)
@@ -35,13 +39,17 @@ class TestUserAPI(BaseAccount):
         super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user,
+             'role_text': Membership.ROLE_MAP[Membership.PROJECT_USER]}
+            ]
+        self.project = self._create_project(self.in_type, members)
 
     def _test_writable_role_with_errors(self, method):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         data = {}
@@ -51,8 +59,8 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = False
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='is_active'), msg)
@@ -64,8 +72,8 @@ class TestUserAPI(BaseAccount):
         data['is_staff'] = True
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(response, error_key='is_staff'), msg)
@@ -76,11 +84,11 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = True
         data['is_staff'] = False
         data['is_superuser'] = False
-        data['role'] = UserModel.ADMINISTRATOR
+        data['role'] = self.ADMINISTRATOR
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
@@ -92,11 +100,11 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = True
         data['is_staff'] = False
         data['is_superuser'] = True
-        data['role'] = UserModel.DEFAULT_USER
+        data['role'] = self.DEFAULT_USER
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
@@ -109,7 +117,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = True
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         data = {}
@@ -119,8 +127,8 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = False
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, data: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertNotEqual(response.data.get('is_active'),
                             kwargs.get('is_active'), msg)
@@ -129,8 +137,8 @@ class TestUserAPI(BaseAccount):
         data['is_staff'] = True
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertNotEqual(response.data.get('is_staff'),
                             kwargs.get('is_staff'), msg)
@@ -138,11 +146,11 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = True
         data['is_staff'] = False
         data['is_superuser'] = True
-        data['role'] = UserModel.ADMINISTRATOR
+        data['role'] = self.ADMINISTRATOR
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertNotEqual(response.data.get('role'),
                             kwargs.get('role'), msg)
@@ -150,11 +158,11 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = True
         data['is_staff'] = False
         data['is_superuser'] = False
-        data['role'] = UserModel.DEFAULT_USER
+        data['role'] = self.DEFAULT_USER
         response = getattr(client, method)(
             uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertNotEqual(response.data.get('is_superuser'),
                             kwargs.get('is_superuser'), msg)
@@ -189,13 +197,13 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-list')
         method = 'get'
         response = getattr(client, method)(uri, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(response.data.get('count'), 2, msg)
         self.assertEqual(len(response.data.get('results')[0]), 9, msg)
@@ -268,7 +276,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         method = 'get'
@@ -284,7 +292,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         method = 'get'
@@ -300,7 +308,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
         method = 'get'
@@ -318,7 +326,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         method = 'put'
@@ -344,7 +352,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         method = 'put'
@@ -394,7 +402,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
         method = 'put'
@@ -417,7 +425,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         method = 'patch'
@@ -443,7 +451,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = True
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         method = 'patch'
@@ -492,7 +500,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         self._test_users_with_invalid_permissions(uri, method)
@@ -507,7 +515,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         self._test_users_with_invalid_permissions(
@@ -522,7 +530,7 @@ class TestUserAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
         self._test_users_with_valid_permissions(uri, method)
@@ -730,8 +738,7 @@ class TestQuestionAPI(BaseAccount):
 
         A DELETE on this endpoint is not permitted by any role.
         """
-        pass
-        #self.skipTest("Temporarily skipped")
+        self.skipTest("Temporarily skipped")
         ## method = 'delete'
         ## # Test SUPERUSER
         ## question = self._create_question(self.DEFAULT_QUESTION)
@@ -1022,7 +1029,7 @@ class TestAnswerAPI(BaseAccount):
         # Test DEFAULT_USER
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         answer = self._create_answer(question, self.DEFAULT_ANSWER, user)
         uri = reverse('answer-detail',
@@ -1097,7 +1104,7 @@ class TestLoginAPI(BaseAccount):
         data = dict(kwargs)
         kwargs['login'] = False
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         response = client.post(uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
@@ -1132,7 +1139,7 @@ class TestLoginAPI(BaseAccount):
         data = dict(kwargs)
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         response = client.post(uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(

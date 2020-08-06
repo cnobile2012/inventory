@@ -18,12 +18,16 @@ UserModel = get_user_model()
 
 
 class BaseRegion(BaseTest, APITestCase):
-
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
+ 
     def setUp(self):
         super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
 
 
 class TestCountry(BaseRegion):

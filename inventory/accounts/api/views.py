@@ -54,12 +54,13 @@ class UserMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('users')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
 
         if (self.request.user.is_superuser
-            or self.request.user.role == UserModel.ADMINISTRATOR
+            or self.request.user.role == self.ADMINISTRATOR
             or (self.kwargs and self.request.user == self.get_object())):
 
             if self.request.version == Decimal("1"):
@@ -85,7 +86,8 @@ class UserList(TrapDjangoValidationErrorCreateMixin,
     User list endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly,
@@ -107,7 +109,8 @@ class UserDetail(TrapDjangoValidationErrorUpdateMixin,
                  UserMixin,
                  RetrieveUpdateAPIView):
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                Or(IsAnyUser,
@@ -125,6 +128,8 @@ user_detail = UserDetail.as_view()
 # Group
 #
 ## class GroupMixin:
+##     ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
+
 ##     def get_serializer_class(self):
 ##         serializer = None
 
@@ -137,7 +142,7 @@ user_detail = UserDetail.as_view()
 
 ##     def get_queryset(self):
 ##         if (self.request.user.is_superuser or
-##             self.request.user.role == UserModel.ADMINISTRATOR):
+##             self.request.user.role == self.ADMINISTRATOR):
 ##             result = Group.objects.all()
 ##         else:
 ##             result = self.request.user.groups.all()
@@ -205,7 +210,8 @@ class QuestionList(TrapDjangoValidationErrorCreateMixin,
     """
     queryset = Question.objects.all()
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly, Or(IsDefaultUser,
@@ -228,7 +234,8 @@ class QuestionDetail(TrapDjangoValidationErrorUpdateMixin,
     """
     queryset = Question.objects.all()
     permission_classes = (
-         And(IsUserActive, IsAuthenticated,
+         And(IsUserActive,
+             IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsReadOnly, Or(IsDefaultUser,
@@ -250,6 +257,7 @@ class AnswerMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('answers')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -263,7 +271,7 @@ class AnswerMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = Answer.objects.all()
         else:
             result = self.request.user.answers.all()
@@ -278,7 +286,8 @@ class AnswerList(TrapDjangoValidationErrorCreateMixin,
     Answer list endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAnyUser,
                IsAnyProjectUser)
             ),
@@ -296,7 +305,8 @@ class AnswerDetail(TrapDjangoValidationErrorUpdateMixin,
     Answer detail endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAnyUser,
                IsAnyProjectUser)
             ),
@@ -350,7 +360,8 @@ class LogoutView(APIView):
     renderer_classes = (renderer_factory('logout')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAnyUser,
                IsAnyProjectUser)
             ),

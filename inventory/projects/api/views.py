@@ -22,9 +22,9 @@ from rest_framework.settings import api_settings
 from rest_condition import C, And, Or, Not
 
 from inventory.common.api.permissions import (
-    IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsAnyUser,
-    IsProjectOwner, IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser,
-    IsReadOnly, IsUserActive, CanDelete)
+    IsAdminSuperUser, IsAdministrator, IsDefaultUser, IsProjectOwner,
+    IsProjectManager, IsProjectDefaultUser, IsAnyProjectUser, IsReadOnly,
+    IsUserActive, CanDelete)
 from inventory.common.api.pagination import SmallResultsSetPagination
 from inventory.common.api.parsers import parser_factory
 from inventory.common.api.renderers import renderer_factory
@@ -127,10 +127,11 @@ class ProjectMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user._role == UserModel.ADMINISTRATOR):
             result = Project.objects.all()
         else:
-            result = self.request.user.projects.all()
+            result = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
 
         return result
 
@@ -143,7 +144,8 @@ class ProjectList(TrapDjangoValidationErrorCreateMixin,
     """
     serializer_class = ProjectSerializerVer01
     permission_classes = (
-        And(IsUserActive, IsAnyUser, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                And(IsDefaultUser, Not(IsReadOnly)),
@@ -167,12 +169,15 @@ class ProjectDetail(TrapDjangoValidationErrorUpdateMixin,
     """
     serializer_class = ProjectSerializerVer01
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
-               And(IsProjectManager, Not(CanDelete)),
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectManager,
+                   Not(CanDelete)),
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )

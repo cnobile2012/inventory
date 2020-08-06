@@ -60,7 +60,7 @@ class IsAdministrator(permissions.BasePermission):
         user = get_user(request)
 
         if (user and hasattr(user, 'role') and
-            user.role == UserModel.ADMINISTRATOR):
+            user.role == UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]):
             result = True
 
         log.debug("IsAdministrator: %s, method: %s, user: %s, view: %s",
@@ -78,7 +78,7 @@ class IsDefaultUser(permissions.BasePermission):
         user = get_user(request)
 
         if (user and hasattr(user, 'role') and
-            user.role == UserModel.DEFAULT_USER):
+            user.role == UserModel.ROLE_MAP[UserModel.DEFAULT_USER]):
             result = True
 
         log.debug("IsDefaultUser: %s, method: %s, user: %s, view: %s",
@@ -97,8 +97,7 @@ class IsAnyUser(permissions.BasePermission):
 
         # This permission is broken
         if (user and hasattr(user, 'role') and
-            (user.is_superuser or user.role in (
-            UserModel.DEFAULT_USER, UserModel.ADMINISTRATOR))):
+            (user.is_superuser or user.role in (UserModel.ROLE_MAP_REV))):
             result = True
 
         log.debug("IsAnyUser: %s, method: %s, user: %s, view: %s",
@@ -139,6 +138,10 @@ class BaseProjectPermission(permissions.BasePermission):
                 project = obj
             elif hasattr(obj, 'project'):
                 project = obj.project
+            elif hasattr(obj, 'memberships'):
+                members = obj.memberships.filter(user=user)
+                if members: project = members[0].project
+                #print('POOP', members, project)
 
             if project:
                 if not isinstance(level, (list, tuple)):
@@ -159,14 +162,16 @@ class IsProjectOwner(BaseProjectPermission):
     def has_permission(self, request, view):
         result = self.has_project_permission(request, Membership.PROJECT_OWNER)
         log.debug("IsProjectOwner: %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, Membership.PROJECT_OWNER)
         log.debug("IsProjectOwner: %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
 
@@ -179,14 +184,16 @@ class IsProjectManager(BaseProjectPermission):
         result = self.has_project_permission(
             request, Membership.PROJECT_MANAGER)
         log.debug("IsProjectManager: %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, Membership.PROJECT_MANAGER)
         log.debug("IsProjectManager: %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
 
@@ -198,15 +205,17 @@ class IsProjectDefaultUser(BaseProjectPermission):
     def has_permission(self, request, view):
         result = self.has_project_permission(
             request, Membership.PROJECT_USER)
-        log.debug(": %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+        log.debug("IsProjectDefaultUser: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, Membership.PROJECT_USER)
-        log.debug(": %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+        log.debug("IsProjectDefaultUser: %s, method: %s, user: %s, view: %s",
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
 
@@ -219,14 +228,16 @@ class IsAnyProjectUser(BaseProjectPermission):
         result = self.has_project_permission(
             request, list(Membership.ROLE_MAP))
         log.debug("IsAnyProjectUser: %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
     def has_object_permission(self, request, view, obj):
         result = self.has_project_object_permission(
             request, obj, list(Membership.ROLE_MAP))
         log.debug("IsAnyProjectUser: %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
 
@@ -246,7 +257,8 @@ class IsReadOnly(permissions.BasePermission):
             result = True
 
         log.debug("IsReadOnly: %s, method: %s, user: %s, view: %s",
-                  result, request.method, request.user, view.__class__.__name__)
+                  result, request.method, request.user,
+                  view.__class__.__name__)
         return result
 
 

@@ -14,7 +14,7 @@ UserModel = get_user_model()
 
 
 class TestInventoryType(BaseTest):
-
+ 
     def __init__(self, name):
         super().__init__(name)
 
@@ -28,12 +28,14 @@ class TestInventoryType(BaseTest):
         #self.skipTest("Temporarily skipped")
         inventory_type = self._create_inventory_type()
         name = str(inventory_type)
-        msg = "__str__ name: {}, object name: {}".format(
-            name, inventory_type.name)
+        msg = f"__str__ name: {name}, object name: {inventory_type.name}"
         self.assertEqual(name, inventory_type.name, msg)
 
 
 class TestProject(BaseTest):
+    PROJECT_OWNER = Membership.ROLE_MAP[Membership.PROJECT_OWNER]
+    PROJECT_MANAGER = Membership.ROLE_MAP[Membership.PROJECT_MANAGER]
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -56,19 +58,32 @@ class TestProject(BaseTest):
         user_1 = self._create_user(username=username_1,
                                    password='1234567',
                                    is_superuser=False)
-        # Test that there is one members.
-        msg = "Members: {}".format(self.project.members.all())
-        self.assertEqual(self.project.members.count(), 1, msg)
+        # Test that there is one member.
+        members = [
+            {'user': user_0, 'role_text': self.PROJECT_USER},
+            ]
+        self.project.process_members(members)
+        member_objs = self.project.memberships.all()
+        msg = f"Members: {member_objs}"
+        self.assertEqual(member_objs.count(), 1, msg)
         # Test that there are two members.
-        self.project.process_members([user_0, user_1])
-        msg = "Members: {}".format(self.project.members.all())
-        self.assertEqual(self.project.members.count(), 2, msg)
+        members = [
+            {'user': user_0, 'role_text': self.PROJECT_USER},
+            {'user': user_1, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
+        member_objs = self.project.memberships.all()
+        msg = f"Members: {member_objs}"
+        self.assertEqual(member_objs.count(), 2, msg)
         # Test that removing a member results in one member.
-        self.project.process_members([user_1])
-        users = self.project.members.all()
-        msg = "Members: {}".format(users)
-        self.assertEqual(self.project.members.count(), 1, msg)
-        self.assertEqual(users[0].username, username_1, msg)
+        members = [
+            {'user': user_1, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
+        member_objs = self.project.memberships.all()
+        msg = f"Members: {member_objs}"
+        self.assertEqual(member_objs.count(), 1, msg)
+        self.assertEqual(member_objs[0].user.username, username_1, msg)
 
     def test_get_role(self):
         """
@@ -86,14 +101,16 @@ class TestProject(BaseTest):
             self.project.get_role(user)
 
         # Add user to membership.
-        self.project.process_members([user])
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
         # Change the user's role.
         self.project.set_role(user, Membership.PROJECT_OWNER)
         role = self.project.get_role(user)
         # Test that the member has a role.
-        msg = "This user has role '{}' which does not conform to '{}'.".format(
-            Membership.ROLE_MAP.get(role),
-            Membership.ROLE_MAP.get(Membership.PROJECT_OWNER))
+        msg = (f"This user has role {Membership.ROLE_MAP.get(role)} "
+               f"which does not conform to '{self.PROJECT_OWNER}'.")
         self.assertEqual(role, Membership.PROJECT_OWNER, msg)
 
     def test_set_role(self):
@@ -110,13 +127,15 @@ class TestProject(BaseTest):
             self.project.set_role(user, Membership.PROJECT_MANAGER)
 
         # Add user to membership.
-        self.project.process_members([user])
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
         # Change the user's role.
         self.project.set_role(user, Membership.PROJECT_MANAGER)
         role = self.project.get_role(user)
-        msg = "This user has role {} which does not conform to '{}'.".format(
-            Membership.ROLE_MAP.get(role),
-            Membership.ROLE_MAP.get(Membership.PROJECT_MANAGER))
+        msg = (f"This user has role {Membership.ROLE_MAP.get(role)} "
+               f"which does not conform to '{self.PROJECT_MANAGER}'.")
         role = self.project.get_role(user)
         self.assertEqual(role, Membership.PROJECT_MANAGER, msg)
 
@@ -134,8 +153,8 @@ class TestProject(BaseTest):
         username = "TestUser_02"
         user = self._create_user(
             username=username, password="123456789", is_superuser=True)
-        msg = "User {} should have permission to access project {}".format(
-            user, self.project)
+        msg = (f"User {user} should have permission to access project "
+               f"{self.project}")
         self.assertTrue(self.project.has_authority(user), msg)
 
     def test_ADMINISTRATOR_has_authority(self):
@@ -149,8 +168,8 @@ class TestProject(BaseTest):
         user = self._create_user(
             username=username, password="123456789", is_superuser=False,
             role=UserModel.ADMINISTRATOR)
-        msg = "User {} should have permission to access project {}".format(
-            user, self.project)
+        msg = (f"User {user} should have permission to access project "
+               f"{self.project}")
         self.assertTrue(self.project.has_authority(user), msg)
 
     def test_DEFAULT_USER_has_authority(self):
@@ -163,13 +182,16 @@ class TestProject(BaseTest):
         user = self._create_user(
             username=username, password="123456789", is_superuser=False)
         # Test that user has no authority with project.
-        msg = "User {} should not have permission to access project {}".format(
-            user, self.project)
+        msg = (f"User {user} should have permission to access project "
+               f"{self.project}")
         self.assertFalse(self.project.has_authority(user), msg)
         # Test that user has authority with project.
-        self.project.process_members([user])
-        msg = "User {} should have permission to access project {}".format(
-            user, self.project)
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
+        msg = (f"User {user} should have permission to access project "
+               f"{self.project}")
         self.assertTrue(self.project.has_authority(user), msg)
 
     def test_image_thumb_producer(self):
@@ -179,14 +201,14 @@ class TestProject(BaseTest):
         #self.skipTest("Temporarily skipped")
         # Test no image
         thumb = self.project.image_thumb_producer()
-        msg = "Invalid result '{}', should be 'No Image'".format(thumb)
+        msg = f"Invalid result '{thumb}', should be 'No Image'"
         self.assertEqual(self.project.image_thumb_producer(), "No Image", msg)
         # Test with image
         self.project.image.name = "T0-92.jpg"
         self.project.save()
         filename = "/media/T0-92.jpg"
         thumb = self.project.image_thumb_producer()
-        msg = "Invalid filename '{}', should be {}".format(thumb, filename)
+        msg = f"Invalid filename '{thumb}', should be {filename}"
         self.assertTrue(filename in thumb, msg)
 
 
@@ -208,8 +230,7 @@ class TestMembership(BaseTest):
         membership = Membership.objects.get(
             user=self.user, project=self.project)
         result = str(membership)
-        obj_result = "{} ({})".format(
-            self.user.get_full_name_reversed(), self.project.name)
-        msg = "__str__ result: {}, object result: {}".format(
-            result, obj_result)
+        obj_result = (f"{self.user.get_full_name_reversed()} "
+                      f"({self.project.name})")
+        msg = f"__str__ result: {result}, object result: {obj_result}"
         self.assertEqual(result, obj_result, msg)

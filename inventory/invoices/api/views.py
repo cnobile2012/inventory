@@ -37,6 +37,7 @@ from inventory.common.api.parsers import parser_factory
 from inventory.common.api.renderers import renderer_factory
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
+from inventory.projects.models import Project
 
 from ..models import Condition, Item, Invoice, InvoiceItem
 
@@ -104,7 +105,8 @@ class ConditionList(ConditionMixin, ListAPIView):
     queryset = Condition.objects.model_objects()
     permission_classes = (
         And(IsUserActive,
-            IsReadOnly, IsAuthenticated,
+            IsReadOnly,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsAnyProjectUser),
@@ -121,7 +123,8 @@ class ConditionDetail(ConditionMixin, RetrieveAPIView):
     queryset = Condition.objects.model_objects()
     permission_classes = (
         And(IsUserActive,
-            IsReadOnly, IsAuthenticated,
+            IsReadOnly,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsAnyProjectUser),
@@ -139,6 +142,7 @@ class ItemMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('items')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -152,10 +156,11 @@ class ItemMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = Item.objects.all()
         else:
-            projects = self.request.user.projects.all()
+            projects = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
             query = Q(project__in=projects) | Q(shared_projects__in=projects)
             result = Item.objects.select_related('project').filter(query)
 
@@ -225,12 +230,14 @@ class ItemList(TrapDjangoValidationErrorCreateMixin,
     Item list endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )
@@ -249,12 +256,14 @@ class ItemDetail(TrapDjangoValidationErrorUpdateMixin,
     Item detail endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )
@@ -271,6 +280,7 @@ class InvoiceMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('invoices')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -284,10 +294,11 @@ class InvoiceMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = Invoice.objects.all()
         else:
-            projects = self.request.user.projects.all()
+            projects = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
             result = Invoice.objects.select_related(
                 'project').filter(project__in=projects)
 
@@ -361,12 +372,14 @@ class InvoiceList(TrapDjangoValidationErrorCreateMixin,
     Invoice list endpoint
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )
@@ -385,12 +398,14 @@ class InvoiceDetail(TrapDjangoValidationErrorUpdateMixin,
     Invoice detail endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
          )
@@ -407,6 +422,7 @@ class InvoiceItemMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('invoice-items')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -420,10 +436,11 @@ class InvoiceItemMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = InvoiceItem.objects.all()
         else:
-            projects = self.request.user.projects.all()
+            projects = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
             invoices = Invoice.objects.select_related(
                 'project').filter(project__in=projects)
             result = InvoiceItem.objects.select_related(
@@ -439,12 +456,14 @@ class InvoiceItemList(TrapDjangoValidationErrorCreateMixin,
     InvoiceItem list endpoint
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )
@@ -461,12 +480,14 @@ class InvoiceItemDetail(TrapDjangoValidationErrorUpdateMixin,
     InvoiceItem detail endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
          )

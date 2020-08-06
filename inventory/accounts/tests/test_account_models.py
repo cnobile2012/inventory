@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from inventory.projects.models import Project
 
 from inventory.common.tests.base_tests import BaseTest
+from inventory.projects.models import Membership
 
 from ..models import Question, Answer, create_hash
 
@@ -41,12 +42,13 @@ class TestUser(BaseAccountModels):
         email = "TSU@example.com"
         password = "{TSU_999}"
         user = UserModel.objects.create_superuser(username, email, password)
-        msg = "Username: {}, email: {}, is_superuser: {}, role: {}".format(
-            user.username, user.email, user.is_superuser, user.role)
+        msg = (f"Username: {user.username}, email: {user.email}, "
+               f"is_superuser: {user.is_superuser}, role: {user.role}")
         self.assertEqual(user.username, username, msg)
         self.assertEqual(user.email, email, msg)
         self.assertEqual(user.is_superuser, True, msg)
-        self.assertEqual(user.role, UserModel.ADMINISTRATOR, msg)
+        role = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
+        self.assertEqual(user.role, role, msg)
 
     def test_create_user(self):
         """
@@ -57,12 +59,13 @@ class TestUser(BaseAccountModels):
         email = "TCU@example.com"
         password = "{TCU_999}"
         user = UserModel.objects.create_user(username, email, password)
-        msg = "Username: {}, email: {}, is_superuser: {}, role: {}".format(
-            user.username, user.email, user.is_superuser, user.role)
+        msg = (f"Username: {user.username}, email: {user.email}, "
+               f"is_superuser: {user.is_superuser}, role: {user.role}")
         self.assertEqual(user.username, username, msg)
         self.assertEqual(user.email, email, msg)
         self.assertEqual(user.is_superuser, False, msg)
-        self.assertEqual(user.role, UserModel.DEFAULT_USER, msg)
+        role = UserModel.ROLE_MAP[UserModel.DEFAULT_USER]
+        self.assertEqual(user.role, role, msg)
 
         # No username
         with self.assertRaises(ValueError) as cm:
@@ -70,8 +73,8 @@ class TestUser(BaseAccountModels):
 
         # No password with email
         user = UserModel.objects.create_user("SecondTestUser", email, None)
-        msg = "send_email: {}, need_password: {}".format(
-            user.send_email, user.need_password)
+        msg = (f"send_email: {user.send_email}, "
+               f"need_password: {user.need_password}")
         self.assertTrue(user.send_email, msg)
         self.assertTrue(user.need_password, msg)
 
@@ -88,13 +91,13 @@ class TestUser(BaseAccountModels):
         kwargs['username'] = "TestUser_01"
         kwargs['password'] = "9876543210"
         kwargs['role'] = 999
-        user = UserModel(**kwargs)
 
-        with self.assertRaises(ValidationError) as cm:
+        with self.assertRaises(AssertionError) as cm:
+            user = UserModel(**kwargs)
             user.save()
 
-        msg = "Found: {}".format(cm.exception)
-        self.assertTrue(" is not a valid choice." in str(cm.exception), msg)
+        msg = f"Found: {cm.exception}"
+        self.assertTrue("The role 999 is invalid, " in str(cm.exception), msg)
 
     def test_get_full_name_or_username(self):
         """
@@ -103,8 +106,8 @@ class TestUser(BaseAccountModels):
         #self.skipTest("Temporarily skipped")
         # Test the full name.
         name = self.user.get_full_name_or_username()
-        msg = "Username: {}, First Name: {}, Last Name: {}".format(
-            self.user.username, self.user.first_name, self.user.last_name)
+        msg = (f"Username: {self.user.username}, First Name: "
+               f"{self.user.first_name}, Last Name: {self.user.last_name}")
         fullname = "{} {}".format(self.user.first_name, self.user.last_name)
         self.assertEqual(name, fullname, msg)
         # Test the username.
@@ -113,7 +116,7 @@ class TestUser(BaseAccountModels):
         password = "{TCU_999}"
         user = UserModel.objects.create_user(username, email, password)
         name = user.get_full_name_or_username()
-        msg = "name: {}, username: {}".format(name, username)
+        msg = f"name: {name}, username: {username}"
         self.assertTrue(name == username, msg)
 
     def test_get_full_name_reversed(self):
@@ -122,10 +125,9 @@ class TestUser(BaseAccountModels):
         """
         #self.skipTest("Temporarily skipped")
         name = self.user.get_full_name_reversed()
-        msg = "Username: {}, First Name: {}, Last Name: {}".format(
-            self.user.username, self.user.first_name, self.user.last_name)
-        reversed_name = "{}, {}".format(self.user.last_name,
-                                        self.user.first_name)
+        msg = (f"Username: {self.user.username}, First Name: "
+               f"{self.user.first_name}, Last Name: {self.user.last_name}")
+        reversed_name = f"{self.user.last_name}, {self.user.first_name}"
         self.assertEqual(name, reversed_name, msg)
         self.assertTrue(reversed_name == str(self.user), msg)
         # Test with no first and last names
@@ -143,7 +145,7 @@ class TestUser(BaseAccountModels):
         """
         #self.skipTest("Temporarily skipped")
         uri = self.user.get_absolute_url()
-        msg = "URI: {}, public_id: {}".format(uri, self.user.public_id)
+        msg = f"URI: {uri}, public_id: {self.user.public_id}"
         self.assertTrue(self.user.public_id in uri, msg)
 
     def test_process_projects(self):
@@ -156,25 +158,33 @@ class TestUser(BaseAccountModels):
         p2 = self._create_project(self.inventory_type, "My Music")
         p3 = self._create_project(self.inventory_type, "My Stamp Collection")
         # Set two projects on the user.
-        self.user.process_projects((p1, p2))
-        projects = self.user.projects.all()
-        msg = "Projects: {}".format(projects)
-        pks = [p.pk for p in projects]
-        self.assertEqual(projects.count(), 2, msg)
+        projects = [
+            {'project': p1,
+             'role_text': Membership.ROLE_MAP[Membership.PROJECT_USER]},
+            {'project': p2,
+             'role_text': Membership.ROLE_MAP[Membership.PROJECT_OWNER]},
+            {'project': p3,
+             'role_text': Membership.ROLE_MAP[Membership.PROJECT_MANAGER]}
+            ]
+        self.user.process_projects(projects[:2]) # p1 and p2
+        members = self.user.memberships.all()
+        msg = f"Members: {members}, user: {self.user}"
+        pks = [member.project.pk for member in members]
+        self.assertEqual(members.count(), 2, msg)
         self.assertTrue(p1.pk in pks and p2.pk in pks, msg)
         # Remove one project.
-        self.user.process_projects((p1,))
-        projects = self.user.projects.all()
-        msg = "Projects: {}".format(projects)
-        pks = [p.pk for p in projects]
-        self.assertEqual(projects.count(), 1, msg)
+        self.user.process_projects(projects[:1]) # p1
+        members = self.user.memberships.all()
+        msg = f"Members: {members}, user: {self.user}"
+        pks = [member.project.pk for member in members]
+        self.assertEqual(members.count(), 1, msg)
         self.assertTrue(p1.pk in pks, msg)
         # Add a new project.
-        self.user.process_projects((p1, p3))
-        projects = self.user.projects.all()
-        msg = "Projects: {}".format(projects)
-        pks = [p.pk for p in projects]
-        self.assertEqual(projects.count(), 2, msg)
+        self.user.process_projects([projects[0], projects[2]]) # p1 and p3
+        members = self.user.memberships.all()
+        msg = f"Members: {members}, user: {self.user}"
+        pks = [member.project.pk for member in members]
+        self.assertEqual(members.count(), 2, msg)
         self.assertTrue(p1.pk in pks and p3.pk in pks, msg)
 
     def test_get_unused_questions(self):
@@ -191,7 +201,7 @@ class TestUser(BaseAccountModels):
         a2 = self._create_answer(q2, "Dog", self.user)
         # Get any remaining questions that have not been used yet.
         questions = self.user.get_unused_questions()
-        msg = "Unused Questions: {}".format(questions)
+        msg = f"Unused Questions: {questions}"
         self.assertEqual(len(questions), 1, msg)
         self.assertTrue(q3.pk in [q.pk for q in questions], msg)
 
@@ -202,8 +212,8 @@ class TestUser(BaseAccountModels):
         """
         #self.skipTest("Temporarily skipped")
         name = self.user.full_name_reversed_producer()
-        msg = "Username: {}, First Name: {}, Last Name: {}".format(
-            self.user.username, self.user.first_name, self.user.last_name)
+        msg = (f"Username: {self.user.username}, First Name: "
+               f"{self.user.first_name}, Last Name: {self.user.last_name}")
         reversed_name = "{}, {}".format(self.user.last_name,
                                         self.user.first_name)
         self.assertEqual(name, reversed_name, msg)
@@ -214,7 +224,7 @@ class TestUser(BaseAccountModels):
         password = "{TCU_999}"
         user = UserModel.objects.create_user(username, email, password)
         name = user.full_name_reversed_producer()
-        msg = "name: {}, username: {}".format(name, username)
+        msg = f"name: {name}, username: {username}"
         self.assertTrue(name == username, msg)
 
     def test_projects_producer(self):
@@ -223,9 +233,13 @@ class TestUser(BaseAccountModels):
         user has for the admin.
         """
         #self.skipTest("Temporarily skipped")
-        self.user.process_projects((self.project,))
+        projects = (
+            {'project': self.project,
+             'role_text': Membership.ROLE_MAP[Membership.PROJECT_USER]},
+            )
+        self.user.process_projects(projects)
         projects = self.user.projects_producer()
-        msg = "Projects found: {}, has: {}".format(projects, self.project)
+        msg = f"Projects found: {projects}, has: {self.project}"
         self.assertTrue(len(projects.split('<br />')) == 1, msg)
 
     def test_image_url_producer(self):
@@ -236,12 +250,12 @@ class TestUser(BaseAccountModels):
         #self.skipTest("Temporarily skipped")
         # Test no image.
         image = self.user.image_url_producer()
-        msg = "Image: {}".format(image)
+        msg = f"Image: {image}"
         self.assertEqual(image, "No Image URL", msg)
         self.user.picture.name = "BogusImage.jpg"
         self.user.save()
         image = self.user.image_url_producer()
-        msg = "Image: {}".format(image)
+        msg = f"Image: {image}"
         self.assertTrue('href' in image, msg)
 
     def test_image_thumb_producer(self):
@@ -250,12 +264,12 @@ class TestUser(BaseAccountModels):
         admin.
         """
         image = self.user.image_thumb_producer()
-        msg = "Image: {}".format(image)
+        msg = f"Image: {image}"
         self.assertEqual(image, "No Image", msg)
         self.user.picture.name = "BogusImage.jpg"
         self.user.save()
         image = self.user.image_thumb_producer()
-        msg = "Image: {}".format(image)
+        msg = f"Image: {image}"
         self.assertTrue('src' in image, msg)
 
 

@@ -13,6 +13,7 @@ from rest_framework.test import APITestCase
 
 from inventory.common.api.tests.base_test import BaseTest
 from inventory.invoices.models import Condition, Item, Invoice, InvoiceItem
+from inventory.projects.models import Membership
 
 UserModel = get_user_model()
 
@@ -110,7 +111,10 @@ class TestItemAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
         kwargs = {'public_id': self.project.public_id}
         self.project_uri = reverse('project-detail', kwargs=kwargs)
         # Create a ColumnCollection
@@ -121,6 +125,25 @@ class TestItemAPI(BaseTest, APITestCase):
         kwargs['updater'] = self.user
         self.collection = ColumnCollection(**kwargs)
         self.collection.save()
+
+    def _create_shared_project_objects(self):
+        # Add the default user to the default project and create an item
+        item_number_0 = "LM7805"
+        item_0 = self._create_item(
+            self.project, self.collection, item_number_0)
+        uri = reverse('item-detail', kwargs={'public_id': item_0.public_id})
+        # Create a second user
+        user, client = self._create_user(
+            username="SecondUser", password="0987654321")
+        # Create second project with second user
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        project = self._create_project(self.in_type, members=members)
+        # Create an item for second project sharing default project
+        item_number_1 = "NE555"
+        item_1 = self._create_item(project, self.collection, item_number_1)
+        return client, uri, self.project, item_0, project, item_1
 
     def test_GET_item_list_with_invalid_permissions(self):
         """
@@ -396,21 +419,24 @@ class TestItemAPI(BaseTest, APITestCase):
         self._test_users_with_valid_permissions(uri, method)
         self._test_project_users_with_valid_permissions(uri, method)
 
-    def _create_shared_project_objects(self):
-        # Add the default user to the default project and create an item
-        item_number = "LM7805"
-        item = self._create_item(self.project, self.collection, item_number)
-        uri = reverse('item-detail', kwargs={'public_id': item.public_id})
-        # Create a second user
-        user, client = self._create_user(
-            username="SecondUser", password="0987654321")
-        # Create second project with second user
-        project = self._create_project(self.in_type, name="Test Project 1")
-        project.process_members([user])
-        # Create an item for second project sharing default project
-        item_number_1 = "NE555"
-        item_1 = self._create_item(project, self.collection, item_number_1)
-        return client, uri, self.project, item, project, item_1
+    #
+    # Test Business Rules
+    #
+
+    def test_POST_item_list_PROJECT_USER_invalid_permissions(self):
+        """
+        Test that a POST by a PROJECT_USER fails.
+        """
+        uri = reverse('item-list')
+        data = {}
+        data['item_number'] = 'NE555'
+        # Test that second project cannot read default project's item.
+        response = self.client.post(uri, data=data, **self._HEADERS)
+        msg = (f"Response: {response.status_code} "
+               f"should be {status.HTTP_400_BAD_REQUEST}, "
+               f"content: {response.data}, uri: {uri}")
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
     def test_GET_only_shared_projects(self):
         """
@@ -418,30 +444,28 @@ class TestItemAPI(BaseTest, APITestCase):
         """
         #self.skipTest("Temporarily skipped")
         # Create objects
-        (client, uri, project_0, item_0,
+        (client, uri,
+         project_0, item_0,
          project_1, item_1) = self._create_shared_project_objects()
         # Test that second project cannot read default project's item.
         response = client.get(uri, **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_404_NOT_FOUND, response.data,
-            uri)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, msg)
-        self.assertTrue(self._has_error(response), msg)
-        self._test_errors(response, tests={
-            'detail': "Not found.",
-            })
+        msg = (f"Response: {response.status_code} "
+               f"should be {status.HTTP_200_OK}, "
+               f"content: {response.data}, uri: {uri}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         # Share the default project's item with second project.
         item_0.process_shared_projects([project_1])
         # Test that second project can read default project's item.
         response = client.get(uri, **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}, uri: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data, uri)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_200_OK}, content: {response.data}, uri: {uri}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
 
     def test_invalid_PUT_shared_projects(self):
         #self.skipTest("Temporarily skipped")
         # Create objects
-        (client, uri, project_0, item_0,
+        (client, uri,
+         project_0, item_0,
          project_1, item_1) = self._create_shared_project_objects()
         # Share the default project's item with second project.
         item_0.process_shared_projects([project_1])
@@ -464,7 +488,8 @@ class TestItemAPI(BaseTest, APITestCase):
     def test_invalid_PATCH_shared_projects(self):
         #self.skipTest("Temporarily skipped")
         # Create objects
-        (client, uri, project_0, item_0,
+        (client, uri,
+         project_0, item_0,
          project_1, item_1) = self._create_shared_project_objects()
         # Share the default project's item with second project.
         item_0.process_shared_projects([project_1])
@@ -484,7 +509,8 @@ class TestItemAPI(BaseTest, APITestCase):
     def test_invalid_DELETE_shared_projects(self):
         #self.skipTest("Temporarily skipped")
         # Create objects
-        (client, uri, project_0, item_0,
+        (client, uri,
+         project_0, item_0,
          project_1, item_1) = self._create_shared_project_objects()
         # Share the default project's item with second project.
         item_0.process_shared_projects([project_1])
@@ -536,7 +562,10 @@ class TestInvoiceAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType and Project.
         in_type = self._create_inventory_type()
-        self.project = self._create_project(in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(in_type, members=members)
         self.project_uri = reverse(
             'project-detail', kwargs={'public_id': self.project.public_id})
         # Create regions
@@ -879,7 +908,10 @@ class TestInvoiceItemAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType and Project.
         in_type = self._create_inventory_type()
-        self.project = self._create_project(in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(in_type, members=members)
         # Create regions
         country = self._create_country()
         currency = self._create_currency(country, "US Dollar", "USD", 840, 2)

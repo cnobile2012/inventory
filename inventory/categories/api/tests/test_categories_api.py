@@ -17,6 +17,8 @@ UserModel = get_user_model()
 
 
 class TestCategoryAPI(BaseTest, APITestCase):
+    DEFAULT_USER = UserModel.ROLE_MAP[UserModel.DEFAULT_USER]
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -25,7 +27,10 @@ class TestCategoryAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
         kwargs = {'public_id': self.project.public_id}
         self.project_uri = reverse('project-detail', kwargs=kwargs)
 
@@ -57,7 +62,8 @@ class TestCategoryAPI(BaseTest, APITestCase):
         uri = reverse('category-list')
         self._test_users_with_valid_permissions(
             uri, method, default_user=False)
-        self._test_project_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(
+            uri, method, user=self.user)
 
     def test_POST_category_list_with_invalid_permissions(self):
         """
@@ -104,7 +110,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         pdu = data.setdefault('PDU', su.copy())
         pdu['name'] = 'TestCategory-06'
         self._test_project_users_with_valid_permissions(
-            uri, method, project_user=False, request_data=data)
+            uri, method, user=self.user, project_user=False, request_data=data)
 
     def test_OPTIONS_category_list_with_invalid_permissions(self):
         """
@@ -123,7 +129,8 @@ class TestCategoryAPI(BaseTest, APITestCase):
         method = 'options'
         uri = reverse('category-list')
         self._test_users_with_valid_permissions(uri, method)
-        self._test_project_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(
+            uri, method, user=self.user)
 
     def test_GET_category_detail_with_invalid_permissions(self):
         """
@@ -147,7 +154,8 @@ class TestCategoryAPI(BaseTest, APITestCase):
                       kwargs={'public_id': category.public_id})
         method = 'get'
         self._test_users_with_valid_permissions(uri, method)
-        self._test_project_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(
+            uri, method, user=self.user)
 
     def test_PUT_category_detail_with_invalid_permissions(self):
         """
@@ -198,7 +206,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         pdu = data.setdefault('PDU', su.copy())
         pdu['name'] = 'TestCategory-06'
         self._test_project_users_with_valid_permissions(
-            uri, method, project_user=False, request_data=data)
+            uri, method, user=self.user, project_user=False, request_data=data)
 
     def test_PATCH_category_detail_with_invalid_permissions(self):
         """
@@ -249,7 +257,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         pdu = data.setdefault('PDU', {})
         pdu['name'] = 'TestCategory-06'
         self._test_project_users_with_valid_permissions(
-            uri, method, project_user=False, request_data=data)
+            uri, method, user=self.user, project_user=False, request_data=data)
 
     def test_DELETE_category_detail_with_invalid_permissions(self):
         """
@@ -261,7 +269,8 @@ class TestCategoryAPI(BaseTest, APITestCase):
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_users_with_invalid_permissions(uri, method)
-        self._test_project_users_with_invalid_permissions(uri, method)
+        self._test_project_users_with_invalid_permissions(
+            uri, method, user=self.user)
 
     def test_DELETE_category_detail_with_valid_permissions(self):
         """
@@ -287,7 +296,8 @@ class TestCategoryAPI(BaseTest, APITestCase):
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
-        self._test_project_owner_with_valid_permissions(uri, method)
+        self._test_project_owner_with_valid_permissions(
+            uri, method, user=self.user)
         self._test_valid_GET_with_errors(uri)
         # Test PROJECT_MANAGER
         category = self._create_category(self.project, "Test Root Category")
@@ -319,7 +329,8 @@ class TestCategoryAPI(BaseTest, APITestCase):
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_users_with_valid_permissions(uri, method)
-        self._test_project_users_with_valid_permissions(uri, method)
+        self._test_project_users_with_valid_permissions(
+            uri, method, user=self.user)
 
     def test_create_category_twice_to_same_parent(self):
         """
@@ -711,10 +722,10 @@ class TestCategoryCloneAPI(BaseTest):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.PROJECT_USER)
+        self.project.set_role(user, self.PROJECT_USER)
         response = client.get(uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
@@ -741,10 +752,10 @@ class TestCategoryCloneAPI(BaseTest):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         self.project.process_members([self.user, user])
-        self.project.set_role(user, Membership.PROJECT_USER)
+        self.project.set_role(user, self.PROJECT_USER)
         status_code = status.HTTP_400_BAD_REQUEST
         response = client.get(uri, data=data, **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(

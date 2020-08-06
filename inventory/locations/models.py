@@ -12,6 +12,7 @@ __docformat__ = "restructuredtext en"
 import logging
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import pre_save, post_save
@@ -25,6 +26,7 @@ from inventory.projects.models import Project
 
 from .validation import FormatValidator
 
+UserModel = get_user_model()
 log = logging.getLogger('inventory.locations.models')
 
 
@@ -145,7 +147,9 @@ class LocationSetNameManager(models.Manager):
         return nodes
 
 
-class LocationSetName(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+class LocationSetName(TimeModelMixin,
+                      UserModelMixin,
+                      ValidateOnSaveMixin,
                       models.Model):
     YES = True
     NO = False
@@ -256,7 +260,9 @@ class LocationFormatManager(models.Manager):
         return record
 
 
-class LocationFormat(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+class LocationFormat(TimeModelMixin,
+                     UserModelMixin,
+                     ValidateOnSaveMixin,
                      models.Model):
 
     public_id = models.CharField(
@@ -363,7 +369,9 @@ class LocationCodeManager(models.Manager):
         return result
 
 
-class LocationCode(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+class LocationCode(TimeModelMixin,
+                   UserModelMixin,
+                   ValidateOnSaveMixin,
                    models.Model):
     ROOT_NAME = '#'
 

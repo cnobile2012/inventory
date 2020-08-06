@@ -20,7 +20,8 @@ UserModel = get_user_model()
 
 
 class TestLocationSetNameAPI(BaseTest, APITestCase):
-
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
+ 
     def __init__(self, name):
         super().__init__(name)
 
@@ -28,7 +29,10 @@ class TestLocationSetNameAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
         kwargs = {'public_id': self.project.public_id}
         self.project_uri = reverse('project-detail', kwargs=kwargs)
 
@@ -380,6 +384,7 @@ class TestLocationSetNameAPI(BaseTest, APITestCase):
 
 
 class TestLocationFormatAPI(BaseTest, APITestCase):
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -388,7 +393,10 @@ class TestLocationFormatAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType, Project, and LocationSetName.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
         self.location_set_name = self._create_location_set_name(self.project)
         kwargs = {'public_id': self.location_set_name.public_id}
         self.location_set_name_uri = reverse('location-set-name-detail',
@@ -754,6 +762,7 @@ class TestLocationFormatAPI(BaseTest, APITestCase):
 
 
 class TestLocationCodeAPI(BaseTest, APITestCase):
+    PROJECT_USER = Membership.ROLE_MAP[Membership.PROJECT_USER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -762,7 +771,10 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType, Project, and LocationSetName.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
         self.location_set_name = self._create_location_set_name(self.project)
         self.location_format = self._create_location_format(
             self.location_set_name, 'A\d\d')
@@ -1221,6 +1233,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
 
 
 class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
+    DEFAULT_USER = UserModel.ROLE_MAP[UserModel.DEFAULT_USER]
 
     def __init__(self, name):
         super().__init__(name)
@@ -1229,9 +1242,10 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         super().setUp()
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
-        self.project = self._create_project(self.in_type, members=[self.user])
-        #kwargs = {'public_id': self.project.public_id}
-        #self.project_uri = reverse('project-detail', kwargs=kwargs)
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project = self._create_project(self.in_type, members=members)
         self.location_set_name = self._create_location_set_name(self.project)
         kwargs = {'public_id': self.location_set_name.public_id}
         self.location_set_name_uri = reverse('location-set-name-detail',
@@ -1404,7 +1418,10 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         kwargs = self._setup_user_credentials()
         user, client = self._create_user(**kwargs)
         project = self._create_project(self.in_type, name="Test Project_1")
-        project.process_members([user])
+        members = [
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        project.process_members(members)
         # Test project owner
         uri = reverse('location-clone')
         data = {}
@@ -1549,7 +1566,7 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         self.assertTrue(loc_set_name.count() == 0
                         and loc_fmts.count() == 0, msg)
 
-    def test_DELETE_location_clone_with_valid_permissions_project_manager(self):
+    def test_DELETE_location_clone_valid_permissions_project_manager(self):
         """
         Test the location_clone endpoint with no permissions.
         """
@@ -1585,9 +1602,13 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.process_members([self.user, user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER},
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
         self.project.set_role(user, Membership.PROJECT_USER)
         response = client.get(uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
@@ -1612,9 +1633,13 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         kwargs['is_superuser'] = False
-        kwargs['role'] = UserModel.DEFAULT_USER
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        self.project.process_members([self.user, user])
+        members = [
+            {'user': self.user, 'role_text': self.PROJECT_USER},
+            {'user': user, 'role_text': self.PROJECT_USER}
+            ]
+        self.project.process_members(members)
         self.project.set_role(user, Membership.PROJECT_USER)
         response = client.get(uri, data=data, format='json', **self._HEADERS)
         msg = "Response: {} should be {}, content: {}".format(

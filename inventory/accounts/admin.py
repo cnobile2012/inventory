@@ -13,9 +13,20 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth import get_user_model
 
 from inventory.common.admin_mixins import UserAdminMixin
+from inventory.projects.models import Membership
 
 from .models import Question, Answer
 from .forms import QuestionForm, AnswerForm
+
+
+#
+# Membership
+#
+class MembershipInline(admin.TabularInline):
+    fields = ('project', 'role',)
+    extra = 0
+    can_delete = True
+    model = Membership
 
 
 #
@@ -28,10 +39,9 @@ class UserAdmin(DjangoUserAdmin):
                                          'address_01', 'address_02', 'city',
                                          'subdivision', 'postal_code',
                                          'country', 'dob', 'email', 'language',
-                                         'timezone',)}),
-        (_("Projects"), {'fields': ('_role', 'project_default',)}),
+                                         'timezone', 'project_default')}),
         (_("Permissions"), {'classes': ('collapse',),
-                            'fields': ('is_active', 'is_staff',
+                            'fields': ('_role', 'is_active', 'is_staff',
                                        'is_superuser', 'groups',
                                        'user_permissions',)}),
         (_("Status"), {'classes': ('collapse',),
@@ -40,11 +50,12 @@ class UserAdmin(DjangoUserAdmin):
         )
     readonly_fields = ('public_id', 'last_login', 'date_joined',)
     list_display = ('image_thumb_producer', 'public_id', 'username', 'email',
-                    'first_name', 'last_name', 'projects_producer', 'is_staff',
-                    'is_active', 'image_url_producer',)
-    list_editable = ('is_staff', 'is_active',)
+                    'first_name', 'last_name', 'projects_producer', '_role',
+                    'is_staff', 'is_active', 'image_url_producer',)
+    list_editable = ('is_staff', 'is_active', '_role',)
     search_fields = ('username', 'last_name', 'email', 'public_id',)
     filter_horizontal = ('groups', 'user_permissions',)
+    inlines = (MembershipInline,)
 
     ## class Media:
     ##     js = ('js/js.cookie-2.0.4.min.js',

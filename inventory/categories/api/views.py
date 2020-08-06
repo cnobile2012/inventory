@@ -32,6 +32,7 @@ from inventory.common.api.parsers import parser_factory
 from inventory.common.api.renderers import renderer_factory
 from inventory.common.api.view_mixins import (
     TrapDjangoValidationErrorCreateMixin, TrapDjangoValidationErrorUpdateMixin)
+from inventory.projects.models import Project
 
 from ..models import Category
 
@@ -51,6 +52,7 @@ class CategoryMixin:
                       + api_settings.DEFAULT_PARSER_CLASSES)
     renderer_classes = (renderer_factory('categories')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
+    ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
 
     def get_serializer_class(self):
         serializer = None
@@ -64,10 +66,11 @@ class CategoryMixin:
 
     def get_queryset(self):
         if (self.request.user.is_superuser or
-            self.request.user.role == UserModel.ADMINISTRATOR):
+            self.request.user.role == self.ADMINISTRATOR):
             result = Category.objects.all()
         else:
-            projects = self.request.user.projects.all()
+            projects = Project.objects.filter(
+                memberships__in=self.request.user.memberships.all())
             result = Category.objects.select_related(
                 'project').filter(project__in=projects)
 
@@ -81,12 +84,14 @@ class CategoryList(CategoryMixin,
     Category list endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )
@@ -103,12 +108,14 @@ class CategoryDetail(CategoryMixin,
     Category detail endpoint.
     """
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )
@@ -132,12 +139,14 @@ class CategoryClone(TrapDjangoValidationErrorCreateMixin,
     renderer_classes = (renderer_factory('category-clone')
                         + api_settings.DEFAULT_RENDERER_CLASSES)
     permission_classes = (
-        And(IsUserActive, IsAuthenticated,
+        And(IsUserActive,
+            IsAuthenticated,
             Or(IsAdminSuperUser,
                IsAdministrator,
                IsProjectOwner,
                IsProjectManager,
-               And(IsProjectDefaultUser, IsReadOnly)
+               And(IsProjectDefaultUser,
+                   IsReadOnly)
                ),
             ),
         )

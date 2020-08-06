@@ -21,6 +21,8 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 
+from rest_framework.reverse import reverse
+
 from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
     UserModelMixin, TimeModelMixin, StatusModelMixin, StatusModelManagerMixin,
@@ -37,7 +39,9 @@ class InventoryTypeManager(models.Manager):
     pass
 
 
-class InventoryType(TimeModelMixin, UserModelMixin, ValidateOnSaveMixin,
+class InventoryType(TimeModelMixin,
+                    UserModelMixin,
+                    ValidateOnSaveMixin,
                     models.Model):
     public_id = models.CharField(
         verbose_name=_("Public Inventory Type ID"), max_length=30,
@@ -77,8 +81,11 @@ class ProjectManager(StatusModelManagerMixin, models.Manager):
     pass
 
 
-class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
-              ValidateOnSaveMixin, models.Model):
+class Project(TimeModelMixin,
+              UserModelMixin,
+              StatusModelMixin,
+              ValidateOnSaveMixin,
+              models.Model):
     """
     This model implements project functionality.
     """
@@ -88,6 +95,7 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         (YES, _('Yes')),
         (NO, _('No')),
         )
+    PROCESS_MEMBERS_FIELDS = ('user', 'role_text',)
 
     public_id = models.CharField(
         verbose_name=_("Public Project ID"), max_length=30, unique=True,
@@ -100,10 +108,6 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         InventoryType, on_delete=models.CASCADE,
         verbose_name=_("Inventory Type"), related_name='projects',
         help_text=_("The inventory type."))
-    members = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, verbose_name=_("Project Members"),
-        through='Membership', related_name='projects', blank=True,
-        help_text=_("The members of this project."))
     image = models.ImageField(
         verbose_name=_("Project Image"), upload_to=create_file_path,
         storage=InventoryFileStorage(), null=True, blank=True,
@@ -142,13 +146,13 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         """
         Set the role for the given user.
         """
-        # objs.update(role=role) does not work since it does not call save
-        # skipping all validation on the model.
         obj = self._get_through_object(user)
-        obj.role = role
+        obj.role = role if isinstance(role, int) else obj.ROLE_MAP_REV[role]
         obj.save()
 
     def _get_through_object(self, user):
+        # objs.update(role=role) does not work since it does not call save
+        # skipping all validation on the model.
         try:
             obj = Membership.objects.get(user=user, project=self)
         except Membership.DoesNotExist:
@@ -161,25 +165,49 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
     def process_members(self, members):
         """
         This method adds and removes members to the project.
-        """
-        seq = (list, tuple, models.QuerySet)
-        assert isinstance(members, seq), (
-            "The members argument must be one of '{}', found '{}'.").format(
-            seq, members)
-        UserModel = get_user_model()
-        wanted_pks = [inst.pk for inst in members]
-        old_pks = [inst.pk for inst in self.members.all()]
-        # Remove unwanted members.
-        rem_pks = list(set(old_pks) - set(wanted_pks))
-        rem_users = UserModel.objects.filter(pk__in=rem_pks)
-        Membership.objects.filter(
-            project=self, user__in=rem_users).delete()
-        # Add new members.
-        add_pks = list(set(wanted_pks) - set(old_pks))
 
-        for user in [obj for obj in members if obj.pk in add_pks]:
-            obj = Membership(project=self, user=user)
-            obj.save()
+        members
+        -------
+        [
+         {'user': <obj>, 'role_text': <role>}
+        ]
+
+        user      -- Django user object.
+        role_text -- Membership role in text format.
+        """
+        seq = (list, tuple, set)
+        assert isinstance(members, seq), (f"The members argument must be one"
+                                          f"of '{seq}', found '{members}'.")
+        assert all([isinstance(member, dict) for member in members]), (
+            f"The members object must be a list of dicts, found {members}")
+        assert all([field in self.PROCESS_MEMBERS_FIELDS
+                    for member in members for field in member.keys()]), (
+            f"Invalid fields in dict, must have these keys "
+            f"{self.PROCESS_MEMBERS_FIELDS}, members {members}"
+            )
+        wanted_user_pks = [item['user'].pk for item in members]
+        current_user_pks = [inst.user.pk for inst in self.memberships.all()]
+        # Delete unwanted Membership objects.
+        rem_user_pks = list(set(current_user_pks) - set(wanted_user_pks))
+        self.memberships.select_related('user').filter(
+            user__pk__in=rem_user_pks).delete()
+        # Add new members.
+        add_user_pks = list(set(wanted_user_pks) - set(current_user_pks))
+        common_pks = list(set(wanted_user_pks) & set(current_user_pks))
+
+        for item in members:
+            if item['user'].pk in add_user_pks:
+                # Create any new members.
+                kwargs = {}
+                kwargs['project'] = self
+                kwargs['user'] = item['user']
+                kwargs['role_text'] = item['role_text']
+                obj = Membership(**kwargs)
+                obj.save()
+            elif item['user'].pk in common_pks:
+                # Update any comment members.
+                role = Membership.ROLE_MAP_REV[item['role_text']]
+                self.memberships.filter(user=item['user']).update(role=role)
 
     def has_authority(self, user):
         """
@@ -187,12 +215,13 @@ class Project(TimeModelMixin, UserModelMixin, StatusModelMixin,
         records.
         """
         UserModel = get_user_model()
+        ADMINISTRATOR = UserModel.ROLE_MAP[UserModel.ADMINISTRATOR]
         result = True
 
-        if not (user.is_superuser or user.role == UserModel.ADMINISTRATOR):
+        if not (user.is_superuser or user.role == ADMINISTRATOR):
             try:
-                obj = self.members.get(pk=user.pk)
-            except UserModel.DoesNotExist:
+                self.memberships.get(user=user)
+            except Membership.DoesNotExist:
                 result = False
 
         return result
@@ -235,11 +264,12 @@ class Membership(ValidateOnSaveMixin, models.Model):
     PROJECT_OWNER = 1
     PROJECT_MANAGER = 2
     ROLE = (
-        (PROJECT_USER, _("Project User")),
-        (PROJECT_OWNER, _("Project Owner")),
-        (PROJECT_MANAGER, _("Project Manager")),
+        (PROJECT_USER, _("PROJECT_USER")),
+        (PROJECT_OWNER, _("PROJECT_OWNER")),
+        (PROJECT_MANAGER, _("PROJECT_MANAGER")),
         )
     ROLE_MAP = {k: v for k, v in ROLE}
+    ROLE_MAP_REV = {v: k for k, v in ROLE}
 
     role = models.SmallIntegerField(
         verbose_name=_("Role"), choices=ROLE, default=PROJECT_USER,
@@ -250,14 +280,14 @@ class Membership(ValidateOnSaveMixin, models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("User"),
         on_delete=models.CASCADE, related_name='memberships',
-        help_text=_("The user."))
+        help_text=_("A member user."))
 
     objects = MembershipManager()
 
     def clean(self):
         if self.role not in self.ROLE_MAP:
-            msg = _("Invalid project role, must be one of {}.").format(
-                self.ROLE_MAP.values())
+            msg = _(f"Invalid project role, must be one of "
+                    f"{list(self.ROLE_MAP_REV.keys())}.")
             log.error(msg)
             raise ValidationError({'role': msg})
 
@@ -265,9 +295,24 @@ class Membership(ValidateOnSaveMixin, models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return "{} ({})".format(self.user.get_full_name_reversed(),
-                                self.project.name)
+        return f"{self.user.get_full_name_reversed()} ({self.project.name})"
 
     class Meta:
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
+
+    @property
+    def role_text(self):
+        return self.ROLE_MAP[self.role]
+
+    @role_text.setter
+    def role_text(self, role):
+        self.role = self.ROLE_MAP_REV[role]
+
+    def get_user_href(self, request=None):
+        return reverse('user-detail', request=request,
+                       kwargs={'public_id': self.user.public_id})
+
+    def get_project_href(self, request=None):
+        return reverse('project-detail', request=request,
+                       kwargs={'public_id': self.project.public_id})

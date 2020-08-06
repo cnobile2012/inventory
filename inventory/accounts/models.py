@@ -71,7 +71,7 @@ class UserManager(BaseUserManager):
                           is_active=True, is_superuser=is_superuser,
                           date_joined=now, **extra_fields)
         user.set_password(password)
-        user.role = role
+        user._role = role
         user.save(using=self._db)
         return user
 
@@ -85,19 +85,23 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser, ValidateOnSaveMixin, models.Model):
+    # These user roles are for total access to the entire application and
+    # are not to be confused with the roles in the Membership model.
     DEFAULT_USER = 0
     ADMINISTRATOR = 1
     ROLE = (
-        (DEFAULT_USER, _("Default User")),
-        (ADMINISTRATOR, _("Administrator")),
+        (DEFAULT_USER, _("DEFAULT_USER")),
+        (ADMINISTRATOR, _("ADMINISTRATOR")),
         )
     ROLE_MAP = {k: v for k, v in ROLE}
+    ROLE_MAP_REV = {v: k for k, v in ROLE}
     YES = True
     NO = False
     YES_NO = (
         (YES, _("Yes")),
         (NO, _("No")),
         )
+    PROCESS_MEMBERS_FIELDS = ('project', 'role_text',)
 
     public_id = models.CharField(
         verbose_name=_("Public User ID"), max_length=30, unique=True,
@@ -146,9 +150,10 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
     timezone = models.ForeignKey(
         TimeZone, on_delete=models.CASCADE, verbose_name=_("Timezone"),
         null=True, blank=True, help_text=_("The timezone."))
-    project_default = models.CharField(
-        verbose_name=_("Project Default"), max_length=30, null=True,
-        blank=True, help_text=_("The default project public_id."))
+    project_default = models.ForeignKey(
+        Project, on_delete=models.CASCADE,
+        verbose_name=_("Project Default"), null=True, blank=True,
+        help_text=_("The default project public_id."))
 
     objects = UserManager()
 
@@ -161,8 +166,8 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
                 self._role = self.ADMINISTRATOR
 
         if self._role not in self.ROLE_MAP:
-            msg = _("Invalid user role, must be one of {}.").format(
-                self.ROLE_MAP.values())
+            msg = _(f"Invalid user role, must be one of "
+                    f"{list(self.ROLE_MAP_REV.keys())}.")
             log.error(msg)
             raise ValidationError({'role': msg})
 
@@ -179,11 +184,15 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
 
     @property
     def role(self):
-        return self._role
+        return self.ROLE_MAP[self._role]
 
     @role.setter
-    def role(self, value):
-        self._role = value
+    def role(self, role):
+        role = role if isinstance(role, int) else self.ROLE_MAP_REV[role]
+        assert role in self.ROLE_MAP, (
+            f"The role {role} is invalid, should be one of {self.ROLE_MAP}")
+        self._role = role
+        self.save()
 
     def get_full_name_or_username(self):
         result = self.get_full_name()
@@ -209,24 +218,52 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
     def process_projects(self, projects):
         """
         This method adds and removes projects to a member.
-        """
-        seq = (list, tuple, models.QuerySet)
-        assert isinstance(projects, seq), (
-            "The projects argument must be one of '{}', found '{}'.").format(
-            seq, projects)
-        wanted_pks = [inst.pk for inst in projects]
-        old_pks = [inst.pk for inst in self.projects.all()]
-        # Remove unwanted projects.
-        rem_pks = list(set(old_pks) - set(wanted_pks))
-        rem_prod = Project.objects.filter(pk__in=rem_pks)
-        Membership.objects.filter(
-            user=self, project__in=rem_prod).delete()
-        # Add new members.
-        add_pks = list(set(wanted_pks) - set(old_pks))
 
-        for project in [obj for obj in projects if obj.pk in add_pks]:
-            obj = Membership(user=self, project=project)
-            obj.save()
+        members
+        -------
+        [
+         {'project': <obj>, 'role_text': <role>}
+        ]
+
+        project   -- Django project object.
+        role_text -- Membership role in text format.
+        """
+        seq = (list, tuple, set)
+        assert isinstance(projects, seq), (
+            f"The projects argument must be one of '{seq}', "
+            f"found '{projects}'.")
+        assert all([isinstance(project, dict) for project in projects]), (
+            f"The members object must be a list of dicts, found {projects}")
+        assert all([field in self.PROCESS_MEMBERS_FIELDS
+                    for project in projects for field in project.keys()]), (
+            f"Invalid fields in dict, must have these keys "
+            f"{self.PROCESS_MEMBERS_FIELDS}, projects {projects}"
+            )
+        wanted_project_pks = [item['project'].pk for item in projects]
+        current_project_pks = [inst.project.pk
+                               for inst in self.memberships.all()]
+        # Delete unwanted Membership objects.
+        rem_pks = list(set(current_project_pks) - set(wanted_project_pks))
+        self.memberships.select_related('project').filter(
+            project__pk__in=rem_pks).delete()
+        # Add new members.
+        add_pks = list(set(wanted_project_pks) - set(current_project_pks))
+        common_pks = list(set(wanted_project_pks) & set(current_project_pks))
+
+        for item in projects:
+            if item['project'].pk in add_pks:
+                # Create any new members.
+                kwargs = {}
+                kwargs['project'] = item['project']
+                kwargs['user'] = self
+                kwargs['role_text'] = item['role_text']
+                obj = Membership(**kwargs)
+                obj.save()
+            elif item['project'].pk in common_pks:
+                # Update any comment members.
+                role = Membership.ROLE_MAP_REV[item['role_text']]
+                self.memberships.filter(
+                    project=item['project']).update(role=role)
 
     def get_unused_questions(self):
         used_pks = [answer.question.pk for answer in self.answers.all()]
@@ -236,10 +273,14 @@ class User(AbstractUser, ValidateOnSaveMixin, models.Model):
         return self.get_full_name_reversed()
     full_name_reversed_producer.short_description = _("User")
 
+    def get_projects(self):
+        
+        return
+
     def projects_producer(self):
         return format_html_join(
             mark_safe("<br>"), '{}',
-            ((record.name,) for record in self.projects.all()))
+            ((record.project.name,) for record in self.memberships.all()))
     projects_producer.short_description = _("Projects")
 
     def image_url_producer(self):
