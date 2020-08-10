@@ -20,7 +20,6 @@ sys.path.append(MIGRATE_PATH)
 #print(sys.path)
 
 import django; django.setup()
-import six
 
 from dcolumn.common import create_field_name
 
@@ -211,7 +210,7 @@ class MigrateItem(MigrateBase):
                 for key in keys:
                     value = spec.get(key)
 
-                    if isinstance(value, six.string_types):
+                    if isinstance(value, str):
                         value = value.encode('utf-8')
 
                     dcs.append(value)

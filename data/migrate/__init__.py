@@ -39,6 +39,7 @@ class MigrateBase:
     _PROJECT_NAME = "Carl's Electronics Inventory"
     _LD_NAME = "Home Inventory Location Formats"
     _LD_DESC = "My DIY Inventory."
+    PROJECT_OWNER = Membership.ROLE_MAP[Membership.PROJECT_OWNER]
 
     def __init__(self, log):
         self._log = log
@@ -76,8 +77,10 @@ class MigrateBase:
             kwargs['updater'] = user
             project, created = Project.objects.get_or_create(
                 name=name, defaults=kwargs)
-            project.process_members([user])
-
+            members = [
+                {'user': user, 'role_text': self.PROJECT_OWNER}
+                ]
+            project.process_members(members)
 
         return project
 

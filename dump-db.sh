@@ -63,9 +63,3 @@ pg_dump --username="$USER" -c --compress=9 -h "$HOST" "$DB" > \
         "$DIR"/"$ENV"-$(date +"%Y%m%d%H%M-%s").sql.gz
 
 exit 0
-
-#
-# Reload Data
-#
-# zcat db-snapshots/<env>-<date>.sql.gz | ./manage.py dbshell
-#

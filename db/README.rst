@@ -30,8 +30,8 @@ These commands are always run::
 
 Run migrations::
 
-  Do the next line only if migration are not checked into git.
-  ------------------------------------------------------------
+  Do the next three line only if migration are not checked into git.
+  ------------------------------------------------------------------
   $ rm -rf inventory/accounts/migrations/ inventory/categories/migrations/ inventory/invoices/migrations/ inventory/locations/migrations/ inventory/projects/migrations/ inventory/regions/migrations/ inventory/suppliers/migrations/
 
   $ ./manage.py makemigrations accounts categories invoices locations projects regions suppliers

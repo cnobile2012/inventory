@@ -20,7 +20,10 @@ sys.path.append(MIGRATE_PATH)
 
 import django; django.setup()
 
-from django.utils.six.moves.urllib.parse import urlsplit, urlunsplit
+try:
+    from urllib.parse import urlsplit, urlunsplit
+except:
+    pass
 
 from migrate import setup_logger, MigrateBase
 
