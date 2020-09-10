@@ -128,7 +128,7 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
 
         return obj
 
-    def validate_memberships(self, members):
+    def validate_members(self, members):
         """
         This method returns either an updated Membership object or a dict
         of the objects to create a Membership object.

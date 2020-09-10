@@ -427,7 +427,7 @@ class TestProject(BaseTest, APITestCase):
         su = data.setdefault('SU', {})
         su['name'] = 'My Test Project'
         su['inventory_type'] = self.in_type_uri
-        su['memberships'] = [
+        su['members'] = [
             {'username': user.username, 'role': self.PROJECT_USER}
             ]
         ad = data.setdefault('AD', su.copy())
@@ -453,36 +453,36 @@ class TestProject(BaseTest, APITestCase):
         su = data.setdefault('SU', {})
         su['name'] = 'My Test Project 1'
         su['inventory_type'] = self.in_type_uri
-        su['memberships'] = [
+        su['members'] = [
             {'username': user.username, 'role': self.PROJECT_USER}
             ]
         ad = data.setdefault('AD', {})
         ad['name'] = 'My Test Project 2'
         ad['inventory_type'] = self.in_type_uri
-        ad['memberships'] = [
+        ad['members'] = [
             {'username': user.username, 'role': self.PROJECT_USER}
             ]
         du = data.setdefault('DU', su.copy())
         du['name'] = 'My Test Project 3'
         du['inventory_type'] = self.in_type_uri
-        du['memberships'] = [
+        du['members'] = [
             {'username': user.username, 'role': self.PROJECT_USER}
             ]
         self._test_users_with_valid_permissions(
             uri, method, request_data=data)
         pow = data.setdefault('POW', su.copy())
         pow['name'] = 'My Test Project 4'
-        pow['memberships'] = [
+        pow['members'] = [
             {'username': user.username, 'role': self.PROJECT_OWNER}
             ]
         pma = data.setdefault('PMA', su.copy())
         pma['name'] = 'My Test Project 5'
-        pma['memberships'] = [
+        pma['members'] = [
             {'username': user.username, 'role': self.PROJECT_MANAGER}
             ]
         pdu = data.setdefault('PDU', su.copy())
         pdu['name'] = 'My Test Project 6'
-        pdu['memberships'] = [
+        pdu['members'] = [
             {'username': user.username, 'role': self.PROJECT_USER}
             ]
         self._test_project_users_with_valid_permissions(
@@ -543,8 +543,8 @@ class TestProject(BaseTest, APITestCase):
         su['name'] = 'Test Project 01'
         su['inventory_type'] = self.in_type_uri
         su['members'] = [
-            reverse('user-detail', kwargs={'public_id': user.public_id})]
-        su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
+            {'username': user.username, 'role': self.PROJECT_USER}
+            ]
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
         self._test_users_with_invalid_permissions(
@@ -568,8 +568,8 @@ class TestProject(BaseTest, APITestCase):
         su['name'] = 'Test Project 01'
         su['inventory_type'] = self.in_type_uri
         su['members'] = [
-            reverse('user-detail', kwargs={'public_id': user.public_id})]
-        su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
+            {'username': user.username, 'role': self.PROJECT_USER}
+            ]
         ad = data.setdefault('AD', su.copy())
         ad['name'] = 'Test Project 02'
         du = data.setdefault('DU', su.copy())
@@ -599,8 +599,8 @@ class TestProject(BaseTest, APITestCase):
         su['name'] = 'Test Project 01'
         su['inventory_type'] = self.in_type_uri
         su['members'] = [
-            reverse('user-detail', kwargs={'public_id': user.public_id})]
-        su['role'] = {'user': user.username, 'role': Membership.PROJECT_USER}
+            {'username': user.username, 'role': self.PROJECT_USER}
+            ]
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
         self._test_users_with_invalid_permissions(
@@ -768,7 +768,7 @@ class TestProject(BaseTest, APITestCase):
             error_key: "Must choose a valid "
             })
 
-    def test_set_user(self):
+    def test_set_user_invalid(self):
         """
         Test that an invalid user raises a validation exception.
         """
@@ -783,13 +783,13 @@ class TestProject(BaseTest, APITestCase):
         su = data.setdefault('SU', {})
         su['name'] = 'Test Project 01'
         su['inventory_type'] = self.in_type_uri
-        su['memberships'] = [
+        su['members'] = [
             {'username': user.username, 'role': self.PROJECT_USER}
             ]
         self._test_superuser_with_valid_permissions(
             uri, method, request_data=data)
         # Test invalid POST
-        su['memberships'] = [
+        su['members'] = [
             {'username': 'Garbage_Name', 'role': self.PROJECT_USER}
             ]
         response = client.post(uri, data=su, format='json', **self._HEADERS)
@@ -798,13 +798,13 @@ class TestProject(BaseTest, APITestCase):
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
-            self._has_error(response, error_key='memberships'), msg)
+            self._has_error(response, error_key='members'), msg)
         self._test_errors(response, tests={
-            'memberships': "is not a valid user for setting a role."
+            'members': "is not a valid user for setting a role."
             })
         # Test invalid numeric value for the role.
         role = 'JUNK'
-        su['memberships'] = [
+        su['members'] = [
             {'username': user.username, 'role': role}
             ]
         response = client.post(uri, data=su, format='json', **self._HEADERS)
@@ -813,12 +813,12 @@ class TestProject(BaseTest, APITestCase):
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(
-            response, error_key='memberships'), msg)
+            response, error_key='members'), msg)
         self._test_errors(response, tests={
             'role': f"Invalid role type '{role}' found should be one of "
-            }, outer_key='memberships')
+            }, outer_key='members')
         # Test an invalid empty string for the role.
-        su['memberships'] = [
+        su['members'] = [
             {'username': user.username, 'role': ''}
             ]
         response = client.post(uri, data=su, format='json', **self._HEADERS)
@@ -827,12 +827,12 @@ class TestProject(BaseTest, APITestCase):
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(
-            response, error_key='memberships'), msg)
+            response, error_key='members'), msg)
         self._test_errors(response, tests={
             'role': "This field may not be blank."
-            }, outer_key='memberships')
+            }, outer_key='members')
         # Test an invalid None value.
-        su['memberships'] = [
+        su['members'] = [
             {'username': user.username, 'role': None}
             ]
         response = client.post(uri, data=su, format='json', **self._HEADERS)
@@ -841,7 +841,7 @@ class TestProject(BaseTest, APITestCase):
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(self._has_error(
-            response, error_key='memberships'), msg)
+            response, error_key='members'), msg)
         self._test_errors(response, tests={
             'role': "This field may not be null."
-            }, outer_key='memberships')
+            }, outer_key='members')
