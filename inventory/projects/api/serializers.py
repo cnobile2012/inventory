@@ -67,6 +67,7 @@ class InventoryTypeSerializerVer01(SerializerMixin,
 #
 class MembershipSerializerVer01(SerializerMixin,
                                 serializers.ModelSerializer):
+    public_id = serializers.SerializerMethodField()
     username = serializers.CharField(
         source='user.username')
     full_name = serializers.CharField(
@@ -75,12 +76,15 @@ class MembershipSerializerVer01(SerializerMixin,
         source='role_text')
     href = serializers.SerializerMethodField()
 
+    def get_public_id(self, obj):
+        return obj.user.public_id
+
     def get_href(self, obj):
         return obj.get_user_href(request=self.get_request())
 
     class Meta:
         model = Membership
-        fields = ('username', 'full_name', 'role', 'href',)
+        fields = ('public_id', 'username', 'full_name', 'role', 'href',)
 
 
 #
@@ -96,8 +100,9 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     image = serializers.ImageField(
         allow_empty_file=True, use_url=True, required=False,
         help_text=_("Upload project logo image."))
-    memberships = MembershipSerializerVer01(
-        many=True, required=False, help_text=_("Members of this project."))
+    members = MembershipSerializerVer01(
+        source='memberships', many=True, required=False,
+        help_text=_("Members of this project."))
     items_href = HyperlinkedFilterField(
         view_name='item-list', query_name='project', read_only=True,
         lookup_field='public_id')
@@ -201,10 +206,10 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('public_id', 'name', 'image', 'memberships',
-                  'inventory_type', 'inventory_type_public_id', 'items_href',
-                  'invoices_href', 'public', 'active', 'creator', 'created',
-                  'updater', 'updated', 'href',)
+        fields = ('public_id', 'name', 'image', 'members', 'inventory_type',
+                  'inventory_type_public_id', 'items_href', 'invoices_href',
+                  'public', 'active', 'creator', 'created', 'updater',
+                  'updated', 'href',)
         read_only_fields = ('public_id', 'creator', 'created', 'updater',
                             'updated',)
         extra_kwargs = {

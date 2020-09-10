@@ -31,18 +31,22 @@ UserModel = get_user_model()
 #
 class ProjectMembershipSerializerVer01(SerializerMixin,
                                        serializers.ModelSerializer):
-    project = serializers.CharField(
+    public_id = serializers.SerializerMethodField()
+    name = serializers.CharField(
         source='project.name')
     href = serializers.SerializerMethodField()
     role = serializers.CharField(
         source='role_text')
+
+    def get_public_id(self, obj):
+        return obj.project.public_id
 
     def get_href(self, obj):
         return obj.get_project_href(request=self.get_request())
 
     class Meta:
         model = Membership
-        fields = ('project', 'href', 'role',)
+        fields = ('public_id', 'name', 'href', 'role',)
 
 
 #
