@@ -11,7 +11,7 @@
 !staging.txt
 !travis.txt
 *.pdf
-#!docs/*.pdf
+!docs/*.pdf
 .~lock.*
 local.py
 data/migrate/*.csv
