@@ -10,7 +10,7 @@ from collections import Mapping, OrderedDict
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 
 from rest_framework import permissions
 from rest_framework.test import APIClient
@@ -622,7 +622,7 @@ class BaseTest(RecordCreation):
         elif isinstance(value, (int, bool, type,)) or value is None:
             pass
         else:
-            value = ugettext(value)
+            value = gettext(value)
 
         return value
 
