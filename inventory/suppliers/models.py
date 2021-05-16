@@ -13,7 +13,7 @@ import logging
 
 from django.db import models
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from inventory.common import generate_public_key
 from inventory.common.model_mixins import (

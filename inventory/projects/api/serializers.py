@@ -10,7 +10,7 @@ __docformat__ = "restructuredtext en"
 import logging
 
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
@@ -94,7 +94,7 @@ class ProjectSerializerVer01(SerializerMixin, serializers.ModelSerializer):
     inventory_type = serializers.HyperlinkedRelatedField(
         view_name='inventory-type-detail', label=_("Inventory Type"),
         queryset=InventoryType.objects.all(), lookup_field='public_id',
-        required=False, help_text=_("Choose an inventory type."))
+        required=False, help_text=_("The inventory type."))
     inventory_type_public_id = serializers.CharField(
         source='inventory_type.public_id', required=False)
     image = serializers.ImageField(

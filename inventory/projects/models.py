@@ -19,7 +19,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from rest_framework.reverse import reverse
 
@@ -46,7 +46,7 @@ class InventoryType(TimeModelMixin,
     public_id = models.CharField(
         verbose_name=_("Public Inventory Type ID"), max_length=30,
         unique=True, blank=True,
-        help_text=_("Public ID to identify an individual inventory type."))
+        help_text=_("Public ID that identifies an individual inventory type."))
     name = models.CharField(
         verbose_name=_("Inventory Type"), max_length=250,
         help_text=_("The name of the inventory type."))
@@ -157,7 +157,7 @@ class Project(TimeModelMixin,
             obj = Membership.objects.get(user=user, project=self)
         except Membership.DoesNotExist:
             msg = _("Invalid user {}").format(user)
-            log.error(ugettext(msg))
+            log.error(gettext(msg))
             raise Membership.DoesNotExist(msg)
 
         return obj

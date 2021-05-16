@@ -17,7 +17,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from inventory.common import generate_public_key
 from inventory.common.model_mixins import (
@@ -339,7 +339,7 @@ class LocationCodeManager(models.Manager):
                     "project, updater: {}, updated: {}, project: {}, invalid "
                     "project: {}").format(code.updater, code.updated,
                                           sn_project, project)
-            log.error(ugettext(msg))
+            log.error(gettext(msg))
             raise ValueError(msg)
 
         parents = self._recurse_parents(code)

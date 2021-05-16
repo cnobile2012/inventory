@@ -18,7 +18,7 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils.html import format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from dcolumn.common.choice_mixins import BaseChoice, BaseChoiceManager
 from dcolumn.dcolumns.models import (
@@ -379,7 +379,7 @@ def create_item_post_save(sender, **kwargs):
                 except ColumnCollection.DoesNotExist as e:
                     msg = _("ColumnCollection objects does not exist for "
                             "'item'")
-                    log.critical(ugettext(msg))
+                    log.critical(gettext(msg))
                     raise e
                 else:
                     kwargs = {}

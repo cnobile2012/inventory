@@ -8,7 +8,7 @@ Project Admin
 __docformat__ = "restructuredtext en"
 
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from inventory.common.admin_mixins import UserAdminMixin, UpdaterFilter
 
