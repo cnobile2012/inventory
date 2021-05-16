@@ -3,11 +3,12 @@ language: python
 python:
   - "3.6"
   - "3.7"
+  - "3.8"
 
 sudo: false
 
 addons:
-  postgresql: "10"
+  postgresql: "12"
 
 before_script:
   - psql -U postgres template1 -f db/create_schema.ddl
