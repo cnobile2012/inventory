@@ -15,7 +15,7 @@ from collections import OrderedDict
 
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from django.conf import settings
 
 from inventory.common import generate_public_key
@@ -107,7 +107,7 @@ class CategoryManager(models.Manager):
                         "updater: {}, updated: {}, project: {}, "
                         "invalid project: {}").format(
                     node, node.updater, node.updated, node.project, project)
-                log.error(ugettext(msg))
+                log.error(gettext(msg))
                 raise ValueError(msg)
 
             deleted = self._recurse_delete(node)
@@ -140,7 +140,7 @@ class CategoryManager(models.Manager):
                     "project: {}").format(
                 category, category.updater, category.updated,
                 category.project, project)
-            log.error(ugettext(msg))
+            log.error(gettext(msg))
             raise ValueError(msg)
 
         parents = self._recurse_parents(category)
