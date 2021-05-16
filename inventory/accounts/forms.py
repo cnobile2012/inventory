@@ -9,7 +9,7 @@ __docformat__ = "restructuredtext en"
 
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .models import Question, Answer
 
@@ -22,7 +22,7 @@ class QuestionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['question'].widget = forms.TextInput(
-            attrs={u'size': 100, u'maxlength': 100})
+            attrs={'size': 100, 'maxlength': 100})
 
     class Meta:
         model = Question
@@ -37,7 +37,7 @@ class AnswerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['answer'].widget = forms.TextInput(
-            attrs={u'size': 100, u'maxlength': 100})
+            attrs={'size': 100, 'maxlength': 100})
 
     class Meta:
         model = Answer

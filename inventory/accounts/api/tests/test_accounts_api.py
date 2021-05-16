@@ -4,7 +4,7 @@
 #
 
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 
 from rest_framework.reverse import reverse
 from rest_framework import status
@@ -1146,7 +1146,7 @@ class TestLoginAPI(BaseAccount):
             response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertTrue("Logout was successful." ==
-                        ugettext(response.data.get('detail')), msg)
+                        gettext(response.data.get('detail')), msg)
         # Test not logged in.
         kwargs['login'] = False
         user, client = self._create_user(**kwargs)
@@ -1155,4 +1155,4 @@ class TestLoginAPI(BaseAccount):
             response.status_code, status.HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
         self.assertTrue("Authentication credentials were not provided." ==
-                        ugettext(response.data.get('detail')), msg)
+                        gettext(response.data.get('detail')), msg)
