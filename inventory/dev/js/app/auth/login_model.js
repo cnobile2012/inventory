@@ -1,7 +1,7 @@
 /*
  * Inventory Login Model
  *
- * js/app/accounts/login_model.js
+ * js/app/auth/login_model.js
  */
 
 "use strict";
@@ -12,8 +12,6 @@ class LoginModel extends Backbone.Model {
   get urlRoot() { return API_LOGIN; }
   get defaults() {
     return {
-      username: 'X',
-      password: 'X',
       fullname: '',
       href: ''
     };

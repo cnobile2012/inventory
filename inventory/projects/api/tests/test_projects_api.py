@@ -651,7 +651,7 @@ class TestProject(BaseTest, APITestCase):
 
     def test_DELETE_project_detail_with_valid_permissions(self):
         """
-        Test that a DELETE to project-detail pass' with valid permissions.
+        Test that a DELETE to project-detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
@@ -687,12 +687,12 @@ class TestProject(BaseTest, APITestCase):
                                        members=members)
         uri = reverse('project-detail',
                       kwargs={'public_id': project.public_id})
-        self._test_project_owner_with_valid_permissions(uri, method)
+        self._test_project_owner_with_valid_permissions(uri, method, user=user)
         self._test_valid_GET_with_errors(uri)
         # Test project MANAGER
         ## This is an invalid test since the PROJECT_MANAGER cannot delete.
         # Test project PROJECT_USER
-        ## This is an invalid test since the PROJECT_USER has no access.
+        ## This is an invalid test since the PROJECT_USER has read only access.
 
     def test_OPTIONS_project_detail_with_invalid_permissions(self):
         """

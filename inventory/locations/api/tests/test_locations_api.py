@@ -1429,7 +1429,7 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         pow['location_set_name'] = self.location_set_name.public_id
         pow['project'] = project.public_id
         self._test_project_owner_with_valid_permissions(
-            uri, method, request_data=data)
+            uri, method, request_data=data, user=user)
         loc_set_name = LocationSetName.objects.filter(project=project)
         loc_fmts = LocationFormat.objects.filter(
             location_set_name__project=project)
@@ -1457,7 +1457,7 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         pma['location_set_name'] = self.location_set_name.public_id
         pma['project'] = project.public_id
         self._test_project_manager_with_valid_permissions(
-            uri, method, request_data=data)
+            uri, method, request_data=data, user=user)
         loc_set_name = LocationSetName.objects.filter(project=project)
         loc_fmts = LocationFormat.objects.filter(
             location_set_name__project=project)

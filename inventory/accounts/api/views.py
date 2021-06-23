@@ -7,7 +7,10 @@ Account API Views
 """
 __docformat__ = "restructuredtext en"
 
+import base64
 import logging
+import re
+import string
 from decimal import Decimal
 
 from django.contrib.auth.models import Group
@@ -22,7 +25,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.settings import api_settings
-from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
+from rest_framework.status import (
+    HTTP_200_OK, HTTP_401_UNAUTHORIZED, HTTP_401_UNAUTHORIZED)
 from rest_framework.views import APIView
 
 from rest_condition import C, And, Or, Not
@@ -331,9 +335,25 @@ class LoginView(GenericAPIView):
                         + api_settings.DEFAULT_RENDERER_CLASSES)
     serializer_class = LoginSerializerVer01
     permission_classes = ()
+    CHARS = string.ascii_letters + string.digits + '+/='
+    # The regex below will ignore any additional parameters as per RFC7617.
+    RE_SEARCH = re.compile(
+        r"^.*(Basic +)(?P<enc_creds>[{}]+) *.*$".format(CHARS))
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        basic = request.META.get('HTTP_AUTHORIZATION')
+        sre = self.RE_SEARCH.search('' if basic is None else basic)
+        enc_creds = sre.group('enc_creds') if sre is not None else ""
+        data = {}
+
+        # Parse out the username and password.
+        if len(enc_creds) > 0:
+            creds = base64.b64decode(bytearray(enc_creds, 'utf-8')).decode()
+            username, delm, password = creds.partition(':')
+            data['username'] = username
+            data['password'] = password
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data.get('user')
         login(request, user)

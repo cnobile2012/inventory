@@ -62,8 +62,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         uri = reverse('category-list')
         self._test_users_with_valid_permissions(
             uri, method, default_user=False)
-        self._test_project_users_with_valid_permissions(
-            uri, method, user=self.user)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_POST_category_list_with_invalid_permissions(self):
         """
@@ -110,7 +109,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         pdu = data.setdefault('PDU', su.copy())
         pdu['name'] = 'TestCategory-06'
         self._test_project_users_with_valid_permissions(
-            uri, method, user=self.user, project_user=False, request_data=data)
+            uri, method, project_user=False, request_data=data)
 
     def test_OPTIONS_category_list_with_invalid_permissions(self):
         """
@@ -129,8 +128,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         method = 'options'
         uri = reverse('category-list')
         self._test_users_with_valid_permissions(uri, method)
-        self._test_project_users_with_valid_permissions(
-            uri, method, user=self.user)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_GET_category_detail_with_invalid_permissions(self):
         """
@@ -154,8 +152,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
                       kwargs={'public_id': category.public_id})
         method = 'get'
         self._test_users_with_valid_permissions(uri, method)
-        self._test_project_users_with_valid_permissions(
-            uri, method, user=self.user)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_PUT_category_detail_with_invalid_permissions(self):
         """
@@ -206,7 +203,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         pdu = data.setdefault('PDU', su.copy())
         pdu['name'] = 'TestCategory-06'
         self._test_project_users_with_valid_permissions(
-            uri, method, user=self.user, project_user=False, request_data=data)
+            uri, method, project_user=False, request_data=data)
 
     def test_PATCH_category_detail_with_invalid_permissions(self):
         """
@@ -257,7 +254,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         pdu = data.setdefault('PDU', {})
         pdu['name'] = 'TestCategory-06'
         self._test_project_users_with_valid_permissions(
-            uri, method, user=self.user, project_user=False, request_data=data)
+            uri, method, project_user=False, request_data=data)
 
     def test_DELETE_category_detail_with_invalid_permissions(self):
         """
@@ -269,8 +266,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_users_with_invalid_permissions(uri, method)
-        self._test_project_users_with_invalid_permissions(
-            uri, method, user=self.user)
+        self._test_project_users_with_invalid_permissions(uri, method)
 
     def test_DELETE_category_detail_with_valid_permissions(self):
         """
@@ -296,8 +292,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         category = self._create_category(self.project, "Test Root Category")
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
-        self._test_project_owner_with_valid_permissions(
-            uri, method, user=self.user)
+        self._test_project_owner_with_valid_permissions(uri, method)
         self._test_valid_GET_with_errors(uri)
         # Test PROJECT_MANAGER
         category = self._create_category(self.project, "Test Root Category")
@@ -329,8 +324,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
         self._test_users_with_valid_permissions(uri, method)
-        self._test_project_users_with_valid_permissions(
-            uri, method, user=self.user)
+        self._test_project_users_with_valid_permissions(uri, method)
 
     def test_create_category_twice_to_same_parent(self):
         """
@@ -548,7 +542,7 @@ class TestCategoryCloneAPI(BaseTest):
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
-            self.project, self.user, create_list)
+            self.project, create_list)
         uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
@@ -573,7 +567,7 @@ class TestCategoryCloneAPI(BaseTest):
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
-            self.project, self.user, create_list)
+            self.project, create_list)
         uri = reverse('category-clone')
         data = {}
         data['categories'] = [categories[0][0].public_id] # 'TestLevel-0'
@@ -657,7 +651,7 @@ class TestCategoryCloneAPI(BaseTest):
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
-            self.project, self.user, create_list)
+            self.project, create_list)
         uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
@@ -686,7 +680,7 @@ class TestCategoryCloneAPI(BaseTest):
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
-            self.project, self.user, create_list)
+            self.project, create_list)
         uri = reverse('category-clone')
         data = {}
         su = data.setdefault('SU', {})
@@ -714,7 +708,7 @@ class TestCategoryCloneAPI(BaseTest):
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
-            self.project, self.user, create_list)
+            self.project, create_list)
         uri = reverse('category-clone')
         data = {}
         data['categories'] = [categories[0][0].public_id]
@@ -744,7 +738,7 @@ class TestCategoryCloneAPI(BaseTest):
         create_list = [['TestLevel-0', (('TestLevel-1', 'TestLevel-2',),
                                         ('TestLevel-1a', 'TestLevel-2a',))]]
         categories = Category.objects.create_category_tree(
-            self.project, self.user, create_list)
+            self.project, create_list)
         uri = reverse('category-clone')
         data = {}
         data['categories'] = []

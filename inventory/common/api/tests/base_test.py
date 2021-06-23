@@ -3,9 +3,9 @@
 # inventory/common/api/tests/base_test.py
 #
 
-import base64
 import json
 import types
+import random
 from collections import Mapping, OrderedDict
 
 from django.conf import settings
@@ -26,8 +26,6 @@ UserModel = get_user_model()
 
 
 class BaseTest(RecordCreation):
-    _TEST_USERNAME = 'TestUser'
-    _TEST_PASSWORD = 'TestPassword_007'
     _ERROR_MESSAGES = {
         'credentials': 'Authentication credentials were not provided.',
         'permission': 'You do not have permission to perform this action.',
@@ -46,8 +44,6 @@ class BaseTest(RecordCreation):
 
     def __init__(self, name):
         super().__init__(name)
-        self.client = None
-        self.user = None
 
     def setUp(self):
         kwargs = {'is_superuser': True}
@@ -56,18 +52,8 @@ class BaseTest(RecordCreation):
 
     def tearDown(self):
         self.client.logout()
-
-    def _setup_user_credentials(self):
-        """
-        Setup a test user credentials.
-        """
-        kwargs = {}
-        kwargs['username'] = 'Normal_User'
-        kwargs['password'] = 'XX_123456'
-        kwargs['is_active'] = True
-        kwargs['is_staff'] = False
-        kwargs['is_superuser'] = False
-        return kwargs
+        self.client = None
+        self.user = None
 
     def __get_request_data(self, key, request_data):
         return request_data.get(key) if request_data else None
@@ -81,6 +67,8 @@ class BaseTest(RecordCreation):
             code = HTTP_204_NO_CONTENT
 
         return code
+
+    # Test Invalid Non-project Users
 
     def _test_users_with_invalid_permissions(self, uri, method, *,
                                              user=None,
@@ -109,13 +97,18 @@ class BaseTest(RecordCreation):
 
         kwargs['login'] = False
         kwargs['is_superuser'] = True
-        kwargs['role'] = self.ADMINISTRATOR
+        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('SU', request_data)
         extra = dict(self._HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
+        auth = response.headers.get('WWW-Authenticate')
+
+        if auth:
+            print("WWW-Authenticate:", auth, "User:", user)
+
         msg = (f"Response: {response.status_code} should be "
                f"{HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_403_FORBIDDEN, msg)
@@ -217,6 +210,8 @@ class BaseTest(RecordCreation):
             self._test_errors(response, tests={
                 'detail': self._ERROR_MESSAGES[message],
                 })
+
+    # Test Invalid Project Users
 
     def _test_project_users_with_invalid_permissions(self, uri, method, *,
                                                      user=None,
@@ -368,6 +363,8 @@ class BaseTest(RecordCreation):
             'detail': self._ERROR_MESSAGES[message],
             })
 
+    # Test Valid Non-project Users
+
     def _test_users_with_valid_permissions(self, uri, method, *,
                                            user=None,
                                            default_user=True,
@@ -459,6 +456,8 @@ class BaseTest(RecordCreation):
             msg = (f"Response: {response.status_code} should be "
                    f"{status_code}, content: {response.data}")
             self.assertEqual(response.status_code, status_code, msg)
+
+    # Test Valid Project Users
 
     def _test_project_users_with_valid_permissions(self, uri, method, *,
                                                    user=None,
@@ -574,9 +573,36 @@ class BaseTest(RecordCreation):
             'detail': self._ERROR_MESSAGES['not_found'],
             })
 
-    # Setup user
-    def _create_user(self, username=_TEST_USERNAME, password=_TEST_PASSWORD,
-                     **kwargs):
+    def _setup_user_credentials(self, *, username=None, password=None,
+                                active=True, staff=False, superuser=False):
+        """
+        Setup a test user credentials.
+        """
+        if username is None:
+            username = f"User-{random.randint(1000, 9999)}"
+
+        if password is None:
+            password = f"PW-{random.randint(1000, 9999)}"
+
+        kwargs = {}
+        kwargs['username'] = username
+        kwargs['password'] = password
+        kwargs['is_active'] = active
+        kwargs['is_staff'] = staff
+        kwargs['is_superuser'] = superuser
+        return kwargs
+
+    # Setup user and client objects.
+    def _create_user(self, *, username=None, password=None, **kwargs):
+        uname = kwargs.pop('username', None)
+        passwd = kwargs.pop('password', None)
+
+        if uname is None and username is None:
+            username = f"User-{random.randint(10000, 99999)}"
+
+        if passwd is None and password is None:
+            password = f"PW-{random.randint(10000, 99999)}"
+
         kwargs['password'] = 'dummy'
         role = kwargs.pop('role', self.DEFAULT_USER)
         login = kwargs.pop('login', True)
@@ -590,13 +616,14 @@ class BaseTest(RecordCreation):
             user.is_superuser = kwargs.get('is_superuser', False)
             user.role = role
         else:
-            # role is a property, so it isn't there when created.
+            # role is a property and not set on a create, so we set it now.
             if user.role != role:
                 user.role = role
 
         user.set_password(password)
         user.save()
         client = APIClient()
+        client.credentials() # Clear any credentials.
 
         if login:
             client.force_authenticate(user=user)

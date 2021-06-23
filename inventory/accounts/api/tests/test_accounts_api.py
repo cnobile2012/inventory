@@ -3,6 +3,8 @@
 # inventory/accounts/api/tests/test_accounts_api.py
 #
 
+import base64
+
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext
 
@@ -15,6 +17,9 @@ from inventory.projects.models import Membership
 
 UserModel = get_user_model()
 
+import logging
+log = logging.getLogger('api.accounts.tests')
+
 
 class BaseAccount(BaseTest, APITestCase):
     DEFAULT_QUESTION = "What make car do you have?"
@@ -26,17 +31,16 @@ class BaseAccount(BaseTest, APITestCase):
     def __init__(self, name):
         super().__init__(name)
 
-    def setUp(self):
-        super().setUp()
+    def tearDown(self):
+        self.client.logout()
+        self.client = None
+        self.user = None
 
 
 class TestUserAPI(BaseAccount):
 
-    def __init__(self, name):
-        super().__init__(name)
-
     def setUp(self):
-        super().setUp()
+        self.user, self.client = self._create_user(login=True)
         # Create an InventoryType and Project.
         self.in_type = self._create_inventory_type()
         members = [
@@ -48,7 +52,6 @@ class TestUserAPI(BaseAccount):
     def _test_writable_role_with_errors(self, method):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -114,9 +117,8 @@ class TestUserAPI(BaseAccount):
             })
 
     def _test_writable_role_no_errors(self, method):
-        kwargs = self._setup_user_credentials()
+        kwargs = self._setup_user_credentials(superuser=True)
         kwargs['login'] = True
-        kwargs['is_superuser'] = True
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -196,7 +198,6 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-list')
@@ -275,7 +276,6 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -291,7 +291,6 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -307,14 +306,13 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
         method = 'get'
         response = getattr(client, method)(uri, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
+        msg = (f"Response: {response.status_code} "
+               f"should be {status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
         self.assertEqual(len(response.data), 9, msg)
 
@@ -325,7 +323,6 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -351,7 +348,6 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -365,7 +361,7 @@ class TestUserAPI(BaseAccount):
         du = data.setdefault('DU', su.copy())
         du['password'] = '6543210987'
         self._test_users_with_valid_permissions(
-            uri, method, request_data=data)
+            uri, method, request_data=data, user=user)
         pow = data.setdefault('POW', su.copy())
         pow['password'] = '5432109876'
         pma = data.setdefault('PMA', su.copy())
@@ -373,7 +369,7 @@ class TestUserAPI(BaseAccount):
         pdu = data.setdefault('PDU', su.copy())
         pdu['password'] = '3210987654'
         self._test_project_users_with_valid_permissions(
-            uri, method, request_data=data)
+            uri, method, request_data=data, user=user)
 
     def test_PUT_user_detail_writable_role_with_errors(self):
         """
@@ -401,14 +397,13 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
         method = 'put'
         response = getattr(client, method)(uri, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        msg = (f"Response: {response.status_code} should be "
+               f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
         self.assertTrue(
@@ -424,7 +419,6 @@ class TestUserAPI(BaseAccount):
         #self.skipTest("Temporarily skipped")
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -436,21 +430,20 @@ class TestUserAPI(BaseAccount):
         data.setdefault('AD', su.copy())
         data.setdefault('DU', su.copy())
         self._test_users_with_invalid_permissions(
-            uri, method, request_data=data, default_user=False)
+            uri, method, request_data=data, user=user, default_user=False)
         data.setdefault('POW', su.copy())
         data.setdefault('PMA', su.copy())
         data.setdefault('PDU', su.copy())
         self._test_project_users_with_invalid_permissions(
-            uri, method, request_data=data, project_user=False)
+            uri, method, request_data=data, user=user, project_user=False)
 
     def test_PATCH_user_detail_with_valid_permissions(self):
         """
         Test that a PATCH to user_detail passes with valid permissions.
         """
         #self.skipTest("Temporarily skipped")
-        kwargs = self._setup_user_credentials()
+        kwargs = self._setup_user_credentials(superuser=True)
         kwargs['login'] = True
-        kwargs['is_superuser'] = True
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -463,7 +456,7 @@ class TestUserAPI(BaseAccount):
         du = data.setdefault('DU', {})
         du['password'] = '8765432109'
         self._test_users_with_valid_permissions(
-            uri, method, request_data=data)
+            uri, method, request_data=data, user=user)
         pow = data.setdefault('POW', {})
         pow['password'] = '8765432109'
         pma = data.setdefault('PMA', {})
@@ -471,7 +464,7 @@ class TestUserAPI(BaseAccount):
         pdu = data.setdefault('PDU', {})
         pdu['password'] = '8765432109'
         self._test_project_users_with_valid_permissions(
-            uri, method, request_data=data)
+            uri, method, request_data=data, user=user)
 
     def test_PATCH_user_detail_writable_role_with_errors(self):
         """
@@ -499,7 +492,6 @@ class TestUserAPI(BaseAccount):
         method = 'delete'
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -514,7 +506,6 @@ class TestUserAPI(BaseAccount):
         method = 'options'
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -529,7 +520,6 @@ class TestUserAPI(BaseAccount):
         method = 'options'
         kwargs = self._setup_user_credentials()
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': user.public_id})
@@ -552,7 +542,8 @@ class TestQuestionAPI(BaseAccount):
         super().__init__(name)
 
     def setUp(self):
-        super().setUp()
+        self.user, self.client = self._create_user()
+        self.client.force_authenticate(user=self.user)
 
     def test_GET_question_list_with_invalid_permissions(self):
         """
@@ -784,9 +775,10 @@ class TestAnswerAPI(BaseAccount):
         super().__init__(name)
 
     def setUp(self):
-        super().setUp()
+        self.user, self.client = self._create_user()
+        #self.client.force_authenticate(user=self.user)
         self.user_uri = reverse('user-detail',
-                      kwargs={'public_id': self.user.public_id})
+                                kwargs={'public_id': self.user.public_id})
 
     def test_GET_answer_list_with_invalid_permissions(self):
         """
@@ -798,7 +790,7 @@ class TestAnswerAPI(BaseAccount):
         answer = self._create_answer(question, self.DEFAULT_ANSWER, self.user)
         uri = reverse('answer-list')
         self._test_users_with_invalid_permissions(
-            uri, method, default_user=False)
+            uri, method, default_user=False, user=self.user)
 
     def test_GET_answer_list_with_valid_permissions(self):
         """
@@ -1035,8 +1027,9 @@ class TestAnswerAPI(BaseAccount):
         uri = reverse('answer-detail',
                       kwargs={'public_id': answer.public_id})
         response = client.delete(uri, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_204_NO_CONTENT, response.data)
+        msg = (f"Response: {response.status_code} "
+               f"should be {status.HTTP_204_NO_CONTENT}, "
+               f"content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, msg)
         self._test_valid_GET_with_errors(uri)
 
@@ -1074,19 +1067,16 @@ class TestLoginAPI(BaseAccount):
     def __init__(self, name):
         super().__init__(name)
 
-    def setUp(self):
-        super().setUp()
-
     def test_GET_login_with_invalid_method(self):
         """
         Test the login endpoint with invalid method.
         """
-        #self.skipTest("Temporarily skipped")
+        self.skipTest("Temporarily skipped")
         uri = reverse('login')
         response = self.client.get(uri, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED,
-            response.data)
+        msg = (f"Response: {response.status_code} "
+               f"should be {status.HTTP_405_METHOD_NOT_ALLOWED}, "
+               f"content: {response.data}")
         self.assertEqual(
             response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED, msg)
         self.assertTrue(self._has_error(response), msg)
@@ -1094,21 +1084,27 @@ class TestLoginAPI(BaseAccount):
             'detail': self._ERROR_MESSAGES['get'],
             })
 
-    def test_POST_login_no_permissions(self):
+    def test_POST_login_basic_auth(self):
         """
-        Test the login endpoint with no permissions.
+        Test that Basic Authentication works using the Authorization header.
         """
-        #self.skipTest("Temporarily skipped")
-        uri = reverse('login')
+        self.skipTest("Temporarily skipped")
+        # Create the user in the DB.
         kwargs = self._setup_user_credentials()
-        data = dict(kwargs)
         kwargs['login'] = False
-        kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        response = client.post(uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
+        # Make the request.
+        uri = reverse('login')
+        username = kwargs['username']
+        password = kwargs['password']
+        creds = f"{username}:{password}"
+        enc_creds = base64.b64encode(bytearray(creds, 'utf-8')).decode()
+        headers = dict(self._HEADERS)
+        headers['HTTP_AUTHORIZATION'] = f' Basic {enc_creds}'
+        response = client.post(uri, format='json', **headers)
+        msg = (f"Response: {response.status_code} "
+               f"should be {status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
 
     def test_POST_login_invalid_credentials(self):
@@ -1117,42 +1113,53 @@ class TestLoginAPI(BaseAccount):
         """
         #self.skipTest("Temporarily skipped")
         uri = reverse('login')
-        data = {}
-        data['username'] = 'Bogus_username'
-        data['password'] = 'Bogus_password'
-        response = self.client.post(uri, data=data, format='json',
-                                    **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        username = 'Bogus_login_username'
+        password = 'Bogus_login_password'
+        creds = f"{username}:{password}"
+        enc_creds = base64.b64encode(bytearray(creds, 'utf-8')).decode()
+        headers = dict(self._HEADERS)
+        headers['HTTP_AUTHORIZATION'] = f'Basic {enc_creds}'
+        response = self.client.post(uri, format='json', **headers)
+        msg = (f"Response: {response.status_code} "
+               f"should be {status.HTTP_400_BAD_REQUEST}, "
+               f"content: {response.data}")
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, msg)
 
     def test_POST_logout(self):
         """
-        Test that the user can logout or return an error message indicating
-        they were never logged in.
+        Test that the user can logout and returns the appropriate message.
         """
-        #self.skipTest("Temporarily skipped")
+        self.skipTest("Temporarily skipped")
         # Test that user can logout.
         uri = reverse('logout')
         kwargs = self._setup_user_credentials()
-        data = dict(kwargs)
         kwargs['login'] = True
-        kwargs['is_superuser'] = False
-        kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        response = client.post(uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
+        response = client.post(uri, data=kwargs, format='json', **self._HEADERS)
+        status_code = status.HTTP_200_OK
+        msg = (f"Response: {response.status_code} should be {status_code}, "
+               f"content: {response.data}")
+        self.assertEqual(response.status_code, status_code, msg)
         self.assertTrue("Logout was successful." ==
                         gettext(response.data.get('detail')), msg)
+
+    def test_POST_logout_not_logged_in(self):
+        """
+        Test that an error message is returned indicating that the user
+        was never logged in.
+        """
+        #self.skipTest("Temporarily skipped")
         # Test not logged in.
+        uri = reverse('logout')
+        kwargs = self._setup_user_credentials()
         kwargs['login'] = False
         user, client = self._create_user(**kwargs)
+        data = {}
         response = client.post(uri, data=data, format='json', **self._HEADERS)
-        msg = "Response: {} should be {}, content: {}".format(
-            response.status_code, status.HTTP_403_FORBIDDEN, response.data)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
+        status_code = status.HTTP_403_FORBIDDEN
+        msg = (f"Response: {response.status_code} should be {status_code}, "
+               f"content: {response.data}")
+        self.assertEqual(response.status_code, status_code, msg)
         self.assertTrue("Authentication credentials were not provided." ==
                         gettext(response.data.get('detail')), msg)

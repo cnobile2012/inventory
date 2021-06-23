@@ -1,13 +1,14 @@
 /*
  * Inventory base modal view
  *
- * js/views/base_modal_view.js
+ * js/contrib/modal/base_modal_view.js
  */
 
 "use strict";
 
 
 class MicromodalBaseView extends Backbone.View {
+
   get template() { return ''; }
 
   constructor(options) {
