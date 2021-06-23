@@ -118,14 +118,28 @@ MIDDLEWARE = [
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '/var/run/redis/redis.sock',
+        'LOCATION': '/var/run/redis/redis-server.sock',
         'OPTIONS': {
             'DB': 0,
             'PARSER_CLASS': 'redis.connection.HiredisParser',
             'PICKLE_VERSION': 2,
             },
         },
+    ## 'locks': {
+    ##     'BACKEND': 'redis_cache.RedisCache',
+    ##     'LOCATION': '/var/run/redis/redis-server.sock',
+    ##     'OPTIONS': {
+    ##         'DB': 1,
+    ##         'PARSER_CLASS': 'redis.connection.HiredisParser',
+    ##         'PICKLE_VERSION': 2,
+    ##         },
+    ##     },
     }
+
+# RedLock config
+## REDLOCK_RETRY_TIMES = 3
+## REDLOCK_RETRY_DELAY = 200
+## REDLOCK_TTL = 100000
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 

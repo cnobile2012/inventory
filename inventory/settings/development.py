@@ -41,18 +41,18 @@ SITE_PORT = 8000
 # Add to the MIDDLEWARE here.
 MIDDLEWARE.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
-CACHES = {
+CACHES.update({
     'default': {
         'BACKEND': 'redis_cache.RedisDummyCache',
         #'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '/var/run/redis/redis.sock',
+        'LOCATION': '/var/run/redis/redis-server.sock',
         'OPTIONS': {
             'DB': 0,
             'PARSER_CLASS': 'redis.connection.HiredisParser',
             'PICKLE_VERSION': 2,
             },
         },
-    }
+    })
 
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')
