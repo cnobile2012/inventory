@@ -431,7 +431,7 @@ class TestItemAPI(BaseTest, APITestCase):
         data = {}
         data['item_number'] = 'NE555'
         # Test that second project cannot read default project's item.
-        response = self.client.post(uri, data=data, **self._HEADERS)
+        response = self.client.post(uri, data=data, **self.HEADERS)
         msg = (f"Response: {response.status_code} "
                f"should be {status.HTTP_400_BAD_REQUEST}, "
                f"content: {response.data}, uri: {uri}")
@@ -448,7 +448,7 @@ class TestItemAPI(BaseTest, APITestCase):
          project_0, item_0,
          project_1, item_1) = self._create_shared_project_objects()
         # Test that second project cannot read default project's item.
-        response = client.get(uri, **self._HEADERS)
+        response = client.get(uri, **self.HEADERS)
         msg = (f"Response: {response.status_code} "
                f"should be {status.HTTP_200_OK}, "
                f"content: {response.data}, uri: {uri}")
@@ -456,7 +456,7 @@ class TestItemAPI(BaseTest, APITestCase):
         # Share the default project's item with second project.
         item_0.process_shared_projects([project_1])
         # Test that second project can read default project's item.
-        response = client.get(uri, **self._HEADERS)
+        response = client.get(uri, **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_200_OK}, content: {response.data}, uri: {uri}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
@@ -475,7 +475,7 @@ class TestItemAPI(BaseTest, APITestCase):
         data['item_number'] = 'NE556N'
         data['project'] = reverse('project-detail',
                                   kwargs={'public_id': project_0.public_id})
-        response = client.put(uri, data=data, **self._HEADERS)
+        response = client.put(uri, data=data, **self.HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN, response.data,
             uri)
@@ -496,7 +496,7 @@ class TestItemAPI(BaseTest, APITestCase):
         # Test that the shared_project item cannot be updated by a second
         # project user.
         data = {'item_number': 'NE556N'}
-        response = client.patch(uri, data=data, **self._HEADERS)
+        response = client.patch(uri, data=data, **self.HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN, response.data,
             uri)
@@ -516,7 +516,7 @@ class TestItemAPI(BaseTest, APITestCase):
         item_0.process_shared_projects([project_1])
         # Test that the shared_project item cannot be updated by a second
         # project user.
-        response = client.delete(uri, **self._HEADERS)
+        response = client.delete(uri, **self.HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN, response.data,
             uri)
@@ -542,7 +542,7 @@ class TestItemAPI(BaseTest, APITestCase):
         kwargs['role'] = UserModel.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         # Try to delete a project
-        response = client.delete(self.project_uri, **self._HEADERS)
+        response = client.delete(self.project_uri, **self.HEADERS)
         msg = "Response: {} should be {}, content: {}, uri: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN, response.data,
             self.project_uri)

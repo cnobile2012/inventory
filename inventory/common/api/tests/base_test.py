@@ -33,7 +33,7 @@ class BaseTest(RecordCreation):
         'delete': 'Method "DELETE" not allowed.',
         'get':  'Method "GET" not allowed.',
         }
-    _HEADERS = {
+    __HEADERS = {
         'HTTP_ACCEPT': 'application/json',
         }
     DEFAULT_USER = UserModel.ROLE_MAP[UserModel.DEFAULT_USER]
@@ -54,6 +54,10 @@ class BaseTest(RecordCreation):
         self.client.logout()
         self.client = None
         self.user = None
+
+    @property
+    def HEADERS(self):
+        return dict(self.__HEADERS)
 
     def __get_request_data(self, key, request_data):
         return request_data.get(key) if request_data else None
@@ -100,7 +104,7 @@ class BaseTest(RecordCreation):
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('SU', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -132,7 +136,7 @@ class BaseTest(RecordCreation):
         kwargs['role'] = self.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('AD', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -159,7 +163,7 @@ class BaseTest(RecordCreation):
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('DU', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -188,7 +192,7 @@ class BaseTest(RecordCreation):
 
         if user.memberships.all().count() == 0:
             data = self.__get_request_data('DU', request_data)
-            extra = dict(self._HEADERS)
+            extra = dict(self.HEADERS)
             if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
             response = getattr(client, method)(
                 uri, data=data, format='json', **extra)
@@ -247,7 +251,7 @@ class BaseTest(RecordCreation):
             ]
         self.project.process_members(members)
         data = self.__get_request_data('POW', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -278,7 +282,7 @@ class BaseTest(RecordCreation):
             ]
         self.project.process_members(members)
         data = self.__get_request_data('PMA', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -309,7 +313,7 @@ class BaseTest(RecordCreation):
             ]
         self.project.process_members(members)
         data = self.__get_request_data('PDU', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -340,7 +344,7 @@ class BaseTest(RecordCreation):
             ]
         self.project.process_members(members)
         data = self.__get_request_data('PDU', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -395,7 +399,7 @@ class BaseTest(RecordCreation):
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('SU', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -422,7 +426,7 @@ class BaseTest(RecordCreation):
         kwargs['role'] = self.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
         data = self.__get_request_data('AD', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -449,7 +453,7 @@ class BaseTest(RecordCreation):
 
         if user.memberships.all().count() > 0:
             data = self.__get_request_data('DU', request_data)
-            extra = dict(self._HEADERS)
+            extra = dict(self.HEADERS)
             if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
             response = getattr(client, method)(
                 uri, data=data, format='json', **extra)
@@ -493,7 +497,7 @@ class BaseTest(RecordCreation):
             ]
         self.project.process_members(members)
         data = self.__get_request_data('POW', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -526,7 +530,7 @@ class BaseTest(RecordCreation):
             ]
         self.project.process_members(members)
         data = self.__get_request_data('PMA', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -555,7 +559,7 @@ class BaseTest(RecordCreation):
             ]
         self.project.process_members(members)
         data = self.__get_request_data('PDU', request_data)
-        extra = dict(self._HEADERS)
+        extra = dict(self.HEADERS)
         if method != 'get': extra['CONTENT_TYPE'] = 'application/json'
         response = getattr(client, method)(
             uri, data=data, format='json', **extra)
@@ -564,7 +568,7 @@ class BaseTest(RecordCreation):
         self.assertEqual(response.status_code, status_code, msg)
 
     def _test_valid_GET_with_errors(self, uri):
-        response = self.client.get(uri, format='json', **self._HEADERS)
+        response = self.client.get(uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{HTTP_404_NOT_FOUND}, content: {response.data}")
         self.assertEqual(response.status_code, HTTP_404_NOT_FOUND, msg)

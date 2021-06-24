@@ -1093,7 +1093,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
             }
         uri = reverse('location-code-list')
         response = self.client.post(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -1110,7 +1110,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
             }
         uri = reverse('location-code-list')
         response = self.client.post(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -1133,7 +1133,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
             'segment': 'A11'
             }
         response = self.client.post(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
@@ -1144,7 +1144,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
             'parent': response.data.get('href')
             }
         response = self.client.post(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -1180,7 +1180,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
             }
         uri = reverse('location-code-list')
         response = self.client.post(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg)
@@ -1193,7 +1193,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
             'parent': response.data.get('href')
             }
         response = self.client.post(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -1220,7 +1220,7 @@ class TestLocationCodeAPI(BaseTest, APITestCase):
             'segment': LocationCode.ROOT_NAME
             }
         response = self.client.put(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(response.status_code,
@@ -1312,14 +1312,14 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         data['project'] = self.project.public_id
         # Test with default arguments.
         response = self.client.get(uri, data=data, format='json',
-                                   **self._HEADERS)
+                                   **self.HEADERS)
         msg = ("data: {}, found '{}' records , should be 2 records"
                ).format(response.data, len(response.data))
         self.assertEqual(len(response.data), 2, msg)
         # Test with with_set_name=False
         data['with_set_name'] = False
         response = self.client.get(uri, data=data, format='json',
-                                   **self._HEADERS)
+                                   **self.HEADERS)
         msg = ("data: {}, found '{}' records , should be 1 records"
                ).format(response.data, len(response.data))
         self.assertEqual(len(response.data), 1, msg)
@@ -1327,7 +1327,7 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
         data['with_set_name'] = True
         data['with_root'] = True
         response = self.client.get(uri, data=data, format='json',
-                                   **self._HEADERS)
+                                   **self.HEADERS)
         msg = ("data: {}, found '{}' records , should be 3 records"
                ).format(response.data, len(response.data))
         self.assertEqual(len(response.data), 3, msg)
@@ -1610,7 +1610,7 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
             ]
         self.project.process_members(members)
         self.project.set_role(user, Membership.PROJECT_USER)
-        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        response = client.get(uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -1641,7 +1641,7 @@ class TestLocationSetNameCloneAPI(BaseTest, APITestCase):
             ]
         self.project.process_members(members)
         self.project.set_role(user, Membership.PROJECT_USER)
-        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        response = client.get(uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(

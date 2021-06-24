@@ -61,7 +61,7 @@ class TestUserAPI(BaseAccount):
         # Test writing to is_active.
         data['is_active'] = False
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -74,7 +74,7 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = True
         data['is_staff'] = True
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -89,7 +89,7 @@ class TestUserAPI(BaseAccount):
         data['is_superuser'] = False
         data['role'] = self.ADMINISTRATOR
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -105,7 +105,7 @@ class TestUserAPI(BaseAccount):
         data['is_superuser'] = True
         data['role'] = self.DEFAULT_USER
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -128,7 +128,7 @@ class TestUserAPI(BaseAccount):
         # Test writing to is_active.
         data['is_active'] = False
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
@@ -138,7 +138,7 @@ class TestUserAPI(BaseAccount):
         data['is_active'] = True
         data['is_staff'] = True
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
@@ -150,7 +150,7 @@ class TestUserAPI(BaseAccount):
         data['is_superuser'] = True
         data['role'] = self.ADMINISTRATOR
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
@@ -162,7 +162,7 @@ class TestUserAPI(BaseAccount):
         data['is_superuser'] = False
         data['role'] = self.DEFAULT_USER
         response = getattr(client, method)(
-            uri, data=data, format='json', **self._HEADERS)
+            uri, data=data, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
@@ -202,7 +202,7 @@ class TestUserAPI(BaseAccount):
         user, client = self._create_user(**kwargs)
         uri = reverse('user-list')
         method = 'get'
-        response = getattr(client, method)(uri, format='json', **self._HEADERS)
+        response = getattr(client, method)(uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
@@ -310,7 +310,7 @@ class TestUserAPI(BaseAccount):
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
         method = 'get'
-        response = getattr(client, method)(uri, format='json', **self._HEADERS)
+        response = getattr(client, method)(uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} "
                f"should be {status.HTTP_200_OK}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg)
@@ -401,7 +401,7 @@ class TestUserAPI(BaseAccount):
         user, client = self._create_user(**kwargs)
         uri = reverse('user-detail', kwargs={'public_id': self.user.public_id})
         method = 'put'
-        response = getattr(client, method)(uri, format='json', **self._HEADERS)
+        response = getattr(client, method)(uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -1026,7 +1026,7 @@ class TestAnswerAPI(BaseAccount):
         answer = self._create_answer(question, self.DEFAULT_ANSWER, user)
         uri = reverse('answer-detail',
                       kwargs={'public_id': answer.public_id})
-        response = client.delete(uri, format='json', **self._HEADERS)
+        response = client.delete(uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} "
                f"should be {status.HTTP_204_NO_CONTENT}, "
                f"content: {response.data}")
@@ -1073,7 +1073,7 @@ class TestLoginAPI(BaseAccount):
         """
         self.skipTest("Temporarily skipped")
         uri = reverse('login')
-        response = self.client.get(uri, format='json', **self._HEADERS)
+        response = self.client.get(uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} "
                f"should be {status.HTTP_405_METHOD_NOT_ALLOWED}, "
                f"content: {response.data}")
@@ -1100,7 +1100,7 @@ class TestLoginAPI(BaseAccount):
         password = kwargs['password']
         creds = f"{username}:{password}"
         enc_creds = base64.b64encode(bytearray(creds, 'utf-8')).decode()
-        headers = dict(self._HEADERS)
+        headers = self.HEADERS
         headers['HTTP_AUTHORIZATION'] = f' Basic {enc_creds}'
         response = client.post(uri, format='json', **headers)
         msg = (f"Response: {response.status_code} "
@@ -1117,7 +1117,7 @@ class TestLoginAPI(BaseAccount):
         password = 'Bogus_login_password'
         creds = f"{username}:{password}"
         enc_creds = base64.b64encode(bytearray(creds, 'utf-8')).decode()
-        headers = dict(self._HEADERS)
+        headers = self.HEADERS
         headers['HTTP_AUTHORIZATION'] = f'Basic {enc_creds}'
         response = self.client.post(uri, format='json', **headers)
         msg = (f"Response: {response.status_code} "
@@ -1136,7 +1136,7 @@ class TestLoginAPI(BaseAccount):
         kwargs = self._setup_user_credentials()
         kwargs['login'] = True
         user, client = self._create_user(**kwargs)
-        response = client.post(uri, data=kwargs, format='json', **self._HEADERS)
+        response = client.post(uri, data=kwargs, format='json', **self.HEADERS)
         status_code = status.HTTP_200_OK
         msg = (f"Response: {response.status_code} should be {status_code}, "
                f"content: {response.data}")
@@ -1156,7 +1156,7 @@ class TestLoginAPI(BaseAccount):
         kwargs['login'] = False
         user, client = self._create_user(**kwargs)
         data = {}
-        response = client.post(uri, data=data, format='json', **self._HEADERS)
+        response = client.post(uri, data=data, format='json', **self.HEADERS)
         status_code = status.HTTP_403_FORBIDDEN
         msg = (f"Response: {response.status_code} should be {status_code}, "
                f"content: {response.data}")

@@ -450,7 +450,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         category = self._create_category(project, name=c_name)
         # GET category on the API
         uri = reverse('category-list')
-        response = client.get(uri, format='json', **self._HEADERS)
+        response = client.get(uri, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -461,7 +461,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
         # Test GET on a category detail
         uri = reverse('category-detail',
                       kwargs={'public_id': category.public_id})
-        response = client.get(uri, format='json', **self._HEADERS)
+        response = client.get(uri, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_403_FORBIDDEN, response.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -471,7 +471,7 @@ class TestCategoryAPI(BaseTest, APITestCase):
             })
         # Test PUT to a specific category
         data = {'name': 'Changed Category'}
-        response = client.patch(uri, data=data, format='json', **self._HEADERS)
+        response = client.patch(uri, data=data, format='json', **self.HEADERS)
         msg = ("Response: {} should be {}, content: {}, user: {}, "
                "project creator: {}").format(
             response.status_code, status.HTTP_403_FORBIDDEN, response.data,
@@ -574,7 +574,7 @@ class TestCategoryCloneAPI(BaseTest):
         data['project'] = self.project.public_id
         # Test with default arguments.
         response = self.client.get(uri, data=data, format='json',
-                                   **self._HEADERS)
+                                   **self.HEADERS)
         res_data = self.flatten(response.data)
         msg = ("data: {}, found '{}' records , should be 5 records"
                ).format(res_data, len(res_data))
@@ -582,7 +582,7 @@ class TestCategoryCloneAPI(BaseTest):
         # Test with with_root=False
         data['with_root'] = False
         response = self.client.get(uri, data=data, format='json',
-                                   **self._HEADERS)
+                                   **self.HEADERS)
         res_data = self.flatten(response.data)
         msg = ("data: {}, found '{}' records , should be 4 records"
                ).format(res_data, len(res_data))
@@ -720,7 +720,7 @@ class TestCategoryCloneAPI(BaseTest):
         user, client = self._create_user(**kwargs)
         self.project.process_members([self.user, user])
         self.project.set_role(user, self.PROJECT_USER)
-        response = client.get(uri, data=data, format='json', **self._HEADERS)
+        response = client.get(uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -751,7 +751,7 @@ class TestCategoryCloneAPI(BaseTest):
         self.project.process_members([self.user, user])
         self.project.set_role(user, self.PROJECT_USER)
         status_code = status.HTTP_400_BAD_REQUEST
-        response = client.get(uri, data=data, **self._HEADERS)
+        response = client.get(uri, data=data, **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status_code, response.data)
         self.assertEqual(response.status_code, status_code, msg)

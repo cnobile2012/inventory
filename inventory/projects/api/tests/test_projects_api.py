@@ -45,7 +45,7 @@ class TestInventoryType(BaseTest, APITestCase):
         kwargs['login'] = False
         kwargs['is_superuser'] = True
         user, client = self._create_user(**kwargs)
-        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        response = client.get(self.in_type_uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -58,7 +58,7 @@ class TestInventoryType(BaseTest, APITestCase):
         kwargs['is_superuser'] = False
         kwargs['role'] = self.ADMINISTRATOR
         user, client = self._create_user(**kwargs)
-        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        response = client.get(self.in_type_uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -71,7 +71,7 @@ class TestInventoryType(BaseTest, APITestCase):
         kwargs['is_superuser'] = False
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
-        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        response = client.get(self.in_type_uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -89,7 +89,7 @@ class TestInventoryType(BaseTest, APITestCase):
             {'user': user, 'role_text': self.PROJECT_OWNER}
             ]
         self.project.process_members(members)
-        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        response = client.get(self.in_type_uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -103,7 +103,7 @@ class TestInventoryType(BaseTest, APITestCase):
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         self.project.set_role(user, Membership.PROJECT_MANAGER)
-        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        response = client.get(self.in_type_uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -117,7 +117,7 @@ class TestInventoryType(BaseTest, APITestCase):
         kwargs['role'] = self.DEFAULT_USER
         user, client = self._create_user(**kwargs)
         self.project.set_role(user, Membership.PROJECT_USER)
-        response = client.get(self.in_type_uri, format='json', **self._HEADERS)
+        response = client.get(self.in_type_uri, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_403_FORBIDDEN}, content: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg)
@@ -741,7 +741,7 @@ class TestProject(BaseTest, APITestCase):
         data['name'] = 'Test Project 01'
         data['inventory_type_public_id'] = "qwertyuiop"
         response = getattr(self.client, method)(
-            self.project_uri, data=data, format='json', **self._HEADERS)
+            self.project_uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -756,7 +756,7 @@ class TestProject(BaseTest, APITestCase):
         data = {}
         data['name'] = 'Test Project 01'
         response = getattr(self.client, method)(
-            self.project_uri, data=data, format='json', **self._HEADERS)
+            self.project_uri, data=data, format='json', **self.HEADERS)
         msg = "Response: {} should be {}, content: {}".format(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
@@ -792,7 +792,7 @@ class TestProject(BaseTest, APITestCase):
         su['members'] = [
             {'username': 'Garbage_Name', 'role': self.PROJECT_USER}
             ]
-        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        response = client.post(uri, data=su, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -807,7 +807,7 @@ class TestProject(BaseTest, APITestCase):
         su['members'] = [
             {'username': user.username, 'role': role}
             ]
-        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        response = client.post(uri, data=su, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -821,7 +821,7 @@ class TestProject(BaseTest, APITestCase):
         su['members'] = [
             {'username': user.username, 'role': ''}
             ]
-        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        response = client.post(uri, data=su, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
@@ -835,7 +835,7 @@ class TestProject(BaseTest, APITestCase):
         su['members'] = [
             {'username': user.username, 'role': None}
             ]
-        response = client.post(uri, data=su, format='json', **self._HEADERS)
+        response = client.post(uri, data=su, format='json', **self.HEADERS)
         msg = (f"Response: {response.status_code} should be "
                f"{status.HTTP_400_BAD_REQUEST}, content: {response.data}")
         self.assertEqual(
