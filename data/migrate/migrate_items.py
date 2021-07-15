@@ -215,19 +215,24 @@ class MigrateItem(MigrateBase):
             for idx, spec in enumerate(specifications, start=1):
                 dcs = []
 
-                for key in keys:
-                    value = spec.get(key)
+                try:
+                    for key in keys:
+                        value = spec.get(key)
 
-                    if isinstance(value, six.string_types):
-                        value = value.encode('utf-8')
+                        if isinstance(value, six.string_types):
+                            value = value.encode('utf-8')
 
-                    dcs.append(value)
+                        dcs.append(value)
 
-                if not (idx % 100):
-                    sys.stdout.write("Processed {} dynamic "
-                                     "columns.\n".format(idx))
+                    if not (idx % 100):
+                        sys.stdout.write("Processed {} dynamic "
+                                         "columns.\n".format(idx))
 
-                writer.writerow(dcs)
+                    if len(dcs) > 0:
+                        writer.writerow(dcs)
+                except Exception as e:
+                    print("item_number: {}".format(spec.get('item_number')))
+                    raise e
 
             sys.stdout.write("Processed a total of {} dynamic "
                              "columns.\n".format(idx))
