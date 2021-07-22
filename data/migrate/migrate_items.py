@@ -136,6 +136,9 @@ class MigrateItem(MigrateBase):
             self._create_item(project)
             self._create_key_value(slug_map)
 
+    #
+    # Dump Inventory
+    #
     def _create_item_csv(self):
         specifications = []
 
@@ -157,8 +160,11 @@ class MigrateItem(MigrateBase):
                 'ctime',
                 'mtime'
                 ])
+            items = Item.objects.all()
+            sys.stdout.write("Num of items: {}\n".format(len(items)))
+            total_item_numbers = []
 
-            for record in Item.objects.all():
+            for idx, record in enumerate(items, start=1):
                 lcs = ','.join([code.segment
                                 for code in record.location_code.all()
                                 if code])
@@ -169,6 +175,12 @@ class MigrateItem(MigrateBase):
                 item_number = self._process_field(record.item_number)
                 item_number_mfg = self._process_field(record.item_number_mfg)
                 item_number_dst = self._process_field(record.item_number_dst)
+
+                if item_number in total_item_numbers:
+                    sys.stdout.write("Item number: {} already exists.\n".format(
+                        item_number))
+
+                total_item_numbers.append(item_number)
 
                 writer.writerow([
                     title,
@@ -205,6 +217,13 @@ class MigrateItem(MigrateBase):
                     dc[spec.name] = spec.value
 
                 specifications.append(dc)
+
+                if not (idx % 100):
+                    sys.stdout.write(("Processed {} item records.\n"
+                                      ).format(idx))
+
+            sys.stdout.write(("Processed a total of {} item records.\n\n"
+                              ).format(idx))
 
         keys = self.__get_dynamic_column_keys(specifications)
 
@@ -271,8 +290,10 @@ class MigrateItem(MigrateBase):
                 'ctime',
                 'mtime',
                 ])
+            costs = Cost.objects.all()
+            sys.stdout.write("\nNum of cost records: {}\n".format(len(costs)))
 
-            for record in Cost.objects.all():
+            for idx, record in enumerate(costs, start=1):
                 date_acquired = (record.date_acquired.isoformat()
                                  if record.date_acquired else '')
                 invoice_number = self._process_field(record.invoice_number)
@@ -296,10 +317,20 @@ class MigrateItem(MigrateBase):
 
                 if (not (dst_name or mfg_name) or not invoice_number
                     or not date_acquired):
-                    print(("item_number: '{}', date_acquired: '{}' missing "
-                           "supplier, invoice_number, or date_acquired"
-                           ).format(item_number, date_acquired))
+                    sys.stdout.write(("item_number: '{}', date_acquired: '{}' "
+                                      "missing supplier, invoice_number, or "
+                                      "date_acquired").format(
+                                         item_number, date_acquired))
+                if not (idx % 100):
+                    sys.stdout.write("Processed {} cost records.\n".format(idx))
 
+            sys.stdout.write("Processed a total of {} cost records.\n".format(
+                idx))
+
+
+    #
+    # Create Inventory
+    #
     def _create_invoice(self, project):
         with open(self._COST, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
