@@ -11,6 +11,8 @@ import datetime
 from dateutil import parser as duparser
 from collections import Counter
 
+#from utf8_csv_encoding import UnicodeWriter
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))))
@@ -228,6 +230,8 @@ class MigrateItem(MigrateBase):
         keys = self.__get_dynamic_column_keys(specifications)
 
         with open(self._DYNAMIC_COLUMN, mode='w') as csvfile:
+            #writer = UnicodeWriter(csvfile, dialect=csv.excel_tab,
+            #                       quoting=csv.QUOTE_ALL)
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             writer.writerow(keys)
 
@@ -237,10 +241,7 @@ class MigrateItem(MigrateBase):
                 try:
                     for key in keys:
                         value = spec.get(key)
-
-                        if isinstance(value, six.string_types):
-                            value = value.encode('utf-8')
-
+                        value = "" if value is None else value
                         dcs.append(value)
 
                     if not (idx % 100):
@@ -250,7 +251,8 @@ class MigrateItem(MigrateBase):
                     if len(dcs) > 0:
                         writer.writerow(dcs)
                 except Exception as e:
-                    print("item_number: {}".format(spec.get('item_number')))
+                    print("item_number: {}, {}".format(
+                        spec.get('item_number'), dcs))
                     raise e
 
             sys.stdout.write("Processed a total of {} dynamic "
