@@ -69,3 +69,7 @@ The international currencies are in file **codes-all.csv** and can be
 on `ISO 4217 <http://www.iso.org/iso/currency_codes>`_. This file **does not**
 use ISO 3166-1 Alpha-2 country codes, so parsing for coultry is a bit more
 difficult.
+
+Currency Symbols
+----------------
+https://www.xe.com/symbols.php
