@@ -281,7 +281,7 @@ class LocationFormat(TimeModelMixin,
         help_text=_("Determine the character position definition where "
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
                     "any hard coded character. ex. \\a\\d\\d\\d could be "
-                    "B001 or \\a@\d\d could be D@99."))
+                    "B001 or \\a@\\d\\d could be D@99."))
     segment_order =  models.PositiveIntegerField(
         verbose_name=_("Segment Order"), default=0,
         help_text=_("A number indicating the order that this segment will "
