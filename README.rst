@@ -2,8 +2,8 @@
 Project Based Parts Management Service
 **************************************
 
-.. image:: http://img.shields.io/pypi/l/django-dcolumns.svg
-   :target: https://pypi.python.org/pypi/django-dcolumns
+.. image:: http://img.shields.io/pypi/l/inventory.svg
+   :target: https://pypi.python.org/pypi/inventory
    :alt: License
 
 .. image:: https://app.travis-ci.com/cnobile2012/inventory.svg?branch=develop
