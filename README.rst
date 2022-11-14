@@ -2,8 +2,8 @@
 Project Based Parts Management Service
 **************************************
 
-.. image:: http://img.shields.io/pypi/l/inventory.svg
-   :target: https://pypi.python.org/pypi/inventory
+.. image:: https://img.shields.io/badge/License-MIT-blue.svg
+   :target: https://lbesson.mit-license.org/
    :alt: License
 
 .. image:: https://app.travis-ci.com/cnobile2012/inventory.svg?branch=develop
