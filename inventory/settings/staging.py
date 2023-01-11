@@ -13,8 +13,8 @@ DATABASES = {
         #'HOST': '/var/run/mysqld/mysqld.sock',
         'PORT': '3306',
          'OPTIONS': {
-            'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
-                             "SET default_storage_engine=INNODB;"),
+            #'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
+            #                 "SET default_storage_engine=InnoDB;"),
             'charset': 'utf8'
             },
         }
@@ -36,6 +36,7 @@ DATABASES = {
 ALLOWED_HOSTS = [
     '.tetrasys-design.net',
     '45.76.60.126',
+    '.vultr.com',
     ]
 
 # email settings
