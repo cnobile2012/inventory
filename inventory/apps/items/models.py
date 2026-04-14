@@ -11,9 +11,9 @@
 #----------------------------------
 
 from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
+#from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 
 from inventory.settings import CONDITION_TYPES
@@ -27,9 +27,11 @@ class BaseBusiness(Base):
     address_01 = models.CharField(max_length=50, blank=True, null=True)
     address_02 = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=30, blank=True, null=True)
-    state = models.ForeignKey(Region, blank=True, null=True)
+    state = models.ForeignKey(Region, blank=True, null=True,
+                              on_delete=models.CASCADE)
     postal_code = models.CharField(max_length=15, blank=True, null=True)
-    country = models.ForeignKey(Country, blank=True, null=True)
+    country = models.ForeignKey(Country, blank=True, null=True,
+                                on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, blank=True, null=True)
     fax = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(max_length=75, blank=True, null=True)
@@ -39,7 +41,7 @@ class BaseBusiness(Base):
         abstract = True
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Distributor(BaseBusiness):
 
     def __str__(self):
@@ -49,7 +51,7 @@ class Distributor(BaseBusiness):
         ordering = ('name',)
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Manufacturer(BaseBusiness):
 
     def __str__(self):
@@ -59,10 +61,11 @@ class Manufacturer(BaseBusiness):
         ordering = ('name',)
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Category(Base):
     parent = models.ForeignKey("self", blank=True, null=True,
-                               default=0, related_name='children')
+                               default=0, related_name='children',
+                               on_delete=models.CASCADE)
     name = models.CharField(max_length=248)
     path = models.CharField(max_length=1016, editable=False)
 
@@ -241,7 +244,7 @@ class Category(Base):
         ordering = ('path',)
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Currency(Base):
     symbol =  models.CharField(max_length=1)
     currency =  models.CharField(max_length=20)
@@ -254,15 +257,17 @@ class Currency(Base):
         ordering = ('symbol',)
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Cost(Base):
     value = models.DecimalField(max_digits=10, decimal_places=4)
-    currency = models.ForeignKey("Currency", default=1)
+    currency = models.ForeignKey("Currency", default=1, on_delete=models.CASCADE)
     date_acquired = models.DateField(blank=True, null=True)
     invoice_number = models.CharField(max_length=20, blank=True, null=True)
-    item = models.ForeignKey("Item")
-    distributor = models.ForeignKey(Distributor, blank=True, null=True)
-    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
+    item = models.ForeignKey("Item", on_delete=models.CASCADE)
+    distributor = models.ForeignKey(Distributor, blank=True, null=True,
+                                    on_delete=models.CASCADE)
+    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True,
+                                    on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s: %s (%s)" % (self.currency, self.value, self.item)
@@ -271,11 +276,11 @@ class Cost(Base):
         ordering = ('item__title', 'invoice_number', 'date_acquired',)
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Specification(Base):
     name = models.CharField(max_length=248, blank=True, null=True)
     value = models.CharField(max_length=248, blank=True, null=True)
-    item = models.ForeignKey("Item")
+    item = models.ForeignKey("Item", on_delete=models.CASCADE)
 
     def _displayItemTitle(self):
         return "%s" % self.item.title
@@ -288,7 +293,7 @@ class Specification(Base):
         ordering = ('name',)
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Item(Base):
     title = models.CharField(max_length=248, verbose_name=_("Description"))
     item_number = models.CharField(max_length=50, db_index=True,
@@ -306,10 +311,10 @@ class Item(Base):
                                            verbose_name=_("Location Codes"))
     categories = models.ManyToManyField(Category,
                                         verbose_name=_("Categories"))
-    distributor = models.ForeignKey(Distributor, db_index=True,
-                                    blank=True, null=True)
-    manufacturer = models.ForeignKey(Manufacturer, db_index=True,
-                                     blank=True, null=True)
+    distributor = models.ForeignKey(Distributor, db_index=True, blank=True,
+                                    null=True, on_delete=models.CASCADE)
+    manufacturer = models.ForeignKey(Manufacturer, db_index=True, blank=True,
+                                     null=True, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     obsolete = models.BooleanField(default=False)
     purge = models.BooleanField(default=False)

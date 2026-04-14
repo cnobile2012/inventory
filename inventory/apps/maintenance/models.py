@@ -9,17 +9,17 @@
 #----------------------------------
 
 from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
+#from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from inventory.apps.utils.models import Base
 from inventory.apps.utils import modelfields
 from inventory.apps.utils.utilities import FormatParser
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class LocationCodeDefault(Base):
     segment_length = models.PositiveIntegerField(
         verbose_name=_("Segment Length"), editable=False)
@@ -103,16 +103,18 @@ class LocationCodeDefault(Base):
         verbose_name_plural = _("Location Code Defaults")
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class LocationCodeCategory(Base):
     parent = models.ForeignKey("self", blank=True, null=True,
-                               default=0, related_name='children')
+                               default=0, related_name='children',
+                               on_delete=models.CASCADE)
     segment = models.CharField(
         max_length=248, db_index=True,
         help_text=_("See the LocationCodeDefault.description for the " +
                     "format used."))
     path = models.CharField(max_length=248, editable=False)
-    char_definition = models.ForeignKey(LocationCodeDefault, editable=False)
+    char_definition = models.ForeignKey(LocationCodeDefault, editable=False,
+                                        on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
         super(LocationCodeCategory, self).__init__(*args, **kwargs)
@@ -222,7 +224,6 @@ class LocationCodeCategory(Base):
     ##     record = LocationCodeCategory.objects.get(segment=segment)
 
     ##     if record:
-            
 
     ##     #return self.segment_length
 

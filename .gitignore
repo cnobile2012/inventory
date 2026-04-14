@@ -16,7 +16,8 @@ db-snapshots/*.sql
 db-snapshots/*.sql.gz
 logs/*.log*
 *.csv
-old
+*old
+*.tar*
 
 # C extensions
 *.so

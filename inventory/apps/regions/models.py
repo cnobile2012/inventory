@@ -23,9 +23,9 @@
 # $Revision: 12 $
 #----------------------------------
 from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
+#from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from inventory.apps.utils.models import Base
 
@@ -37,7 +37,7 @@ class ChooseField(object):
         pass
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Country(Base):
     country = models.CharField(max_length=100)
     country_code_2 = models.CharField(
@@ -57,9 +57,9 @@ class Country(Base):
         ordering = ('country',)
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Region(Base):
-    country = models.ForeignKey(Country)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
     region_code = models.CharField(max_length=10, db_index=True,
                                    verbose_name="Region Code")
     region = models.CharField(max_length=100)

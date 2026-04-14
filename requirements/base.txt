@@ -1,5 +1,5 @@
-django==1.11.17
-django-redis-cache==1.8.1
+django
+django-redis-cache
 djangorestframework
 djangorestframework-xml
 djangorestframework-yaml
@@ -15,7 +15,6 @@ mysqlclient
 pytz
 Pillow
 
-redis==2.10.6
+redis
 rest_condition
 markdown
-

@@ -11,11 +11,9 @@
 #------------------------------
 
 from django import forms
-from django.forms.fields import EMPTY_VALUES
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
-from django.utils import six
+from django.utils.translation import gettext_lazy as _
 
 from inventory.apps.items.models import Manufacturer, Distributor, \
      Category, Currency, Cost, Specification, Item
@@ -28,11 +26,12 @@ log = getLogger()
 
 # Custom field types
 class RegionTypedChoiceField(forms.TypedChoiceField):
+    EMPTY_VALUES = (None, '', [])
 
     def __init__(self, *args, **kwargs):
         empty_label = kwargs.pop('empty_label', None)
 
-        if isinstance(empty_label, six.string_types):
+        if isinstance(empty_label, str):
             choices = list(kwargs.get('choices', ()))
             choices.insert(0, (0, empty_label))
             kwargs['choices'] = choices
@@ -44,15 +43,15 @@ class RegionTypedChoiceField(forms.TypedChoiceField):
         """
         Validates that the input is in self.choices.
         """
-        if self.required and value in EMPTY_VALUES:
+        if self.required and value in self.EMPTY_VALUES:
             raise ValidationError(self.error_messages['required'])
 
-        if value in EMPTY_VALUES:
+        if value in self.EMPTY_VALUES:
             value = u''
 
         #value = smart_unicode(value)
 
-        if value == self.empty_value or value in EMPTY_VALUES:
+        if value == self.empty_value or value in self.EMPTY_VALUES:
             return self.empty_value
 
         return value
