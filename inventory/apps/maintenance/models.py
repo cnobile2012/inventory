@@ -30,7 +30,7 @@ class LocationCodeDefault(Base):
         help_text=_("Determine the character position definition where "
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
                     "any char='any char'. ex. \\a\\d\\d\\d could be B001 "
-                    "or \\a@\d\d could be D@99"))
+                    "or \\a@\\d\\d could be D@99"))
     segment_order =  models.PositiveIntegerField(
         default=0, verbose_name=_("Segment Order"),
         help_text=_("A number indicating the order that this segment will "
