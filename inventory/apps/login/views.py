@@ -84,6 +84,7 @@ class ProcessLogin(ViewBase):
         password = request.POST.get('password')
         context = {}
         user = auth.authenticate(username=username, password=password)
+        self._log.info("User: %s, just logged in.", user)
 
         if user is not None:
             if user.is_active:
