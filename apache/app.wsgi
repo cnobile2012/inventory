@@ -27,7 +27,6 @@
 #             |--admin.py
 #             |--models.py
 #             `--views.py
-#
 
 import os, sys
 
@@ -40,6 +39,6 @@ not sys.path.count(BASE_SITE_PATH) and sys.path.insert(0, BASE_SITE_PATH)
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ['DJANGO_SETTINGS_MODULE'] = '%s.settings' % SITE
+os.environ['DJANGO_SETTINGS_MODULE'] = f"{SITE}.settings"
 
 application = get_wsgi_application()
