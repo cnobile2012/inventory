@@ -7,6 +7,7 @@ djangorestframework-yaml
 docutils
 dateutils
 python-dateutil
+setuptools
 
 hiredis
 ipython
@@ -16,5 +17,6 @@ pytz
 Pillow
 
 redis
+redis[hiredis]
 rest_condition
 markdown

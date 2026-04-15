@@ -10,7 +10,7 @@
 # $Revision: 78 $
 #------------------------------
 
-from django.utils import six
+from io import StringIO
 from django import template
 from inventory.setupenv import getLogger
 
@@ -71,7 +71,7 @@ class BreadcrumbNode(template.Node):
         except:
             locations = eval(self._pagesVar.var)
 
-        if not isinstance(self._imgVar, (str, unicode)):
+        if not isinstance(self._imgVar, str):
             try:
                 img = self._imgVar.resolve(context)
             except:
@@ -86,7 +86,7 @@ class BreadcrumbNode(template.Node):
         """
         Assemble the breadcrumbs.
         """
-        buff = six.StringIO()
+        buff = StringIO()
         count = 0
         size = len(locations) - 1
 

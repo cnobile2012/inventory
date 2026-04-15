@@ -8,7 +8,7 @@
 # $Revision: 87 $
 #----------------------------------
 
-from django.conf.urls import include, url
+from django.urls import include, re_path
 
 from inventory.apps.reports.views import (
     view_item_search, view_item_record, view_distributor_search,
@@ -17,11 +17,11 @@ from inventory.apps.reports.views import (
 
 
 urlpatterns = [
-    url(r'^view_item/$', view_item_search),
-    url(r'^view_item/(?P<pk>\d+)/$', view_item_record),
-    url(r'^view_distributor/$', view_distributor_search),
-    url(r'^view_distributor/(?P<pk>\d+)/$', view_distributor_record),
-    url(r'^view_manufacturer/$', view_manufacturer_search),
-    url(r'^view_manufacturer/(?P<pk>\d+)/$', view_manufacturer_record),
-    url(r'^restock/$', restock_search),
+    re_path(r'^view_item/$', view_item_search),
+    re_path(r'^view_item/(?P<pk>\d+)/$', view_item_record),
+    re_path(r'^view_distributor/$', view_distributor_search),
+    re_path(r'^view_distributor/(?P<pk>\d+)/$', view_distributor_record),
+    re_path(r'^view_manufacturer/$', view_manufacturer_search),
+    re_path(r'^view_manufacturer/(?P<pk>\d+)/$', view_manufacturer_record),
+    re_path(r'^restock/$', restock_search),
     ]

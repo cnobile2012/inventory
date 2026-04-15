@@ -8,11 +8,11 @@
 # $Revision: 87 $
 #----------------------------------
 
-from django.conf.urls import include, url
+from django.urls import re_path
 
 from inventory.apps.items.views import frontPage, processRegion
 
 urlpatterns = [
-    url(r'^$', frontPage),
-    url(r'^lookup/regions/', processRegion),
+    re_path(r'^$', frontPage),
+    re_path(r'^lookup/regions/', processRegion),
     ]

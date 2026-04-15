@@ -8,13 +8,13 @@
 # $Revision: 87 $
 #----------------------------------
 
-from django.conf.urls import include, url
+from django.urls import include, re_path
 
 from inventory.apps.maintenance.views import purge, confirm, delete
 
 
 urlpatterns = [
-    url(r'^purge/$', purge),
-    url(r'^confirm/$', confirm),
-    url(r'^delete/$', delete),
+    re_path(r'^purge/$', purge),
+    re_path(r'^confirm/$', confirm),
+    re_path(r'^delete/$', delete),
     ]

@@ -14,10 +14,8 @@ DATABASES = {
         'USER': 'inventory',
         # Not used with sqlite3.
         'PASSWORD': 'inventory',
-        # Set to empty string for localhost. Not used with sqlite3.
-        'HOST': 'localhost',
-        # Set to empty string for default. Not used with sqlite3.
-        'PORT': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
         'OPTIONS': {
             'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
                              "SET default_storage_engine=INNODB;"),
@@ -25,6 +23,18 @@ DATABASES = {
             },
         }
     }
+
+CACHES.update({
+    'default': {
+        'BACKEND': 'redis_cache.RedisDummyCache',
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'unix:///run/redis/redis-server.sock',
+        'OPTIONS': {
+            'db': 0,
+            #'PICKLE_VERSION': 2,
+            },
+        },
+    })
 
 #KEY_PREFIX = 'dev'
 #KEY_FUNCTION = 'inventory.common.caching.make_key'
@@ -43,7 +53,7 @@ DATABASES = {
 # Django Debug Toolbar
 ###############################################################################
 # Add to the MIDDLEWARE_CLASSES here.
-MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')

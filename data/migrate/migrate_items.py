@@ -22,7 +22,6 @@ sys.path.append(MIGRATE_PATH)
 #print(sys.path)
 
 import django; django.setup()
-from django.utils import six
 from django.template.defaultfilters import slugify
 
 from migrate import setup_logger, MigrateBase

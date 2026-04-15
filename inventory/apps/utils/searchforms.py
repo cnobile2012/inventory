@@ -9,7 +9,6 @@
 #----------------------------------
 
 from django import forms
-from django.utils import six
 
 from inventory.apps.items.models import (
     Item, Category, Distributor, Manufacturer)
@@ -60,7 +59,7 @@ class FindChoices(object):
 
     @classmethod
     def _findFieldList(self, records, field, defaultOption=True, optionName=""):
-        if not len(field) or not isinstance(field, six.string_types):
+        if not len(field) or not isinstance(field, str):
             msg = "Invalid field value and type can only be a 'str' or" + \
                   " 'unicode'."
             raise TypeError(msg)

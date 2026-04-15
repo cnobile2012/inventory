@@ -34,6 +34,17 @@ class IPList(list):
 
 DEBUG = False
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': '/var/run/redis/redis-server.sock',
+        'OPTIONS': {
+            'DB': 0,
+            'PICKLE_VERSION': 2,
+            },
+        },
+    }
+
 ADMINS = (
     ('Sysadmins', 'carl.nobile@gmail.com'),
     )
@@ -109,7 +120,7 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'bjwykl6a7km26!0bsx%$v8g#s=+s5-(v2&d0^r8tl5++4ip$u4'
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     # UpdateCacheMiddleware must be first on the list
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -125,11 +136,10 @@ MIDDLEWARE_CLASSES = [
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '/var/run/redis/redis-server.sock',
+        'LOCATION': 'unix:///run/redis/redis-server.sock',
         'OPTIONS': {
-            'DB': 0,
-            'PARSER_CLASS': 'redis.connection.HiredisParser',
-            'PICKLE_VERSION': 2,
+            'db': 0,
+            #'PICKLE_VERSION': 2,
             },
         },
     }
