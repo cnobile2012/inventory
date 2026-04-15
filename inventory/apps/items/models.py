@@ -10,8 +10,6 @@
 # $Revision: 88 $
 #----------------------------------
 
-from __future__ import unicode_literals
-#from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -41,7 +39,6 @@ class BaseBusiness(Base):
         abstract = True
 
 
-#@python_2_unicode_compatible
 class Distributor(BaseBusiness):
 
     def __str__(self):
@@ -51,7 +48,6 @@ class Distributor(BaseBusiness):
         ordering = ('name',)
 
 
-#@python_2_unicode_compatible
 class Manufacturer(BaseBusiness):
 
     def __str__(self):
@@ -61,7 +57,6 @@ class Manufacturer(BaseBusiness):
         ordering = ('name',)
 
 
-#@python_2_unicode_compatible
 class Category(Base):
     parent = models.ForeignKey("self", blank=True, null=True,
                                default=0, related_name='children',
@@ -76,7 +71,8 @@ class Category(Base):
     def _getCategoryPath(self, current=True):
         parents = Category.getParents(self)
         if current: parents.append(self)
-        return Category.getSeparator().join([parent.name for parent in parents])
+        return Category.getSeparator().join([parent.name
+                                             for parent in parents])
 
     @classmethod
     def getParents(self, category):
@@ -149,7 +145,8 @@ class Category(Base):
             except StopIteration:
                 pass
 
-        return sorted(tree, cmp=lambda x,y: cmp(x.path.lower(), y.path.lower()))
+        return sorted(tree,
+                      cmp=lambda x,y: cmp(x.path.lower(), y.path.lower()))
 
     @classmethod
     def getAllChildPathsForCategoryList(self, categoryList):
@@ -244,7 +241,6 @@ class Category(Base):
         ordering = ('path',)
 
 
-#@python_2_unicode_compatible
 class Currency(Base):
     symbol =  models.CharField(max_length=1)
     currency =  models.CharField(max_length=20)
@@ -257,10 +253,10 @@ class Currency(Base):
         ordering = ('symbol',)
 
 
-#@python_2_unicode_compatible
 class Cost(Base):
     value = models.DecimalField(max_digits=10, decimal_places=4)
-    currency = models.ForeignKey("Currency", default=1, on_delete=models.CASCADE)
+    currency = models.ForeignKey("Currency", default=1,
+                                 on_delete=models.CASCADE)
     date_acquired = models.DateField(blank=True, null=True)
     invoice_number = models.CharField(max_length=20, blank=True, null=True)
     item = models.ForeignKey("Item", on_delete=models.CASCADE)
@@ -276,7 +272,6 @@ class Cost(Base):
         ordering = ('item__title', 'invoice_number', 'date_acquired',)
 
 
-#@python_2_unicode_compatible
 class Specification(Base):
     name = models.CharField(max_length=248, blank=True, null=True)
     value = models.CharField(max_length=248, blank=True, null=True)
@@ -293,7 +288,6 @@ class Specification(Base):
         ordering = ('name',)
 
 
-#@python_2_unicode_compatible
 class Item(Base):
     title = models.CharField(max_length=248, verbose_name=_("Description"))
     item_number = models.CharField(max_length=50, db_index=True,

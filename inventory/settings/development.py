@@ -27,11 +27,10 @@ DATABASES = {
 CACHES.update({
     'default': {
         'BACKEND': 'redis_cache.RedisDummyCache',
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        # 'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'unix:///run/redis/redis-server.sock',
         'OPTIONS': {
             'db': 0,
-            #'PICKLE_VERSION': 2,
             },
         },
     })
@@ -53,7 +52,7 @@ CACHES.update({
 # Django Debug Toolbar
 ###############################################################################
 # Add to the MIDDLEWARE_CLASSES here.
-MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+#MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')
@@ -61,7 +60,7 @@ INSTALLED_APPS.append('debug_toolbar')
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 
 # Setup the IP address from the internal clients.
-#INTERNAL_IPS = IPList(['127.0.0.1', '10.10.10.1', '192.168.1.0/24'])
+INTERNAL_IPS = ['127.0.0.1', '192.168.1.0/24']
 
 # If it were working, set it to follow redirects by default.
 DEBUG_TOOLBAR_CONFIG = {

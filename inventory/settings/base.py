@@ -29,6 +29,7 @@ class IPList(list):
                     return True
         except:
             pass
+
         return False
 
 
@@ -122,6 +123,8 @@ SECRET_KEY = 'bjwykl6a7km26!0bsx%$v8g#s=+s5-(v2&d0^r8tl5++4ip$u4'
 
 MIDDLEWARE = [
     # UpdateCacheMiddleware must be first on the list
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -139,7 +142,6 @@ CACHES = {
         'LOCATION': 'unix:///run/redis/redis-server.sock',
         'OPTIONS': {
             'db': 0,
-            #'PICKLE_VERSION': 2,
             },
         },
     }
@@ -171,18 +173,18 @@ AUTH_PASSWORD_VALIDATORS = [
     ]
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'inventory.common',
-    'inventory.apps.items',
     'inventory.apps.regions',
+    'inventory.apps.items',
     'inventory.apps.login',
-    'inventory.apps.reports',
+    # 'inventory.apps.reports',
     'inventory.apps.maintenance',
     ]
 

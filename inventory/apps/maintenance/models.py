@@ -8,8 +8,6 @@
 # $Revision: 84 $
 #----------------------------------
 
-from __future__ import unicode_literals
-#from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -19,7 +17,6 @@ from inventory.apps.utils import modelfields
 from inventory.apps.utils.utilities import FormatParser
 
 
-#@python_2_unicode_compatible
 class LocationCodeDefault(Base):
     segment_length = models.PositiveIntegerField(
         verbose_name=_("Segment Length"), editable=False)
@@ -103,7 +100,6 @@ class LocationCodeDefault(Base):
         verbose_name_plural = _("Location Code Defaults")
 
 
-#@python_2_unicode_compatible
 class LocationCodeCategory(Base):
     parent = models.ForeignKey("self", blank=True, null=True,
                                default=0, related_name='children',
