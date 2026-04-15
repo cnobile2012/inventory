@@ -20,6 +20,15 @@ DATABASES = {
         }
     }
 
+CACHES.update({
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'unix:///run/redis/redis-server.sock',
+        'OPTIONS': {
+            'db': 0,
+            },
+        },
+    })
 
 ## KEY_PREFIX = 'stg'
 ## #KEY_FUNCTION = 'testsite.common.caching.make_key'
