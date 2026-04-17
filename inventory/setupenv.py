@@ -34,12 +34,12 @@ def initializeLogging():
     logger.addHandler(handler)
     logger.info("Logging is initialized for the %s application.", LOGGER_NAME)
 
-def getLogger(name=LOGGER_NAME):
+def getLogger(name: str=LOGGER_NAME):
     """
     Get the default logger or the named logger.
 
-    @keyword name: The logger to get.
-    @return: The logging object.
+    :param str name: The logger to get.
+    :returns: The logging object.
     """
     if name not in logging.Logger.manager.loggerDict:
         initializeLogging()

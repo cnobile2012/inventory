@@ -12,7 +12,7 @@ DATABASES = {
         'HOST': 'localhost',
         #'HOST': '/var/run/mysqld/mysqld.sock',
         'PORT': '3306',
-         'OPTIONS': {
+        'OPTIONS': {
             #'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
             #                 "SET default_storage_engine=InnoDB;"),
             'charset': 'utf8'
@@ -30,8 +30,8 @@ CACHES.update({
         },
     })
 
-## KEY_PREFIX = 'stg'
-## #KEY_FUNCTION = 'testsite.common.caching.make_key'
+#KEY_PREFIX = 'stg'
+#KEY_FUNCTION = 'testsite.common.caching.make_key'
 
 # Add to the MIDDLEWARE_CLASSES here.
 #MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
@@ -46,6 +46,7 @@ ALLOWED_HOSTS = [
     '.tetrasys-design.net',
     '45.76.60.126',
     '.vultr.com',
+    '.homelinux.org',
     ]
 
 # email settings

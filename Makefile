@@ -7,7 +7,8 @@
 #
 
 PREFIX		= $(shell pwd)
-PACKAGE_DIR	= $(shell echo $${PWD\#\#*/})
+BASE_DIR	= $(shell basename $(PREFIX))
+PACKAGE_DIR	= $(BASE_DIR)  #-$(VERSION)$(TEST_TAG)
 APACHE_DIR	= $(PREFIX)/apache
 DOCS_DIR	= $(PREFIX)/docs
 LOGS_DIR	= $(PREFIX)/logs

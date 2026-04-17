@@ -52,7 +52,7 @@ CACHES.update({
 # Django Debug Toolbar
 ###############################################################################
 # Add to the MIDDLEWARE_CLASSES here.
-#MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 # Add to the INSTALLED_APPS here.
 INSTALLED_APPS.append('debug_toolbar')
@@ -72,6 +72,12 @@ EMAIL_HOST = 'localhost'
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_REPLY_TO = 'donotreply@'
+
+ALLOWED_HOSTS = [
+    '192.168.1.109',
+    'inventory.homelinux.org',
+    'tetrasys.homelinux.org',
+    ]
 
 # Document Email Contacts
 DOC_CONTACTS = (

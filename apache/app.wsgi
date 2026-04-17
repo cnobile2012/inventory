@@ -23,12 +23,14 @@
 #         |--settings.py
 #         |--setupenv.py
 #         |--urls.py
-#         '-- <app>
+#         `-- <app>
 #             |--admin.py
 #             |--models.py
 #             `--views.py
 
-import os, sys
+import os
+import sys
+from django.core.wsgi import get_wsgi_application
 
 SITE = "inventory"
 APACHE_CONF = os.path.dirname(__file__)
@@ -36,8 +38,6 @@ BASE_SITE_PATH = os.path.abspath(os.path.join(APACHE_CONF, '..'))
 
 # DO NOT EDIT BELOW THIS LINE
 not sys.path.count(BASE_SITE_PATH) and sys.path.insert(0, BASE_SITE_PATH)
-
-from django.core.wsgi import get_wsgi_application
 
 os.environ['DJANGO_SETTINGS_MODULE'] = f"{SITE}.settings"
 

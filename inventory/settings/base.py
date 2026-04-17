@@ -123,8 +123,6 @@ SECRET_KEY = 'bjwykl6a7km26!0bsx%$v8g#s=+s5-(v2&d0^r8tl5++4ip$u4'
 
 MIDDLEWARE = [
     # UpdateCacheMiddleware must be first on the list
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -223,6 +221,8 @@ LOG_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'logs'))
 not os.path.isdir(LOG_DIR) and os.mkdir(LOG_DIR, 0o0775)
 LOG_ENV = "base"
 
+LOGGING_CONFIG = None
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -255,7 +255,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'level': 'DEBUG',
             'formatter': 'verbose',
-            'filename': '%s/%s-search.log' % (LOG_DIR, LOG_ENV),
+            'filename': f'{LOG_DIR}/{LOG_ENV}-search.log',
             'maxBytes': 50000000,  # 50 Meg bytes
             'backupCount': 5,
             },

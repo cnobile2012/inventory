@@ -8,7 +8,8 @@
 # $Revision: 55 $
 #----------------------------------
 
-import string, re
+import re
+import string
 
 
 class FormatParser(object):
@@ -39,9 +40,9 @@ class FormatParser(object):
         """
         FormatParser constructor.
 
-        @param formats: A sequence of various formats that this mini
-                        language can parse.
-        @param delimiter: The delimiter used between formats.
+        :param str formats: A sequence of various formats that this mini
+                            language can parse.
+        :param str delimiter: The delimiter used between formats.
         """
         self.__formats = formats
         self.__delimiter = delimiter
