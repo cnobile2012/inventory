@@ -8,7 +8,7 @@
 # $Revision: 14 $
 #----------------------------------
 
-class ViewBase(object):
+class ViewBase:
     __CRUMBS_KEY = 'breadcrumbs'
 
     def __init__(self, log):

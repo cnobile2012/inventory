@@ -57,7 +57,10 @@ class Login(ViewBase):
         context['form'] = form
         context['redirect'] = redirect
         self._log.debug("Context dump for %s: %s", self.__module__, context)
-        return HttpResponse(tmpl.render(context))
+        response = HttpResponse(tmpl.render(context))
+        response.set_cookie("csrftoken", request.META.get("CSRF_COOKIE", ""),
+                            secure=True)
+        return response
 
 
 class Logout(ViewBase):
