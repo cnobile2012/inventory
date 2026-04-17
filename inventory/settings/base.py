@@ -123,13 +123,21 @@ SECRET_KEY = 'bjwykl6a7km26!0bsx%$v8g#s=+s5-(v2&d0^r8tl5++4ip$u4'
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+# Prevent JS access to session cookie
+SESSION_COOKIE_HTTPONLY = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# CSRF behavior (safe default)
+CSRF_COOKIE_HTTPONLY = False  # leave False unless you fully control JS strategy
+# SameSite (usually fine as-is, but explicit is better)
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
 
 MIDDLEWARE = [
     # UpdateCacheMiddleware must be first on the list
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
