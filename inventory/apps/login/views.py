@@ -1,12 +1,6 @@
 #
 # login/views.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2013-06-29 21:54:44 -0400 (Sat, 29 Jun 2013) $
-# $Revision: 77 $
-#----------------------------------
 
 import json
 
