@@ -4,6 +4,7 @@
 *#*#
 .DS_Store
 *.txt
+!NOTES.txt
 !base.txt
 !development.txt
 !production.txt

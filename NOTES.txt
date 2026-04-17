@@ -1,0 +1,36 @@
+Things to Remember
+==================
+
+This needs to be run whenever Django
+or other major app are updated.
+------------------------------------
+$ python manage.py collectstatic
+
+Be sure to:
+-----------
+$ cd /etc/apache2/mods-enabled/
+$ ln -s ../mods-available/ssl.conf
+$ ln -s ../mods-available/ssl.load
+$ ln -s ../mods-available/rewrite.load
+
+To test Apache is getting thing right
+-------------------------------------
+$ curl -I http://inventory.homelinux.org/static/admin/css/base.css
+You should now see:
+HTTP/1.1 301 Moved Permanently
+Date: Thu, 16 Apr 2026 23:54:46 GMT
+Server: Apache/2.4.58 (Ubuntu)
+Location: https://inventory.homelinux.org/static/admin/css/base.css
+Content-Type: text/html; charset=iso-8859-1
+
+$ curl -kI https://inventory.homelinux.org/static/admin/css/base.css
+Should return:
+HTTP/1.1 200 OK
+Date: Thu, 16 Apr 2026 23:54:50 GMT
+Server: Apache/2.4.58 (Ubuntu)
+Last-Modified: Thu, 16 Apr 2026 23:36:40 GMT
+ETag: "5a3c-64f9c4de7bc9d"
+Accept-Ranges: bytes
+Content-Length: 23100
+Vary: Accept-Encoding
+Content-Type: text/css
