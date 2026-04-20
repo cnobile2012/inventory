@@ -74,6 +74,7 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_REPLY_TO = 'donotreply@'
 
 ALLOWED_HOSTS = [
+    'localhost',
     '192.168.1.109',
     '172.220.244.125',
     'inventory.homelinux.org',

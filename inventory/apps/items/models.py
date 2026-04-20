@@ -101,19 +101,25 @@ class Category(Base):
     _parentsProducer.short_description = _("Category Parents")
 
     def save(self, *args, **kwargs):
-        # Fix our self.
+        old_parent_id = None
+
+        if self.pk:
+            old_parent_id = type(self).objects.filter(pk=self.pk).values_list(
+                "parent_id", flat=True).first()
+
+        # Update self
         self.path = self._getCategoryPath()
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-        # Fix all the children if any.
-        iterator = self.children.iterator()
+        # Only cascade if parent changed
+        if old_parent_id != self.parent_id:
+            self._update_descendants()
 
-        try:
-            while True:
-                child = iterator.next()
-                child.save()
-        except StopIteration:
-            pass
+    def _update_descendants(self):
+        for child in self.children.all():
+            child.path = child._getCategoryPath()
+            child.save(update_fields=["path"])  # avoids full save side-effects
+            child._update_descendants()
 
     def getChildren(self):
         """
