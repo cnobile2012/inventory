@@ -264,7 +264,7 @@ class Cost(Base):
     currency = models.ForeignKey("Currency", default=1,
                                  on_delete=models.CASCADE)
     date_acquired = models.DateField(blank=True, null=True)
-    invoice_number = models.CharField(max_length=20, blank=True, null=True)
+    invoice_number = models.CharField(max_length=40, blank=True, null=True)
     item = models.ForeignKey("Item", on_delete=models.CASCADE)
     distributor = models.ForeignKey(Distributor, blank=True, null=True,
                                     on_delete=models.CASCADE)
