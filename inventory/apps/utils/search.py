@@ -168,7 +168,7 @@ class ItemSearch(SearchBase):
                   'purge': 'purge'}
 
     def __init__(self, *args, **kwargs):
-        super(ItemSearch, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _getRecords(self, query):
         return Item.objects.filter(query)
@@ -219,7 +219,7 @@ class BusinessSearchBase(SearchBase):
     _CHECK_BOX = {}
 
     def __init__(self, *args, **kwargs):
-        super(BusinessSearchBase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _getSearchForm(self, data=None):
         return BusinessSearchForm(data=data)
@@ -241,7 +241,7 @@ class BusinessSearchBase(SearchBase):
 class DistributorSearch(BusinessSearchBase):
 
     def __init__(self, *args, **kwargs):
-        super(DistributorSearch, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _getRecords(self, query):
         if query: return Distributor.objects.filter(query)
@@ -260,7 +260,7 @@ class DistributorSearch(BusinessSearchBase):
 class ManufacturerSearch(BusinessSearchBase):
 
     def __init__(self, *args, **kwargs):
-        super(ManufacturerSearch, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _getRecords(self, query):
         if query: return Manufacturer.objects.filter(query)

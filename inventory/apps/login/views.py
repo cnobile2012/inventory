@@ -24,7 +24,7 @@ class Login(ViewBase):
     Called when the login page is requested.
     """
     def __init__(self, log, crumbData=()):
-        super(Login, self).__init__(log)
+        super().__init__(log)
         self.__crumbData = crumbData
 
     def __call__(self, request, *args, **kwargs):
@@ -62,7 +62,7 @@ class Logout(ViewBase):
     Called when the logout page is requested.
     """
     def __init__(self, log):
-        super(Logout, self).__init__(log)
+        super().__init__(log)
 
     def __call__(self, request, *args, **kwargs):
         auth.logout(request)
@@ -74,7 +74,7 @@ class ProcessLogin(ViewBase):
     Called when the login page sends an AJAX request to validate a user.
     """
     def __init__(self, log):
-        super(ProcessLogin, self).__init__(log)
+        super().__init__(log)
 
     def __call__(self, request, *args, **kwargs):
         username = request.POST.get('username')
@@ -125,7 +125,7 @@ class CreateUser(ViewBase):
     Called when the createUser page is requested.
     """
     def __init__(self, log, crumbData=()):
-        super(CreateUser, self).__init__(log)
+        super().__init__(log)
         self.__crumbData = crumbData
 
     def __call__(self, request, *args, **kwargs):
@@ -156,7 +156,7 @@ class CreateUser(ViewBase):
 class ProcessCreateUser(ViewBase):
 
     def __init__(self, log):
-        super(ProcessCreateUser, self).__init__(log)
+        super().__init__(log)
 
     def __call__(self, request, *args, **kwargs):
         context = {}

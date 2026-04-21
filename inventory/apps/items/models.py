@@ -3,12 +3,6 @@
 #
 # Inventory model
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2014-01-25 17:28:58 -0500 (Sat, 25 Jan 2014) $
-# $Revision: 88 $
-#----------------------------------
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -124,6 +118,8 @@ class Category(Base):
     def getChildren(self):
         """
         Returns a list of Category objects that are children of this category.
+
+        NOT USED
         """
         return Category.getChildTreeFromList((self,), withRoot=False)
 
@@ -131,6 +127,8 @@ class Category(Base):
         """
         Return a list of Category objects that are children of this category
         including this category.
+
+        NOT USED
         """
         return Category.getChildTreeFromList((self,))
 
@@ -138,6 +136,8 @@ class Category(Base):
     def getChildTreeFromList(self, categories, withRoot=True):
         """
         Return a category tree(s) starting from a list of category objects.
+
+        NOT USED
         """
         tree = []
 

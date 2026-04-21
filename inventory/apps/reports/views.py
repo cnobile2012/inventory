@@ -26,7 +26,7 @@ RESPONSE_404 = "404 Not Found"
 class ReportsBase(ViewBase):
 
     def __init__(self, log, crumbData=()):
-        super(ReportsBase, self).__init__(log)
+        super().__init__(log)
         self._crumbData = crumbData
 
     @method_decorator(login_required(redirect_field_name='/login/'))
@@ -75,7 +75,7 @@ class ReportsBase(ViewBase):
 class ItemRecord(ReportsBase):
 
     def __init__(self, *args, **kwargs):
-        super(ItemRecord, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _populateRecord(self, context, pk):
         context['edit'] = "/admin/items/item/%s/" % pk
@@ -151,7 +151,7 @@ class ItemRecord(ReportsBase):
 class BusinessRecordBase(ReportsBase):
 
     def __init__(self, *args, **kwargs):
-        super(BusinessRecordBase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _getBusinessForm(self, record):
         item = {}
@@ -175,7 +175,7 @@ class BusinessRecordBase(ReportsBase):
 class DistributorRecord(BusinessRecordBase):
 
     def __init__(self, *args, **kwargs):
-        super(DistributorRecord, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _populateRecord(self, context, pk):
         context['edit'] = "/admin/items/distributor/%s/" % pk
@@ -187,7 +187,7 @@ class DistributorRecord(BusinessRecordBase):
 class ManufacturerRecord(BusinessRecordBase):
 
     def __init__(self, *args, **kwargs):
-        super(ManufacturerRecord, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _populateRecord(self, context, pk):
         context['edit'] = "/admin/items/manufacturer/%s/" % pk

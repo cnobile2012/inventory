@@ -8,7 +8,7 @@
 
 PREFIX		= $(shell pwd)
 BASE_DIR	= $(shell basename $(PREFIX))
-PACKAGE_DIR	= $(BASE_DIR)  #-$(VERSION)$(TEST_TAG)
+PACKAGE_DIR	= $(BASE_DIR)
 APACHE_DIR	= $(PREFIX)/apache
 DOCS_DIR	= $(PREFIX)/docs
 LOGS_DIR	= $(PREFIX)/logs

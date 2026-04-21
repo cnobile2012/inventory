@@ -23,7 +23,7 @@ log = getLogger()
 class Confirm(ViewBase):
 
     def __init__(self, log):
-        super(Confirm, self).__init__(log)
+        super().__init__(log)
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
@@ -46,7 +46,7 @@ class Confirm(ViewBase):
 class Delete(ViewBase):
 
     def __init__(self, log):
-        super(Delete, self).__init__(log)
+        super().__init__(log)
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):
@@ -138,7 +138,7 @@ class Delete(ViewBase):
 class Location(ViewBase):
 
     def __init__(self, log, crumbData=()):
-        super(Location, self).__init__(log)
+        super().__init__(log)
         self._crumbData = crumbData
 
     @method_decorator(login_required(redirect_field_name='/login/'))

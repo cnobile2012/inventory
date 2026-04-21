@@ -37,7 +37,7 @@ class RegionTypedChoiceField(forms.TypedChoiceField):
             kwargs['choices'] = choices
             log.debug("choices: %s", choices)
 
-        super(RegionTypedChoiceField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self, value):
         """
@@ -164,7 +164,7 @@ class CategoryAdminForm(forms.ModelForm):
 class ItemAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(ItemAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['title'].widget = forms.TextInput(attrs={'size': 100})
 
     class Meta:

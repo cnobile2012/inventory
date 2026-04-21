@@ -31,7 +31,7 @@ class MigrateCategory(MigrateBase):
     _CATEGORY = 'category.csv'
 
     def __init__(self, log, options):
-        super(MigrateCategory, self).__init__(log)
+        super().__init__(log)
         self._options = options
 
     def start(self):

@@ -38,7 +38,7 @@ class MigrateSupplier(MigrateBase):
                        'General Electric',)
 
     def __init__(self, log, options):
-        super(MigrateSupplier, self).__init__(log)
+        super().__init__(log)
         self._options = options
 
     def start(self):

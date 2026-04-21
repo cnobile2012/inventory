@@ -31,7 +31,7 @@ class PostalCodeField(forms.CharField):
         input_size = kwargs.pop('input_size', 10)
         kwargs['widget'] = forms.TextInput(attrs={'size': '%s' % input_size})
         log.debug("kwargs: %s", kwargs)
-        super(PostalCodeField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SizableCharField(forms.CharField):
@@ -40,7 +40,7 @@ class SizableCharField(forms.CharField):
         input_size = kwargs.pop('input_size', 50)
         kwargs['widget'] = forms.TextInput(attrs={'size': '%s' % input_size})
         log.debug("kwargs: %s", kwargs)
-        super(SizableCharField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SizableTextField(forms.CharField):
@@ -50,4 +50,4 @@ class SizableTextField(forms.CharField):
         cols = kwargs.pop('cols', 83)
         kwargs['widget'] = forms.Textarea(attrs={'rows': rows, 'cols': cols})
         log.debug("kwargs: %s", kwargs)
-        super(SizableTextField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)

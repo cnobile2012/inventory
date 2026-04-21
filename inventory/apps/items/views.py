@@ -26,7 +26,7 @@ class FrontPage(ViewBase):
     Called when the front page is requested.
     """
     def __init__(self, log):
-        super(FrontPage, self).__init__(log)
+        super().__init__(log)
 
     def __call__(self, request, *args, **kwargs):
         context = {}
@@ -50,7 +50,7 @@ class ProcessRegion(ViewBase):
 
 
     def __init__(self, log):
-        super(ProcessRegion, self).__init__(log)
+        super().__init__(log)
 
     @method_decorator(login_required(redirect_field_name='/login/'))
     def __call__(self, request, *args, **kwargs):

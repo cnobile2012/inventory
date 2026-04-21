@@ -1,12 +1,6 @@
 #
 # maintenance/models.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2013-07-14 13:21:05 -0400 (Sun, 14 Jul 2013) $
-# $Revision: 84 $
-#----------------------------------
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -92,7 +86,7 @@ class LocationCodeDefault(Base):
     def save(self, *args, **kwargs):
         # Run all the validators.
         self.full_clean()
-        super(LocationCodeDefault, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ('segment_order',)
@@ -113,7 +107,7 @@ class LocationCodeCategory(Base):
                                         on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
-        super(LocationCodeCategory, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._formats = [fmt.char_definition
                          for fmt in LocationCodeDefault.objects.all()]
         self._separator = LocationCodeDefault.getSegmentSeparator()
@@ -188,20 +182,25 @@ class LocationCodeCategory(Base):
     def save(self, *args, **kwargs):
         # Run all the validators.
         self.full_clean()
+        old_parent_id = None
+
+        if self.pk:
+            old_parent_id = type(self).objects.filter(pk=self.pk).values_list(
+                "parent_id", flat=True).first()
 
         # Fix our self.
         self.path = self._getCategoryPath()
-        super(LocationCodeCategory, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-        # Fix all the children if any.
-        iterator = self.children.iterator()
+        # Only cascade if parent changed
+        if old_parent_id != self.parent_id:
+            self._update_descendants()
 
-        try:
-            while True:
-                child = iterator.next()
-                child.save()
-        except StopIteration:
-            pass
+    def _update_descendants(self):
+        for child in self.children.all():
+            child.path = child._getCategoryPath()
+            child.save(update_fields=["path"])  # avoids full save side-effects
+            child._update_descendants()
 
     @classmethod
     def getAllRootTrees(self, segment):

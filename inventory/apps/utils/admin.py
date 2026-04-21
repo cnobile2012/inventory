@@ -25,13 +25,12 @@ class ReadPermissionModelAdmin(admin.ModelAdmin):
         if getattr(request, 'readonly', False):
             return True
 
-        return super(ReadPermissionModelAdmin, self).has_change_permission(
-            request, obj)
+        return super().has_change_permission(request, obj)
 
     def changelist_view(self, request, extra_context=None):
         try:
-            return super(ReadPermissionModelAdmin, self).changelist_view(
-                request, extra_context=extra_context)
+            return super().changelist_view(request,
+                                           extra_context=extra_context)
         except PermissionDenied:
             pass
 
@@ -39,13 +38,12 @@ class ReadPermissionModelAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         request.readonly = True
-        return super(ReadPermissionModelAdmin, self).changelist_view(
-            request, extra_context=extra_context)
+        return super().changelist_view(request, extra_context=extra_context)
 
     def add_view(self, request, form_url='', extra_context=None):
         try:
-            return super(ReadPermissionModelAdmin, self).add_view(
-                request, form_url, extra_context=extra_context)
+            return super().add_view(request, form_url,
+                                    extra_context=extra_context)
         except PermissionDenied:
             pass
 
@@ -53,22 +51,21 @@ class ReadPermissionModelAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         request.readonly = True
-        return super(ReadPermissionModelAdmin, self).add_view(
-              request, form_url, extra_context=extra_context)
+        return super().add_view(request, form_url, extra_context=extra_context)
 
-    ## def change_view(self, request, object_id, extra_context=None):
-    ##     try:
-    ##         return super(ReadPermissionModelAdmin, self).change_view(
-    ##             request, object_id, extra_context=extra_context)
-    ##     except PermissionDenied:
-    ##         pass
+    # def change_view(self, request, object_id, extra_context=None):
+    #     try:
+    #         return super().change_view(request, object_id,
+    #                    extra_context=extra_context)
+    #     except PermissionDenied:
+    #         pass
 
-    ##     if request.method == 'POST':
-    ##         raise PermissionDenied
+    #     if request.method == 'POST':
+    #         raise PermissionDenied
 
-    ##     request.readonly = True
-    ##     return super(ReadPermissionModelAdmin, self).change_view(
-    ##         request, object_id, extra_context=extra_context)
+    #     request.readonly = True
+    #     return super().change_view(request, object_id,
+    #        extra_context=extra_context)
 
 
 class BaseAdmin(ReadPermissionModelAdmin): # admin.ModelAdmin
@@ -80,4 +77,4 @@ class BaseAdmin(ReadPermissionModelAdmin): # admin.ModelAdmin
             obj.ctime = datetime.datetime.now()
 
         #obj.save()
-        super(BaseAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)

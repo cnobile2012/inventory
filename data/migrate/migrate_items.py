@@ -121,7 +121,7 @@ class MigrateItem(MigrateBase):
         }
 
     def __init__(self, log, options):
-        super(MigrateItem, self).__init__(log)
+        super().__init__(log)
         self._options = options
 
     def start(self):

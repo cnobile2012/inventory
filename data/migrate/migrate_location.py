@@ -34,7 +34,7 @@ class MigrateLocation(MigrateBase):
     _LOCATION_CODE = 'location_code.csv'
 
     def __init__(self, log, options):
-        super(MigrateLocation, self).__init__(log)
+        super().__init__(log)
         self._options = options
 
     def start(self):
