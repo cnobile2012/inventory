@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                 ('mtime', models.DateTimeField(auto_now=True)),
                 ('value', models.DecimalField(decimal_places=4, max_digits=10)),
                 ('date_acquired', models.DateField(blank=True, null=True)),
-                ('invoice_number', models.CharField(blank=True, max_length=40, null=True)),
+                ('invoice_number', models.CharField(blank=True, max_length=20, null=True)),
                 ('user', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('currency', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='items.currency')),
                 ('distributor', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='items.distributor')),
