@@ -5,7 +5,10 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
-mysqldump -u inventory -p inventory > db-snapshots/$1-$(date +"%Y%m%d%H%M%S").sql
+FILE=$1-$(date +"%Y%m%d%H%M%S").sql
+
+mysqldump -u inventory -p inventory > db-snapshots/${FILE}
+gzip -9 db-snapshots/${FILE}
 
 exit 0
 
