@@ -3,12 +3,6 @@
 #
 # Inventory admin registery.
 #
-# SVN/CVS Keywords
-#------------------------------
-# $Author: cnobile $
-# $Date: 2014-12-05 17:46:21 -0500 (Fri, 05 Dec 2014) $
-# $Revision: 95 $
-#------------------------------
 
 from django import forms
 from django.contrib import admin
@@ -275,8 +269,9 @@ class ItemAdmin(BaseAdmin):
                     '_aquiredDateProducer',)
     readonly_fields = ('user', 'ctime', 'mtime',)
     search_fields = ('item_number', 'item_number_dst', 'categories__path',
-                     'item_number_mfg', 'title', 'package', 'condition',
-                     'distributor__name', 'manufacturer__name', 'notes',)
+                     'cost__invoice_number', 'item_number_mfg', 'title',
+                     'package', 'condition', 'distributor__name',
+                     'manufacturer__name', 'notes',)
     list_display_links = ('item_number',)
     list_editable = ('quantity', 'title',)
     list_filter = ('location_code__path', 'distributor__name',
