@@ -5,10 +5,15 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
+DIR="db-snapshots"
+
+if [ ! -d {DIR} ]; then
+    mkdir ${DIR}
+
 FILE=$1-$(date +"%Y%m%d%H%M%S").sql
 
-mysqldump -u inventory -p inventory > db-snapshots/${FILE}
-gzip -9 db-snapshots/${FILE}
+mysqldump -u inventory -p inventory > ${DIR}/${FILE}
+gzip -9 ${DIR}/${FILE}
 
 exit 0
 
