@@ -7,8 +7,9 @@ fi
 
 DIR="db-snapshots"
 
-if [ ! -d {DIR} ]; then
+if [ ! -d ${DIR} ]; then
     mkdir ${DIR}
+fi
 
 FILE=$1-$(date +"%Y%m%d%H%M%S").sql
 
