@@ -18,8 +18,6 @@ class ReadPermissionModelAdmin(admin.ModelAdmin):
     """
     This is Django admin with read-only permission by Gregor Muellegger and
     was published on 1st July 2010.
-
-    http://gremu.net/BS
     """
     def has_change_permission(self, request, obj=None):
         if getattr(request, 'readonly', False):
@@ -68,7 +66,7 @@ class ReadPermissionModelAdmin(admin.ModelAdmin):
     #        extra_context=extra_context)
 
 
-class BaseAdmin(ReadPermissionModelAdmin): # admin.ModelAdmin
+class BaseAdmin(ReadPermissionModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.user = request.user
 
@@ -76,5 +74,4 @@ class BaseAdmin(ReadPermissionModelAdmin): # admin.ModelAdmin
         if obj.ctime is None:
             obj.ctime = datetime.datetime.now()
 
-        #obj.save()
         super().save_model(request, obj, form, change)

@@ -106,8 +106,9 @@ class FormatParser(object):
         if self.validate(value) and self.__currentFormat is not None:
             result = self.__formats[self.__currentFormat]
         else:
-            msg = "Invalid value [%s] or format [%s]."
-            raise ValueError(msg % (value, self.__currentFormat))
+            msg = (f"Invalid value [{value}] or format "
+                   f"[{self.__currentFormat}].")
+            raise ValueError(msg)
 
         return result
 
@@ -119,5 +120,5 @@ if __name__ == "__main__":
     fp = FormatParser(formats, delimiter)
 
     for seq in ('T01', 'X55', 'B01R05C09', 'A!339', '01###!AQ', 'TBD'):
-        print("Validate: %s, %s" % (seq, fp.validate(seq)))
-        print("Format: %s, from: %s\n" % (fp.getFormat(seq), seq))
+        print(f"Validate: {seq}, {fp.validate(seq)}")
+        print(f"Format: {fp.getFormat(seq)}, from: {seq}\n")

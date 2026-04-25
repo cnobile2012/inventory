@@ -9,8 +9,8 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from inventory.apps.items.models import Manufacturer, Distributor, \
-     Category, Currency, Cost, Specification, Item
+from inventory.apps.items.models import (
+    Manufacturer, Distributor, Category, Currency, Cost, Specification, Item)
 from inventory.apps.regions.models import Region, Country
 from inventory.apps.utils.admin import BaseAdmin
 from inventory.setupenv import getLogger
@@ -223,16 +223,57 @@ class CurrencyAdmin(BaseAdmin):
 admin.site.register(Currency, CurrencyAdmin)
 
 
-#class CostAdmin(BaseAdmin):
-#    list_display = ('item', 'value', 'invoice_number', 'date_acquired',)
-#    ordering = ('item__title', 'invoice_number', 'date_acquired',)
-#    form = CostAdminForm
+class CostItemAdminForm(forms.ModelForm):
+    item_title = forms.CharField(max_length=248, required=False,
+                                 label="Item Description")
+    item_number = forms.CharField(max_length=50, required=False,
+                                  label="Item Number")
 
-#admin.site.register(Cost, CostAdmin)
+    class Meta:
+        model = Cost
+        fields = ('value', 'currency', 'invoice_number', 'date_acquired')
+
+
+class CostAdmin(BaseAdmin):
+    form = CostItemAdminForm
+    list_display = ('display_item_title', 'display_item_number', 'categories',
+                    'distributor', 'manufacturer', 'value',
+                    'currency__currency', 'invoice_number', 'date_acquired')
+    ordering = ('item__title', 'invoice_number', 'date_acquired')
+
+    def display_item_title(self, obj):
+        return obj.item.title if obj.item else "-"
+    display_item_title.short_description = "Item Description"
+
+    def display_item_number(self, obj):
+        return obj.item.item_number if obj.item else "-"
+    display_item_number.short_description = "Item Number"
+
+    def categories(self, obj):
+        if not obj or not obj.item:
+            return "-"
+
+        # Get the list of category objects
+        categories = obj.item.categories.all()
+
+        if not categories.exists():
+            return "-"
+
+        # Extract the 'path' (or name) from each and join them
+        # Assuming 'path' is the field you want to show
+        category_paths = [cat.path for cat in categories]
+        return ", ".join(category_paths)
+    categories.short_description = "Categories"
+    categories.admin_order_field = 'item__categories__path'
+
+    def has_add_permission(self, request):
+        return False
+
+admin.site.register(Cost, CostAdmin)
 
 
 #class SpecificationAdmin(BaseAdmin):
-#    list_display = ('name', 'value', '_displayItemTitle',)
+#    list_display = ('name', 'value', '_displayItemTitle')
 #    list_display_links = ('name',)
 #    list_editable = ('value',)
 
