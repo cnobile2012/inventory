@@ -239,6 +239,9 @@ class CostAdmin(BaseAdmin):
     list_display = ('display_item_title', 'display_item_number', 'categories',
                     'distributor', 'manufacturer', 'value',
                     'currency__currency', 'invoice_number', 'date_acquired')
+    search_fields = ('item__title', 'item__item_number', 'invoice_number',
+                     'item__categories__path', 'distributor__name',
+                     'manufacturer__name', 'date_acquired')
     ordering = ('item__title', 'invoice_number', 'date_acquired')
 
     def display_item_title(self, obj):
