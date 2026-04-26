@@ -21,20 +21,18 @@ class LocationCodeDefaultForm(forms.ModelForm):
         exclude = ()
 
     def clean(self):
-        # Do not test if the record is being updated.
-        if not self.initial:
-            segment_order = self.cleaned_data.get('segment_order')
+        cleaned = super().clean()
 
-            try:
-                if LocationCodeDefault.objects.get(
-                    segment_order=segment_order):
-                    msg = "There is already a segment with this order number."
-                    raise forms.ValidationError(_(msg))
-            except LocationCodeDefault.DoesNotExist:
-                # The record does not exist, but this is okay.
-                pass
+        # Only validate on create
+        if not self.instance.pk:
+            segment_order = cleaned.get('segment_order')
 
-        return self.cleaned_data
+            if segment_order and LocationCodeDefault.objects.filter(
+                segment_order=segment_order).exists():
+                msg = "There is already a segment with this order number."
+                raise forms.ValidationError(_(msg))
+
+        return cleaned
 
 
 class LocationCodeCategoryForm(forms.ModelForm):

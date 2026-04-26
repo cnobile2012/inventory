@@ -299,28 +299,28 @@ class ItemAdmin(BaseAdmin):
         (None, {'fields': ('title', 'item_number', 'distributor',
                            'item_number_dst', 'manufacturer',
                            'item_number_mfg', 'quantity', 'condition',
-                           'location_code', 'categories',)}),
+                           'location_code', 'categories')}),
         ('Description', {'classes': ('collapse',),
-                         'fields': ('package', 'notes',)}),
+                         'fields': ('package', 'notes')}),
         ('Status', {'classes': ('collapse',),
                     'fields': ('active', 'obsolete', 'purge', 'user', 'ctime',
-                               'mtime',)}),
+                               'mtime')}),
         )
     list_display = ('item_number', 'title', 'quantity', 'condition',
                     '_categoryProducer', '_locationCodeProducer',
-                    '_aquiredDateProducer',)
-    readonly_fields = ('user', 'ctime', 'mtime',)
+                    '_aquiredDateProducer')
+    readonly_fields = ('user', 'ctime', 'mtime')
     search_fields = ('item_number', 'item_number_dst', 'categories__path',
                      'cost__invoice_number', 'item_number_mfg', 'title',
                      'package', 'condition', 'distributor__name',
-                     'manufacturer__name', 'notes',)
+                     'manufacturer__name', 'notes')
     list_display_links = ('item_number',)
-    list_editable = ('quantity', 'title',)
+    list_editable = ('title', 'quantity')
     list_filter = ('location_code__path', 'distributor__name',
-                   'manufacturer__name', 'condition',)
+                   'manufacturer__name', 'condition')
     ordering = ('categories__path',)
-    filter_horizontal = ('categories', 'location_code',)
-    inlines = (CostInline, SpecificationInline,)
+    filter_horizontal = ('categories', 'location_code')
+    inlines = (CostInline, SpecificationInline)
     date_hierarchy = 'ctime'
     save_as = True
 
