@@ -8,16 +8,14 @@
 
 
 class BaseMetaModel extends Backbone.Model {
-  get mutators() {
-    return {
-      actions: {
-        set(key, value, options, set) {
-          _.forEach(value.POST, function(value, key) {
-            this.set(key, value);
-          }.bind(this));
-        }
-      }
-    };
+
+  parse(data) {
+    _.forEach(data.actions.POST, function(value, key) {
+      data[key] = value;
+    });
+
+    delete data.actions;
+    return data;
   }
 
   sync(method, model, options) {

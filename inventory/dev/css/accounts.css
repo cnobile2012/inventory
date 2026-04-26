@@ -1,0 +1,58 @@
+/*
+ * Accounts CSS
+ *
+ * css/accounts.css
+ */
+
+ul.social-networks {
+  list-style: none;
+  text-align: center;
+  padding: 0px;
+  margin-bottom: 0;
+}
+
+ul.social-networks li {
+  color: black;
+  position: relative;
+  display: inline-block;
+  font-size: 1.4em;
+  margin-left: 5px;
+}
+
+ul.social-networks li:first-child {
+  margin-left: 0;
+}
+
+ul.social-networks a {
+  color: black;
+}
+
+.panel-simple {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.panel-simple > .panel-heading {
+  font-size: 1.4em;
+}
+
+.panel-buttons {
+  float: right;
+}
+
+.contact-info {
+  padding: 15px;
+}
+
+.contact-info h4 {
+  font-size: 1.2em;
+  color: #a1a1a1;
+  margin-bottom: 20px;
+}
+
+.bio {
+  line-height: 1.5em;
+  margin-bottom: 25px;
+}
+

@@ -6,111 +6,148 @@
 
 'use strict';
 
+
 class ProjectViewLayout extends Layout {
+
+  get el() { return '#projects .tab-choice-pane'; }
+
   constructor(options) {
     super(options);
-    this.template = '#contact-view-layout';
     this.regions = {
-      widget: '#contact-widget',
-      about: '#about-container',
-      calls: '#call-log-container'
+      actions: 'action-bar',
+      content: 'items'
     };
   }
-
-  get className() {
-    return 'row page-container';
-  }
 }
 
-class ProjectWidget extends ModelView {
-  constructor(options) {
-    super(options);
-    this.template = '#contact-view-widget';
-  }
 
-  get className() {
-    return 'box contact-summary';
-  }
-}
+class ProjectViewActionBar extends ModelView {
 
-class ProjectAbout extends ModelView {
-  constructor(options) {
-    super(options);
-    this.template = '#contact-view-about';
-  }
-
-  get className() {
-    return 'panel panel-simple';
-  }
+  get template() { return App.templates.project_action_bar; }
+  get multiple() { return true; }
 
   get events() {
     return {
-      'click #back': 'goToList',
-      'click #delete': 'deleteProject',
-      'click #edit': 'editProject'
+      'click button[name=project-save]': 'saveProject',
+      'click button[name=project-edit]': 'editProject',
+      'click button[name=project-close]': 'closeProject',
+      'click button[name=project-delete]': 'deleteProject'
     };
   }
 
-  goToList() {
-    App.router.navigate('contacts', true);
-  }
-
-  deleteProject() {
-    this.trigger('contact:delete', this.model);
-  }
-
-  editProject() {
-    var contactId = this.model.get('id');
-    App.router.navigate(`contacts/edit/${contactId}`, true);
-  }
-}
-
-class ProjectCallLog extends ModelView {
   constructor(options) {
     super(options);
-    this.template = '#contact-view-call-log';
+    this.setElement('#' + options.model.id);
   }
 
-  get className() {
-    return 'panel panel-simple';
+  saveProject(event) {
+    console.log('save', this, event);
+
+  }
+
+  editProject(event) {
+    console.log('edit', this, event);
+
+  }
+
+  closeProject(event) {
+    let close = 'app:projects:' + this.model.id + ':close',
+        contact = 'app:projects:' + this.model.id + ':contact';
+    App.events.trigger(close);
+    App.events.stopListening(App.events, close);
+    App.events.trigger(contact);
+    App.events.stopListening(App.events, contact);
+
+    // Revert back to #Projects
+    console.log('POOP', App.openDataPanes.projects);
+    if (App.openDataPanes.projects <= 0) {
+      App.events.trigger('app:projects:projects');
+    } else {
+      let id = $('#projects .data-pane').attr('id');
+      App.router.navigate('projects/' + id); //, {trigger: true});
+    }
+  }
+
+  deleteProject(event) {
+    console.log('delete', this, event);
+
   }
 }
 
-class ProjectViewer {
-  constructor(options) {
-    // Region where the application will be placed
-    this.region = options.region;
 
+class ProjectContent extends ModelView {
+
+  get template() { return App.templates.project_content; }
+  get multiple() { return true; }
+
+  get events() {
+    return {
+      click: 'makeActive'
+    };
+  }
+
+  constructor(options) {
+    super(options);
+    this.setElement('#' + options.model.id);
+  }
+
+  onRender() {
+    if ($('#' + this.model.id + ' .items').length) {
+      App.events.listenTo(
+        App.events, 'app:projects:' + this.model.id + ':contact',
+        this.makeActive.bind(this));
+    }
+
+    this.makeActive();
+  }
+
+  makeActive(event) {
+    $('#projects .data-pane .items').removeClass('darken');
+
+    if (App.openDataPanes.projects > 0) {
+      App.router.navigate('projects/' + this.model.id, {trigger: true});
+    }
+
+    if (App.openDataPanes.projects > 1) {
+      $('#projects .data-pane:not(#' + this.model.id  + ') > .items')
+        .addClass('darken');
+    }
+  }
+}
+
+
+class ProjectViewer {
+
+  constructor(options) {
+    this.region = new Region({el: ''});
     // Allow subapplication to listen and trigger events,
     // useful for subapplication wide events
     _.extend(this, Backbone.Events);
   }
 
-  showProject(contact) {
+  showProject(project) {
     // Create the views
-    var layout = new ProjectViewLayout();
-    var contactWidget = new ProjectWidget({model: contact});
-    var contactAbout = new ProjectAbout({model: contact});
-    var contactCalls = new ProjectCallLog({model: contact});
+    let layout = new ProjectViewLayout(),
+        actionBar = new ProjectViewActionBar({model: project}),
+        content = new ProjectContent({model: project});
 
     // Show the views
     this.region.show(layout);
-    layout.getRegion('widget').show(contactWidget);
-    layout.getRegion('about').show(contactAbout);
-    layout.getRegion('calls').show(contactCalls);
+    layout.getRegion('actions').show(actionBar, true);
+    layout.getRegion('content').show(content, true);
 
-    this.listenTo(contactAbout, 'contact:delete', this._deleteProject);
+    //this.listenTo(projectMenu, 'project:delete', this._deleteProject);
   }
 
-  _deleteProject(contact) {
-    App.askConfirmation('The contact will be deleted', isConfirm => {
+  _deleteProject(project) {
+    App.askConfirmation('The project will be deleted', isConfirm => {
       if (isConfirm) {
-        contact.destroy({
+        project.destroy({
           success() {
-            // Regirect user to the contacts list after
+            // Regirect user to the projects list after
             // deletion
             App.notifySuccess('Project was deleted');
-            App.router.navigate('/contacts', true);
+            App.router.navigate('projects', {trigger: true});
           },
           error() {
             // Show error message when something is wrong
@@ -119,12 +156,5 @@ class ProjectViewer {
         });
       }
     });
-  }
-
-  // Close any active view and remove event listeners
-  // to prevent zombie functions
-  destroy() {
-    this.region.remove();
-    this.stopListening();
   }
 }

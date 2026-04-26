@@ -11,37 +11,14 @@
 class InvoicesModel extends Backbone.Model {
   get defaults() {
     return {
-      public_id: '',
       project: null,
       currency: null,
       supplier: null,
-      invoices_number: '',
-      invoice_date: '',
       credit: 0,
       shipping: 0,
       other: 0,
       tax: 0,
-      notes: '',
-      creator: '',
-      created: '',
-      updater: '',
-      updated: '',
       href: ''
-    };
-  }
-
-  get mutators() {
-    return {
-      invoice_items: {
-        set(key, value, options, set) {
-          var invoice_items = new InvoiceItemsCollection();
-          set(key, invoice_items, options);
-
-          _.forEach(value, function(value, key) {
-            invoice_items.add(value);
-          });
-        }
-      }
     };
   }
 
@@ -51,6 +28,17 @@ class InvoicesModel extends Backbone.Model {
 
   constructor(options) {
     super(options);
+  }
+
+  parse(data) {
+    App.models.invoice_items = new InvoiceItemsCollection();
+
+    _.forEach(data.invoice_items, (value, key) => {
+      App.models.invoice_items.add(value);
+    });
+
+    data.invoice_items = App.models.invoice_items;
+    return data;
   }
 };
 

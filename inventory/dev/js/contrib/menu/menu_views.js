@@ -3,40 +3,30 @@
  *
  * js/contrib/menu_views.js
  *
- * See:
- * http://stackoverflow.com/questions/12908210/click-menu-item-to-highlight-in-backbone-view
+ * See: http://stackoverflow.com/questions/12908210/click-menu-item-to-highlight-in-backbone-view
  */
 
 "use strict";
 
 
-// Single menu item view
+// Single item menu view
 class MenuItem extends Backbone.View {
+
   get tagName() { return 'li'; }
-
-  get events() {
-    return {
-      'click': 'onClick'
-    };
-  }
-
   // Set to `false` if you don't want the menu items to toggle.
   get toggle() { return true; }
+  get target() { return null; }
+  //get events() { return {'click a': 'projectSelected'}; }
+  get events() { return {'click a': 'onClick'}; }
 
   constructor(options) {
     super(options);
-    this.target = options.target;
-    this.models = options.models;
-  }
-
-  // Binding to model's selection change event
-  // Thus having ability to update view state
-  initialize() {
-    _.bindAll(this, 'onClickCallback', 'closePaneCallback');
+    this.parent = options.parent;
+    this.parentPaneSelector = options.parentPaneSelector;
+    this.dataPaneClass = options.dataPaneClass;
     this.listenTo(this.model, 'change:isSelected', this.onSelectedChange);
   }
 
-  // Simple render override
   render() {
     this.$el.html(this.model.get('title'));
     return this;
@@ -44,42 +34,52 @@ class MenuItem extends Backbone.View {
 
   // Highlight our self and do any other logic on click
   onClick(event) {
-    let id = this.$el.find('a').attr('data'),
-        model = this.models.find(function(model) {
-          return model.id === id;
-        }),
-        dataPaneClass = 'data-pane';
+    if (this.target === null) {
+      console.error("target:", this.target);
+      throw new Error("The 'target' must be set in subclass.");
+    }
 
-    // Only display pane once while active.
-    if($('#' + id).length <= 0) {
-      this.highlight();
-      let $choicePane = $('div#' + this.target + ' div.tab-choice-pane'),
-          $dataPane = $('<div id="' + id + '" class="' + dataPaneClass + '"></div>'),
-          $closePane = $('<div class="pane-close">X</div>'),
-          self = this;
-      $closePane.appendTo($dataPane);
-      $dataPane.appendTo($choicePane);
-      $closePane.one('click', function() {
-        $dataPane.remove();
-        self.$el.removeClass('active');
-        self.closePaneCallback(dataPaneClass);
-      });
+    if (!App.openDataPanes[this.target]) {
+      App.openDataPanes[this.target] = 0;
+    }
 
-      this.onClickCallback(model);
+    if (App.openDataPanes[this.target] < this.parent.maxOpen) {
+      // Only display pane once while active.
+      if($('#' + this.model.id).length <= 0) {
+        this.highlight();
+        let $choicePane = $('div#' + this.target + ' '
+                            + this.parentPaneSelector),
+            $dataPane = $('<div id="' + this.model.id + '" class="'
+                          + this.dataPaneClass + '"></div>');
+        $dataPane.appendTo($choicePane);
+        App.openDataPanes[this.target]++;
+      }
+    } else {
+      this.parent.maxOpenWarning();
     }
   }
 
-  onClickCallback() {}
-  closePaneCallback(dataPaneClass) {}
+  closePane() {
+    //if (this.model.id != this.parent.altId) {
+      let $dataPane = $('#' + this.model.id + ' .' + this.dataPaneClass);
+      $dataPane.remove();
+      this.$el.removeClass('active');
+    //}
 
-  // If we changed our model's selection property during onClick then
-  // update ourself with 'active' class if or model was forced by
-  // collection to change selection property to false, then remove
-  // 'active' class.
+    if (App.openDataPanes[this.target] > 0) {
+      App.openDataPanes[this.target]--;
+    } else {
+      App.openDataPanes[this.target] = 0; // Incase it's negative.
+    }
+  }
+
+  // If we changed our model's selection property during onClick then update
+  // ourself with 'active' class if or model was forced by collection to
+  // change selection property to false, then remove 'active' class.
   onSelectedChange() {
-    if(this.model.get('isSelected') === true) {
+    if (this.model.get('isSelected') === true) {
       this.$el.addClass('active');
-    } else if(this.toggle) {
+    } else if (this.toggle) {
       this.$el.removeClass('active');
     }
   }
@@ -88,31 +88,45 @@ class MenuItem extends Backbone.View {
   highlight() {
     this.model.set('isSelected', true);
   }
-};
+
+//  projectSelected(event) {
+//    event.preventDefault();
+//    this.model.select();
+//  }
+}
 
 
 // Whole menu view
 class Menu extends Backbone.View {
-  get tagName() { return 'ul'; }
 
-  // Initialize menu items collection here
-  initialize() {
-    _.bindAll(this, 'renderCallback');
+  get tagName() { return 'ul'; }
+  get maxOpen() { return 2; }
+
+  constructor(options) {
+    super(options);
+    this.collection = options.collection;
+    this.viewCollection = [];
   }
 
   // Render each menu item by creating the appropriate view calling its
   // render method and appending the resulting element.
   render() {
-    let self = this,
-        container = document.createDocumentFragment();
     this.$el.empty();
 
-    _.forEach(this.collection.models, function(model) {
-      let item = self.renderCallback(model);
-      container.appendChild(item.render().el);
+    _.each(this.collection.toArray(), (model) => {
+      let item = this.renderCallback(model);
+      this.$el.append(item.render().el);
+      this.postRenderCallback(item);
+      this.viewCollection.push(item);
     });
 
-    this.$el.append(container);
     return this;
   }
-};
+
+  maxOpenWarning() {
+    console.warn("Cannot open more than " + this.parent.maxOpen + " tabs!");
+  }
+
+  renderCallback(model) {}
+  postRenderCallback(item) {}
+}

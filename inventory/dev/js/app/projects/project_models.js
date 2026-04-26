@@ -8,67 +8,82 @@
 
 
 // InventoryType
+class InventoryTypeMetaModel extends BaseMetaModel {
+
+  get urlRoot() {
+    return App.models.rootModel.get('projects').inventory_types.href;
+  }
+}
+
+
 class InventoryTypeModel extends Backbone.Model {
 
-  get idAttribute() {
-    return 'public_id';
-  }
+  get idAttribute() { return 'public_id'; }
 
-  urlRoot() {
+  get urlRoot() {
     return App.models.rootModel.get('projects').inventory_types.href;
   }
-};
 
+  parse(data) {
+    let subApp = App.startSubApplication(AccountsApp),
+        creator = App.models.users.findWhere({href: data.creator}),
+        updater = App.models.users.findWhere({href: data.updater});
 
-class InventoryTypeMetaModel extends BaseMetaModel {
-  urlRoot() {
-    return App.models.rootModel.get('projects').inventory_types.href;
+    if (creator === (void 0)) {
+      subApp.fetchUserAccount(data.creator);
+      creator = App.models.users.findWhere({href: data.creator});
+    }
+
+    if (updater === (void 0)) {
+      subApp.fetchUserAccount(data.updater);
+      updater = App.models.users.findWhere({href: data.updater});
+    }
+
+    data.creator = creator.get('full_name');
+    data.updater = updater.get('full_name');
+    data.created = new Date(data.created).toLocaleString();
+    data.updated = new Date(data.updated).toLocaleString();
+    data.meta = App.models.inventoryTypeMeta.toJSON();
+    return data;
   }
-};
+}
 
 
 class InventoryTypeCollection extends Backbone.Collection {
+
+  get url() {
+    return App.models.rootModel.get('projects').inventory_types.href;
+  }
+
   get name() { return "InventoryTypeCollection"; }
   get model() { return InventoryTypeModel; }
 
-  initialize() {}
-
-  parse(response, options) {
-    let models = response.results;
-    App.models.inventoryTypeMeta.set({
-      count: response.count,
-      next: response.next,
-      previous: response.previous
-    });
-    return models;
+  parse(data) {
+    this.next = data.next;
+    this.prev = data.previous;
+    return data.results;
   }
-
-  url() {
-    return App.models.rootModel.get('projects').inventory_types.href;
-  }
-};
+}
 
 
 // Project
+class ProjectMetaModel extends BaseMetaModel {
+
+  get urlRoot() { return App.models.rootModel.get('projects').projects.href; }
+}
+
+
 class ProjectModel extends Backbone.Model {
 
-  get idAttribute() {
-    return 'public_id';
-  }
-
-  get urlRoot() {
-    return this.get('href');
-  }
+  get idAttribute() { return 'public_id'; }
+  get urlRoot() { return this.get('href'); }
 
   get defaults() {
     return {
       public_id: '',
       name: '',
       members: [],
-      memberships: [],
-      invoices: [],
       invoices_href: '',
-      items: [],
       items_href: '',
       inventory_type: '',
       public: false,
@@ -81,76 +96,44 @@ class ProjectModel extends Backbone.Model {
     };
   }
 
-  get mutators() {
-    return {
-      invoices_href: {
-        set(key, value, options, set) {
-          set(key, value, options);
+  parse(data) {
+    let subApp = App.startSubApplication(AccountsApp),
+        creator = App.models.users.findWhere({href: data.creator}),
+        updater = App.models.users.findWhere({href: data.updater});
 
-          if(value.length > 0) {
-            //App.invoiceTimeout = setTimeout(App.utils.fetchInvoiceCollection,
-            //                                200, value, this);
-          }
-        }
-      },
-      items_href: {
-        set(key, value, options, set) {
-          set(key, value, options);
+    data.inventory_type = App.models.inventoryTypes.findWhere({
+      href: data.inventory_type
+    }).get('name');
 
-          if(value.length > 0) {
-            //App.itemTimeout = setTimeout(App.utils.fetchItemCollection,
-            //                             200, value, this);
-          }
-        }
-      },
-      creator() {
-        let name = "Not Found",
-            href = this.attributes.creator,
-            userHREF = App.models.userModel.get('href');
+    if (creator === (void 0)) {
+      subApp.fetchUserAccount(data.creator);
+      creator = App.models.users.findWhere({href: data.creator});
+    }
 
-        // Check if it's the current user first.
-        if(href === userHREF) {
-          name = App.models.userModel.get('full_name');
-        } else {
-          // Get the creator with the 'href'.
-        }
+    if (updater === (void 0)) {
+      subApp.fetchUserAccount(data.updater);
+      updater = App.models.users.findWhere({href: data.updater});
+    }
 
-        return name;
-      },
-      created() {
-        return new Date(this.attributes.created).toLocaleString();
-      },
-      updater() {
-        let name = "Not Found",
-            href = this.attributes.updater,
-            userHREF = App.models.userModel.get('href');
-
-        // Check if it's the current user first.
-        if(href === userHREF) {
-          name = App.models.userModel.get('full_name');
-        } else {
-          // Get the updater with the 'href'.
-        }
-
-        return name;
-      },
-      updated() {
-        return new Date(this.attributes.updated).toLocaleString();
-      }
-    };
+    data.creator = creator.get('full_name');
+    data.updater = updater.get('full_name');
+    data.created = new Date(data.created).toLocaleString();
+    data.updated = new Date(data.updated).toLocaleString();
+    data.meta = App.models.projectMeta.toJSON();
+    return data;
   }
-};
-
-
-class ProjectMetaModel extends BaseMetaModel {
-  get urlRoot() {
-    return App.models.rootModel.get('projects').projects.href;
-  }
-};
+}
 
 
 class ProjectCollection extends Backbone.Collection {
+
   get name() { return "Projects"; }
   get model() { return ProjectModel; }
   get url() { return App.models.rootModel.get('projects').projects.href; }
-};
+
+  parse(data) {
+    this.next = data.next;
+    this.prev = data.previous;
+    return data.results;
+  }
+}

@@ -7,51 +7,38 @@
 "use strict";
 
 
+class ProjectProxyModel extends Backbone.Model {
+
+  get idAttribute() { return 'public_id'; }
+  get urlRoot() { return this.get('href'); }
+};
+
+
+class ProjectProxyCollection extends Backbone.Collection {
+
+  get model() { return ProjectProxyModel; }
+};
+
+
 class UserModel extends Backbone.Model {
+
+  get idAttribute() { return 'public_id'; }
+
   get defaults() {
     return {
-      public_id: '',
-      username: '',
-      picture: '',
       send_email: false,
       need_password: false,
-      first_name: '',
-      last_name: '',
-      address_01: '',
-      address_02: '',
-      city: '',
-      subdivision: '',
-      postal_code: '',
-      country: '',
-      language: '',
-      timezone: '',
-      dob: '',
-      email: '',
-      role: '',
       projects: [],
-      project_default: '',
+      project_default: null,
       answers: [],
       is_active: false,
       is_staff: false,
       is_superuser: false,
-      last_login: '',
-      date_joined: '',
+      creator: '',
+      created: '',
+      updater: '',
+      updated: '',
       href: ''
-    };
-  }
-
-  get mutators() {
-    return {
-      projects: {
-        set(key, value, options, set) {
-          App.models.projects = new ProjectCollection();
-          set(key, App.models.projects, options);
-
-          _.forEach(value, (value, key) => {
-            App.models.projects.add(value);
-          });
-        }
-      }
     };
   }
 
@@ -64,9 +51,29 @@ class UserModel extends Backbone.Model {
 
     return url;
   }
+
+  parse(data) {
+    App.models.projectProxies = new ProjectProxyCollection();
+
+    _.forEach(data.projects, (value, key) => {
+      App.models.projectProxies.add(value);
+    });
+
+    data.projects = App.models.projectProxies;
+    return data;
+  }
 };
 
 
 class UsersCollection extends Backbone.Collection {
-  get model() { return User; }
+
+  get name () { return "Users"; }
+  get model() { return UserModel; }
+  get url() { return App.models.rootModel.get('accounts').users.href; }
+
+  parse(data) {
+    this.next = data.next;
+    this.prev = data.previous;
+    return data.results;
+  }
 };

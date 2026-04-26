@@ -9,11 +9,9 @@
 
 class AuthApp {
 
-  constructor(options) {
-    this.region = options.region;
-  }
+  get region() { return null; } // Not used yet new Region({el: '#auth'});
 
-  authenticate(redirect) {
+  authenticate(redirect, publicId) {
     if (!IS_AUTHENTICATED) {
       // Show Login Modal
       let options = {
@@ -29,18 +27,18 @@ class AuthApp {
       async function run(self) {
         await self.fetchRootApi();
         App.startSubApplication(AccountsApp);
-        await App.apps.accountsApp.fetchCurrentUserAccount();
+        await App.apps.accountsApp.fetchUserAccount(USER_HREF);
         App.utils.sleep(500);
 
         // Call the redirect route if any.
         if (redirect !== (void 0)) {
-          await redirect();
+          await redirect(publicId);
         }
       };
 
       run(this);
     } else if (redirect !== (void 0)) { // Call the redirect route if any.
-      redirect();
+      redirect(publicId);
     }
   }
 
@@ -59,10 +57,18 @@ class AuthApp {
       App.models.rootModel = new RootModel();
     }
 
+    //App.events.trigger('loading:start');
+    //App.events.trigger('app:projects:started');
+
     return App.models.rootModel.fetch({
-      error(model, response, options) {
-        App.utils.showMessage("Error: Could not get data from API root.");
-      }
+      accepts: { json: 'application/json' }
+    }).then((json) => {
+      console.log('Root data fetch completed successfully.');
+    }).catch((error) => {
+      App.utils.showMessage("Error: " + error);
+      //App.trigger('server:error', response);
+    }).always(() => {
+      //App.trigger('loading:stop');
     });
   }
 

@@ -1,7 +1,7 @@
 /*
  * Inventory Utilities.
  *
- * js/utils.js
+ * js/app/utils.js
  */
 
 "use strict";
@@ -153,74 +153,28 @@ class Utilities {
     while((new Date().getTime() - start) < milliseconds);
   }
 
-  /*
-   * Inventory specific methods.
-   */
 
-  fetchInventoryType() {
-    if(App.collections.inventoryType === (void 0)) {
-      App.collections.inventoryType = new InventoryTypeCollection();
+  getPublicId(href) {
+    let re = RegExp(/^.*\/api\/.*\/([a-zA-Z0-9]{20})\/$/),
+        result = re.exec(href);
+
+    if (result !== null) {
+      result = result[1];
+    } else {
+      result = "";
     }
 
-    return App.collections.inventoryType.fetch({
-      success(model, response, options) {
-        //console.log(model.get('projects').projects);
-      },
-
-      error(model, response, options) {
-        App.utils.showMessage(options.textStatus + " " + options.errorThrown);
-      }
-    });
+    return result;
   }
 
-  fetchInventoryTypeMeta() {
-    if(App.models.inventoryTypeMeta === (void 0)) {
-      App.models.inventoryTypeMeta = new InventoryTypeMetaModel();
+  getFullyQualifiedHref(href) {
+    let result = href;
+
+    if (href.search(/^https?:\/\/.*$/) !== 0) {
+      result = location.protocol + '//' + location.host + href;
     }
 
-    return App.models.inventoryTypeMeta.fetch({
-      success(model, response, options) {
-        //console.log(model.get('projects').projects);
-      },
-
-      error(model, response, options) {
-        App.utils.showMessage(options.textStatus + " " + options.errorThrown);
-      }
-    });
-  }
-
-  // Fetch Invoices
-  fetchInvoiceCollection(url, project) {
-    clearTimeout(App.invoiceTimeout);
-    let invoices = new InvoicesCollection();
-    project.set('invoices', invoices);
-    invoices.url = url;
-    invoices.fetch({
-      success(collection, response, options) {
-        console.log(response);
-      },
-
-      error(collection, response, options) {
-        console.log(response);
-      }
-    });
-  }
-
-  // Fetch Items
-  fetchItemCollection(url, project) {
-    clearTimeout(App.itemTimeout);
-    let items = new ItemsCollection();
-    project.set('items', items);
-    items.url = url;
-    items.fetch({
-      success(collection, response, options) {
-        console.log(response);
-      },
-
-      error(collection, response, options) {
-        console.log(response);
-      }
-    });
+    return result;
   }
 
   // SEARCH ENDPOINTS

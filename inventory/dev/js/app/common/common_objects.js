@@ -8,14 +8,34 @@
 
 
 class ModelView extends Backbone.View {
+
+  /*
+   * Compile template with underscore templates. This method can be
+   * redefined to implemente another template engine like Handlebars or Jade.
+   */
+  get compileTemplate() { return _.template($(this.template).html()); }
+  get multiple() { return false; }
+
   render() {
     // Get JSON representation of the model
     let data = this.serializeData(),
-        renderedHtml = this.template; // Templates are always pre-compiled.
+        renderedHtml;
 
-    this.$el.html(renderedHtml);
+    if (_.isFunction(this.template)) {
+      renderedHtml = this.template(data);
+    } else if (_.isString(this.template)) {
+      renderedHtml = this.compileTemplate(data);
+    }
 
-    // Call onRender callback if is available
+    this.$el = $(this.el);
+
+    if (this.multiple) {
+      this.$el.append(renderedHtml);
+    } else {
+      this.$el.html(renderedHtml);
+    }
+
+    // Call onRender callback if it's available
     if(this.onRender) {
       this.onRender();
     }
@@ -23,21 +43,15 @@ class ModelView extends Backbone.View {
     return this;
   }
 
-  // Transform Model into JSON representation
+  // Transform Model into a JSON representation.
   serializeData() {
-    let data;
-
-    // Only when model is available
-    if(this.model) {
-      data = this.model.toJSON();
-    }
-
-    return data;
+    return (this.model) ? this.model.toJSON() : (void 0);
   }
-};
+}
 
 
 class CollectionView extends Backbone.View {
+
   initialize() {
     // Keep track of rendered items
     this.children = {};
@@ -129,25 +143,33 @@ class CollectionView extends Backbone.View {
       this.children[view.model.cid] = undefined;
     }
   }
-};
+}
 
 
 class Region {
+
+  get currentView() { return this._currentView; }
+  set currentView(view) { this._currentView = view; }
+
   constructor(options) {
     this.el = options.el;
+    this._currentView = null;
   }
 
-  // Closes any active view and render a new one
-  show(view) {
-    this.closeView(this.currentView);
-    this.currentView = view;
+  // Closes any active view and renders a new one
+  show(view, multiple) {
+    if (multiple && multiple === false) {
+      this.closeView(this.currentView);
+      this.currentView = view;
+    }
+
     this.openView(view);
   }
 
   closeView(view) {
-    // Only remove the view when the remove function
+    // Only remove the view when the view exists and remove function
     // is available
-    if(view && view.remove) {
+    if (view && view.remove) {
       view.remove();
     }
   }
@@ -161,25 +183,27 @@ class Region {
     this.$el.html(view.el);
 
     // Callback when the view is in the DOM
-    if(view.onShow) {
+    if (view.onShow) {
       view.onShow();
     }
   }
 
   // Create the this.$el attribute if do not exists
   ensureEl() {
-    if(this.$el) return;
-    this.$el = $(this.el);
+    if (!this.$el) {
+      this.$el = $(this.el);
+    }
   }
 
   // Close the Region and any view on it
   remove() {
     this.closeView(this.currentView);
   }
-};
+}
 
 
 class Layout extends ModelView {
+
   render() {
     // Clean up any rendered DOM
     this.closeRegions();
@@ -190,7 +214,7 @@ class Layout extends ModelView {
     // Creand and expose the configurated regions
     this.configureRegions();
     return result;
-  };
+  }
 
   configureRegions() {
     let regionDefinitions = this.regions || {};
@@ -202,8 +226,7 @@ class Layout extends ModelView {
     // Create the configurated regions and save a reference
     // in the this._regions attribute
     _.each(regionDefinitions, (selector, name) => {
-      let $el = this.$(selector);
-      this._regions[name] = new Region({el: $el});
+      this._regions[name] = new Region({el: selector});
     });
   }
 
@@ -227,4 +250,37 @@ class Layout extends ModelView {
       if (region && region.remove) region.remove();
     });
   }
-};
+}
+
+
+/*
+ * Global Menu Bar
+ */
+class InventoryMenuBar {
+
+  update(newTab) {
+    let $li, $div;
+
+    // Toggle the active menu item to the new tab.
+    _.each($('#content .nav-tabs li'), li => {
+      $li = $(li);
+
+      if ($li.find('a').attr('aria-controls') === newTab) {
+        $li.addClass('active');
+      } else {
+        $li.removeClass('active');
+      }
+    });
+
+    // Toggle the active tab-pane to the new tab.
+    _.each($('#content .tab-content .tab-pane'), div => {
+      $div = $(div);
+
+      if (div.id === newTab) {
+        $div.addClass('active');
+      } else {
+        $div.removeClass('active');
+      }
+    });
+  }
+}

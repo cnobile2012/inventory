@@ -33,37 +33,22 @@ class DefaultRouter extends Backbone.Router {
   redirectLoginRoute(redirect) {
     App.startSubApplication(AuthApp).authenticate(redirect);
   }
-};
-
-
-/*
- * ViewContainer
- */
-class ViewContainer extends Backbone.View {
-  get childView() { return null; }
-
-  render() {
-    this.$el.html("Greeting Area");
-
-    this.$el.append(this.childView.$el);
-    return this;
-  }
-};
+}
 
 
 var App = {
   Routers: {},
   router: null, // Only the default router.
+  //globalRegion: null,
   // Multiple instance variables.
   apps: {},
-  collections: {},
   layouts: {},
   models: {},
   persistentModels: {},
   regions: {},
   templates: {},
   views: {}, // Use for persistent single views.
-  viewFunctions: {}, // Use for functions that call ephemeral views.
+  openDataPanes: {},
   // Single instance variables.
   viewContainer: null,
   utils: null,
@@ -88,8 +73,13 @@ var App = {
     // other urls
     this.router = new DefaultRouter();
 
+    // The common place where sub-applications will be showen.
+    //this.globalRegion = new Region({el: '#content'});
+
     if(!Backbone.History.started) {
-          Backbone.history.start();
+      Backbone.history.start();
+      Backbone.history.listenTo(Backbone.history, 'route',
+                                this.removeTabs.bind(this));
     }
   },
 
@@ -130,7 +120,6 @@ var App = {
   destroyApp() {
     App.persistentModels.login.clear()
       .set(App.persistentModels.login.defaults);
-    App.collections = {};
     App.layouts = {};
     App.models = {};
     App.regions = {};
@@ -142,15 +131,42 @@ var App = {
     $('div.tab-choice-pane div').empty();
   },
 
+  removeTabs(router, method) {
+    //console.log('POOP', router.routes, method, route);
+    let defRoutes = ['projects', 'invoices', 'items', 'suppliers',
+                     'categories', 'locations', 'accounts'],
+        currentRoute = Object.keys(router.routes).find(
+          key => router.routes[key] == method);
+
+    if (defRoutes.hasOwnProperty(currentRoute)) {
+      _.each(defRoutes, route => {
+        if (route !== currentRoute) {
+          //console.log('POOP', route, currentRoute);
+          App.events.trigger('app:' + route + ':closeall');
+        }
+      });
+    }
+  },
+
   hasRootData() {
     return (this.models.rootModel !== (void 0));
+  },
+
+  doesElementExist(elem) {
+    let result = false;
+
+    if ($(elem).length) {
+      result = true;
+    }
+
+    return result;
   },
 
   /*
    * Only one subapplication can be running at once, destroy any
    * currently running subapplication and start the asked for one.
    */
-  startSubApplication(SubApplication, region) {
+  startSubApplication(SubApplication) {
     // Do not run the same subapplication twice
     let idx = SubApplication.name.indexOf('App');
     this.utils.assert(idx > 0, "Programming Error: " + SubApplication.name
@@ -166,7 +182,7 @@ var App = {
       }
 
       // Run subapplication.
-      this.apps[instName] = new SubApplication({region: region});
+      this.apps[instName] = new SubApplication();
     }
 
     return this.apps[instName];
@@ -177,6 +193,16 @@ var App = {
     if (message !== (void 0)) model.set('message', message);
     let nmv = new NotificationModalView({model: model});
     nmv.show();
+  },
+
+  // https://stackoverflow.com/questions/21518381/proper-way-to-wait-for-one-function-to-finish-before-continuing
+  waitFor(func, ms=1000) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        let result = func();
+        resolve(result);
+      }, ms);
+    });
   },
 
   askConfirmation(message, callback) {
@@ -198,7 +224,7 @@ var App = {
     let amv = new AlertModalView({model: model});
     amv.show();
     setTimeout(() => {
-      $('#alert-modal').fadeOut(2000, () => { amv.close(); });
+      $('#alert-modal').fadeOut(3000, () => { amv.close(); });
     }, 2000);
   },
 
@@ -208,7 +234,7 @@ var App = {
     let amv = new AlertModalView({model: model});
     amv.show();
     setTimeout(() => {
-      $('#alert-modal').fadeOut(2000, () => { amv.close(); });
+      $('#alert-modal').fadeOut(3000, () => { amv.close(); });
     }, 2000);
   },
 

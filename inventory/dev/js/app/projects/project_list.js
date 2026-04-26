@@ -6,147 +6,120 @@
 
 'use strict';
 
-/*
-class ProjectListLayout extends Layout {
+
+// Project Menu
+class ProjectItemMenu extends MenuItem {
+
+  get toggle() { return false; }
+  get target() { return 'projects'; }
+
   constructor(options) {
     super(options);
-    this.template = '#project_list_layout';
-    this.regions = {
-      actions: '.actions-bar-container',
-      list: '.list-container'
-    };
-  }
-
-  get className() {
-    return 'row page-container';
   }
 }
 
-class ProjectListActionBar extends ModelView {
+
+class ProjectParentMenu extends Menu {
+
+  get maxOpen() { return 2; }
+
   constructor(options) {
     super(options);
-    this.template = '#contact-list-action-bar';
+    //App.events.listenTo(App.events, 'app:projects:closeall',
+    //                    this.remove.bind(this));
   }
 
-  get className() {
-    return 'options-bar col-xs-12';
-  }
-
-  get events() {
-    return {
-      'click button': 'createProject'
-    };
-  }
-
-  createProject() {
-    App.router.navigate('projects/new', true);
-  }
-}
-*/
-
-class ProjectListItemView extends ModelView {
-  constructor(options) {
-    super(options);
-    this.template = '#project_list_item';
-  }
-
-  get className() {
-    return 'col-xs-12 col-sm-6 col-md-3';
-  }
-
-  get events() {
-    return {
-      'click #delete': 'deleteProject',
-      'click #view': 'viewProject'
-    };
-  }
-
-  initialize(options) {
-    this.listenTo(options.model, 'change', this.render);
-  }
-
-  deleteProject() {
-    this.trigger('contact:delete', this.model);
-  }
-
-  viewProject() {
-    var projectId = this.model.get('id');
-    App.router.navigate(`projects/view/${projectId}`, true);
-  }
-}
-
-/*
-class ProjectListView extends CollectionView {
-  constructor(options) {
-    super(options);
-    this.modelView = ProjectListItemView;
-  }
-
-  get className() {
-    return 'project-list';
-  }
-}
-*/
-
-class ProjectList {
-  constructor(options) {
-    // Allow subapplication to listen and trigger events,
-    // useful for subapplication wide events
-    _.extend(this, Backbone.Events);
-  }
-
-  showList(projects) {
-    // Create the views
-    let options = [],
-        item = null,
-        id = "",
-        nextModel = null,
-        projectMenuCollection = null,
-        projectMenuView = null;
-
-    for(let i = 0; i < projects.length; i++) {
-      nextModel = projects.at(i);
-      item = {title: '<a href="#projects/' + nextModel.id + '" data="'
-              + nextModel.id + '" >' + nextModel.get('name') + '</a>'};
-      options[i] = item;
-    }
-
-    projectMenuCollection = new MenuModelItems(options);
-    projectMenuView = new ProjectMenu({collection: projectMenuCollection});
-    projectMenuView.render();
-
-/*
-    var layout = new ProjectListLayout();
-    //var actionBar = new ProjectListActionBar();
-    var projectList = new ProjectListView({collection: projects});
-
-    // Show the views
-    this.region.show(layout);
-    //layout.getRegion('actions').show(actionBar);
-    layout.getRegion('list').show(projectList);
-*/
-    //this.listenTo(projectList, 'item:project:delete', this.deleteProject);
-  }
-
-  deleteProject(view, project) {
-    App.askConfirmation('The project will be deleted', (isConfirm) => {
-      if (isConfirm) {
-        project.destroy({
-          success: () => {
-            App.notifySuccess('Project was deleted');
-          },
-          error: () => {
-            App.notifyError('Ooops... Something went wrong');
-          }
-        });
-      }
+  renderCallback(model) {
+    return new ProjectItemMenu({
+      parent: this,
+      model: model,
+      parentPaneSelector: 'div.tab-choice-pane',
+      dataPaneClass: 'data-pane'
     });
   }
 
-  // Close any active view and remove event listeners
-  // to prevent zombie functions
-  destroy() {
-    this.region.remove();
-    this.stopListening();
+  postRenderCallback(item) {
+    App.events.listenTo(App.events, 'app:projects:' + item.model.id + ':open',
+                        item.onClick.bind(item));
+    App.events.listenTo(App.events, 'app:projects:' + item.model.id + ':close',
+                        item.closePane.bind(item));
+  }
+
+  remove() {
+    _.each(this.viewCollection, view => {
+      let open = 'app:projects:' + view.model.id + ':open',
+          close = 'app:projects:' + view.model.id + ':close',
+          contact = 'app:projects:' + view.model.id + ':contact',
+          closeall = 'app:projects:closeall';
+      App.events.stopListening(App.events, open);
+      App.events.trigger(close);
+      App.events.stopListening(App.events, close);
+      App.events.stopListening(App.events, contact);
+      App.events.stopListening(App.events, closeall);
+      view.remove();
+    });
+
+    Backbone.View.prototype.remove.call(this);
+  }
+
+  maxOpenWarning() {
+    App.alertError("Cannot open more than " + this.maxOpen + " tabs!");
+  }
+}
+
+
+class ProjectMenu extends Backbone.View {
+
+  get el() { return 'div#projects div.tab-choice-pane div.pane-nav'; }
+  get altId() { return 'create-project'; }
+
+  constructor(options) {
+    super(options);
+    this.projects = options.projects;
+  }
+
+  render() {
+    this.$el.empty();
+    let menu = new ProjectParentMenu({collection: this.collection});
+    this.$el.append(menu.render().el);
+    return this;
+  }
+
+  show() {
+    let $ul = $('#projects .pane-nav ul'),
+        items = [];
+
+    // Update the Globle Menu
+    new InventoryMenuBar().update('projects');
+
+    // Create Project Action Bar
+    _.each(this.projects.toArray(), (model) => {
+      let item = {
+        public_id: model.id,
+        title: '<a href="' + "#projects/" + model.id + '">'
+          + model.get('name') + '</a>'
+      };
+      items.push(item);
+    });
+
+    items.unshift({
+      public_id: this.altId,
+      title: '<a href="#projects/create">Create New Project</a>'
+    });
+    this.collection = new MenuModelItems(items);
+    this.render();
+  }
+}
+
+
+class ProjectList {
+
+  constructor(options) {
+    this.region = options.region;
+  }
+
+  showList(projects) {
+    // Show the Project Menu
+    new ProjectMenu({projects: projects}).show();
   }
 }

@@ -11,16 +11,26 @@
 
 
 class MenuModelItem extends Backbone.Model {
+
+  get idAttribute() { return 'public_id'; }
+
   get defaults() {
     return {
+      public_id: null,
       title: 'Default Title',
       isSelected: false
     };
   }
-};
+
+//  select() {
+//    this.set({isSelected: true});
+//    this.collection.selectProject(this);
+//  }
+}
 
 
 class MenuModelItems extends Backbone.Collection {
+
   get model() { return MenuModelItem; }
 
   constructor(options) {
@@ -34,9 +44,9 @@ class MenuModelItems extends Backbone.Collection {
 
   /*
    * If any model changes it's selection property to true, go through
-   * each model in collection, checking if it has isSelected property
-   * equal to true and not being changed during this change event. if
-   * found any--reset it's isSelected property to false.
+   * each model in the collection, checking if it has its isSelected
+   * property equal to true and not being changed during this change
+   * event. if found any--reset it's isSelected property to false.
    */
   onSelectedChanged(currentModel, value) {
     // Only check if `isSelected` is `true`.
@@ -48,4 +58,8 @@ class MenuModelItems extends Backbone.Collection {
       });
     }
   }
-};
+
+//  selectProject() {
+//    App.events.trigger('app:projects:selected', project);
+//  }
+}

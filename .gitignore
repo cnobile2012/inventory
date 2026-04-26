@@ -23,6 +23,7 @@ logs/*.log*
 old
 tmp
 docs/htmlcov
+*.tar.gz
 
 # C extensions
 *.so

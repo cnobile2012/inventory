@@ -1,5 +1,91 @@
 {% load i18n %}
-    <script type="text/template" class="template" id="project_template">
+    <script type="text/template" class="template" id="project_action_bar">
+      <div class="action-bar">
+        <button type="button" name="project-save" class="form-submit">
+            {% trans "Save" %}
+          </button>
+        <button type="button" name="project-edit" class="form-submit">
+            {% trans "Edit" %}
+          </button>
+        <button type="button" name="project-close" class="form-submit">
+            {% trans "Close" %}
+          </button>
+        <button type="button" name="project-delete" class="form-submit">
+            {% trans "Delete" %}
+          </button>
+      </div>
+    </script>
+
+    <script type="text/template" class="template" id="project_content">
+      <div class="items">
+        <div class="item project-public-id">
+          <div class="value-container">
+            <label class="value-label"><%= meta.public_id.label %>:</label>
+            <span class="value"><%= public_id %></span>
+          </div>
+          <div class="value-container below-help">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"><%= meta.public_id.help_text %></span>
+          </div>
+        </div>
+        <div class="item project-inventory-type">
+          <div class="value-container">
+            <label class="value-label">
+              <%= meta.inventory_type.label %>:
+            </label>
+            <span class="value"><%= inventory_type %></span>
+          </div>
+          <div class="value-container below-help">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"><%= meta.inventory_type.help_text %></span>
+          </div>
+        </div>
+        <div class="item project-name">
+          <div class="value-container">
+            <label class="value-label"><%= meta.name.label %>:</label>
+            <span class="value"><%= name %></span>
+          </div>
+          <div class="value-container below-help">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"><%= meta.name.help_text %></span>
+          </div>
+        </div>
+        <div class="item project-members">
+          <div class="value-container">
+            <label class="value-label"><%= meta.members.label %>:</label>
+            <ul>
+              <% _.each(members, (member) => { %>
+              <li><a href="#accounts/<%= member.public_id %>">
+                  <%= member.full_name %></a></li>
+              <% }) %>
+            </ul>
+          </div>
+          <div class="value-container below-help">
+            <label class="help-label">&nbsp;</label>
+            <span class="help"><%= meta.members.help_text %></span>
+          </div>
+        </div>
+
+
+
+
+
+      </div>
+    </script>
+
+    <script type="text/template" class="template"
+            id="project_create_action_bar">
+      <div class="action-bar">
+        <button type="button" name="project-save" class="form-submit">
+            {% trans "Save" %}
+          </button>
+        <button type="button" name="project-close" class="form-submit">
+            {% trans "Close" %}
+          </button>
+      </div>
+    </script>
+
+    <script type="text/template" class="template" id="project_edit">
       {% csrf_token %}
       <div class="item project-public-id">
         <div class="value-container">
@@ -31,6 +117,7 @@
           <span class="help"></span>
         </div>
       </div>
+
       <div class="item project-image">
         <div class="value-container">
           <label class="value-label"></label>
@@ -45,10 +132,11 @@
           <span class="help"></span>
         </div>
       </div>
-      <div class="item project-membership">
+
+      <div class="item project-members">
         <div class="value-container">
           <label class="value-label"></label>
-          <input type="text" name="membership-search" />
+          <input type="text" name="members-search" />
         </div>
         <div class="value-container below-help">
           <label class="help-label">&nbsp;</label>

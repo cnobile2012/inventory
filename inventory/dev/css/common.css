@@ -106,7 +106,7 @@ body {
 
 /* GLOBAL PANE TABS */
 .tab-pane {
-  min-height: 456px;
+  min-height: inherit;
   margin: -1px 1px 1px;
   padding: 0 4px 4px;
   border: 1px solid rgba(72, 48, 24, 0.5);
@@ -121,7 +121,6 @@ body {
   display: flex;
   -webkit-flex-direction: row;
   -webkit-box-orient: horizontal;
-  -ms-flex-direction: row;
   flex-direction: row;
 }
 
@@ -156,6 +155,10 @@ body {
   background-color: rgba(246, 242, 214, 1);
 }
 
+.tab-content {
+  min-height: 500px;
+}
+
 .tab-content>.tab-pane {
   display: none;
 }
@@ -166,30 +169,21 @@ body {
 
 /* DATA PANE TABS */
 .data-pane {
-  min-height: 446px;
+  min-height: 489px;
   width: 100%;
-  margin: 4px 0 0 2px;
+  margin: 4px 0 0 0;
   padding: 8px;
   border: 1px solid rgba(72, 48, 24, 0.5);
   background-color: rgba(233, 231, 213, 1);
-}
-
-.data-pane .pane-close {
-  float: right;
-  margin-top: -5px;
-  font-weight: bold;
-  cursor: pointer;
 }
 
 .data-pane form {
   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
   display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
   display: -moz-box;
-  display: -ms-flexbox;  /* TWEENER - IE 10 */
   display: flex;
   -webkit-flex-direction: column;
   -webkit-box-orient: vertical;
-  -ms-flex-direction: column;
   flex-direction: column;
 }
 
@@ -197,16 +191,20 @@ body {
   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
   display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
   display: -moz-box;
-  display: -ms-flexbox;  /* TWEENER - IE 10 */
   display: flex;
   -webkit-flex-direction: column;
   -webkit-box-orient: vertical;
-  -ms-flex-direction: column;
   flex-direction: column;
 }
 
-.data-pane .item {
-  margin: 4px 0 0;
+.data-pane .items {
+  margin: 5px 0 0 0;
+  min-height: 93%;
+  background-color: inherit;
+}
+
+.darken {
+  filter: brightness(90%);
 }
 
 .data-pane .value-container {
@@ -294,4 +292,25 @@ body {
   width: 60px;
   height: 30px;
   font-size: 100%;
+}
+
+/* PROJECT */
+.project-members ul {
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+  justify-content: flex-start;
+  margin: 0 0;
+  padding: 0px 8px;  
+}
+
+.project-members ul>li {
+  margin: 0 0;
+  padding: 0 0;
+}
+
+.project-members ul>li>a {
+  cursor: pointer;
+  text-decoration: none;
+  color: rgba(218, 131, 44, 1);
 }

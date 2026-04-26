@@ -10,9 +10,7 @@
 // TODO: enable pagination
 class AccountsApp {
 
-  constructor(options) {
-    this.region = options.region;
-  }
+  get reqion() { return new Region({el: '#accounts'}); }
 
   get accept() {
     return App.models.rootModel.get('accounts').users
@@ -24,17 +22,47 @@ class AccountsApp {
       .content_type_header.json['1.0'];
   }
 
-  fetchCurrentUserAccount() {
-    if(App.models.userModel === (void 0)) {
-      App.models.userModel = new UserModel();
+  fetchUserAccount(href) {
+    App.utils.assert(
+      typeof href === 'string',
+      "Invalid type should be a valid URL found '" + href + "'");
+
+    if (App.models.users === (void 0)) {
+      App.models.users = new UsersCollection();
     }
 
-    App.models.userModel.fetch({
-      accepts: { json: this.accept },
-      error(model, response, options) {
-        App.utils.showMessage("Error: Could not get data for user '" +
-                              USERNAME + "' from API.");
-      }
+    let user = App.models.users.findWhere({
+      href: App.utils.getFullyQualifiedHref(href)
+    });
+
+    if (user === (void 0)) {
+      user = new UserModel();
+      return user.fetch({
+        accepts: { json: this.accept }
+      }).then((json) => {
+        console.log('Account data fetch completed successfully.');
+      }).catch((model, response, options) => {
+        App.utils.showMessage("Error: Could not get user data with URL "
+                              + href);
+      }).always(() => {
+        App.models.users.add(user);
+      });
+    }
+  }
+
+  fetchUserAccounts() {
+    if (App.models.users === (void 0)) {
+      App.models.users = new UsersCollection();
+    }
+
+    return App.models.users.fetch({
+      accepts: { json: this.accept }
+    }).then((json) => {
+      console.log('Accounts fetch completed successfully.');
+    }).catch((error) => {
+      App.utils.showMessage("Error: Failed to get users data with URL " +
+                            App.models.users.url);
+      console.error("Error: " + error);
     });
   }
 

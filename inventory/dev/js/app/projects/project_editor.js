@@ -239,7 +239,7 @@ class ProjectEditor {
       success() {
         // Redirect user to project list after save
         App.notifySuccess('Project saved');
-        App.router.navigate('projects', true);
+        App.router.navigate('projects', {trigger: true});
       },
       error() {
         // Show error message if something goes wrong
@@ -269,7 +269,7 @@ class ProjectEditor {
     // cencel
     App.askConfirmation('Changes will be lost', isConfirm => {
       if (isConfirm) {
-        App.router.navigate('projects', true);
+        App.router.navigate('projects', {trigger: true});
       }
     });
   }
