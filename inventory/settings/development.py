@@ -67,12 +67,6 @@ DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
     }
 
-# email settings
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_REPLY_TO = 'donotreply@'
-
 ALLOWED_HOSTS = [
     'localhost',
     '192.168.1.109',
@@ -80,6 +74,12 @@ ALLOWED_HOSTS = [
     'inventory.homelinux.org',
     'tetrasys.homelinux.org',
     ]
+
+# email settings
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_REPLY_TO = 'donotreply@'
 
 # Document Email Contacts
 DOC_CONTACTS = (
