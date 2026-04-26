@@ -100,7 +100,7 @@ class LocationCodeCategory(Base):
                                on_delete=models.CASCADE)
     segment = models.CharField(
         max_length=248, db_index=True,
-        help_text=_("See the LocationCodeDefault.description for the " +
+        help_text=_("See the LocationCodeDefault.description for the "
                     "format used."))
     path = models.CharField(max_length=248, editable=False)
     char_definition = models.ForeignKey(LocationCodeDefault, editable=False,
@@ -178,9 +178,9 @@ class LocationCodeCategory(Base):
             raise ValidationError(msg % e)
 
         if not self.char_definition:
-            msg = "Invalid segment must conform to one of the following " + \
-                  "character definitions: %s"
-            raise ValidationError(_(msg % ', '.join(self._formats)))
+            msg = ("Invalid segment must conform to one of the following "
+                   f"character definitions: {', '.join(self._formats)}")
+            raise ValidationError(_(msg))
 
     def save(self, *args, **kwargs):
         # Run all the validators.

@@ -95,7 +95,7 @@ class CostAdminForm(forms.ModelForm):
                   self.cleaned_data)
 
         if mfg and dst:
-            msg = _("A cost can only be assigned to one business type, " +
+            msg = _("A cost can only be assigned to one business type, "
                     "either a distributor or a manufacturer.")
             raise forms.ValidationError(msg)
 

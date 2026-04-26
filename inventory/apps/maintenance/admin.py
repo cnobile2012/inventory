@@ -68,7 +68,7 @@ class LocationCodeCategoryForm(forms.ModelForm):
                                     for c in range(len(parents))])
 
                         if flag:
-                            msg = _("The segment [%s] in this location code " +
+                            msg = _("The segment [%s] in this location code "
                                     "already exists.")
                             raise forms.ValidationError(_(msg % segment))
                     except IndexError:

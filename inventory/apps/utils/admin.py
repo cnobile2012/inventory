@@ -8,6 +8,7 @@ from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.forms.utils import ErrorList
 
+# This fixes the empty list '[]' in the admin issue in production environments.
 ErrorList.__str__ = lambda self: '' if not self else super(
     ErrorList, self).__str__()
 
