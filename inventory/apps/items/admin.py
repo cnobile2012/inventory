@@ -112,10 +112,12 @@ class CategoryAdminForm(forms.ModelForm):
         name = self.cleaned_data.get('name')
         names = Category.objects.filter(name=name)
         log.debug("All %s names in all trees: %s", name, names)
+        sep = Category.getSeparator()
 
-        if Category.getSeparator() in name:
-            msg = "A category name cannot contain the category delimiter '%s'."
-            raise ValidationError(msg % Category.getSeparator())
+        if sep in name:
+            msg = ("A category name cannot contain the category "
+                   f"delimiter '{sep}'.")
+            raise ValidationError(msg)
 
         if parent:
             # Test saving a category to itself.
