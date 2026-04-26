@@ -3,3 +3,4 @@
 
 coverage
 django_debug_toolbar
+flake8

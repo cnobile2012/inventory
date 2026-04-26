@@ -5,7 +5,11 @@
 # This script imports the state/provences/regions into the database.
 #
 
-import sys, csv, traceback, codecs
+import os
+import sys
+import csv
+import traceback
+import codecs
 from StringIO import StringIO
 from optparse import OptionParser
 
@@ -45,8 +49,7 @@ class UnicodeReader:
         return self
 
     def next(self):
-        row = self.reader.next()
-        return [unicode(s, "utf-8") for s in row]
+        return self.reader.next()
 
 
 def getRegionRecord(records, country, code):
@@ -61,6 +64,7 @@ def getRegionRecord(records, country, code):
             break
 
     return record
+
 
 def getCountryRecord(records, code):
     record = None
@@ -87,13 +91,13 @@ parser.add_option("-u", "--user-id", dest="id", default=1,
                   help="USER ID (defaults to 1)", metavar="USER_ID")
 options, args = parser.parse_args()
 
-#print options, args
+# print(options, args)
 
 try:
     records = Region.objects.all().values()
     cRecords = Country.objects.all().values()
     codes = [r["region_code"].upper() for r in records]
-    #print "Country codes: %s" % codes
+    # print(f"Country codes: {codes}")
     fileObj = open(options.csv, "rb")
     buff = StringIO(fileObj.read())
     fileObj.close()
@@ -115,15 +119,16 @@ try:
         level = row[3]
 
         if not code:
-            msg = "Error: Could not fine the region code for country: %s," + \
-                  " region: %s, level: %s"
-            print msg % (country, region, level)
+            msg = ("Error: Could not fine the region code for country: "
+                   f"{country}, region: {region}, level: {level}")
+            print(msg)
             continue
 
         if not country:
-            msg = "Error: Could not find country for code: %s, region: %s," + \
-                  " level: %s, this record could not be saved to database."
-            print msg % (code, region, level)
+            msg = (f"Error: Could not find country for code: {code}, "
+                   f"region: {region}, level: {level}, this record could "
+                   "not be saved to database.")
+            print(msg)
             continue
 
         if code in codes:
@@ -138,13 +143,13 @@ try:
 
                 try:
                     record.save()
-                except:
-                    print "%s: %s (%s: %s)" % (country, code, sys.exc_info()[0],
-                                               sys.exc_info()[1])
+                except Exception:
+                    print(f"{country}: {code} ({sys.exc_info()[0]}: "
+                          f"{sys.exc_info()[1]})")
                     continue
 
                 if options.verbose:
-                    print "Updated: %s (%s)" % (code, country)
+                    print(f"Updated: {code} ({country})")
         else:
             record = Region(user_id=options.id, country=country,
                             region_code=code, region=region,
@@ -152,19 +157,19 @@ try:
 
             try:
                 record.save()
-            except:
-                print "%s: %s (%s: %s)" % (country, code, sys.exc_info()[0],
-                                           sys.exc_info()[1])
+            except Exception:
+                print(f"{country}: {code} ({sys.exc_info()[0]}: "
+                      f"{sys.exc_info()[1]}")
                 continue
 
             if options.verbose:
-                print "Added: %s (%s)" % (code, country)
+                print("Added: {code} ({country})")
 
     buff.close()
-except:
+except Exception:
     tb = sys.exc_info()[2]
     traceback.print_tb(tb)
-    print "%s: %s\n" % (sys.exc_info()[0], sys.exc_info()[1])
+    print(f"{sys.exc_info()[0]}: {sys.exc_info()[1]}\n")
     sys.exit(1)
 
 sys.exit(0)

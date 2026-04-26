@@ -41,9 +41,7 @@ class RegionTypedChoiceField(forms.TypedChoiceField):
             raise ValidationError(self.error_messages['required'])
 
         if value in self.EMPTY_VALUES:
-            value = u''
-
-        #value = smart_unicode(value)
+            value = ''
 
         if value == self.empty_value or value in self.EMPTY_VALUES:
             return self.empty_value
@@ -141,7 +139,7 @@ class CategoryAdminForm(forms.ModelForm):
                                     for c in range(len(parents))])
 
                         if flag:
-                            msg = _("A category at this level with name [%s] " +
+                            msg = _("A category at this level with name [%s] "
                                     "already exists.")
                             raise forms.ValidationError(_(msg % name))
                     except IndexError:
@@ -171,12 +169,12 @@ class DistributorAdmin(BaseAdmin):
     fieldsets = (
         (None, {'fields': ('name', 'address_01', 'address_02', 'city',
                 'state', 'postal_code', 'country', 'phone', 'fax', 'email',
-                'url',)}),
+                'url')}),
         (_('Status'), {'classes': ('collapse',),
-                       'fields': ('user', 'ctime', 'mtime',)}),
+                       'fields': ('user', 'ctime', 'mtime')}),
         )
-    list_display = ('name', 'phone', 'fax', 'email', 'url',)
-    readonly_fields = ('user', 'ctime', 'mtime',)
+    list_display = ('name', 'phone', 'fax', 'email', 'url')
+    readonly_fields = ('user', 'ctime', 'mtime')
     ordering = ('name',)
     form = DistributorAdminForm
 
@@ -275,12 +273,12 @@ class CostAdmin(BaseAdmin):
 admin.site.register(Cost, CostAdmin)
 
 
-#class SpecificationAdmin(BaseAdmin):
-#    list_display = ('name', 'value', '_displayItemTitle')
-#    list_display_links = ('name',)
-#    list_editable = ('value',)
+# class SpecificationAdmin(BaseAdmin):
+#     list_display = ('name', 'value', '_displayItemTitle')
+#     list_display_links = ('name',)
+#     list_editable = ('value',)
 
-#admin.site.register(Specification, SpecificationAdmin)
+# admin.site.register(Specification, SpecificationAdmin)
 
 
 class CostInline(admin.StackedInline):
@@ -330,7 +328,7 @@ class ItemAdmin(BaseAdmin):
         css = {'all': ('css/hozFilter.css',)}
 
     def save_formset(self, request, form, formset, change):
-        instances = formset.save(commit=False)
+        formset.save(commit=False)
 
         for form in formset.forms:
             form.instance.user = request.user

@@ -3,12 +3,6 @@
 #
 # Breadcrumbs tag library.
 #
-# SVN/CVS keywords
-#------------------------------
-# $Author: cnobile $
-# $Date: 2013-06-29 21:55:28 -0400 (Sat, 29 Jun 2013) $
-# $Revision: 78 $
-#------------------------------
 
 from io import StringIO
 from django import template
@@ -18,6 +12,7 @@ log = getLogger()
 
 register = template.Library()
 
+
 @register.tag
 def breadcrumbs(parser, token):
     """
@@ -26,13 +21,16 @@ def breadcrumbs(parser, token):
 
     Arguments:
 
-     1. pages -- A list of tuples. ex. [('Home', '/'), ('Current Page', ''), ...]
+     1. pages -- A list of tuples. ex. [('Home', '/'), ('Current Page', ''),
+                                        ...]
      2. img   -- (optional) An image to display as the breadcrumb separator.
-        If not passed to the tag the &raquo; entity will be used as a separator.
+                 If not passed to the tag the &raquo; entity will be used as
+                 a separator.
 
     Examples:
 
-     * {% breadcrumbs "[('Home', 'url01'), ('Page01', 'url02'), ('CurrentPage', '/')]" %}
+     * {% breadcrumbs "[('Home', 'url01'), ('Page01', 'url02'),
+                        ('CurrentPage', '/')]" %}
      * {% breadcrumbs page_context_var '/static/img/arrow18x16.png' %}
      * {% breadcrumbs page_context_var img_context_var %}
     """
@@ -46,7 +44,10 @@ def breadcrumbs(parser, token):
     tagName = tokens[0]
     pages = tokens[1]
     img = ""
-    if size == 3: img = tokens[2].strip("'").strip('"')
+
+    if size == 3:
+        img = tokens[2].strip("'").strip('"')
+
     pages = pages.strip("'").strip('"')
     log.debug("tagName: %s, pages: %s, img: %s", tagName, pages, img)
     return BreadcrumbNode(tagName, pages, img)
@@ -68,13 +69,13 @@ class BreadcrumbNode(template.Node):
     def render(self, context):
         try:
             locations = self._pagesVar.resolve(context)
-        except:
+        except Exception:
             locations = eval(self._pagesVar.var)
 
         if not isinstance(self._imgVar, str):
             try:
                 img = self._imgVar.resolve(context)
-            except:
+            except Exception:
                 img = self._imgVar.var
         else:
             img = self._imgVar
@@ -92,20 +93,22 @@ class BreadcrumbNode(template.Node):
 
         for title, url in locations:
             log.debug("title: %s, url: %s", title, url)
+
             # Make the last page non-linkable.
-            if size == count: url = ""
+            if size == count:
+                url = ""
 
             if count > 0:
                 if img != "":
-                    buff.write('<img class="arrow" src="%s" alt="&raquo;" />'\
-                               % img)
+                    buff.write(
+                        f'<img class="arrow" src="{img}" alt="&raquo;" />')
                 else:
                     buff.write('<span class="arrow">&raquo;</span>')
 
             if url:
-                buff.write('<a class="title" href="%s">%s</a>' % (url, title))
+                buff.write(f'<a class="title" href="{url}">{title}</a>')
             else:
-                buff.write('<span class="title">%s</span>' % title)
+                buff.write(f'<span class="title">{title}</span>')
 
             count += 1
 

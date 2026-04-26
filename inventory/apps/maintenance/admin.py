@@ -1,22 +1,15 @@
 #
 # maintenance/admin.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2014-12-05 17:46:21 -0500 (Fri, 05 Dec 2014) $
-# $Revision: 95 $
-#----------------------------------
 
 from django.contrib import admin
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from inventory.apps.maintenance.models import LocationCodeDefault, \
-     LocationCodeCategory
+from inventory.apps.maintenance.models import (
+    LocationCodeDefault, LocationCodeCategory)
 from inventory.apps.utils.admin import BaseAdmin
 from inventory.settings import getLogger
-
 
 log = getLogger()
 
@@ -33,7 +26,8 @@ class LocationCodeDefaultForm(forms.ModelForm):
             segment_order = self.cleaned_data.get('segment_order')
 
             try:
-                if LocationCodeDefault.objects.get(segment_order=segment_order):
+                if LocationCodeDefault.objects.get(
+                    segment_order=segment_order):
                     msg = "There is already a segment with this order number."
                     raise forms.ValidationError(_(msg))
             except LocationCodeDefault.DoesNotExist:
@@ -87,29 +81,29 @@ class LocationCodeCategoryForm(forms.ModelForm):
             msg = _("A root level category segment [%s] already exists.")
             raise forms.ValidationError(_(msg % segment))
 
-        ## segmentLength = LocationCodeDefault.getSegmentLength()
-        ## length = len(segment)
+        # segmentLength = LocationCodeDefault.getSegmentLength()
+        # length = len(segment)
 
-        ## # Test that configured segment length is correct.
-        ## if length != segmentLength:
-        ##     msg = _("The segment length is %s must be %s characters.")
-        ##     raise forms.ValidationError(_(msg % (length, segmentLength)))
+        # Test that configured segment length is correct.
+        # if length != segmentLength:
+        #     msg = _("The segment length is %s must be %s characters.")
+        #     raise forms.ValidationError(_(msg % (length, segmentLength)))
 
-        #level = self.cleaned_data.get('level')
+        # level = self.cleaned_data.get('level')
 
-        ## cDef = LocationCodeDefault.getCharDefinition()
+        # cDef = LocationCodeDefault.getCharDefinition()
 
-        ## if cDef:
-        ##     formatMap = {'A': cDef.isalpha, 'N': cDef.isdigit, 'P': ''}
+        # if cDef:
+        #     formatMap = {'A': cDef.isalpha, 'N': cDef.isdigit, 'P': ''}
 
         return self.cleaned_data
 
 
 # Admin
 class LocationCodeDefaultAdmin(BaseAdmin):
-    fields = ('char_definition', 'segment_order', 'description',)
+    fields = ('char_definition', 'segment_order', 'description')
     list_display = ('char_definition', 'segment_order', 'description',
-                    'segment_length', 'segment_separator',)
+                    'segment_length', 'segment_separator')
     list_display_links = ('char_definition',)
     ordering = ('segment_order',)
     list_editable = ('segment_order',)
@@ -120,7 +114,7 @@ admin.site.register(LocationCodeDefault, LocationCodeDefaultAdmin)
 
 class LocationCodeCategoryAdmin(BaseAdmin):
     list_display = ('segment', '_parentsProducer', '_levelProducer',
-                    '_charDefProducer',)
+                    '_charDefProducer')
     search_fields = ('segment',)
     ordering = ('segment',)
     form = LocationCodeCategoryForm

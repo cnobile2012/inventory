@@ -1,12 +1,6 @@
 #
 # utils/modelfields.py
 #
-# SVN Keywords
-#------------------------------
-# $Author: cnobile $
-# $Date: 2011-05-18 19:02:58 -0400 (Wed, 18 May 2011) $
-# $Revision: 47 $
-#------------------------------
 
 from django.db import models
 
@@ -18,7 +12,7 @@ log = getLogger()
 
 
 class PostalCodeField(models.CharField):
-    #__metaclass__ = models.from_db_value()
+    # __metaclass__ = models.from_db_value()
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 10
@@ -35,7 +29,7 @@ class PostalCodeField(models.CharField):
 
 
 class SizableCharField(models.CharField):
-    #__metaclass__ = models.SubfieldBase
+    # __metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kwargs):
         self.input_size = kwargs.pop('input_size', 50)
@@ -51,7 +45,7 @@ class SizableCharField(models.CharField):
 
 
 class SizableTextField(models.TextField):
-    #__metaclass__ = models.SubfieldBase
+    # __metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kwargs):
         self.rows = kwargs.pop('rows', 10)

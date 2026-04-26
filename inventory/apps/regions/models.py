@@ -16,12 +16,6 @@
 # COUNTRY NAME, ISO 3166-2 SUB-DIVISION/STATE CODE,
 # ISO 3166-2 SUBDIVISION/STATE NAME, ISO 3166-2 PRIMARY LEVEL NAME
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2010-08-29 22:22:56 -0400 (Sun, 29 Aug 2010) $
-# $Revision: 12 $
-#----------------------------------
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _

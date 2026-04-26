@@ -1,4 +1,8 @@
-import csv, codecs, cStringIO
+import csv
+import codecs
+
+from io import cStringIO
+
 
 class UTF8Recoder:
     """
@@ -13,6 +17,7 @@ class UTF8Recoder:
     def next(self):
         return self.reader.next().encode("utf-8")
 
+
 class UnicodeReader:
     """
     A CSV reader which will iterate over lines in the CSV file "f",
@@ -24,11 +29,11 @@ class UnicodeReader:
         self.reader = csv.reader(f, dialect=dialect, **kwds)
 
     def next(self):
-        row = self.reader.next()
-        return [unicode(s, "utf-8") for s in row]
+        return self.reader.next()
 
     def __iter__(self):
         return self
+
 
 class UnicodeWriter:
     """

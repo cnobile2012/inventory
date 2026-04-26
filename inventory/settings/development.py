@@ -35,18 +35,18 @@ CACHES.update({
         },
     })
 
-#KEY_PREFIX = 'dev'
-#KEY_FUNCTION = 'inventory.common.caching.make_key'
+# KEY_PREFIX = 'dev'
+# KEY_FUNCTION = 'inventory.common.caching.make_key'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-#STATIC_ROOT = os.path.join(BASE_DIR, 'dev/')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'dev/')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-#STATIC_URL = os.path.join(SITE_URL, 'dev/')
+# STATIC_URL = os.path.join(SITE_URL, 'dev/')
 
 ###############################################################################
 # Django Debug Toolbar

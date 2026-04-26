@@ -1,12 +1,6 @@
 #
 # utils/views.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2010-08-31 15:14:49 -0400 (Tue, 31 Aug 2010) $
-# $Revision: 14 $
-#----------------------------------
 
 class ViewBase:
     __CRUMBS_KEY = 'breadcrumbs'
@@ -14,41 +8,41 @@ class ViewBase:
     def __init__(self, log):
         self._log = log
 
-    ## @classmethod
-    ## def getLocalizedNowDateTime(self):
-    ##     timezone = pytz.timezone(TIME_ZONE)
-    ##     return datetime.datetime.now(timezone)
+    # @classmethod
+    # def getLocalizedNowDateTime(self):
+    #     timezone = pytz.timezone(TIME_ZONE)
+    #     return datetime.datetime.now(timezone)
 
-    ## def getUserFromSession(self, key):
-    ##     #key = request.session.session_key
-    ##     session = Session.objects.get(session_key=key)
-    ##     uid = session.get_decoded().get('_auth_user_id')
-    ##     return User.objects.get(pk=uid)
+    # def getUserFromSession(self, key):
+    #     #key = request.session.session_key
+    #     session = Session.objects.get(session_key=key)
+    #     uid = session.get_decoded().get('_auth_user_id')
+    #     return User.objects.get(pk=uid)
 
     def _formHTML(self, form, klass=None):
-        result = u'''
+        result = f'''
           <form id="form" method="post" action="javascript:void(0)">
-            <ul class="%s">
-              %s
+            <ul class="{klass}">
+              {form.as_ul().replace('\n', '\n              ')}
             </ul>
             <div class="submit">
               <input id="submit" type="submit" value="Submit" />
             </div> <!-- End div.submit -->
           </form>
-        ''' % (klass, form.as_ul().replace('\n', '\n              '))
+        '''
         return result
 
-    ## def _buildResponse(self, status, message):
-    ##     # RFC-2616 states that: "All 1xx (informational), 204 (no content),
-    ##     # and 304 (not modified) responses MUST NOT include a message-body".
-    ##     if status in (100, 101, 102, 204, 304): return ''
-    ##     context = {}
-    ##     context['title'] = "%s %s" % (status, STATUS_CODES.get(
-    ##         status, 'Invalid Status'))
-    ##     context['message'] = str(message)
-    ##     self._log.debug("Context dump for %s: %s", self.__module__, context)
-    ##     tmpl = loader.get_template('response.html')
-    ##     return tmpl.render(context)
+    # def _buildResponse(self, status, message):
+    #     # RFC-2616 states that: "All 1xx (informational), 204 (no content),
+    #     # and 304 (not modified) responses MUST NOT include a message-body".
+    #     if status in (100, 101, 102, 204, 304): return ''
+    #     context = {}
+    #     context['title'] = "%s %s" % (status, STATUS_CODES.get(
+    #         status, 'Invalid Status'))
+    #     context['message'] = str(message)
+    #     self._log.debug("Context dump for %s: %s", self.__module__, context)
+    #     tmpl = loader.get_template('response.html')
+    #     return tmpl.render(context)
 
     def _setBreadcrumb(self, request, title, url):
         page = (title, url)
@@ -56,7 +50,7 @@ class ViewBase:
 
         try:
             breadcrumbs = request.session[self.__CRUMBS_KEY]
-        except:
+        except Exception:
             breadcrumbs = []
             request.session[self.__CRUMBS_KEY] = breadcrumbs
             self._log.debug("Created %s object in session", self.__CRUMBS_KEY)

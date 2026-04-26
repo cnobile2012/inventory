@@ -25,7 +25,7 @@ class LocationCodeDefault(Base):
                     "alpha='\\a', numeric='\\d', punctuation='\\p', or "
                     "any char='any char'. ex. \\a\\d\\d\\d could be B001 "
                     "or \\a@\\d\\d could be D@99"))
-    segment_order =  models.PositiveIntegerField(
+    segment_order = models.PositiveIntegerField(
         default=0, verbose_name=_("Segment Order"),
         help_text=_("A number indicating the order that this segment will "
                     "appear in the location code. Numbers should start "
@@ -115,7 +115,10 @@ class LocationCodeCategory(Base):
 
     def _getCategoryPath(self, current=True):
         parents = LocationCodeCategory.getParents(self)
-        if current: parents.append(self)
+
+        if current:
+            parents.append(self)
+
         return self._separator.join([parent.segment for parent in parents])
 
     @classmethod
@@ -162,14 +165,14 @@ class LocationCodeCategory(Base):
         length = len(parents) + 1
 
         if length > maxNumSegments:
-            msg = "There are too many segments in this location code, " + \
-                  "found: %s, allowed: %s"
-            raise ValidationError(_(msg % (length, maxNumSegments)))
+            msg = ("There are too many segments in this location code, "
+                   f"found: {length}, allowed: {maxNumSegments}")
+            raise ValidationError(_(msg))
 
         try:
-            self.char_definition = \
-                                 LocationCodeDefault.getCharDefinitionBySegment(
-                self._parser.getFormat(self.segment))
+            self.char_definition = (LocationCodeDefault
+                                    .getCharDefinitionBySegment(
+                                        self._parser.getFormat(self.segment)))
         except ValueError as e:
             msg = "Segment does not match a Location Code Default, %s"
             raise ValidationError(msg % e)
@@ -213,14 +216,14 @@ class LocationCodeCategory(Base):
 
         return result
 
-    ## @classmethod
-    ## def getSegmentLength(self, segment=None):
-    ##     result = 0
-    ##     record = LocationCodeCategory.objects.get(segment=segment)
+    # @classmethod
+    # def getSegmentLength(self, segment=None):
+    #     result = 0
+    #     record = LocationCodeCategory.objects.get(segment=segment)
 
-    ##     if record:
+    #     if record:
 
-    ##     #return self.segment_length
+    #     #return self.segment_length
 
     def __str__(self):
         return self.path

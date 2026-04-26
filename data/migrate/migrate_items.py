@@ -9,9 +9,7 @@ import os
 import csv
 import datetime
 from dateutil import parser as duparser
-from collections import Counter
 
-#from utf8_csv_encoding import UnicodeWriter
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'inventory.settings'
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -19,7 +17,6 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
 MIGRATE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 sys.path.append(MIGRATE_PATH)
-#print(sys.path)
 
 import django; django.setup()
 from django.template.defaultfilters import slugify
@@ -27,14 +24,12 @@ from django.template.defaultfilters import slugify
 from migrate import setup_logger, MigrateBase
 
 try:
-    from inventory.apps.items.models import (
-        Distributor, Manufacturer, Item, Cost, Specification)
-    from inventory.apps.regions.models import Country
-except:
+    from inventory.apps.items.models import Item, Cost
+except Exception:
     from inventory.categories.models import Category
     from inventory.suppliers.models import Supplier
-    from inventory.invoices.models import Item, Invoice, InvoiceItem, Condition
-    from inventory.regions.models import Country, Currency
+    from inventory.invoices.models import Item, Invoice, InvoiceItem
+    from inventory.regions.models import Currency
     from inventory.locations.models import LocationCode
     from dcolumn.dcolumns.models import ColumnCollection, DynamicColumn
     from dcolumn.dcolumns.manager import dcolumn_manager
@@ -178,8 +173,8 @@ class MigrateItem(MigrateBase):
                 item_number_dst = self._process_field(record.item_number_dst)
 
                 if item_number in total_item_numbers:
-                    sys.stdout.write("Item number: {} already exists.\n".format(
-                        item_number))
+                    sys.stdout.write(f"Item number: {item_number} already "
+                                     "exists.\n")
 
                 total_item_numbers.append(item_number)
 
@@ -229,8 +224,6 @@ class MigrateItem(MigrateBase):
         keys = self.__get_dynamic_column_keys(specifications)
 
         with open(self._DYNAMIC_COLUMN, mode='w') as csvfile:
-            #writer = UnicodeWriter(csvfile, dialect=csv.excel_tab,
-            #                       quoting=csv.QUOTE_ALL)
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             writer.writerow(keys)
 
@@ -270,10 +263,10 @@ class MigrateItem(MigrateBase):
         keys = list(specs.keys())
         keys.sort()
 
-        #for key in keys:
-        #    print("{}: {}".format(key, specs.get(key)))
+        # for key in keys:
+        #     print("{}: {}".format(key, specs.get(key)))
 
-        #print(len(keys))
+        # print(len(keys))
         return keys
 
     def _create_cost_csv(self):
@@ -318,16 +311,14 @@ class MigrateItem(MigrateBase):
 
                 if (not (dst_name or mfg_name) or not invoice_number
                     or not date_acquired):
-                    sys.stdout.write(("item_number: '{}', date_acquired: '{}' "
-                                      "missing supplier, invoice_number, or "
-                                      "date_acquired").format(
-                                         item_number, date_acquired))
+                    sys.stdout.write(f"item_number: '{item_number}', "
+                                     f"date_acquired: '{date_acquired}' "
+                                     "missing supplier, invoice_number, or "
+                                     "date_acquired.")
                 if not (idx % 100):
-                    sys.stdout.write("Processed {} cost records.\n".format(idx))
+                    sys.stdout.write(f"Processed {idx} cost records.\n")
 
-            sys.stdout.write("Processed a total of {} cost records.\n".format(
-                idx))
-
+            sys.stdout.write(f"Processed a total of {idx} cost records.\n")
 
     #
     # Create Inventory
@@ -335,9 +326,11 @@ class MigrateItem(MigrateBase):
     def _create_invoice(self, project):
         with open(self._COST, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
-                if idx == 0: continue # Skip the header
+                if idx == 0:
+                    continue  # Skip the header
+
                 value = row[0]
-                #currency = row[1] # Not used
+                # currency = row[1] # Not used
                 currency = Currency.objects.get(
                     country__code='US', alphabetic_code='USD')
 
@@ -428,18 +421,20 @@ class MigrateItem(MigrateBase):
 
         with open(self._ITEM, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
-                if idx == 0: continue # Skip the header
+                if idx == 0:
+                    continue  # Skip the header
+
                 title = row[0].strip()
                 item_number = row[1].strip()
                 item_number_mfg = row[2].strip()
-                #item_number_dst = row[3] # Not used
+                # item_number_dst = row[3] # Not used
                 quantity = self._fix_numeric(row[4])
                 loc = row[5].strip()
                 location_codes = LocationCode.objects.filter(segment=loc)
                 cat = row[6].strip()
                 categories = Category.objects.filter(name=cat)
-                #distributor = Supplier.objects.get(name=row[7]) # Not used
-                #print("Supplier: {}".format(row[8]))
+                # distributor = Supplier.objects.get(name=row[7])  # Not used
+                # print(f"Supplier: {row[8]}")
                 mfg = row[8].strip()
 
                 if mfg:
@@ -503,7 +498,7 @@ class MigrateItem(MigrateBase):
                     self._log.info("NOOP Mode: Found item: %s", item_number)
 
         all_items.sort()
-        #print([k for k, v in Counter(all_items).items() if v > 1])
+        # print([k for k, v in Counter(all_items).items() if v > 1])
 
     def _create_dynamic_column(self):
         slug_map = {}
@@ -585,7 +580,7 @@ class MigrateItem(MigrateBase):
             key_list = slug_map.get(key, [])
             key_list += value
 
-        #print(slug_map)
+        # print(slug_map)
         return slug_map
 
     def _create_collection(self, dcolumns):
@@ -625,13 +620,12 @@ class MigrateItem(MigrateBase):
                 # Get only the columns used with this item.
                 values = [col for col in row if col != ""]
 
-                for value in values[:-1]: # Don't want the item_number.
+                for value in values[:-1]:  # Don't want the item_number.
                     header = headers[row.index(value)]
                     value = value.strip()
 
                     if header == 'Condition':
-                        if value.isdigit():
-                            # Adjust for new Condition object
+                        if value.isdigit():  # Adjust for new Condition object
                             value = int(value) + 1
                         elif value == '':
                             value = 1
@@ -669,7 +663,6 @@ if __name__ == '__main__':
         '-D', '--debug', action='store_true', default=False, dest='debug',
         help="Run in debug mode.")
     options = parser.parse_args()
-    #print "Options: {}".format(options)
 
     if not (options.csv or options.populate):
         parser.print_help()
@@ -693,7 +686,7 @@ if __name__ == '__main__':
         endTime = datetime.datetime.now()
         log.info("Item: Finished at %s elapsed time %s",
                  endTime, endTime - startTime)
-    except Exception as e:
+    except Exception:
         tb = sys.exc_info()[2]
         traceback.print_tb(tb)
         print("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))

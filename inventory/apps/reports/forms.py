@@ -1,13 +1,11 @@
 #
 # reports/forms.py
 #
-# SVN/CVS Keywords
-#
 
 from django import forms
 from django.forms.formsets import formset_factory
 
-from inventory.apps.items.models import Item, Specification, Cost
+# from inventory.apps.items.models import Item, Specification, Cost
 from inventory.apps.utils.widgets import TextDisplay, TextareaDisplay
 from inventory.settings import getLogger
 

@@ -14,6 +14,10 @@ from inventory.apps.regions.models import Country, Region
 from inventory.apps.maintenance.models import LocationCodeCategory
 
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
+
 class BaseBusiness(Base):
     name = models.CharField(max_length=248, db_index=True)
     address_01 = models.CharField(max_length=50, blank=True, null=True)
@@ -64,7 +68,10 @@ class Category(Base):
 
     def _getCategoryPath(self, current=True):
         parents = Category.getParents(self)
-        if current: parents.append(self)
+
+        if current:
+            parents.append(self)
+
         return Category.getSeparator().join([parent.name
                                              for parent in parents])
 
@@ -143,7 +150,9 @@ class Category(Base):
 
         for cat in categories:
             iterator = cat.children.iterator()
-            if withRoot: tree.append(cat)
+
+            if withRoot:
+                tree.append(cat)
 
             try:
                 while True:
@@ -152,7 +161,7 @@ class Category(Base):
                 pass
 
         return sorted(tree,
-                      cmp=lambda x,y: cmp(x.path.lower(), y.path.lower()))
+                      cmp=lambda x, y: cmp(x.path.lower(), y.path.lower()))
 
     @classmethod
     def getAllChildPathsForCategoryList(self, categoryList):
@@ -167,7 +176,7 @@ class Category(Base):
 
         if isinstance(categoryList, (list, tuple)):
             if categoryList:
-                argList = ["models.Q(path__exact='%s')" % unicode(c)
+                argList = [f"models.Q(path__exact='{c}')"
                            for c in categoryList]
                 args = eval(('|'.join(argList)))
                 result = Category.objects.filter(args)
@@ -223,7 +232,9 @@ class Category(Base):
         deletedNodes = []
 
         for node in nodeList:
-            if node.children.count() > 1: break
+            if node.children.count() > 1:
+                break
+
             deletedNodes.append(node.path)
             node.delete()
 
@@ -248,11 +259,11 @@ class Category(Base):
 
 
 class Currency(Base):
-    symbol =  models.CharField(max_length=1)
-    currency =  models.CharField(max_length=20)
+    symbol = models.CharField(max_length=1)
+    currency = models.CharField(max_length=20)
 
     def __str__(self):
-        return "%s %s" % (self.symbol, self.currency)
+        return f"{self.symbol} {self.currency}"
 
     class Meta:
         verbose_name_plural = _("Currencies")
@@ -269,7 +280,7 @@ class Cost(Base):
     distributor = models.ForeignKey(Distributor, blank=True, null=True,
                                     on_delete=models.CASCADE)
     manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True,
-                                    on_delete=models.CASCADE)
+                                     on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s: %s (%s)" % (self.currency, self.value, self.item)
@@ -338,7 +349,9 @@ class Item(Base):
 
         if values and len(values) > 0:
             date = values[0]['date_acquired']
-            if date: result = date
+
+            if date:
+                result = date
 
         return result
     _aquiredDateProducer.short_description = _("Date Aquired")

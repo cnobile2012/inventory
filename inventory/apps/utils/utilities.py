@@ -1,15 +1,8 @@
 #
 # utils/utilities.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2011-12-14 23:02:54 -0500 (Wed, 14 Dec 2011) $
-# $Revision: 55 $
-#----------------------------------
 
 import re
-import string
 
 
 class FormatParser(object):
@@ -22,18 +15,18 @@ class FormatParser(object):
         r'\p': r"""[!"#\$%&'\(\)\*\+,-\./:;<=>\?@\[\\\]\^_`{\|}~]"""
         }
     __REGEX_RESERVED_MAP = {
-        '[': '\[',
-        ']': '\]',
+        '[': r'\[',
+        ']': r'\]',
         '\\': r'\\',
-        '^': '\^',
-        '$': '\$',
-        '.': '\.',
-        '|': '\|',
-        '?': '\?',
-        '*': '\*',
-        '+': '\+',
-        '(': '\(',
-        ')': '\)',
+        '^': r'\^',
+        '$': r'\$',
+        '.': r'\.',
+        '|': r'\|',
+        '?': r'\?',
+        '*': r'\*',
+        '+': r'\+',
+        '(': r'\(',
+        ')': r'\)',
         }
 
     def __init__(self, formats, delimiter):
@@ -51,7 +44,7 @@ class FormatParser(object):
 
     def __buildRegEx(self):
         splitRegEx = r"""(\\[adp]|[a-zA-Z%s])""" % \
-                     self.__removeDelimiter(self.__FMT_MAP.get('\p')[1:-1])
+                     self.__removeDelimiter(self.__FMT_MAP.get(r'\p')[1:-1])
         result = []
 
         for fmt in self.__formats:
@@ -60,12 +53,14 @@ class FormatParser(object):
 
             for seg in segList:
                 tmp = self.__FMT_MAP.get(seg)
-                if tmp: regex += self.__removeDelimiter(tmp)
-                else: regex += self.__removeDelimiter(seg)
+
+                if tmp:
+                    regex += self.__removeDelimiter(tmp)
+                else:
+                    regex += self.__removeDelimiter(seg)
 
             regex = "(" + regex + ")"
             result.append(re.compile(regex))
-            #print regex
 
         return result
 

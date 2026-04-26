@@ -1,18 +1,11 @@
 #
 # utils/search.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2014-12-05 17:46:21 -0500 (Fri, 05 Dec 2014) $
-# $Revision: 95 $
-#----------------------------------
 
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.template.context_processors import csrf
@@ -71,7 +64,7 @@ class SearchBase(ViewBase):
                     return HttpResponse(tmpl.render(context))
                 else:
                     context['message'] = "No records found"
-            ## else: # Error condition
+            # else:  # Error condition
         else:
             form = self._getSearchForm()
 
@@ -112,42 +105,45 @@ class SearchBase(ViewBase):
         query = []
 
         for key, value in form.cleaned_data.items():
-            #self._log.debug("key: %s, value: %s", key, value)
-            if value in (u'', '', None): continue
+            # self._log.debug("key: %s, value: %s", key, value)
+            if value in ('', '', None):
+                continue
 
             if key in self._ICONTAINS:
                 field = self._ICONTAINS[key]
 
                 if key == 'user':
-                    code = "(Q(user__username__icontains='%s') |" + \
-                           " Q(user__first_name__icontains='%s') |" + \
-                           " Q(user__last_name__icontains='%s'))"
-                    code = code % (value, value, value)
+                    code = (f"(Q(user__username__icontains='{value}') |"
+                            f" Q(user__first_name__icontains='{value}') |"
+                            f" Q(user__last_name__icontains='{value}'))")
                 else:
-                    code = "Q(%s__icontains='%s')" % (field, value)
+                    code = f"Q({field}__icontains='{value}')"
             elif key in self._EXACT:
                 field = self._EXACT[key]
                 choice = self._getChoice(field, value)
-                code = "Q(%s__exact='%s')" % (field, choice)
+                code = f"Q({field}__exact='{choice}')"
             elif key in self._LESS_THAN_EQUAL:
                 field = self._LESS_THAN_EQUAL[key]
-                code = "Q(%s__lte=%s)" % (field, value)
+                code = f"Q({field}__lte={value})"
             elif key in self._GREATER_THAN_EQUAL:
                 field = self._GREATER_THAN_EQUAL[key]
-                code = "Q(%s__gte=%s)" % (field, value)
+                code = f"Q({field}__gte={value})"
             elif key in self._CHECK_BOX:
                 field = self._CHECK_BOX[key]
 
                 if self._purge and field == 'purge':
-                    code = "Q(%s=True)" % field
+                    code = f"Q({field}=True)"
                 else:
-                    code = "Q(%s=%s)" % (field, value)
+                    code = f"Q({field}={value})"
 
             query.append(code)
 
         result = ' & '.join(query)
         self._log.debug("query: %s", result)
-        if result: result = eval(result)
+
+        if result:
+            result = eval(result)
+
         return result
 
 
@@ -161,7 +157,7 @@ class ItemSearch(SearchBase):
               'categories': 'categories__path',
               'distributor': 'distributor__name',
               'manufacturer': 'manufacturer__name'}
-    _LESS_THAN_EQUAL = {'quantity': 'quantity',}
+    _LESS_THAN_EQUAL = {'quantity': 'quantity'}
     _GREATER_THAN_EQUAL = {}
     _CHECK_BOX = {'active': 'active',
                   'obsolete': 'obsolete',
@@ -204,7 +200,7 @@ class ItemSearch(SearchBase):
 
         self._log.debug("field: %s, value: %s, choiceMap: %s",
                         field, value, choiceMap)
-        return choiceMap.get(int(value), u'')
+        return choiceMap.get(int(value), '')
 
 
 class BusinessSearchBase(SearchBase):
@@ -221,8 +217,8 @@ class BusinessSearchBase(SearchBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def _getSearchForm(self, data=None):
-        return BusinessSearchForm(data=data)
+    # def _getSearchForm(self, data=None):
+    #     return BusinessSearchForm(data=data)
 
     def _getSearchHTML(self):
         return "businessSearch.html"
@@ -235,7 +231,7 @@ class BusinessSearchBase(SearchBase):
         data.append(('state', escape(record.state)))
         data.append(('postal_code', escape(record.postal_code)))
         data.append(('country', record.country))
-        return dict([(k, v is not None and v or u'') for k, v in data])
+        return dict([(k, v is not None and v or '') for k, v in data])
 
 
 class DistributorSearch(BusinessSearchBase):
@@ -244,7 +240,9 @@ class DistributorSearch(BusinessSearchBase):
         super().__init__(*args, **kwargs)
 
     def _getRecords(self, query):
-        if query: return Distributor.objects.filter(query)
+        if query:
+            return Distributor.objects.filter(query)
+
         return Distributor.objects.all()
 
     def _getSearchForm(self, data=None):
@@ -255,7 +253,8 @@ class DistributorSearch(BusinessSearchBase):
             field, defaultOption=False))
         self._log.debug("field: %s, value: %s, choiceMap: %s",
                         field, value, choiceMap)
-        return choiceMap.get(int(value), u'')
+        return choiceMap.get(int(value), '')
+
 
 class ManufacturerSearch(BusinessSearchBase):
 
@@ -263,7 +262,9 @@ class ManufacturerSearch(BusinessSearchBase):
         super().__init__(*args, **kwargs)
 
     def _getRecords(self, query):
-        if query: return Manufacturer.objects.filter(query)
+        if query:
+            return Manufacturer.objects.filter(query)
+
         return Manufacturer.objects.all()
 
     def _getSearchForm(self, data=None):
@@ -274,4 +275,4 @@ class ManufacturerSearch(BusinessSearchBase):
             field, defaultOption=False))
         self._log.debug("field: %s, value: %s, choiceMap: %s",
                         field, value, choiceMap)
-        return choiceMap.get(int(value), u'')
+        return choiceMap.get(int(value), '')

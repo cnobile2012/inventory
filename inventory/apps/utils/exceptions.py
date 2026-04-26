@@ -7,7 +7,7 @@ class InventoryException(Exception):
 
     def __init__(self, msg=__DEFAULT_MESSAGE):
         super().__init__(msg)
-        
+
         if msg is None:
             msg = self.__DEFAULT_MESSAGE
 

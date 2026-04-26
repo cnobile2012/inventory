@@ -5,7 +5,11 @@
 # This script imports the countries into the database.
 #
 
-import sys, csv, traceback, codecs
+import os
+import sys
+import csv
+import traceback
+import codecs
 from StringIO import StringIO
 from optparse import OptionParser
 
@@ -45,8 +49,7 @@ class UnicodeReader:
         return self
 
     def next(self):
-        row = self.reader.next()
-        return [unicode(s, "utf-8") for s in row]
+        return self.reader.next()
 
 
 def getCountryRecord(records, code):
@@ -74,12 +77,12 @@ parser.add_option("-u", "--user-id", dest="id", default=1,
                   help="USER ID (defaults to 1)", metavar="USER_ID")
 options, args = parser.parse_args()
 
-#print options, args
+# print(options, args)
 
 try:
     records = Country.objects.all().values()
     codes = [r["country_code_2"].upper() for r in records]
-    #print "Country codes: %s" % codes
+    # print(f"Country codes: {codes}")
     fileObj = open(options.csv, "rb")
     buff = StringIO(fileObj.read())
     fileObj.close()
@@ -109,12 +112,12 @@ try:
 
                 try:
                     record.save()
-                except:
-                    print "%s: %s\n" % (sys.exc_info()[0], sys.exc_info()[1])
+                except Exception:
+                    print("%s: %s\n" % (sys.exc_info()[0], sys.exc_info()[1]))
                     continue
 
                 if options.verbose:
-                    print "Updated: %s (%s)" % (code02, country)
+                    print("Updated: %s (%s)" % (code02, country))
         else:
             record = Country(user_id=options.id, country=country,
                              country_code_2=code02, country_code_3=code03,
@@ -122,18 +125,18 @@ try:
 
             try:
                 record.save()
-            except:
-                print "%s: %s\n" % (sys.exc_info()[0], sys.exc_info()[1])
+            except Exception:
+                print("%s: %s\n" % (sys.exc_info()[0], sys.exc_info()[1]))
                 continue
 
             if options.verbose:
-                print "Added: %s (%s)" % (code02, country)
+                print("Added: %s (%s)" % (code02, country))
 
     buff.close()
-except:
+except Exception:
     tb = sys.exc_info()[2]
     traceback.print_tb(tb)
-    print "%s: %s\n" % (sys.exc_info()[0], sys.exc_info()[1])
+    print("%s: %s\n" % (sys.exc_info()[0], sys.exc_info()[1]))
     sys.exit(1)
 
 sys.exit(0)

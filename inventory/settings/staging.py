@@ -10,11 +10,11 @@ DATABASES = {
         'USER': 'inventory',
         'PASSWORD': 'inventory',
         'HOST': 'localhost',
-        #'HOST': '/var/run/mysqld/mysqld.sock',
+        # 'HOST': '/var/run/mysqld/mysqld.sock',
         'PORT': '3306',
         'OPTIONS': {
-            #'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
-            #                 "SET default_storage_engine=InnoDB;"),
+            # 'init_command': ("SET sql_mode='STRICT_TRANS_TABLES';"
+            #                  "SET default_storage_engine=InnoDB;"),
             'charset': 'utf8'
             },
         }
@@ -30,17 +30,17 @@ CACHES.update({
         },
     })
 
-#KEY_PREFIX = 'stg'
-#KEY_FUNCTION = 'testsite.common.caching.make_key'
+# KEY_PREFIX = 'stg'
+# KEY_FUNCTION = 'testsite.common.caching.make_key'
 
 # Add to the MIDDLEWARE_CLASSES here.
-#MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+# MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 # Setup the IP address from the internal clients.
-#INTERNAL_IPS = IPList(['127.0.0.1', '10.10.10.1', '192.168.1.0/24'])
+# INTERNAL_IPS = []
 
 # Add to the INSTALLED_APPS here.
-#INSTALLED_APPS.append('debug_toolbar')
+# INSTALLED_APPS.append('debug_toolbar')
 
 ALLOWED_HOSTS = [
     '.tetrasys-design.net',

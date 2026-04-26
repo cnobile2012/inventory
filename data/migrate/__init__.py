@@ -8,8 +8,8 @@ import logging
 from django.contrib.auth import get_user_model
 
 try:
-    from inventory.projects.models import Project, Membership, InventoryType
-except:
+    from inventory.projects.models import Project, InventoryType
+except Exception:
     pass
 
 UserModel = get_user_model()
@@ -18,7 +18,10 @@ UserModel = get_user_model()
 def setup_logger(name='root', fullpath=None, fmt=None, level=logging.INFO):
     FORMAT = ("%(asctime)s %(levelname)s %(module)s %(funcName)s "
               "[line:%(lineno)d] %(message)s")
-    if not fmt: fmt = FORMAT
+
+    if not fmt:
+        fmt = FORMAT
+
     # Trun off logging from django db backend.
     backends = logging.getLogger('django.db.backends')
     backends.setLevel(logging.WARNING)
@@ -29,7 +32,7 @@ def setup_logger(name='root', fullpath=None, fmt=None, level=logging.INFO):
     formatter = logging.Formatter(fmt)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    #print(logger.getEffectiveLevel())
+    # print(logger.getEffectiveLevel())
     return logger
 
 
@@ -77,7 +80,6 @@ class MigrateBase(object):
             project, created = Project.objects.get_or_create(
                 name=name, defaults=kwargs)
             project.process_members([user])
-
 
         return project
 

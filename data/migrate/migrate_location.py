@@ -15,7 +15,6 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
 MIGRATE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 sys.path.append(MIGRATE_PATH)
-#print(sys.path)
 
 import django; django.setup()
 
@@ -24,7 +23,7 @@ from migrate import setup_logger, MigrateBase
 try:
     from inventory.apps.maintenance.models import (
         LocationCodeDefault, LocationCodeCategory)
-except:
+except Exception:
     from inventory.locations.models import (
         LocationSetName, LocationFormat, LocationCode)
 
@@ -132,7 +131,9 @@ class MigrateLocation(MigrateBase):
 
         with open(self._LOCATION_FORMAT, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
-                if idx == 0: continue # Skip the header
+                if idx == 0:
+                    continue  # Skip the header
+
                 char_definition = row[0]
                 so = int(row[1])
                 segment_order = so + 1 if so != 10 else so
@@ -179,7 +180,9 @@ class MigrateLocation(MigrateBase):
     def _create_location_code(self):
         with open(self._LOCATION_CODE, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
-                if idx == 0: continue # Skip the header
+                if idx == 0:
+                    continue  # Skip the header
+
                 location_format = LocationFormat.objects.get(
                     char_definition=row[0])
 
@@ -189,7 +192,7 @@ class MigrateLocation(MigrateBase):
                     parent = None
 
                 segment = row[2]
-                level = row[3] # Throw away, it's auto-generated.
+                # level = row[3]  # Throw away, it's auto-generated.
                 user = self.get_user(username=row[4])
                 ctime = duparser.parse(row[5])
                 mtime = duparser.parse(row[6])
@@ -197,7 +200,10 @@ class MigrateLocation(MigrateBase):
                 if not self._options.noop:
                     kwargs = {}
                     kwargs['location_format'] = location_format
-                    if parent: kwargs['parent'] = parent
+
+                    if parent:
+                        kwargs['parent'] = parent
+
                     kwargs['segment'] = segment
 
                     try:
@@ -254,7 +260,6 @@ if __name__ == '__main__':
         '-D', '--debug', action='store_true', default=False, dest='debug',
         help="Run in debug mode.")
     options = parser.parse_args()
-    #print "Options: {}".format(options)
 
     if not (options.csv or options.populate):
         parser.print_help()
@@ -278,7 +283,7 @@ if __name__ == '__main__':
         endTime = datetime.now()
         log.info("Location: Finished at %s elapsed time %s",
                  endTime, endTime - startTime)
-    except Exception as e:
+    except Exception:
         tb = sys.exc_info()[2]
         traceback.print_tb(tb)
         print("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))

@@ -1,19 +1,13 @@
 #
 # tags/utilitylib.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2010-10-05 12:28:39 -0400 (Tue, 05 Oct 2010) $
-# $Revision: 26 $
-#----------------------------------
 
 from django import template
 from inventory.setupenv import getLogger
 
 log = getLogger()
-
 register = template.Library()
+
 
 @register.tag
 def hideNoValueField(parser, token):
@@ -43,8 +37,8 @@ def hideNoValueField(parser, token):
     field = tokens[1]
     cmpLabels = tokens[2].strip('"')
     tagType = tokens[3]
-    #log.debug("tagName: %s, field: %s, cmpLabels: %s, tageType: %s",
-    #          tagName, field, cmpLabels, tagType)
+    # log.debug("tagName: %s, field: %s, cmpLabels: %s, tageType: %s",
+    #           tagName, field, cmpLabels, tagType)
     return NoValueFieldNode(tagName, field, cmpLabels, tagType)
 
 
@@ -63,16 +57,15 @@ class NoValueFieldNode(template.Node):
 
         try:
             cmpLabels = self._cmpLabelsVar.resolve(context)
-        except:
+        except Exception:
             cmpLabels = eval(self._cmpLabelsVar.var)
 
-        #log.debug("%s: label: %s, field: %s, labelTag: %s, cmpLabels: %s",
-        #          self._tagName, label, field, labelTag, cmpLabels)
-
+        log.debug("%s: label: %s, field: %s, labelTag: %s, cmpLabels: %s",
+                  self._tagName, label, field, labelTag, cmpLabels)
         result = ""
 
         if 'value' in str(field) or 'None' not in str(field):
-            result = "<%s>%s%s</%s>" % (tagType, labelTag, field, tagType)
+            result = f"<{tagType}>{labelTag}{field}</{tagType}>"
 
         return result
 
@@ -95,8 +88,8 @@ def assign(parser, token):
     bits = token.contents.split()
 
     if len(bits) != 3:
-        msg = "%s: tag takes two arguments"
-        raise template.TemplateSyntaxError(msg % bits[0])
+        msg = "{bits[0]}: tag takes two arguments"
+        raise template.TemplateSyntaxError(msg)
 
     value = parser.compile_filter(bits[2])
     return AssignNode(bits[1], value)

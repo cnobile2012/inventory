@@ -1,15 +1,14 @@
 #
 # utils/loghandler.py
 #
-# SVN/CVS Info
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2010-08-29 22:22:56 -0400 (Sun, 29 Aug 2010) $
-# $Revision: 12 $
-#----------------------------------
 
-import sys, os, cPickle, time, codecs
-import logging, logging.handlers
+import sys
+import os
+import cPickle
+import time
+import codecs
+import logging
+import logging.handlers
 
 
 class NewTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
@@ -32,12 +31,13 @@ class NewTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
             if lastRoll < (currentTime - self.interval):
                 self.rolloverAt = rolloverAt
             else:
-               self.setPersistentData(self.rolloverAt, lastRoll=lastRoll)
+                self.setPersistentData(self.rolloverAt, lastRoll=lastRoll)
         else:
             self.setPersistentData(self.rolloverAt, lastRoll=lastRoll)
 
-        msg = "Current persistent log file, rolloverAt: %s, lastRoll: %s"
-        print >> sys.stderr, msg % (self.rolloverAt, lastRoll)
+        msg = (f"Current persistent log file, rolloverAt: {self.rolloverAt}, "
+               f"lastRoll: {lastRoll}")
+        print(msg, file=sys.stderr)
 
     def getPersistentData(self):
         fobj = None
@@ -50,20 +50,23 @@ class NewTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
                 p = cPickle.Unpickler(fobj)
                 result = p.load()
                 fobj.close()
-            except Exception, e:
-                if fobj: fobj.close()
+            except Exception as e:
+                if fobj:
+                    fobj.close()
+
                 raise e
 
             if isinstance(result, dict):
-                msg = "getPersistentData(): rolloverAt: %s, lastRoll: %s"
-                print >> sys.stderr, msg % \
-                      (result.get('rolloverAt'), result.get('lastRoll'))
+                msg = ("getPersistentData(): rolloverAt: "
+                       f"{result.get('rolloverAt')}, lastRoll: "
+                       f"{result.get('lastRoll')}")
+                print(msg, file=sys.stderr)
 
         return result
 
     def setPersistentData(self, rolloverAt, lastRoll=0):
         fobj = None
-        data = {'rolloverAt': rolloverAt,'lastRoll': lastRoll}
+        data = {'rolloverAt': rolloverAt, 'lastRoll': lastRoll}
 
         # Persist the rollover time to disk.
         try:
@@ -71,12 +74,15 @@ class NewTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
             p = cPickle.Pickler(fobj)
             p.dump(data)
             fobj.close()
-        except Exception, e:
-            if fobj: fobj.close()
+        except Exception as e:
+            if fobj:
+                fobj.close()
+
             raise e
 
-        msg = "setPersistentData(): rolloverAt: %s, lastRoll: %s"
-        print >> sys.stderr, msg % (rolloverAt, lastRoll)
+        msg = (f"setPersistentData(): rolloverAt: {rolloverAt}, "
+               f"lastRoll: {lastRoll}")
+        print(msg, file=sys.stderr)
 
     def shouldRollover(self, record):
         """
@@ -114,16 +120,17 @@ class NewTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
                     self.rolloverAt = rolloverAt
                 else:
                     # We have missed the roll time, so roll now.
-                    msg = "Should roll, lastRoll(%s) + self.interval(%s)" + \
-                          " <= currentTime(%s)"
-                    print >> sys.stderr, msg % (lastRoll, self.interval,
-                                                currentTime)
+                    msg = (f"Should roll, lastRoll({lastRoll}) + "
+                           f"self.interval({self.interval}) "
+                           f"<= currentTime({currentTime})")
+                    print(msg, file=sys.stderr)
                     result = True
             else:
                 # Bad data in the persist file or some jerk blew the file
                 # away, so we just believe the memory value in self.rolloverAt.
-                msg = "Should roll, wrong data type in or missing persist file."
-                print >> sys.stderr, msg
+                msg = ("Should roll, wrong data type in or missing "
+                       "persist file.")
+                print(msg, file=sys.stderr)
                 result = True
 
         return result

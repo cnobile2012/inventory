@@ -3,18 +3,15 @@
 #
 
 import json
-from django.http import (
-    HttpResponse, HttpResponseRedirect, HttpResponseBadRequest)
-from django.template import loader
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.template.context_processors import csrf
 
-from inventory.settings import SITE_NAME, getLogger
+from inventory.settings import getLogger
 from inventory.apps.utils.views import ViewBase
 from inventory.apps.utils.search import ItemSearch
 from inventory.apps.utils.exceptions import DoesNotExist
-from inventory.apps.items.models import Item, Cost, Specification
+from inventory.apps.items.models import Item
 
 
 log = getLogger()
@@ -29,17 +26,17 @@ class Confirm(ViewBase):
     def __call__(self, request, *args, **kwargs):
         context = {}
         self._log.debug(request.POST)
-        context['message'] = u"At least one box must be checked."
+        context['message'] = "At least one box must be checked."
 
         if request.POST:
             pks = request.POST.getlist('pks')
             context['valid'] = any(pks)
 
             if context['valid']:
-                context['message'] = u"Confirm your choices then click" + \
-                                     u" submit again."
+                context['message'] = ("Confirm your choices then click submit "
+                                      "again.")
 
-        self._log.debug(u"Context dump for %s: %s", self.__module__, context)
+        self._log.debug("Context dump for %s: %s", self.__module__, context)
         return HttpResponse(json.dumps(context))
 
 
@@ -52,7 +49,7 @@ class Delete(ViewBase):
     def __call__(self, request, *args, **kwargs):
         context = {}
         self._log.debug(request.POST)
-        context['message'] = u"No IDs sent from client."
+        context['message'] = "No IDs sent from client."
 
         if request.POST:
             pks = request.POST.getlist('pks')
@@ -61,29 +58,29 @@ class Delete(ViewBase):
             if context['valid']:
                 try:
                     self._deleteRecords(pks)
-                    context['message'] = u"The selected records" + \
-                                          u" have been deleted."
+                    context['message'] = ("The selected records have been "
+                                          "deleted.")
                 except DoesNotExist as e:
-                    context['message'] = unicode(str(e))
-                except Exception as e:
+                    context['message'] = str(e)
+                except Exception:
                     # Send error message
                     pass
 
-        self._log.debug(u"Context dump for %s: %s", self.__module__, context)
+        self._log.debug("Context dump for %s: %s", self.__module__, context)
         return HttpResponse(json.dumps(context))
 
     def _deleteRecords(self, pks):
         # Make the PKs integers.
         pks = [int(pk) for pk in pks]
-        self._log.debug(u"Deleting PKs: %s", pks)
+        self._log.debug("Deleting PKs: %s", pks)
 
         for pk in pks:
             try:
                 record = Item.objects.get(pk=pk)
             except Item.DoesNotExist as e:
-                msg = u"Record [%s] does not exist" % pk
-                self._log.warning(msg + u", %s", e)
-                raise DoesNotExist(msg + u".")
+                msg = "Record [%s] does not exist" % pk
+                self._log.warning(msg + ", %s", e)
+                raise DoesNotExist(msg + ".")
             except Exception as e:
                 self._log.warning(str(e))
                 raise e
@@ -101,7 +98,7 @@ class Delete(ViewBase):
                 value = cost.value
                 pk = cost.pk
                 cost.delete()
-                self._log.info(u"Deteted record: %s with pk: %s", value, pk)
+                self._log.info("Deteted record: %s with pk: %s", value, pk)
             except StopIteration:
                 break
             except Exception as e:
@@ -117,7 +114,7 @@ class Delete(ViewBase):
                 name = spec.name
                 pk = spec.pk
                 spec.delete()
-                self._log.info(u"Deteted record: %s with pk: %s", name, pk)
+                self._log.info("Deteted record: %s with pk: %s", name, pk)
             except StopIteration:
                 break
             except Exception as e:
@@ -129,7 +126,7 @@ class Delete(ViewBase):
             title = record.title
             pk = record.pk
             record.delete()
-            self._log.info(u"Deteted record: %s with pk: %s", title, pk)
+            self._log.info("Deteted record: %s with pk: %s", title, pk)
         except Exception as e:
             self._log.error(str(e), exc_info=True)
             raise e
@@ -145,7 +142,7 @@ class Location(ViewBase):
     def __call__(self, request, *args, **kwargs):
         context = {}
         self._log.debug(request.POST)
-        #context['message'] = "At least one box must be checked."
+        # context['message'] = "At least one box must be checked."
         title = ''
 
         if isinstance(self._crumbData, tuple) and len(self._crumbData) == 2:
@@ -157,24 +154,24 @@ class Location(ViewBase):
         context['title'] = title
 
         if request.POST:
-            #pks = request.POST.getlist('pks')
-            #context['valid'] = any(pks)
+            # pks = request.POST.getlist('pks')
+            # context['valid'] = any(pks)
 
-            #if context['valid']:
-            #    context['message'] = "Confirm your choices then click" + \
-            #                         " submit again."
+            # if context['valid']:
+            #     context['message'] = ("Confirm your choices then click "
+            #                           "submit again.")
 
-            self._log.debug(u"Context dump for %s: %s",
-                            self.__module__, context)
-            result = json.dumps(context)
-        else:
-            form = LocationConfigForm()
-            context['form'] = form
-            tmpl = loader.get_template("location.html")
-            context.update(csrf(request))
             self._log.debug("Context dump for %s: %s",
                             self.__module__, context)
-            result = tmpl.render(context)
+            result = json.dumps(context)
+        # else:
+        #     form = LocationConfigForm()
+        #     context['form'] = form
+        #     tmpl = loader.get_template("location.html")
+        #     context.update(csrf(request))
+        #     self._log.debug("Context dump for %s: %s",
+        #                     self.__module__, context)
+        #     result = tmpl.render(context)
 
         return HttpResponse(result)
 

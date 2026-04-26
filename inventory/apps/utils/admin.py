@@ -1,12 +1,6 @@
 #
 # utils/admin.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2012-05-16 15:01:25 -0400 (Wed, 16 May 2012) $
-# $Revision: 61 $
-#----------------------------------
 
 import datetime
 

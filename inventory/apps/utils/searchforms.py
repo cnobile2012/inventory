@@ -1,12 +1,6 @@
 #
 # utils/searchforms.py
 #
-# SVN/CVS Keywords
-#----------------------------------
-# $Author: cnobile $
-# $Date: 2014-12-05 17:46:21 -0500 (Fri, 05 Dec 2014) $
-# $Revision: 95 $
-#----------------------------------
 
 from django import forms
 
@@ -58,10 +52,11 @@ class FindChoices(object):
             records, field, defaultOption=defaultOption, optionName=optionName)
 
     @classmethod
-    def _findFieldList(self, records, field, defaultOption=True, optionName=""):
+    def _findFieldList(self, records, field, defaultOption=True,
+                       optionName=""):
         if not len(field) or not isinstance(field, str):
-            msg = "Invalid field value and type can only be a 'str' or" + \
-                  " 'unicode'."
+            msg = ("Invalid field value and type can only be a 'str' or "
+                   "'unicode'.")
             raise TypeError(msg)
 
         field = field.replace('__', '.')
@@ -72,7 +67,7 @@ class FindChoices(object):
                 name = optionName
             else:
                 name = ' '.join([n.capitalize() for n in obj.split('_')])
-                #log.debug("field: %s, tmp: %s, name: %s", field, tmp, name)
+                # log.debug("field: %s, tmp: %s, name: %s", field, tmp, name)
 
             result = [(0, "Choose a %s" % name)]
         else:
@@ -87,13 +82,15 @@ class FindChoices(object):
                 if attr and hasattr(eval(fieldPath), attr):
                     fieldPath += ".%s" % attr
 
-                #log.debug("fieldPath: %s", fieldPath)
+                # log.debug("fieldPath: %s", fieldPath)
                 value = eval(fieldPath)
-                if value: valueMap[str(value)] = None
+
+                if value:
+                    valueMap[str(value)] = None
 
             values = list(valueMap.keys())
             values.sort()
-            #log.debug("values: %s", values)
+            # log.debug("values: %s", values)
             idx = 1
 
             for value in values:
@@ -131,21 +128,23 @@ class ItemSearchForm(forms.Form):
         widget=forms.Select())
     quantity = forms.IntegerField(required=False)
     active = forms.BooleanField(initial=True, required=False)
-    obsolete  = forms.BooleanField(initial=False, required=False)
+    obsolete = forms.BooleanField(initial=False, required=False)
     purge = forms.BooleanField(initial=False, required=False)
 
     def clean(self):
         for key in self.cleaned_data:
             value = self.cleaned_data[key]
-            if not isinstance(value, (str, unicode)): continue
+
+            if not isinstance(value, str):
+                continue
 
             # This sets the select boxes defaults to "not set".
-            if value.isdigit() and int(value) == 0 or \
-                   value.strip() in ('', None):
-                self.cleaned_data[key] = u''
+            if (value.isdigit() and int(value) == 0
+                or value.strip() in ('', None)):
+                self.cleaned_data[key] = ''
 
         if not any(self.cleaned_data.values()):
-            raise forms.ValidationError(u"At least one field must be chosen.")
+            raise forms.ValidationError("At least one field must be chosen.")
 
         return self.cleaned_data
 
@@ -176,12 +175,14 @@ class DistributorSearchForm(forms.Form):
     def clean(self):
         for key in self.cleaned_data:
             value = self.cleaned_data[key]
-            if not isinstance(value, (str, unicode)): continue
+
+            if not isinstance(value, str):
+                continue
 
             # This sets the select boxes defaults to "not set".
-            if value.isdigit() and int(value) == 0 or \
-                   value.strip() in ('', None):
-                self.cleaned_data[key] = u''
+            if (value.isdigit() and int(value) == 0
+                or value.strip() in ('', None)):
+                self.cleaned_data[key] = ''
 
         return self.cleaned_data
 
@@ -212,11 +213,13 @@ class ManufacturerSearchForm(forms.Form):
     def clean(self):
         for key in self.cleaned_data:
             value = self.cleaned_data[key]
-            if not isinstance(value, (str, unicode)): continue
+
+            if not isinstance(value, str):
+                continue
 
             # This sets the select boxes defaults to "not set".
-            if value.isdigit() and int(value) == 0 or \
-                   value.strip() in ('', None):
-                self.cleaned_data[key] = u''
+            if (value.isdigit() and int(value) == 0
+                or value.strip() in ('', None)):
+                self.cleaned_data[key] = ''
 
         return self.cleaned_data

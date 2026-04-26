@@ -10,29 +10,6 @@ from inventory.apps.items.settings import *
 from inventory.apps.login.settings import *
 
 
-class IPList(list):
-
-    def __init__(self, ips):
-        try:
-            #http://software.inl.fr/trac/wiki/IPy
-            #ubuntu: apt-get install python-ipy
-            from IPy import IP
-            for ip in ips:
-                self.append(IP(ip))
-        except ImportError:
-            pass
-
-    def __contains__(self, ip):
-        try:
-            for net in self:
-                if ip in net:
-                    return True
-        except:
-            pass
-
-        return False
-
-
 DEBUG = False
 
 CACHES = {
@@ -115,7 +92,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     )
 
 # Make this unique, and don't share it with anybody.
@@ -127,7 +104,8 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # CSRF behavior (safe default)
-CSRF_COOKIE_HTTPONLY = False  # leave False unless you fully control JS strategy
+# leave False unless you fully control JS strategy
+CSRF_COOKIE_HTTPONLY = False
 # SameSite (usually fine as-is, but explicit is better)
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
@@ -143,7 +121,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware', # This must be last
+    'django.middleware.cache.FetchFromCacheMiddleware',  # This must be last
     ]
 
 CACHES = {
@@ -204,7 +182,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
             ],
-        #'APP_DIRS': True,
+        # 'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -217,7 +195,7 @@ TEMPLATES = [
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
-                #'django.template.loaders.eggs.Loader',
+                # 'django.template.loaders.eggs.Loader',
                 ],
             },
         },

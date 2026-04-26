@@ -15,7 +15,6 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(
 MIGRATE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 sys.path.append(MIGRATE_PATH)
-#print(sys.path)
 
 import django; django.setup()
 
@@ -25,7 +24,7 @@ from migrate import setup_logger, MigrateBase
 try:
     from inventory.apps.items.models import Distributor, Manufacturer
     from inventory.apps.regions.models import Country
-except:
+except Exception:
     from inventory.suppliers.models import Supplier
     from inventory.regions.models import Country, Subdivision
 
@@ -91,7 +90,7 @@ class MigrateSupplier(MigrateBase):
                         region_code = ''
 
                     if name in self._BOTH_SUPPLIERS:
-                        stype = 0 # Supplier.BOTH_MFG_DIS
+                        stype = 0  # Supplier.BOTH_MFG_DIS
                     else:
                         stype = idx
 
@@ -132,7 +131,9 @@ class MigrateSupplier(MigrateBase):
     def _create_supplier(self, project):
         with open(self._SUPPLIER, mode='r') as csvfile:
             for idx, row in enumerate(csv.reader(csvfile)):
-                if idx == 0: continue # Skip the header
+                if idx == 0:
+                    continue  # Skip the header
+
                 name = row[0].strip()
                 address_01 = row[1]
                 address_02 = row[2]
@@ -255,7 +256,6 @@ if __name__ == '__main__':
         '-D', '--debug', action='store_true', default=False, dest='debug',
         help="Run in debug mode.")
     options = parser.parse_args()
-    #print "Options: {}".format(options)
 
     if not (options.csv or options.populate):
         parser.print_help()
@@ -279,7 +279,7 @@ if __name__ == '__main__':
         endTime = datetime.now()
         log.info("Supplier: Finished at %s elapsed time %s",
                  endTime, endTime - startTime)
-    except Exception as e:
+    except Exception:
         tb = sys.exc_info()[2]
         traceback.print_tb(tb)
         print("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))

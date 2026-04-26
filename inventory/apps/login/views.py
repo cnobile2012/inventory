@@ -5,11 +5,8 @@
 import json
 
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.template import loader
-from django.contrib.auth.models import User
 from django.contrib import auth
-from django.db import models
 from django.template.context_processors import csrf
 
 from inventory.apps.login.forms import LoginForm, RegistrationForm
@@ -92,32 +89,24 @@ class ProcessLogin(ViewBase):
                     auth.login(request, user)
                     context["valid"] = True
                     context["cookies"] = True
-                    #context['logoutHTML'] = self._logoutHTML(user)
-                    context["message"] = u"User [%s] is logged in." % username
+                    # context['logoutHTML'] = self._logoutHTML(user)
+                    context["message"] = f"User [{username}] is logged in."
                 else:
                     context["valid"] = True
                     context["cookies"] = False
-                    context["message"] = u"Please enable cookies if you" + \
-                                          u" want to login"
+                    context["message"] = ("Please enable cookies if you want "
+                                          "to login")
             else:
                 context["valid"] = False
-                context["message"] = u"The user [%s] is disabled."
+                context["message"] = "The user [%s] is disabled."
         else:
             context["valid"] = False
-            context["message"] = u"Could not validate [%s] as a user," + \
-                                  u" check username and password."
+            context["message"] = (f"Could not validate [{username}] as a "
+                                  "user, check username and password.")
             username = username and username or None
-            context["message"] =  context["message"] % username
 
         self._log.debug("Context dump for %s: %s", self.__module__, context)
         return HttpResponse(json.dumps(context))
-
-##     def _logoutHTML(self, user):
-##         result = u'''
-##         <li class="user">User: %s</li>
-##         <li class="user"><a href="/login/logout/">Logout</a></li>
-## ''' % user.username
-##         return result
 
 
 class CreateUser(ViewBase):
@@ -164,16 +153,15 @@ class ProcessCreateUser(ViewBase):
         self._log.debug(request.POST)
 
         if form.is_valid():
-            newUser = form.save()
+            form.save()
             context['valid'] = True
-            context['message'] = u"Your account is created. Please " + \
-                                  u"contact a sys admin to have your " + \
-                                  u"account upgraded."
+            context['message'] = ("Your account is created. Please contact a "
+                                  "sys admin to have your account upgraded.")
         else:
             context['valid'] = False
             context['content'] = self._formHTML(form, "create")
 
-        self._log.debug(u"Context dump for %s: %s", self.__module__, context)
+        self._log.debug("Context dump for %s: %s", self.__module__, context)
         return HttpResponse(json.dumps(context))
 
 

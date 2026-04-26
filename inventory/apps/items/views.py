@@ -3,12 +3,9 @@
 #
 
 import json
-import datetime, pytz
 
 from django.http import HttpResponse
 from django.template import loader
-from django.contrib.sessions.models import Session
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
@@ -48,7 +45,6 @@ class FrontPage(ViewBase):
 class ProcessRegion(ViewBase):
     __MODELS_MAP = {'distributor': Distributor, 'manufacturer': Manufacturer}
 
-
     def __init__(self, log):
         super().__init__(log)
 
@@ -68,10 +64,10 @@ class ProcessRegion(ViewBase):
                 model = self.__MODELS_MAP.get(path[-2])
                 pk = path[-1]
 
-                if pk.isdigit(): # An update
+                if pk.isdigit():  # An update
                     region = model.objects.get(pk=int(pk))
                     selected = region.state_id
-                elif pk == "add": # An add
+                elif pk == "add":  # An add
                     pass
                 else:
                     # Error condition
@@ -80,9 +76,8 @@ class ProcessRegion(ViewBase):
             code = code.strip(')')
             record = Country.objects.get(country_code_2__iexact=code)
             context['regions'] = [
-                ("%s (%s: %s)" %
-                (m['region'], m['region_code'], m['primary_level']), m['id'])
-                for m in record.region_set.values()]
+                (f"{m['region']} ({m['region_code']}: {m['primary_level']})",
+                 m['id']) for m in record.region_set.values()]
             context['selected'] = selected
         except Exception as e:
             msg = "Failed to find region records"

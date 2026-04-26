@@ -1,0 +1,18 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    docs/source/conf.py,
+    *migrations*
+    inventory/settings/local.py
+    old,
+    build,
+    dist,
+    txt
+
+per-file-ignores =
+    db/*: E402
+    data/migrate/*: E129, E402, E702
+    inventory/setupenv.py: E252
+    inventory/settings/*: F401, F403, F405
+    inventory/apps*: E125, E128, E129, E305

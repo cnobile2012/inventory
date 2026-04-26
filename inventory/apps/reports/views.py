@@ -11,8 +11,8 @@ from django.utils.safestring import mark_safe
 
 from inventory.apps.items.models import Item, Distributor, Manufacturer
 from inventory.apps.reports.forms import ItemForm, CostFormSet, BusinessForm
-from inventory.apps.utils.search import ItemSearch, DistributorSearch, \
-     ManufacturerSearch
+from inventory.apps.utils.search import (
+    ItemSearch, DistributorSearch, ManufacturerSearch)
 from inventory.apps.utils.views import ViewBase
 from inventory.settings import SITE_NAME, getLogger
 
@@ -101,9 +101,15 @@ class ItemRecord(ReportsBase):
         items['categories'] = mark_safe("<br />".join(
             [cat.path for cat in record.categories.all()]))
         dist = record.distributor
-        if dist: items['distributor'] = escape(dist.name)
+
+        if dist:
+            items['distributor'] = escape(dist.name)
+
         mfg = record.manufacturer
-        if mfg: items['manufacturer'] = escape(mfg.name)
+
+        if mfg:
+            items['manufacturer'] = escape(mfg.name)
+
         items['active'] = escape(record.active)
         items['obsolete'] = escape(record.obsolete)
         items['purge'] = escape(record.purge)
@@ -138,9 +144,15 @@ class ItemRecord(ReportsBase):
                     escape(cost.currency.currency))
                 costs['date_acquired'] = cost.date_acquired
                 dist = cost.distributor
-                if dist: costs['distributor'] = escape(dist.name)
+
+                if dist:
+                    costs['distributor'] = escape(dist.name)
+
                 mfg = cost.manufacturer
-                if mfg: costs['manufacturer'] = escape(mfg.name)
+
+                if mfg:
+                    costs['manufacturer'] = escape(mfg.name)
+
                 costList.append(costs)
             except StopIteration:
                 break
