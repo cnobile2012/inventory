@@ -323,7 +323,7 @@ class ItemAdmin(BaseAdmin):
     ordering = ('categories__path',)
     filter_horizontal = ('categories', 'location_code')
     inlines = (CostInline, SpecificationInline)
-    date_hierarchy = 'ctime'
+    date_hierarchy = 'cost__date_acquired'
     save_as = True
 
     class Media:
