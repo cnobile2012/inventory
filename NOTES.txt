@@ -35,3 +35,73 @@ Accept-Ranges: bytes
 Content-Length: 23100
 Vary: Accept-Encoding
 Content-Type: text/css
+
+certbot instructions
+--------------------
+https://certbot.eff.org/instructions?ws=apache&os=pip
+
+1. SSH into the server
+SSH into the server running your HTTP website as a user with sudo privileges.
+
+2. Install system dependencies
+System dependencies may include Python 3.6+ including the venv module and Augeas for the Apache plugin.
+
+If you're having trouble installing cryptography, you may need to install additional dependencies. See the cryptography project's site for more information.
+
+Commands to install system dependencies may look like the following, run on the commandline on the machine.
+
+For APT-based distributions (e.g. Debian, Ubuntu ...):
+
+$ sudo apt update
+$ sudo apt install python3 python3-dev python3-venv libaugeas-dev gcc
+
+For RPM-based distributions (e.g. Fedora, CentOS ...):
+
+$ sudo dnf install python3 python-devel augeas-devel gcc
+
+Note that old distributions use yum instead of dnf, and that RHEL-based distributions use python3X instead of python3 (e.g. python36<).
+
+These packages may have slightly different names on other distributions; a search such as "augeas on " will probably yield helpful results.
+
+3. Remove certbot-auto and any Certbot OS packages
+If you have any Certbot packages installed using an OS package manager like apt, dnf, or yum, you should remove them before installing the Certbot package to ensure that when you run the command certbot the package is used rather than the installation from your OS package manager. The exact command to do this depends on your OS, but common examples are sudo apt-get remove certbot, sudo dnf remove certbot, or sudo yum remove certbot.
+
+4. Set up a Python virtual environment
+Execute the following instructions on the command line on the machine to set up a virtual environment.
+
+$ sudo python3 -m venv /opt/certbot/
+$ sudo /opt/certbot/bin/pip install --upgrade pip
+
+5. Install Certbot
+Run this command on the command line on the machine to install Certbot.
+
+$ sudo /opt/certbot/bin/pip install certbot certbot-apache
+
+6. Prepare the Certbot command
+Execute the following instruction on the command line on the machine to ensure that the certbot command can be run.
+
+$ sudo ln -s /opt/certbot/bin/certbot /usr/local/bin/certbot
+
+7. Choose how you'd like to run Certbot
+Either get and install your certificates...
+Run this command to get a certificate and have Certbot edit your apache configuration automatically to serve it, turning on HTTPS access in a single step.
+
+$ sudo certbot --apache
+
+Or, just get a certificate
+If you're feeling more conservative and would like to make the changes to your apache configuration by hand, run this command.
+
+$ sudo certbot certonly --apache -d <server name>
+
+8. Set up automatic renewal
+We recommend running the following line, which will add a cron job to the default crontab.
+
+$ echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+
+9. Confirm that Certbot worked
+To confirm that your site is set up properly, visit https://yourwebsite.com/ in your browser and look for the lock icon in the URL bar.
+
+10. [Monthly] Upgrade certbot
+It's important to occasionally update Certbot to keep it up-to-date. To do this, run the following command on the command line on the machine.
+
+$ sudo /opt/certbot/bin/pip install --upgrade certbot certbot-apache
