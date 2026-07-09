@@ -4,7 +4,7 @@
 
 import os
 import logging
-import logging.handlers
+from logging.handlers import RotatingFileHandler
 
 
 LOGGER_NAME = "inventory"
@@ -21,8 +21,8 @@ def initializeLogging():
     """
     logger = logging.getLogger(LOGGER_NAME)
     logger.setLevel(LOG_LEVEL)
-    args = (os.path.join(LOG_PATH, 'logs', LOG_FILENAME), 'midnight', 1, 9)
-    handler = logging.handlers.TimedRotatingFileHandler(*args)
+    filename = os.path.join(LOG_PATH, 'logs', LOG_FILENAME)
+    handler = RotatingFileHandler(filename, 'a', 2000000, 9, None, True)
     fmt = ("%(asctime)s %(module)s %(funcName)s [line:%(lineno)d]"
            " %(levelname)s %(message)s")
     formatter = logging.Formatter(fmt)

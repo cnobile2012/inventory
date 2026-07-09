@@ -60,6 +60,8 @@ class RegistrationForm(forms.Form):
         user = User.objects.create_user(username=data['username'],
                                         email=data['email'],
                                         password=data['password1'])
+        log.info("New user registered: username: '%s', email: '%s'.",
+                 user.username, user.email)
 
         match KEY_PREFIX:
             case 'dev':
