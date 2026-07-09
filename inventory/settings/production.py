@@ -1,4 +1,12 @@
+import os
+
+from dotenv import load_dotenv
 from .base import *
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / ".env")
+DEBUG = False
 
 DATABASES = {
     'default': {
@@ -32,10 +40,15 @@ ALLOWED_HOSTS = [
     ]
 
 # email settings
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_REPLY_TO = 'donotreply@'
+load_dotenv()
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Document Email Contacts
 DOC_CONTACTS = (

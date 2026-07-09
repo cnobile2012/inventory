@@ -4,6 +4,7 @@ djangorestframework
 djangorestframework-xml
 djangorestframework-yaml
 
+dotenv
 docutils
 dateutils
 python-dateutil
