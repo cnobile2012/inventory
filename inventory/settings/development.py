@@ -1,6 +1,12 @@
+import os
+
+from dotenv import load_dotenv
 from .base import *
+from pathlib import Path
+# from inventory.setupenv import getLogger
 
-
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / ".env")
 DEBUG = True
 
 DATABASES = {
@@ -75,11 +81,16 @@ ALLOWED_HOSTS = [
     'tetrasys.homelinux.org',
     ]
 
-# email settings
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_REPLY_TO = 'donotreply@'
+# Email settings
+load_dotenv()
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Document Email Contacts
 DOC_CONTACTS = (
@@ -89,3 +100,7 @@ LOGGING.get('loggers', {}).get('django.request', {})['level'] = 'DEBUG'
 LOGGING.get('loggers', {}).get('inventory.views', {})['level'] = 'DEBUG'
 LOGGING.get('loggers', {}).get('inventory.admin', {})['level'] = 'DEBUG'
 LOGGING.get('loggers', {}).get('inventory.models', {})['level'] = 'DEBUG'
+
+# log = getLogger()
+# log.debug("EMAIL_HOST_USER: %s, EMAIL_HOST_PASSWORD: %s, BASE_DIR: %s",
+#           EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, BASE_DIR)

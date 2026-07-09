@@ -150,7 +150,6 @@ class ProcessCreateUser(ViewBase):
     def __call__(self, request, *args, **kwargs):
         context = {}
         form = RegistrationForm(request.POST)
-        self._log.debug(request.POST)
 
         if form.is_valid():
             form.save()

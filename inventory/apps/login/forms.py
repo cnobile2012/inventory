@@ -5,6 +5,7 @@
 import re
 from django import forms
 from django.contrib.auth.models import User
+from django.core.mail import mail_admins
 from inventory.settings import getLogger
 
 
@@ -56,7 +57,12 @@ class RegistrationForm(forms.Form):
 
     def save(self):
         data = self.cleaned_data
-        log.debug("cleaned_data: %s", data)
-        return User.objects.create_user(username=data['username'],
+        user = User.objects.create_user(username=data['username'],
                                         email=data['email'],
                                         password=data['password1'])
+        mail_admins(subject="New User Registration",
+                    message=("A new user has registered.\n\n"
+                             f"Username: {user.username}\n"
+                             f"Email: {user.email}\n"),
+                    fail_silently=False)
+        return user

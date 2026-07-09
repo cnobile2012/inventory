@@ -1,6 +1,8 @@
 # Include the bare minimum.
 -r base.txt
 
+mod_wsgi
+dotenv
 coverage
 django_debug_toolbar
 flake8

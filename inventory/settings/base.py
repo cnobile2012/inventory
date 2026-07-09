@@ -24,7 +24,7 @@ CACHES = {
     }
 
 ADMINS = (
-    ('Sysadmins', 'carl.nobile@gmail.com'),
+    ('Carl J. Nobile', 'carl.nobile@gmail.com'),
     )
 
 ALLOWED_HOSTS = []
@@ -201,6 +201,8 @@ TEMPLATES = [
         },
     ]
 
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 587
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
