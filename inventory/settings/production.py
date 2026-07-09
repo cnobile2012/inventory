@@ -24,7 +24,7 @@ DATABASES = {
         }
     }
 
-# KEY_PREFIX = 'prod'
+KEY_PREFIX = 'prod'
 # KEY_FUNCTION = 'testsite.common.caching.make_key'
 
 # Where is the root of the site? This can be a root-relative URL.

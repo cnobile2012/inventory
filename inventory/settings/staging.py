@@ -36,7 +36,7 @@ CACHES.update({
         },
     })
 
-# KEY_PREFIX = 'stg'
+KEY_PREFIX = 'stg'
 # KEY_FUNCTION = 'testsite.common.caching.make_key'
 
 # Add to the MIDDLEWARE_CLASSES here.

@@ -6,7 +6,7 @@ import re
 from django import forms
 from django.contrib.auth.models import User
 from django.core.mail import mail_admins
-from inventory.settings import getLogger
+from inventory.settings import getLogger, KEY_PREFIX
 
 
 log = getLogger()
@@ -60,7 +60,18 @@ class RegistrationForm(forms.Form):
         user = User.objects.create_user(username=data['username'],
                                         email=data['email'],
                                         password=data['password1'])
-        mail_admins(subject="New User Registration",
+
+        match KEY_PREFIX:
+            case 'dev':
+                machine = 'development'
+            case 'stg':
+                machine = 'stage'
+            case 'prod':
+                machine = 'production'
+            case _:
+                machine = 'unknown'
+
+        mail_admins(subject=f"New User Registration on {machine}",
                     message=("A new user has registered.\n\n"
                              f"Username: {user.username}\n"
                              f"Email: {user.email}\n"),
